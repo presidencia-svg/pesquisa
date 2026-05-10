@@ -388,11 +388,15 @@ export default function TransparenciaPage() {
                 <li>
                   <strong>Código fonte aberto.</strong> O sistema inteiro —
                   back-end, banco, formulários, lógica anti-fraude — está
-                  publicado em repositório aberto.{' '}
-                  <span className="text-muted-foreground italic">
-                    URL do repositório a ser publicada antes do registro no
-                    TRE/SE.
-                  </span>
+                  publicado em repositório aberto:{' '}
+                  <a
+                    href="https://github.com/presidencia-svg/pesquisa"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-sm text-primary hover:underline break-all"
+                  >
+                    github.com/presidencia-svg/pesquisa ↗
+                  </a>
                 </li>
                 <li>
                   <strong>Documento técnico completo</strong> com fórmulas,
