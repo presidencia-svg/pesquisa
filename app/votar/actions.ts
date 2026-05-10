@@ -8,6 +8,7 @@ import { hashCpf } from '@/lib/crypto'
 import { consultarSpc, type SpcDadosEleitor } from '@/lib/spc'
 import { setPreVoto, type PreVotoDraft } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { verifyTurnstile } from '@/lib/turnstile'
 
 export type VotarFormState = {
   ok: boolean
@@ -45,6 +46,21 @@ export async function entrarComCpf(
   const cpf = normalizarCpf(raw)
   if (!cpfValido(cpf)) {
     return { ok: false, message: 'CPF inválido. Verifique os dígitos.' }
+  }
+
+  // 0. Anti-bot (Turnstile) — antes de tudo. Em DEV_MODE faz bypass.
+  const headersListEarly = await headers()
+  const xffEarly = headersListEarly.get('x-forwarded-for')
+  const ipEarly = xffEarly ? (xffEarly.split(',')[0]?.trim() ?? null) : null
+  const tokenTurnstile = formData.get('cf-turnstile-response')
+  const tokenStr = typeof tokenTurnstile === 'string' ? tokenTurnstile : null
+  const turnstile = await verifyTurnstile(tokenStr, ipEarly)
+  if (!turnstile.ok) {
+    return {
+      ok: false,
+      message:
+        'Verificação anti-bot falhou. Recarregue a página e tente novamente.',
+    }
   }
 
   const db = supabaseAdmin()

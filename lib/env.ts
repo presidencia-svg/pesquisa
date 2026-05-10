@@ -59,16 +59,21 @@ export const SERVER_ENV = {
   get SPC_AMBIENTE() {
     return optional('SPC_AMBIENTE', 'homologacao') as 'homologacao' | 'producao'
   },
+  /**
+   * Base da API SPC JUD pra consulta cadastral. O codigo apenda
+   * `/cpf/{CPF}/1` na hora da chamada. Sobrescreva no .env.local se a
+   * URL real do contrato for diferente (ex.: outro path, outro produto).
+   */
   get SPC_API_URL() {
     return optional(
       'SPC_API_URL',
-      'https://api.spcbrasil.com.br/spcconsulta/recurso/consulta/padrao',
+      'https://api.spcbrasil.com.br/spc/remoting/rest/consultaCadastral',
     )
   },
   get SPC_API_URL_HOMOLOG() {
     return optional(
       'SPC_API_URL_HOMOLOG',
-      'https://treinamento.spcbrasil.com.br/spcconsulta/recurso/consulta/padrao',
+      'https://treinamento.spcbrasil.com.br/spc/remoting/rest/consultaCadastral',
     )
   },
   get SPC_USER() {

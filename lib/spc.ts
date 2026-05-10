@@ -1,8 +1,15 @@
 /**
- * Consulta ao SPC Brasil — API REST.
+ * Consulta SPC Brasil — API SPC JUD (REST GET).
  *
- * Adaptado do projeto Melhores do Ano (lib/spc/client.ts), com mesmas
- * variaveis de ambiente pra permitir reuso direto de credenciais.
+ * Doc oficial: Manuais_WebService_Integracao_SPCBRASIL_v4.3 / SPC JUD v1.5.
+ *
+ * Endpoints usados:
+ *   GET /spc/remoting/rest/consultaCadastral/cpf/{cpf}/1
+ *
+ * Auth: Basic com SPC_USER:SPC_PASSWORD. O usuario precisa ter perfil
+ * de operador associado abaixo da entidade SPC JUD pra fazer requisicoes
+ * — homologacao requer abertura de chamado via Sales Force; producao
+ * a propria CDL libera.
  *
  * Server-only.
  */
@@ -28,42 +35,54 @@ export type SpcResult =
     }
 
 /**
- * Estrutura conhecida da resposta SPC (extraida do uso em producao no
- * projeto Melhores do Ano). Campos extras sao preservados via index
- * signature.
+ * Resposta da API SPC JUD pra consulta cadastral de CPF.
+ * Campos opcionais — alguns só vem se SPC tiver registro.
  */
-type SpcResponseShape = {
-  result?: {
-    return_object?: {
-      resultado?: {
-        consumidor?: {
-          consumidorPessoaFisica?: {
-            nome?: string
-            dataNascimento?: number
-            sexo?: string
-          }
-        } | null
-      }
-    }
-    error?: string | boolean
-    message?: string
-  }
+type SpcCadastralResponse = {
+  nome?: string
+  dataDeNascimento?: string // formato DDMMYYYY (ex: "23011938")
+  cpf?: string
+  cep?: string
+  endereco?: string
+  estado?: string
+  nomeDaMae?: string
+  enderecosInformadosAnteriormente?: Array<unknown>
+  telefonesConsultadosAnteriormente?: Array<unknown>
+  telefonesVinculadosDocumento?: Array<unknown>
+  // Campo de erro retornado em 400/404
+  message?: string
 }
 
 const TIMEOUT_MS = 15_000
+
+/**
+ * Monta URL completa pra consulta cadastral por CPF.
+ *
+ * Le a base de SPC_API_URL (producao) ou SPC_API_URL_HOMOLOG
+ * (homologacao) — definidos em lib/env.ts. Apenda `/cpf/{CPF}/1`.
+ *
+ * Resultado tipico:
+ *   producao:    https://api.spcbrasil.com.br/spc/remoting/rest/consultaCadastral/cpf/12345678901/1
+ *   homologacao: https://treinamento.spcbrasil.com.br/spc/remoting/rest/consultaCadastral/cpf/12345678901/1
+ */
+const construirUrlConsulta = (cpfDigits: string): string => {
+  const base =
+    SERVER_ENV.SPC_AMBIENTE === 'producao'
+      ? SERVER_ENV.SPC_API_URL
+      : SERVER_ENV.SPC_API_URL_HOMOLOG
+  // Aceita base com ou sem trailing slash.
+  const baseClean = base.replace(/\/+$/, '')
+  return `${baseClean}/cpf/${cpfDigits}/1`
+}
 
 export async function consultarSpc(cpfDigits: string): Promise<SpcResult> {
   if (!/^\d{11}$/.test(cpfDigits)) {
     return { ok: false, razao: 'erro_api', detalhe: 'CPF inválido (formato)' }
   }
 
-  // Modo MOCK explicito (SPC_MOCK=true) — util pra dev sem chave SPC
-  // ainda contratada. NAO ative em producao.
+  // DEV_MODE / SPC_MOCK — stub deterministico pra testar UX sem credencial.
   if (DEV_MODE || SERVER_ENV.SPC_MOCK) {
-    return {
-      ok: true,
-      dados: stubDevPrefill(cpfDigits),
-    }
+    return { ok: true, dados: stubDevPrefill(cpfDigits) }
   }
 
   const user = SERVER_ENV.SPC_USER
@@ -72,11 +91,7 @@ export async function consultarSpc(cpfDigits: string): Promise<SpcResult> {
     return { ok: false, razao: 'nao_integrado' }
   }
 
-  const url =
-    SERVER_ENV.SPC_AMBIENTE === 'producao'
-      ? SERVER_ENV.SPC_API_URL
-      : SERVER_ENV.SPC_API_URL_HOMOLOG
-
+  const url = construirUrlConsulta(cpfDigits)
   const auth = Buffer.from(`${user}:${password}`).toString('base64')
 
   let response: Response
@@ -84,18 +99,11 @@ export async function consultarSpc(cpfDigits: string): Promise<SpcResult> {
     const ctrl = new AbortController()
     const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS)
     response = await fetch(url, {
-      method: 'POST',
+      method: 'GET',
       headers: {
         Authorization: `Basic ${auth}`,
-        'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-      body: JSON.stringify({
-        codigoProduto: SERVER_ENV.SPC_CODIGO_PRODUTO,
-        tipoConsumidor: 'F',
-        documentoConsumidor: cpfDigits,
-        codigoInsumoOpcional: [],
-      }),
       signal: ctrl.signal,
       cache: 'no-store',
     })
@@ -116,51 +124,59 @@ export async function consultarSpc(cpfDigits: string): Promise<SpcResult> {
     return { ok: false, razao: 'erro_api', detalhe: 'Rate limit SPC' }
   }
 
-  let data: SpcResponseShape
+  let data: SpcCadastralResponse
   try {
-    data = (await response.json()) as SpcResponseShape
+    data = (await response.json()) as SpcCadastralResponse
   } catch {
-    return { ok: false, razao: 'erro_api', detalhe: 'resposta nao-JSON do SPC' }
+    return {
+      ok: false,
+      razao: 'erro_api',
+      detalhe: 'resposta nao-JSON do SPC',
+    }
   }
 
-  // SPC retorna erro estruturado mesmo em HTTP 200 / 500.
-  if (data.result?.error === true || data.result?.error === 'true') {
-    const msg = data.result?.message ?? 'Erro SPC'
-    console.error('[spc] erro estruturado:', msg)
-    return { ok: false, razao: 'erro_api', detalhe: msg }
+  // Erros do SPC JUD vem como HTTP 400 com { "message": "..." }
+  if (response.status >= 400) {
+    const msg = (data.message ?? '').toLowerCase()
+    // Mensagens conhecidas:
+    //   "Número do CPF inválido"  → CPF malformado (mas nosso valida antes)
+    //   "CPF não foi encontrado"  → CPF nao existe na base SPC
+    if (msg.includes('não foi encontrado') || msg.includes('nao foi encontrado')) {
+      return { ok: false, razao: 'cpf_inexistente' }
+    }
+    if (msg.includes('inválido') || msg.includes('invalido')) {
+      return { ok: false, razao: 'cpf_inexistente', detalhe: data.message }
+    }
+    return {
+      ok: false,
+      razao: 'erro_api',
+      detalhe: data.message ?? `HTTP ${response.status}`,
+    }
   }
 
-  const pf =
-    data.result?.return_object?.resultado?.consumidor?.consumidorPessoaFisica
-  const nome = pf?.nome?.trim()
+  // Sucesso — extrai dados.
+  const nome = data.nome?.trim()
   if (!nome) {
     return { ok: false, razao: 'cpf_inexistente' }
   }
 
-  // Mapeia pra SpcDadosEleitor.
   const dados: SpcDadosEleitor = {
     nomeMascarado: mascararNome(nome),
   }
 
-  if (pf?.dataNascimento) {
-    const data = new Date(pf.dataNascimento)
-    if (!Number.isNaN(data.getTime())) {
-      const faixa = calcularFaixaEtaria(data)
+  if (data.dataDeNascimento) {
+    const dt = parseDataDeNascimentoSpc(data.dataDeNascimento)
+    if (dt) {
+      const faixa = calcularFaixaEtaria(dt)
       if (faixa) dados.faixaEtaria = faixa
     }
-  }
-
-  if (pf?.sexo === 'M' || pf?.sexo === 'F') {
-    dados.sexo = pf.sexo
   }
 
   return { ok: true, dados }
 }
 
 /**
- * Stub determinístico pra DEV_MODE/SPC_MOCK. Gera prefill sintetico
- * baseado no ultimo digito do CPF — o suficiente pra testar a UX sem
- * SPC real.
+ * Stub determinístico pra DEV_MODE/SPC_MOCK.
  */
 function stubDevPrefill(cpfDigits: string): SpcDadosEleitor {
   const ultimoDigito = Number(cpfDigits.slice(-1))
@@ -183,6 +199,33 @@ function stubDevPrefill(cpfDigits: string): SpcDadosEleitor {
     faixaEtaria: faixas[ultimoDigito],
     escolaridade: escolaridades[ultimoDigito % 3],
   }
+}
+
+/**
+ * Parse da data de nascimento que o SPC JUD retorna no formato DDMMYYYY
+ * (ex.: "23011938" -> 1938-01-23). Aceita tambem com separadores caso
+ * a API mude no futuro.
+ */
+function parseDataDeNascimentoSpc(raw: string): Date | null {
+  const limpa = raw.replace(/\D/g, '')
+  if (limpa.length !== 8) return null
+  const dia = Number(limpa.slice(0, 2))
+  const mes = Number(limpa.slice(2, 4))
+  const ano = Number(limpa.slice(4, 8))
+  if (
+    !Number.isFinite(dia) ||
+    !Number.isFinite(mes) ||
+    !Number.isFinite(ano) ||
+    mes < 1 ||
+    mes > 12 ||
+    dia < 1 ||
+    dia > 31 ||
+    ano < 1900 ||
+    ano > 2100
+  ) {
+    return null
+  }
+  return new Date(ano, mes - 1, dia)
 }
 
 /**

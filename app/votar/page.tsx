@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { RodapeInstitucional } from '@/components/rodape-institucional'
+import { PUBLIC_ENV } from '@/lib/env'
 import { getPreVoto, getVotoToken } from '@/lib/sessao'
 
 import { CpfForm } from './cpf-form'
@@ -48,7 +49,7 @@ export default async function VotarPage() {
             </p>
           </div>
 
-          <CpfForm />
+          <CpfForm turnstileSiteKey={PUBLIC_ENV.TURNSTILE_SITE_KEY} />
 
           <details className="text-sm text-muted-foreground">
             <summary className="cursor-pointer hover:text-foreground">
