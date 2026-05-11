@@ -7,7 +7,7 @@ export const metadata = { title: 'Candidatos · Admin' }
 
 type Candidato = {
   id: string
-  cargo: 'presidente' | 'governador' | 'senador'
+  cargo: 'presidente' | 'governador' | 'senador' | 'federal' | 'estadual'
   numero: number
   nome_urna: string
   nome_completo: string | null
@@ -20,6 +20,8 @@ const ROTULO_CARGO: Record<Candidato['cargo'], string> = {
   presidente: 'Presidente',
   governador: 'Governador',
   senador: 'Senador',
+  federal: 'Deputado Federal',
+  estadual: 'Deputado Estadual',
 }
 
 export default async function CandidatosPage() {
@@ -76,14 +78,16 @@ export default async function CandidatosPage() {
           .
         </p>
         <p className="text-xs text-muted-foreground">
-          Federal e Estadual votam por <strong>legenda</strong> — não cadastra
-          candidato individual aqui, basta manter os partidos ativos.
+          Federal e Estadual armazenam o voto como <strong>legenda</strong>
+          (metodologia). Os candidatos individuais aqui servem só pra
+          mostrar nome + foto na cédula quando o eleitor digita o número
+          completo de 4/5 dígitos — espelho da urna.
         </p>
       </header>
 
       {edicao ? <NovoCandidatoForm partidos={partidos ?? []} /> : null}
 
-      {(['presidente', 'governador', 'senador'] as const).map((cargo) => (
+      {(['presidente', 'governador', 'senador', 'federal', 'estadual'] as const).map((cargo) => (
         <section key={cargo} className="flex flex-col gap-2">
           <h2 className="text-sm font-semibold uppercase tracking-wide">
             {ROTULO_CARGO[cargo]}{' '}

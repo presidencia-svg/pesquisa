@@ -7,7 +7,13 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export type CandidatoState = { ok: boolean; message?: string }
 
-const cargosCandidato = ['presidente', 'governador', 'senador'] as const
+const cargosCandidato = [
+  'presidente',
+  'governador',
+  'senador',
+  'federal',
+  'estadual',
+] as const
 
 const schema = z.object({
   cargo: z.enum(cargosCandidato),

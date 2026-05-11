@@ -46,6 +46,8 @@ export function NovoCandidatoForm({ partidos }: { partidos: Partido[] }) {
             <option value="presidente">Presidente</option>
             <option value="governador">Governador</option>
             <option value="senador">Senador</option>
+            <option value="federal">Deputado Federal</option>
+            <option value="estadual">Deputado Estadual</option>
           </select>
         </label>
 
