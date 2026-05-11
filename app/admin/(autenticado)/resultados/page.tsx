@@ -31,6 +31,7 @@ type CandidatoLegenda = {
   numero: number
   nome_urna: string
   foto_url: string | null
+  votos: number
 }
 
 type ZonaLinha = {
@@ -136,11 +137,13 @@ export default async function ResultadosPage() {
     }
   }
 
-  // -------- Candidatos fed/est por partido (lista de referencia) --------
-  // Voto e' por legenda, mas mostramos os candidatos dessa legenda pra
-  // contexto (TSE 2022 eleitos / candidatos cadastrados na edicao).
+  // -------- Candidatos fed/est por partido + votos individuais --------
+  // Voto agregado por legenda (define cadeiras via QE). Tambem registramos
+  // candidato_id individual quando o eleitor digita o numero completo —
+  // serve pra projetar quem dentro da legenda seria eleito (TSE faz igual).
   const candidatosPorPartido = new Map<string, CandidatoLegenda[]>()
   {
+    // Lista completa de candidatos fed/est cadastrados.
     const { data: candidatos } = await db
       .from('candidatos_pesquisa')
       .select('id, cargo, numero, nome_urna, foto_url, partido_id')
@@ -148,6 +151,23 @@ export default async function ResultadosPage() {
       .eq('ativo', true)
       .in('cargo', ['federal', 'estadual'])
       .order('numero')
+
+    // Votos individuais — vem da v_resultados_candidato (apos migration 008
+    // ela inclui fed/est). Pode estar vazio se ninguem votou no numero
+    // completo ou se a migration ainda nao foi aplicada.
+    const votosPorCandidato = new Map<string, number>()
+    const { data: votosCands } = await db
+      .from('v_resultados_candidato')
+      .select('candidato_id, cargo, votos')
+      .eq('edicao_id', edicao.id)
+      .in('cargo', ['federal', 'estadual'])
+    for (const r of (votosCands ?? []) as Array<{
+      candidato_id: string
+      votos: number
+    }>) {
+      votosPorCandidato.set(r.candidato_id, r.votos)
+    }
+
     for (const c of (candidatos ?? []) as Array<{
       id: string
       cargo: 'federal' | 'estadual'
@@ -163,8 +183,14 @@ export default async function ResultadosPage() {
         numero: c.numero,
         nome_urna: c.nome_urna,
         foto_url: c.foto_url,
+        votos: votosPorCandidato.get(c.id) ?? 0,
       })
       candidatosPorPartido.set(key, arr)
+    }
+    // Ordena candidatos dentro de cada legenda por votos desc
+    for (const [k, arr] of candidatosPorPartido) {
+      arr.sort((a, b) => b.votos - a.votos)
+      candidatosPorPartido.set(k, arr)
     }
   }
 
@@ -216,14 +242,18 @@ export default async function ResultadosPage() {
             cada candidato com sua contagem.
           </p>
           <p>
-            <strong>Deputado Federal e Estadual:</strong> voto por{' '}
-            <strong>legenda (partido)</strong>. O eleitor digita os 4 ou 5
-            dígitos completos para ver o nome + foto e confirmar — mas o que
-            entra na contagem é só o partido (2 primeiros dígitos). Essa é
-            a metodologia oficial para fins de projeção de cadeiras
-            (Quociente Eleitoral, Quociente Partidário, sobras por maiores
-            médias) conforme Lei 9.504/97. A lista de candidatos sob cada
-            legenda é exibida apenas como referência.
+            <strong>Deputado Federal e Estadual:</strong> dupla contagem,
+            igual ao TSE.{' '}
+            <strong>(1) Voto na legenda</strong> — os 2 primeiros dígitos
+            sempre contam pro total do partido, que define quantas
+            cadeiras a chapa elege (Quociente Eleitoral, Quociente
+            Partidário e maiores médias, Lei 9.504/97).{' '}
+            <strong>(2) Voto no candidato</strong> — se o eleitor digitou
+            o número completo (4/5 dígitos) e o candidato está cadastrado,
+            também conta pra ele individualmente. Isso define a{' '}
+            <strong>ordem</strong> dentro da chapa: quais candidatos do
+            partido X seriam eleitos primeiro. Eleitores que digitam só
+            a legenda (2 dígitos + zeros) entram só na contagem 1.
           </p>
           <p>
             <strong>Zona de Expansão:</strong> consulta extra apresentada
@@ -359,8 +389,9 @@ function SecaoLegendas({
         </span>
       </h2>
       <p className="text-xs text-muted-foreground italic">
-        Voto agregado por legenda. Lista de candidatos sob cada partido é
-        meramente informativa.
+        Voto por legenda define quantas cadeiras a chapa elege (Quociente
+        Eleitoral). Voto individual de cada candidato — quando o eleitor
+        digita o número completo — define a ordem dentro da legenda.
       </p>
       {total === 0 ? (
         <p className="text-xs text-muted-foreground italic px-3 py-2">
@@ -381,25 +412,42 @@ function SecaoLegendas({
                   total={total}
                 />
                 {cands.length > 0 && (
-                  <details className="mt-1 ml-14 mr-2 text-xs">
+                  <details className="mt-1 ml-14 mr-2 text-xs" open={l.votos > 0 && cands.some((c) => c.votos > 0)}>
                     <summary className="cursor-pointer text-muted-foreground hover:text-foreground transition">
-                      {cands.length} candidato{cands.length !== 1 ? 's' : ''} desta legenda ▾
+                      Candidatos da legenda ({cands.length}) ▾
                     </summary>
                     <ul className="mt-2 flex flex-col gap-1 pl-2 border-l border-dashed border-border">
-                      {cands.map((c) => (
-                        <li
-                          key={c.id}
-                          className="flex items-center gap-2 py-1"
-                        >
-                          <span className="font-mono tabular-nums text-[10px] text-muted-foreground w-12">
-                            {c.numero}
-                          </span>
-                          <span className="text-foreground truncate">
-                            {c.nome_urna}
-                          </span>
-                        </li>
-                      ))}
+                      {cands.map((c) => {
+                        const pctNaLegenda =
+                          l.votos === 0 ? 0 : (c.votos / l.votos) * 100
+                        return (
+                          <li
+                            key={c.id}
+                            className="flex items-baseline gap-2 py-1"
+                          >
+                            <span className="font-mono tabular-nums text-[10px] text-muted-foreground w-12 flex-none">
+                              {c.numero}
+                            </span>
+                            <span className="text-foreground truncate flex-1">
+                              {c.nome_urna}
+                            </span>
+                            <span className="tabular-nums whitespace-nowrap text-foreground">
+                              {c.votos.toLocaleString('pt-BR')}
+                              {c.votos > 0 && l.votos > 0 ? (
+                                <span className="text-muted-foreground font-normal ml-1">
+                                  ({pctNaLegenda.toFixed(0)}% da legenda)
+                                </span>
+                              ) : null}
+                            </span>
+                          </li>
+                        )
+                      })}
                     </ul>
+                    <p className="mt-2 text-[10px] text-muted-foreground italic">
+                      Votos no número completo. Eleitores que digitaram só
+                      os 2 dígitos da legenda contam pra o total do
+                      partido mas não pra nenhum candidato individual.
+                    </p>
                   </details>
                 )}
               </div>

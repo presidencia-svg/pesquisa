@@ -131,7 +131,16 @@ export async function submeterVoto(
         candidatoId = cand.id
       } else {
         // Legenda: o eleitor digita o numero como na urna (4 digitos pra
-        // federal, 5 pra estadual), mas a pesquisa armazena so o partido.
+        // federal, 5 pra estadual). Armazenamos AMBOS:
+        //   - partido_id:    obrigatorio. Soma agregada pra Quociente
+        //                    Eleitoral / Quociente Partidario, define
+        //                    quantas cadeiras a legenda elege.
+        //   - candidato_id:  opcional. Se o numero completo bater um
+        //                    candidato cadastrado, registra ele tambem.
+        //                    Permite projetar dentro da legenda quem sao
+        //                    os mais votados (espelho da contagem TSE).
+        //                    Se nao bater (numero existe mas nao ta'
+        //                    cadastrado), so' o partido_id e' usado.
         const numeroPartido = Number(numeroRaw.slice(0, 2))
         const { data: part } = await db
           .from('partidos')
@@ -146,6 +155,20 @@ export async function submeterVoto(
           }
         }
         partidoId = part.id
+
+        // Resolve candidato_id pelo numero completo (4/5 digitos). Se
+        // existir, registra junto. Nao bloqueia o voto se nao existir.
+        const { data: candFedEst } = await db
+          .from('candidatos_pesquisa')
+          .select('id')
+          .eq('edicao_id', edicaoId)
+          .eq('cargo', cargo)
+          .eq('numero', numero)
+          .eq('ativo', true)
+          .maybeSingle()
+        if (candFedEst) {
+          candidatoId = candFedEst.id
+        }
       }
 
       // Pra senador (2 vagas): nao deixa votar 2x no mesmo candidato
