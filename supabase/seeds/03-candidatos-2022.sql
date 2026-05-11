@@ -34,19 +34,23 @@
 --   25 = DEM (historico, extinto apos fusao com PSL=17 virando UB)
 -- --------------------------------------------------------------------------
 
--- Corrige sigla/nome do numero 44 (era NOVO, virou UNIAO):
-update partidos
-   set sigla = 'UNIAO',
-       nome  = 'União Brasil',
-       cor_hex = '#fbb03b'
- where numero = 44;
+-- ORDEM IMPORTA: partidos.sigla tem UNIQUE constraint.
+-- Primeiro liberar UNIAO do 25 (renomear pra DEM_HIST), so depois
+-- ocupa UNIAO no 44. Se fizer ao contrario quebra.
 
--- Corrige sigla/nome do numero 25 (era UNIAO, agora DEM historico):
+-- (a) Libera 'UNIAO' renomeando 25 -> DEM_HIST
 update partidos
    set sigla = 'DEM_HIST',
        nome  = 'Democratas (historico, virou Uniao Brasil em 2022)',
        cor_hex = '#0a2a6e'
  where numero = 25 and sigla = 'UNIAO';
+
+-- (b) Renomeia 44 (era NOVO) -> UNIAO Brasil
+update partidos
+   set sigla = 'UNIAO',
+       nome  = 'União Brasil',
+       cor_hex = '#fbb03b'
+ where numero = 44 and sigla <> 'UNIAO';
 
 -- Insere partidos historicos / faltantes (ON CONFLICT preserva)
 insert into partidos (numero, sigla, nome, cor_hex) values
