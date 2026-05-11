@@ -42,13 +42,13 @@ export default async function AdminLayout({
       </header>
 
       <div className="flex-1 max-w-6xl mx-auto w-full flex flex-col sm:flex-row gap-8 px-6 py-8">
-        <nav className="sm:w-48 flex-none">
-          <ul className="flex sm:flex-col gap-1">
+        <nav className="sm:w-48 flex-none -mx-6 sm:mx-0 px-6 sm:px-0 overflow-x-auto sm:overflow-visible">
+          <ul className="flex sm:flex-col gap-1 min-w-max sm:min-w-0">
             {NAV.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="block px-3 py-2 rounded-md text-sm text-foreground hover:bg-muted transition"
+                  className="block px-3 py-2 rounded-md text-sm text-foreground hover:bg-muted transition whitespace-nowrap"
                 >
                   {item.label}
                 </Link>

@@ -118,6 +118,13 @@ export const SERVER_ENV = {
   get ADMIN_PASSWORD() {
     return required('ADMIN_PASSWORD')
   },
+  /**
+   * Segredo TOTP em Base32 pra 2FA do admin (Google Authenticator).
+   * Se ausente, login usa so' senha. Gerar via `npm run totp:setup`.
+   */
+  get ADMIN_TOTP_SECRET() {
+    return optional('ADMIN_TOTP_SECRET')
+  },
   get JWT_SECRET() {
     return required('JWT_SECRET')
   },
