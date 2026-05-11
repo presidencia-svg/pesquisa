@@ -98,7 +98,7 @@ export default async function ConfirmaPage() {
                 Esses dados ficam só na <strong>Sala 1</strong> (validação) —
                 <strong> nunca</strong> são gravados junto com seus votos. Na
                 hora de divulgar resultados cruzados (ex.:{' '}
-                <em>"intenção entre mulheres de 25-34 em Aracaju"</em>),
+                <em>&ldquo;intenção entre mulheres de 25-34 em Aracaju&rdquo;</em>),
                 aplicamos k-anonymity ≥ 30 — ou seja, só publicamos cortes com
                 pelo menos 30 respondentes.
               </p>

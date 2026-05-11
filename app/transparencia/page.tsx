@@ -220,7 +220,7 @@ export default function TransparenciaPage() {
                 <li>Hash do token aleatório (sem ligação com nenhum CPF).</li>
                 <li>Cargo (Presidente, Governador, Senador, Federal, Estadual).</li>
                 <li>Candidato ou partido escolhido.</li>
-                <li>Método: voto numérico, branco ou "não sei".</li>
+                <li>Método: voto numérico, branco ou &ldquo;não sei&rdquo;.</li>
                 <li>
                   Hora de criação <strong>truncada pra hora cheia</strong> —
                   análise temporal segue possível, cruzamento minuto-a-minuto
@@ -229,8 +229,9 @@ export default function TransparenciaPage() {
               </ul>
 
               <p className="text-foreground leading-relaxed pt-2 italic">
-                Nada de demográfico vai pra Sala 2. Cruzamentos como "intenção
-                entre mulheres de 25-34 em Aracaju" são feitos comparando
+                Nada de demográfico vai pra Sala 2. Cruzamentos como
+                &ldquo;intenção entre mulheres de 25-34 em Aracaju&rdquo; são
+                feitos comparando
                 distribuições agregadas das duas salas — nunca por linha
                 individual.
               </p>
@@ -267,7 +268,7 @@ export default function TransparenciaPage() {
                 titulo="LGPD — Lei nº 13.709/2018"
                 url="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm"
               >
-                Base legal pra coleta: "execução de pesquisa de opinião"
+                Base legal pra coleta: &ldquo;execução de pesquisa de opinião&rdquo;
                 (Art. 7º, IV). Princípios aplicados: finalidade exclusiva
                 (sem reuso comercial), minimização (só o necessário pra a
                 pesquisa), adequação técnica (CPF nunca em texto, arquitetura
@@ -336,16 +337,17 @@ export default function TransparenciaPage() {
                 Mesmo sem ligação direta entre CPF e voto, células muito
                 pequenas em cruzamentos demográficos podem reidentificar
                 pessoas. Exemplo: se só uma mulher de 60+ em determinado
-                município respondeu, o "voto da maioria daquela célula" é
-                o voto dela.
+                município respondeu, o &ldquo;voto da maioria daquela
+                célula&rdquo; é o voto dela.
               </p>
               <p className="text-foreground leading-relaxed">
                 Pra evitar isso, qualquer corte cruzado divulgado
                 publicamente respeita{' '}
                 <strong>k ≥ 30 respondentes por célula</strong>. Cruzamentos
                 que não atingem o mínimo são suprimidos ou agregados a um
-                nível superior (ex.: "mulheres de 60+ em Sergipe" em vez de
-                "mulheres de 60+ em Itabaianinha"). É a mesma convenção que
+                nível superior (ex.: &ldquo;mulheres de 60+ em Sergipe&rdquo;
+                em vez de &ldquo;mulheres de 60+ em Itabaianinha&rdquo;). É a
+                mesma convenção que
                 o IBGE adota pra microdados públicos.
               </p>
             </section>

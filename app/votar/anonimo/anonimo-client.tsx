@@ -14,7 +14,10 @@ export function AnonimoClient({ token }: { token: string }) {
 
   // Calcula o magic link no client porque ai pega o origin certo
   // (localhost em dev, dominio real em prod) sem precisar de env var.
+  // setState num effect aqui e' o padrao recomendado pra ler window
+  // depois da hidratacao — desabilita o lint pra esse caso especifico.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLinkCompleto(`${window.location.origin}/votar/redimir?t=${token}`)
   }, [token])
 

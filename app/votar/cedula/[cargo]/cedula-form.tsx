@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState, useTransition } from 'react'
+import { useMemo, useState, useTransition } from 'react'
 
 import { type Cargo, type CargoConfig } from '@/lib/cargos'
 
@@ -113,7 +113,10 @@ export function CedulaForm({
         {/* Display de confirmacao do candidato/legenda */}
         {completo && opcaoSelecionada ? (
           <div className="mt-2 bg-capsule-foreground/5 border border-capsule-foreground/20 rounded-md p-4 flex items-center gap-4">
-            <FotoOuInicial opcao={opcaoSelecionada} />
+            <FotoOuInicial
+              key={opcaoSelecionada.fotoUrl ?? opcaoSelecionada.numero}
+              opcao={opcaoSelecionada}
+            />
             <div className="flex-1 flex flex-col gap-0.5 text-left">
               <p className="text-xs uppercase tracking-wider text-capsule-foreground/60">
                 {cfg.tipo === 'candidato' ? 'Candidato' : 'Legenda'}
@@ -215,9 +218,9 @@ export function CedulaForm({
  * material). Usa a cor do partido se tiver, senao um cinza neutro.
  */
 function FotoOuInicial({ opcao }: { opcao: Opcao }) {
+  // erroFoto reseta naturalmente entre opcoes diferentes via `key`
+  // prop no FotoOuInicial em cima (linha 116). Evita setState em effect.
   const [erroFoto, setErroFoto] = useState(false)
-
-  useEffect(() => setErroFoto(false), [opcao.fotoUrl])
 
   const iniciais = (opcao.nome.match(/\b[A-Z]/g) ?? ['?'])
     .slice(0, 2)

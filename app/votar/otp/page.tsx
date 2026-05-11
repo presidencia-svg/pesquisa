@@ -59,7 +59,7 @@ export default async function OtpPage() {
               ANTES de confirmar, porque depois é tarde: a ponte some. */}
           <aside className="rounded-md border border-capsule/20 bg-capsule/5 p-5 flex flex-col gap-3">
             <p className="text-sm font-semibold text-capsule">
-              O que vai acontecer quando você clicar em "Confirmar"
+              O que vai acontecer quando você clicar em &ldquo;Confirmar&rdquo;
             </p>
             <p className="text-sm text-foreground leading-relaxed">
               O servidor vai gerar um token aleatório, gravar só o hash dele
