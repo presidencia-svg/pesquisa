@@ -31,6 +31,12 @@ export default async function DashboardPage() {
     .select('id', { count: 'exact', head: true })
     .eq('ativo', true)
 
+  const { count: candidatosComFotoCount } = await db
+    .from('candidatos_pesquisa')
+    .select('id', { count: 'exact', head: true })
+    .eq('ativo', true)
+    .not('foto_url', 'is', null)
+
   const { count: municipiosCount } = await db
     .from('municipios_se')
     .select('ibge_codigo', { count: 'exact', head: true })
@@ -103,7 +109,7 @@ export default async function DashboardPage() {
         <h2 className="text-sm font-semibold uppercase tracking-wide">
           Configuração
         </h2>
-        <div className="grid sm:grid-cols-3 gap-3">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <CardConfig
             titulo="Municípios SE"
             valor={municipiosCount ?? 0}
@@ -113,6 +119,12 @@ export default async function DashboardPage() {
           <CardConfig
             titulo="Candidatos ativos"
             valor={candidatosCount ?? 0}
+            href="/admin/candidatos"
+          />
+          <CardConfig
+            titulo="Candidatos com foto"
+            valor={candidatosComFotoCount ?? 0}
+            esperado={candidatosCount ?? 0}
             href="/admin/candidatos"
           />
           <CardConfig titulo="Base CDL" valor={cdlCount ?? 0} href="/admin" />
