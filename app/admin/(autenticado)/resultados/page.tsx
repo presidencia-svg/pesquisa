@@ -411,45 +411,74 @@ function SecaoLegendas({
                   votos={l.votos}
                   total={total}
                 />
-                {cands.length > 0 && (
-                  <details className="mt-1 ml-14 mr-2 text-xs" open={l.votos > 0 && cands.some((c) => c.votos > 0)}>
-                    <summary className="cursor-pointer text-muted-foreground hover:text-foreground transition">
-                      Candidatos da legenda ({cands.length}) ▾
-                    </summary>
-                    <ul className="mt-2 flex flex-col gap-1 pl-2 border-l border-dashed border-border">
-                      {cands.map((c) => {
-                        const pctNaLegenda =
-                          l.votos === 0 ? 0 : (c.votos / l.votos) * 100
-                        return (
-                          <li
-                            key={c.id}
-                            className="flex items-baseline gap-2 py-1"
-                          >
-                            <span className="font-mono tabular-nums text-[10px] text-muted-foreground w-12 flex-none">
-                              {c.numero}
+                {cands.length > 0 && (() => {
+                  const somaCandidatos = cands.reduce(
+                    (acc, c) => acc + c.votos,
+                    0,
+                  )
+                  const semCandidato = Math.max(l.votos - somaCandidatos, 0)
+                  return (
+                    <details
+                      className="mt-1 ml-14 mr-2 text-xs"
+                      open={l.votos > 0}
+                    >
+                      <summary className="cursor-pointer text-muted-foreground hover:text-foreground transition">
+                        Candidatos da legenda ({cands.length}) ▾
+                      </summary>
+                      <ul className="mt-2 flex flex-col gap-1 pl-2 border-l border-dashed border-border">
+                        {cands.map((c) => {
+                          const pctNaLegenda =
+                            l.votos === 0 ? 0 : (c.votos / l.votos) * 100
+                          return (
+                            <li
+                              key={c.id}
+                              className="flex items-baseline gap-2 py-1"
+                            >
+                              <span className="font-mono tabular-nums text-[10px] text-muted-foreground w-12 flex-none">
+                                {c.numero}
+                              </span>
+                              <span className="text-foreground truncate flex-1">
+                                {c.nome_urna}
+                              </span>
+                              <span className="tabular-nums whitespace-nowrap text-foreground">
+                                {c.votos.toLocaleString('pt-BR')}
+                                {c.votos > 0 && l.votos > 0 ? (
+                                  <span className="text-muted-foreground font-normal ml-1">
+                                    ({pctNaLegenda.toFixed(0)}% da legenda)
+                                  </span>
+                                ) : null}
+                              </span>
+                            </li>
+                          )
+                        })}
+                        {semCandidato > 0 && (
+                          <li className="flex items-baseline gap-2 py-1 mt-1 pt-2 border-t border-dotted border-border/60 text-muted-foreground italic">
+                            <span className="font-mono tabular-nums text-[10px] w-12 flex-none">
+                              ?
                             </span>
-                            <span className="text-foreground truncate flex-1">
-                              {c.nome_urna}
+                            <span className="truncate flex-1">
+                              Só legenda (número digitado não bateu nenhum
+                              candidato cadastrado)
                             </span>
-                            <span className="tabular-nums whitespace-nowrap text-foreground">
-                              {c.votos.toLocaleString('pt-BR')}
-                              {c.votos > 0 && l.votos > 0 ? (
-                                <span className="text-muted-foreground font-normal ml-1">
-                                  ({pctNaLegenda.toFixed(0)}% da legenda)
-                                </span>
-                              ) : null}
+                            <span className="tabular-nums whitespace-nowrap not-italic">
+                              {semCandidato.toLocaleString('pt-BR')}
+                              <span className="font-normal ml-1">
+                                ({((semCandidato / l.votos) * 100).toFixed(0)}
+                                % da legenda)
+                              </span>
                             </span>
                           </li>
-                        )
-                      })}
-                    </ul>
-                    <p className="mt-2 text-[10px] text-muted-foreground italic">
-                      Votos no número completo. Eleitores que digitaram só
-                      os 2 dígitos da legenda contam pra o total do
-                      partido mas não pra nenhum candidato individual.
-                    </p>
-                  </details>
-                )}
+                        )}
+                      </ul>
+                      <p className="mt-2 text-[10px] text-muted-foreground italic">
+                        Voto vai pra um candidato individual só quando o
+                        eleitor digita o número completo (4/5 dígitos) E
+                        esse número está cadastrado nesta edição. Caso
+                        contrário, conta só pra o total da legenda.
+                      </p>
+                    </details>
+                  )
+                })()}
               </div>
             )
           })}
