@@ -1,24 +1,28 @@
 import Link from 'next/link'
 
+import { InstalarAppButton } from '@/components/instalar-app-button'
 import { MarcaCdl } from '@/components/marca-cdl'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
 
 export default function Home() {
   return (
     <>
-      <main className="flex flex-col flex-1 items-center bg-background px-6 py-16 sm:py-24">
-        <div className="w-full max-w-2xl flex flex-col gap-12">
-          <header className="flex flex-col gap-8">
-            <MarcaCdl tamanho="lg" />
+      <main className="flex flex-col flex-1 items-center bg-background px-5 sm:px-6 py-10 sm:py-24">
+        <div className="w-full max-w-2xl flex flex-col gap-10 sm:gap-12">
+          <header className="flex flex-col gap-6 sm:gap-8">
+            <div className="flex items-start justify-between gap-3">
+              <MarcaCdl tamanho="lg" />
+              <InstalarAppButton />
+            </div>
 
             <div className="flex flex-col gap-3 pt-4 border-t border-border">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">
                 Pesquisa de intenção de voto
               </p>
-              <h1 className="text-4xl font-semibold leading-[1.05] tracking-tight text-foreground sm:text-5xl">
+              <h1 className="text-3xl sm:text-5xl font-semibold leading-[1.05] tracking-tight text-foreground">
                 Sergipe 2026
               </h1>
-              <p className="text-lg text-muted-foreground leading-relaxed pt-2">
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed pt-2">
                 Pesquisa eleitoral via internet, com identidade verificada e
                 voto desvinculado do eleitor. O sistema valida quem você é,
                 mas não armazena ligação entre você e seus votos.
@@ -71,7 +75,46 @@ export default function Home() {
             </ol>
           </section>
 
-          <section className="flex flex-col gap-3 rounded-md border border-border bg-muted px-6 py-5">
+          <section className="flex flex-col gap-4 rounded-md border-2 border-accent/40 bg-accent/5 px-5 sm:px-6 py-5">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground">
+              Quando saem os resultados
+            </h2>
+            <ul className="flex flex-col gap-3 text-sm text-foreground">
+              <li className="flex gap-3">
+                <span className="flex-none w-2 h-2 mt-2 rounded-full bg-accent" />
+                <span>
+                  <strong>Setembro de 2026:</strong> coleta principal dos
+                  votos. O link de participação fica aberto pra todo
+                  sergipano cadastrado responder pelo celular.
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <span className="flex-none w-2 h-2 mt-2 rounded-full bg-accent" />
+                <span>
+                  <strong>Registro no TRE/SE:</strong> antes da divulgação,
+                  metodologia, plano amostral e questionário são depositados
+                  no PesqEle do TRE com pelo menos 5 dias de antecedência
+                  (Resolução TSE 23.747/2026).
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <span className="flex-none w-2 h-2 mt-2 rounded-full bg-accent" />
+                <span>
+                  <strong>Divulgação:</strong> resultado completo —
+                  percentuais por cargo, recortes por município, sexo, faixa
+                  etária e escolaridade — sai{' '}
+                  <strong>aqui mesmo no app</strong>, antes do 1º turno
+                  (04/out/2026).
+                </span>
+              </li>
+            </ul>
+            <p className="text-xs text-muted-foreground leading-relaxed pt-2 border-t border-accent/20">
+              Instale o app no celular (botão no topo) pra ver o resultado
+              assim que for publicado — sem precisar lembrar do link.
+            </p>
+          </section>
+
+          <section className="flex flex-col gap-3 rounded-md border border-border bg-muted px-5 sm:px-6 py-5">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground">
               Por que essa separação importa
             </h2>
@@ -83,7 +126,7 @@ export default function Home() {
             </p>
           </section>
 
-          <section className="flex flex-col gap-4 border-l-2 border-accent pl-6 py-2">
+          <section className="flex flex-col gap-4 border-l-2 border-accent pl-4 sm:pl-6 py-2">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground">
               Por que a CDL realiza esta pesquisa
             </h2>

@@ -1,5 +1,7 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+
+import { RegistrarServiceWorker } from '@/components/registrar-service-worker'
 
 import './globals.css'
 
@@ -17,10 +19,28 @@ export const metadata: Metadata = {
   title: 'Pesquisa Sergipe 2026',
   description:
     'Pesquisa de intenção de voto para Sergipe 2026. Realizada pela CDL Aracaju, com identidade verificada e voto desvinculado do eleitor.',
+  applicationName: 'Pesquisa SE 2026',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    title: 'Pesquisa SE',
+    statusBarStyle: 'default',
+  },
+  icons: {
+    icon: '/icon.svg',
+    apple: '/icon.svg',
+  },
   robots: {
     index: false,
     follow: false,
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#0a2a6e',
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({
@@ -31,7 +51,10 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <RegistrarServiceWorker />
+      </body>
     </html>
   )
 }
