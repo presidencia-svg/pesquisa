@@ -89,6 +89,13 @@ export default async function DashboardPage() {
               valor={(resumo.votos_brancos ?? 0) + (resumo.votos_nao_sabe ?? 0)}
             />
           </div>
+
+          <Link
+            href="/admin/resultados"
+            className="self-start text-sm text-primary hover:underline"
+          >
+            Ver apuração detalhada por candidato/legenda →
+          </Link>
         </section>
       )}
 
