@@ -31,10 +31,29 @@
 
 | Item | Valor |
 |---|---|
-| **Tamanho amostral previsto** | *a definir pelo estatístico — diretrizes: n ≈ 1.067 (margem ±3pp / IC 95%) ou n ≈ 2.401 (margem ±2pp / IC 95%)* |
+| **Base potencial** | 44.545 CPFs já validados (votantes do Melhores do Ano CDL Aracaju) + qualquer CPF brasileiro validado em tempo real no SPC Brasil |
+| **n projetado conservador** | 5.000 respondentes (≈ 11% da base CDL) — margem de erro ±1,4pp / IC 95% |
+| **n projetado realista** | 10.000–15.000 respondentes (efeito viral do Melhores do Ano) — margem ±0,98–±0,80pp / IC 95% |
 | **Tipo de amostragem** | **Não-probabilística por cotas com identidade verificada** (ver detalhe abaixo) |
-| **Margem de erro máxima** | a calcular após coleta — diretriz: até ±3 pontos percentuais |
 | **Nível de confiança** | 95% |
+| **Cota geográfica** | Proporcional ao eleitorado TSE de cada um dos 75 municípios de SE |
+
+> **Por que a amostra pode ser muito maior do que institutos tradicionais:**
+> A coleta é digital, gratuita pra o respondente, sem entrevistadores
+> (custo marginal ≈ R$ 0,01 por respondente em servidor + WhatsApp). O
+> gargalo deixa de ser orçamento e passa a ser **adesão**. Com base
+> pré-validada de 44.545 CPFs + a possibilidade de qualquer eleitor de
+> SE entrar via SPC, o teto é o eleitorado verificável do estado, não
+> a verba da pesquisa.
+>
+> **Margem de erro pra n grande (referência IC 95%, proporção 50%):**
+> | n      | Margem de erro |
+> |--------|----------------|
+> | 1.000  | ±3,1 pp        |
+> | 2.500  | ±1,96 pp       |
+> | 5.000  | ±1,39 pp       |
+> | 10.000 | ±0,98 pp       |
+> | 20.000 | ±0,69 pp       |
 
 ## Coleta
 

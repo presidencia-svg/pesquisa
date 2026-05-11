@@ -126,8 +126,12 @@ export default function TransparenciaPage() {
                   valor="95%"
                 />
                 <LinhaFicha
-                  titulo="Margem de erro"
-                  valor="Diretriz: ±3 p.p. máx. (definido pelo estatístico CONRE)"
+                  titulo="Base potencial"
+                  valor="44.545 CPFs CDL pré-validados + qualquer eleitor SE via SPC"
+                />
+                <LinhaFicha
+                  titulo="n projetado"
+                  valor="5.000–15.000 respondentes (margem ±1,4pp a ±0,8pp)"
                 />
                 <LinhaFicha
                   titulo="Período de coleta"
