@@ -51,8 +51,35 @@ type WikiResponse = {
 
 const WIKIPEDIA_API = 'https://pt.wikipedia.org/w/api.php'
 const THUMB_SIZE = 600
+const UA =
+  'PesquisaSergipe2026/1.0 (https://pesquisa.cdlaju.com.br; contato@cdlaju.com.br)'
 
-async function buscarFotoWikipedia(termo: string): Promise<string | null> {
+/**
+ * Busca o titulo mais relevante no Wikipedia pra um termo.
+ * Usa opensearch — mais flexivel que titles= que exige match exato.
+ */
+async function buscarTituloWikipedia(termo: string): Promise<string | null> {
+  const url = new URL(WIKIPEDIA_API)
+  url.searchParams.set('action', 'opensearch')
+  url.searchParams.set('search', termo)
+  url.searchParams.set('limit', '1')
+  url.searchParams.set('namespace', '0')
+  url.searchParams.set('format', 'json')
+
+  try {
+    const res = await fetch(url, { headers: { 'User-Agent': UA } })
+    if (!res.ok) return null
+    const data = (await res.json()) as [string, string[], string[], string[]]
+    return data[1]?.[0] ?? null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Pega thumbnail da pagina com o titulo dado.
+ */
+async function buscarFotoDoTitulo(titulo: string): Promise<string | null> {
   const url = new URL(WIKIPEDIA_API)
   url.searchParams.set('action', 'query')
   url.searchParams.set('prop', 'pageimages')
@@ -60,16 +87,10 @@ async function buscarFotoWikipedia(termo: string): Promise<string | null> {
   url.searchParams.set('pithumbsize', String(THUMB_SIZE))
   url.searchParams.set('pilicense', 'any')
   url.searchParams.set('redirects', '1')
-  url.searchParams.set('titles', termo)
-  url.searchParams.set('origin', '*')
+  url.searchParams.set('titles', titulo)
 
   try {
-    const res = await fetch(url, {
-      headers: {
-        'User-Agent':
-          'PesquisaSergipe2026/1.0 (https://pesquisa.cdlaju.com.br; contato@cdlaju.com.br)',
-      },
-    })
+    const res = await fetch(url, { headers: { 'User-Agent': UA } })
     if (!res.ok) return null
     const data = (await res.json()) as WikiResponse
     const pages = data.query?.pages ?? {}
@@ -81,6 +102,16 @@ async function buscarFotoWikipedia(termo: string): Promise<string | null> {
   } catch {
     return null
   }
+}
+
+async function buscarFotoWikipedia(termo: string): Promise<string | null> {
+  // 1. Tenta o titulo direto (mais rapido, funciona quando bate exato)
+  const fotoDireta = await buscarFotoDoTitulo(termo)
+  if (fotoDireta) return fotoDireta
+  // 2. Fallback: usa opensearch pra achar o titulo certo e pega a foto
+  const titulo = await buscarTituloWikipedia(termo)
+  if (!titulo) return null
+  return buscarFotoDoTitulo(titulo)
 }
 
 async function main() {
