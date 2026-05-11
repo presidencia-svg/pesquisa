@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "import:cdl": "tsx scripts/importar-cdl-base.ts"
+    "import:cdl": "tsx scripts/importar-cdl-base.ts",
+    "import:fotos": "tsx scripts/importar-fotos-candidatos.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.3",
