@@ -1,29 +1,46 @@
 -- ==========================================================================
--- 03-candidatos-2022.sql
+-- 03-candidatos-referencia.sql
 --
--- Popula `candidatos_pesquisa` com os candidatos REAIS de 2022 (Presidente
--- nacional + Governador SE + Senador SE). Inclui o total de votos
--- recebidos como `votos_referencia` pra servir de coeficiente baseline
--- nas projeções de 2026.
+-- Popula `candidatos_pesquisa` com os candidatos REAIS de referencia:
+--   - Presidente:  candidatos do 1o turno 2022 (Brasil, nacional)
+--   - Governador:  candidatos do 1o turno 2022 (SE)
+--   - Senador:     candidatos de 2018 (SE) — em 2018 SE elegeu 2
+--                  senadores (Alessandro Vieira + Rogerio Carvalho), MESMA
+--                  dinamica de 2026 (2 vagas). 2022 elegeu so 1 vaga e
+--                  e' menos util como baseline.
 --
--- IMPORTANTE: dados de 2022 são REFERÊNCIA. Antes do registro PesqEle
--- pra a pesquisa real, esta tabela DEVE ser limpa e reabastecida com os
--- candidatos efetivamente registrados pelo TRE em 2026. Use o ano_referencia
--- pra distinguir: 2022 = baseline, 2026 = registro real.
+-- Tres `ano_referencia` no batch:
+--   2018 → senador
+--   2022 → presidente + governador
 --
--- foto_url está NULL — pode ser preenchido depois pelo admin via
--- /admin/candidatos, ou por script futuro que busca da TSE.
+-- votos_referencia serve de coeficiente baseline pras projecoes 2026.
+-- foto_url permanece NULL — admin pode preencher via /admin/candidatos.
+--
+-- IMPORTANTE: dados sao HISTORICOS. Antes do registro PesqEle pra a
+-- pesquisa real de 2026, LIMPAR e re-popular com os candidatos
+-- efetivamente registrados pelo TRE/SE em 2026.
 --
 -- Roda APOS as migrations 001 + 002 + 003 + 004.
 -- Substitui completamente o seed 01-partidos-candidatos-teste.sql.
---
--- Fontes:
---   - Governador SE 2022 1º turno: TSE / Gazeta do Povo
---     (https://www.gazetadopovo.com.br/eleicoes/2022/se/...)
---   - Senador SE 2022: TSE / Gazeta do Povo
---   - Presidente: TSE oficial 2022 (1º turno nacional)
 -- ==========================================================================
 
+-- --------------------------------------------------------------------------
+-- (0) Insere partidos historicos que aparecem nas listas 2018/2022 mas
+--     nao estavam no seed inicial. ON CONFLICT pra nao mexer no que ja tem.
+-- --------------------------------------------------------------------------
+insert into partidos (numero, sigla, nome, cor_hex) values
+  (16, 'PSTU',  'Partido Socialista dos Trabalhadores Unificado', '#cc0000'),
+  (18, 'REDE',  'Rede Sustentabilidade',                          '#15ab53'),
+  (21, 'PCB',   'Partido Comunista Brasileiro',                   '#a4161a'),
+  (27, 'DC',    'Democracia Crista',                              '#143974'),
+  (33, 'PMN',   'Partido da Mobilizacao Nacional',                '#5cabba'),
+  (54, 'PPL',   'Partido Patria Livre (historico 2018)',          '#27ae60'),
+  (80, 'UP',    'Unidade Popular',                                '#e3000f')
+on conflict (numero) do nothing;
+
+-- --------------------------------------------------------------------------
+-- (1) Limpa candidatos antigos da edicao ativa
+-- --------------------------------------------------------------------------
 do $$
 declare
   v_edicao_id uuid;
@@ -33,11 +50,9 @@ begin
     raise exception 'Nenhuma edicao ativa. Crie e ative uma edicao primeiro.';
   end if;
 
-  -- Limpa candidatos antigos desta edicao (TESTE A/B/C do seed 01)
   delete from candidatos_pesquisa where edicao_id = v_edicao_id;
 
-  -- ─── PRESIDENTE BRASIL 2022 (1º turno, dados nacionais) ────────────────
-  -- Numeros e votos do 1º turno 2022 (resultado oficial TSE).
+  -- ─── PRESIDENTE BR 2022 (1º turno) ─────────────────────────────────────
   insert into candidatos_pesquisa
     (edicao_id, cargo, numero, nome_urna, nome_completo, partido_id, ordem, ano_referencia, votos_referencia)
   select v_edicao_id, 'presidente', 13, 'LULA', 'Luiz Inácio Lula da Silva',
@@ -73,8 +88,8 @@ begin
   select v_edicao_id, 'presidente', 27, 'EYMAEL', 'José Maria Eymael',
          id, 11, 2022, 16308 from partidos where numero = 27;
 
-  -- ─── GOVERNADOR SE 2022 (1º turno) ──────────────────────────────────────
-  -- Fonte: TSE / Gazeta do Povo. Fábio venceu no 2º turno com 610.543 votos.
+  -- ─── GOVERNADOR SE 2022 (1º turno) ─────────────────────────────────────
+  -- Fabio venceu no 2º turno com 610.543 votos (51,83%).
   insert into candidatos_pesquisa
     (edicao_id, cargo, numero, nome_urna, nome_completo, partido_id, ordem, ano_referencia, votos_referencia)
   select v_edicao_id, 'governador', 13, 'ROGÉRIO CARVALHO', 'Rogério Carvalho Santos',
@@ -98,51 +113,69 @@ begin
   select v_edicao_id, 'governador', 16, 'ELINOS SABINO', 'Elinos Sabino da Silva',
          id, 7, 2022, 646 from partidos where numero = 16;
 
-  -- ─── SENADOR SE 2022 (1 vaga eleita, turno único) ──────────────────────
-  -- Em 2026 SE elege 2 senadores. Os candidatos vao mudar.
-  -- Esses sao da eleicao passada, servem de coeficiente baseline.
+  -- ─── SENADOR SE 2018 (2 vagas eleitas — MESMA dinamica de 2026) ────────
+  -- Eleitos: Alessandro Vieira (REDE) e Rogerio Carvalho (PT).
+  -- Fontes: TSE 2018, Wikipedia.
   insert into candidatos_pesquisa
     (edicao_id, cargo, numero, nome_urna, nome_completo, partido_id, ordem, ano_referencia, votos_referencia)
-  select v_edicao_id, 'senador', 111, 'LAÉRCIO OLIVEIRA', 'Laércio José de Oliveira',
-         id, 1, 2022, 310300 from partidos where numero = 11
+  select v_edicao_id, 'senador', 181, 'ALESSANDRO VIEIRA', 'Alessandro Bezerra Vieira',
+         id, 1, 2018, 474449 from partidos where numero = 18
   union all
-  select v_edicao_id, 'senador', 404, 'VALADARES FILHO', 'Antônio Carlos Valadares Filho',
-         id, 2, 2022, 267756 from partidos where numero = 40
+  select v_edicao_id, 'senador', 131, 'ROGÉRIO CARVALHO', 'Rogério Carvalho Santos',
+         id, 2, 2018, 300247 from partidos where numero = 13
   union all
-  select v_edicao_id, 'senador', 222, 'EDUARDO AMORIM', 'Eduardo Amorim de Almeida',
-         id, 3, 2022, 246398 from partidos where numero = 22
+  select v_edicao_id, 'senador', 200, 'ANDRÉ MOURA', 'André Moura',
+         id, 3, 2018, 251213 from partidos where numero = 20
   union all
-  select v_edicao_id, 'senador', 190, 'DANIELLE GARCIA', 'Danielle Cristine Garcia Mendes',
-         id, 4, 2022, 206135 from partidos where numero = 19
+  select v_edicao_id, 'senador', 155, 'JACKSON BARRETO', 'Jackson Barreto de Lima',
+         id, 4, 2018, 204677 from partidos where numero = 15
   union all
-  select v_edicao_id, 'senador', 500, 'HENRI CLAY', 'Henri Clay Andrade dos Santos',
-         id, 5, 2022, 52741 from partidos where numero = 50
+  select v_edicao_id, 'senador', 404, 'ANTÔNIO CARLOS VALADARES', 'Antônio Carlos Valadares',
+         id, 5, 2018, 175155 from partidos where numero = 40
   union all
-  select v_edicao_id, 'senador', 161, 'HERALDO GOES', 'Heraldo Pereira Goes',
-         id, 6, 2022, 1600 from partidos where numero = 16
+  select v_edicao_id, 'senador', 100, 'PASTOR HELENO', 'Heleno Silva',
+         id, 6, 2018, 165039 from partidos where numero = 10
   union all
-  select v_edicao_id, 'senador', 270, 'AIRTON COSTA', 'Airton Costa dos Santos',
-         id, 7, 2022, 1333 from partidos where numero = 27;
+  select v_edicao_id, 'senador', 540, 'HENRI CLAY', 'Henri Clay Andrade dos Santos',
+         id, 7, 2018, 109562 from partidos where numero = 54
+  union all
+  select v_edicao_id, 'senador', 500, 'SÔNIA MEIRE', 'Sônia Meire Santos Andrade Vieira',
+         id, 8, 2018, 62770 from partidos where numero = 50
+  union all
+  select v_edicao_id, 'senador', 177, 'CADU SILVA', 'Cadu Silva',
+         id, 9, 2018, 43215 from partidos where numero = 17
+  union all
+  select v_edicao_id, 'senador', 433, 'REYNALDO NUNES', 'Reynaldo Nunes',
+         id, 10, 2018, 27147 from partidos where numero = 43
+  union all
+  select v_edicao_id, 'senador', 505, 'JOSSIMÁRIO MICK', 'Jossimário Mick',
+         id, 11, 2018, 11650 from partidos where numero = 50
+  union all
+  select v_edicao_id, 'senador', 161, 'CLARCKSON MESSIAS', 'Clarckson Messias',
+         id, 12, 2018, 2960 from partidos where numero = 16;
 
-  raise notice 'Candidatos 2022 importados.';
+  raise notice 'Candidatos de referencia (Pres+Gov 2022, Sen 2018) importados.';
 end $$;
 
 -- --------------------------------------------------------------------------
 -- CONFERÊNCIA pós-execução
 -- --------------------------------------------------------------------------
--- Lista quantos candidatos por cargo:
---   select cargo, count(*) from candidatos_pesquisa
---    where edicao_id in (select id from edicao where ativa=true)
---    group by cargo order by cargo;
--- Esperado: presidente=11, governador=7, senador=7
+-- select cargo, count(*), min(ano_referencia), max(ano_referencia)
+-- from candidatos_pesquisa
+-- where edicao_id in (select id from edicao where ativa=true)
+-- group by cargo order by cargo;
+--
+-- Esperado:
+--   governador: 7,  2022, 2022
+--   presidente: 11, 2022, 2022
+--   senador:    12, 2018, 2018
 
 -- --------------------------------------------------------------------------
--- TODO — apos rodar este seed:
--- 1. Conferir nomes e numeros no /admin/candidatos.
--- 2. Subir foto_url de cada candidato (formato JPG/PNG hospedado em
---    URL pública). Pode usar Supabase Storage ou link externo.
--- 3. Atualizar `partidos.votos_referencia_se` quando tivermos os totais
---    por partido em SE 2022 (Deputado Federal + Estadual).
--- 4. Pra registro PesqEle real em 2026, LIMPAR esses dados e inserir os
+-- TODO operacional
+-- 1. Conferir nomes/numeros em /admin/candidatos.
+-- 2. Preencher foto_url de cada candidato.
+-- 3. Atualizar partidos.votos_referencia_se com totais 2022 (Fed/Est)
+--    por partido em SE, quando dispusermos do dado consolidado.
+-- 4. Antes do registro PesqEle 2026: LIMPAR esses dados e inserir
 --    candidatos efetivamente registrados pelo TRE/SE.
 -- --------------------------------------------------------------------------
