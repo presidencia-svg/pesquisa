@@ -135,6 +135,12 @@ export async function entrarComCpf(
   } else {
     const spc = await consultarSpc(cpf)
     if (!spc.ok) {
+      // Log server-side com detalhe pra diagnostico (Vercel Logs).
+      // Mensagem pro eleitor fica generica.
+      console.error('[votar] SPC falhou', {
+        razao: spc.razao,
+        detalhe: spc.detalhe,
+      })
       switch (spc.razao) {
         case 'cpf_inexistente':
           return {
