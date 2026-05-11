@@ -1,18 +1,17 @@
 /**
- * Configuracao das 5 cedulas da pesquisa.
+ * Configuracao das 6 cedulas da pesquisa (5 cargos + 1 consulta extra).
  *
- * - presidente, governador, senador → eleitor digita NUMERO DO CANDIDATO.
- *   O voto guarda candidato_id em votos_pesquisa.
- * - federal, estadual → eleitor digita o numero como na urna real
- *   (4 digitos pra federal, 5 pra estadual). Mas a pesquisa armazena
- *   apenas a LEGENDA (partido_id) — os 2 primeiros digitos identificam
- *   o partido; os ultimos sao decorativos pra fidelidade da urna.
+ * Tipos:
+ *   - 'candidato'  → eleitor digita NUMERO DO CANDIDATO (Pres/Gov/Sen).
+ *                    Voto guarda candidato_id em votos_pesquisa.
+ *   - 'legenda'    → eleitor digita LEGENDA estilo urna (Fed/Est).
+ *                    Voto guarda partido_id (2 primeiros digitos).
+ *   - 'consulta'   → pergunta sim/nao ou opcoes fixas (zona_expansao).
+ *                    Voto guarda `resposta` text.
  *
- * Numero de digitos espelha a urna eletronica brasileira:
- *   Pres/Gov: 2 digitos (numero do partido).
- *   Senador:  3 digitos (partido + 1 digito de ordem do candidato).
- *   Federal:  4 digitos (partido + 2 digitos do candidato).
- *   Estadual: 5 digitos (partido + 3 digitos do candidato).
+ * `zona_expansao` so e' apresentada a eleitores de Aracaju (2800308)
+ * ou Sao Cristovao (2806701) — roteamento condicional via municipio
+ * carregado no cookie `voto`.
  *
  * Pure, importavel em Client Component.
  */
@@ -23,23 +22,30 @@ export const CARGOS = [
   'senador',
   'federal',
   'estadual',
+  'zona_expansao',
 ] as const
 
 export type Cargo = (typeof CARGOS)[number]
 
 export type CargoConfig = {
   label: string
-  /** 'candidato' = ele digita numero do candidato; 'legenda' = numero do partido. */
-  tipo: 'candidato' | 'legenda'
-  /** Quantos votos o eleitor pode emitir nesta cedula. */
+  tipo: 'candidato' | 'legenda' | 'consulta'
   vagas: number
-  /** Quantidade exata de digitos do numero a digitar. */
+  /** Quantos digitos. Em 'consulta' nao tem teclado, ignorado. */
   digitos: number
-  /** Cargo seguinte na sequencia, ou null se for o ultimo. */
   proximo: Cargo | null
-  /** Posicao na sequencia (1 a 5). */
   ordem: number
+  /** Pra consultas: opcoes valid as de resposta. */
+  opcoesConsulta?: ReadonlyArray<{ valor: string; label: string }>
+  /**
+   * Municipios IBGE em que esta cedula e' apresentada. Vazio/ausente =
+   * todos. Util pra zona_expansao (so Aracaju + Sao Cristovao).
+   */
+  municipiosAplicaveis?: ReadonlyArray<number>
 }
+
+export const ARACAJU_IBGE = 2800308
+export const SAO_CRISTOVAO_IBGE = 2806701
 
 export const CARGO_CONFIG: Record<Cargo, CargoConfig> = {
   presidente: {
@@ -61,7 +67,7 @@ export const CARGO_CONFIG: Record<Cargo, CargoConfig> = {
   senador: {
     label: 'Senador',
     tipo: 'candidato',
-    vagas: 2, // SE elege 2 senadores em 2026
+    vagas: 2,
     digitos: 3,
     proximo: 'federal',
     ordem: 3,
@@ -79,10 +85,54 @@ export const CARGO_CONFIG: Record<Cargo, CargoConfig> = {
     tipo: 'legenda',
     vagas: 1,
     digitos: 5,
+    // Estadual e o ultimo cargo geral. zona_expansao e' apresentada
+    // condicionalmente — a transicao acontece no submeterVoto, nao via
+    // este `proximo` (pq depende de municipio do eleitor).
     proximo: null,
     ordem: 5,
+  },
+  zona_expansao: {
+    label: 'Zona de Expansão',
+    tipo: 'consulta',
+    vagas: 1,
+    digitos: 0,
+    proximo: null,
+    ordem: 6,
+    opcoesConsulta: [
+      { valor: 'aracaju', label: 'Aracaju' },
+      { valor: 'sao_cristovao', label: 'São Cristóvão' },
+    ],
+    municipiosAplicaveis: [ARACAJU_IBGE, SAO_CRISTOVAO_IBGE],
   },
 }
 
 export const isCargo = (raw: string): raw is Cargo =>
   (CARGOS as readonly string[]).includes(raw)
+
+/**
+ * Decide o proximo cargo (ou null = fim) baseado no cargo atual e no
+ * municipio do eleitor. zona_expansao so aparece pra Aracaju + Sao
+ * Cristovao; outros pulam direto pra /obrigado.
+ */
+export const proximoCargoConsiderandoMunicipio = (
+  cargoAtual: Cargo,
+  municipioIbge: number | null,
+): Cargo | null => {
+  // Sequencia normal pra todos os cargos exceto estadual
+  const cfg = CARGO_CONFIG[cargoAtual]
+  if (cfg.proximo) return cfg.proximo
+
+  // Estadual e o ultimo. Apos ele, ve se aplica zona_expansao.
+  if (cargoAtual === 'estadual') {
+    const z = CARGO_CONFIG.zona_expansao
+    if (
+      municipioIbge &&
+      z.municipiosAplicaveis?.includes(municipioIbge)
+    ) {
+      return 'zona_expansao'
+    }
+    return null
+  }
+
+  return null
+}

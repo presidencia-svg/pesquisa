@@ -141,21 +141,70 @@ export const clearPreVoto = async (): Promise<void> => {
 const VOTO_COOKIE_TTL_SEGUNDOS = 24 * 60 * 60
 
 /**
- * Salva o token em claro pra Sala 2. Persiste por 24h (Fix A) pra
- * permitir recuperacao se o eleitor fechar o navegador antes de
- * terminar todas as cedulas. Path restrito a /votar.
+ * Conteudo do cookie `voto`. Carrega:
+ *   - token: gerado aleatoriamente, hash equivalente esta em tokens_emitidos
+ *   - municipioIbge: pra roteamento condicional da cedula extra de
+ *     zona_expansao (so aparece pra Aracaju + Sao Cristovao). NAO vai
+ *     pro banco — fica so na sessao client-side.
+ *
+ * IMPORTANTE: o votos_pesquisa NUNCA recebe municipio. O roteamento
+ * com base em municipio aqui e' apenas pra UX (quais cedulas mostrar).
  */
-export const setVotoToken = async (token: string): Promise<void> => {
+export type VotoCookieData = {
+  token: string
+  municipioIbge?: number
+}
+
+/**
+ * Salva o cookie da capsula com token + municipio. Persiste 24h.
+ */
+export const setVotoCookie = async (
+  data: VotoCookieData,
+): Promise<void> => {
   const jar = await cookies()
-  jar.set(COOKIE_VOTO, encodePayload(token), {
+  const encoded = toBase64Url(JSON.stringify(data))
+  jar.set(COOKIE_VOTO, encodePayload(encoded), {
     ...COMMON_OPTIONS,
     maxAge: VOTO_COOKIE_TTL_SEGUNDOS,
   })
 }
 
-export const getVotoToken = async (): Promise<string | null> => {
+/** Compat de retro pra getVotoToken — retorna so o token. */
+export const setVotoToken = async (
+  token: string,
+  municipioIbge?: number,
+): Promise<void> => {
+  const data: VotoCookieData = municipioIbge
+    ? { token, municipioIbge }
+    : { token }
+  await setVotoCookie(data)
+}
+
+export const getVotoData = async (): Promise<VotoCookieData | null> => {
   const jar = await cookies()
-  return decodePayload(jar.get(COOKIE_VOTO)?.value)
+  const decoded = decodePayload(jar.get(COOKIE_VOTO)?.value)
+  if (!decoded) return null
+  try {
+    const parsed = JSON.parse(fromBase64Url(decoded)) as Partial<VotoCookieData>
+    if (typeof parsed.token === 'string') {
+      return {
+        token: parsed.token,
+        ...(typeof parsed.municipioIbge === 'number'
+          ? { municipioIbge: parsed.municipioIbge }
+          : {}),
+      }
+    }
+    return null
+  } catch {
+    // Compat retro: cookie antigo era apenas o token em claro.
+    if (decoded.length === 64) return { token: decoded }
+    return null
+  }
+}
+
+export const getVotoToken = async (): Promise<string | null> => {
+  const data = await getVotoData()
+  return data?.token ?? null
 }
 
 export const clearVotoToken = async (): Promise<void> => {

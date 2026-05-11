@@ -1,9 +1,14 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 
-import { CARGO_CONFIG, isCargo, type Cargo } from '@/lib/cargos'
+import {
+  CARGO_CONFIG,
+  isCargo,
+  proximoCargoConsiderandoMunicipio,
+  type Cargo,
+} from '@/lib/cargos'
 import { hashTokenVoto } from '@/lib/crypto'
-import { getVotoToken } from '@/lib/sessao'
+import { getVotoData } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 import { CedulaForm, type Opcao } from './cedula-form'
@@ -22,8 +27,19 @@ export default async function CedulaPage({ params }: PageProps) {
   const cargo: Cargo = cargoRaw
   const cfg = CARGO_CONFIG[cargo]
 
-  const tokenClaro = await getVotoToken()
-  if (!tokenClaro) redirect('/votar')
+  const votoData = await getVotoData()
+  if (!votoData) redirect('/votar')
+  const tokenClaro = votoData.token
+  const municipioIbge = votoData.municipioIbge ?? null
+
+  // Se a cedula tem restricao de municipio e o eleitor nao se aplica,
+  // pula direto pro proximo (ou /obrigado se nao houver).
+  if (
+    cfg.municipiosAplicaveis &&
+    (!municipioIbge || !cfg.municipiosAplicaveis.includes(municipioIbge))
+  ) {
+    redirect('/votar/obrigado')
+  }
 
   const tokenHash = hashTokenVoto(tokenClaro)
   const db = supabaseAdmin()
@@ -42,13 +58,14 @@ export default async function CedulaPage({ params }: PageProps) {
     .eq('token_hash', tokenHash)
     .eq('cargo', cargo)
 
-  // Se ja completou todas as vagas, pula pro proximo
+  // Se ja completou todas as vagas, pula pro proximo (considerando municipio)
   if ((votosJaFeitos ?? 0) >= cfg.vagas) {
-    if (cfg.proximo) redirect(`/votar/cedula/${cfg.proximo}`)
+    const proximo = proximoCargoConsiderandoMunicipio(cargo, municipioIbge)
+    if (proximo) redirect(`/votar/cedula/${proximo}`)
     redirect('/votar/obrigado')
   }
 
-  // Carrega opcoes (candidatos OU partidos)
+  // Carrega opcoes conforme o tipo
   let opcoes: Opcao[] = []
   if (cfg.tipo === 'candidato') {
     const { data } = await db
@@ -74,7 +91,7 @@ export default async function CedulaPage({ params }: PageProps) {
           corHex: p.cor_hex ?? null,
         }
       }) ?? []
-  } else {
+  } else if (cfg.tipo === 'legenda') {
     const { data } = await db
       .from('partidos')
       .select('numero, sigla, nome, cor_hex')
@@ -89,8 +106,16 @@ export default async function CedulaPage({ params }: PageProps) {
         corHex: (p.cor_hex as string | null) ?? null,
       })) ?? []
   }
+  // tipo === 'consulta' usa cfg.opcoesConsulta diretamente — sem precisar de DB
 
   const vagaInicial = (votosJaFeitos ?? 0) + 1
+
+  // Cabecalho diferencia ordem maxima por municipio
+  const totalCedulas =
+    municipioIbge &&
+    CARGO_CONFIG.zona_expansao.municipiosAplicaveis?.includes(municipioIbge)
+      ? 6
+      : 5
 
   return (
     <main className="flex flex-col flex-1 bg-capsule text-capsule-foreground">
@@ -100,7 +125,7 @@ export default async function CedulaPage({ params }: PageProps) {
             Cápsula anônima
           </p>
           <p className="text-xs text-capsule-foreground/70">
-            Cédula {cfg.ordem} de 5
+            Cédula {cfg.ordem} de {totalCedulas}
           </p>
         </div>
       </header>
@@ -112,7 +137,9 @@ export default async function CedulaPage({ params }: PageProps) {
             <p className="text-sm text-capsule-foreground/80">
               {cfg.tipo === 'candidato'
                 ? `Digite o número do candidato (${cfg.digitos} dígitos). A foto e o nome aparecem pra você confirmar antes de registrar.`
-                : `Digite os ${cfg.digitos} dígitos como na urna eletrônica — os 2 primeiros identificam o partido, os ${cfg.digitos - 2} últimos identificam o candidato na urna real. Nesta pesquisa, o voto vale como legenda (o partido conta).`}
+                : cfg.tipo === 'legenda'
+                  ? `Digite os ${cfg.digitos} dígitos como na urna eletrônica — os 2 primeiros identificam o partido, os ${cfg.digitos - 2} últimos identificam o candidato na urna real. Nesta pesquisa, o voto vale como legenda (o partido conta).`
+                  : `Esta consulta é só pra quem está cadastrado em Aracaju ou São Cristóvão. Sua opinião sobre a administração da Zona de Expansão.`}
             </p>
           </div>
 

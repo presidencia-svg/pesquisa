@@ -169,8 +169,12 @@ export async function validarOtp(
   }
 
   // 3d. PONTE DESTRUIDA: limpa cookie da Sala 1, planta cookie da Sala 2.
+  //     Inclui o municipioIbge no cookie pra que o /votar/cedula possa
+  //     decidir condicionalmente se mostra a cedula de zona_expansao
+  //     (apenas Aracaju + Sao Cristovao). Isso NAO escreve municipio
+  //     no votos_pesquisa — fica so client-side.
   await clearPreVoto()
-  await setVotoToken(tokenClaro)
+  await setVotoToken(tokenClaro, draft.municipioIbge)
 
   redirect('/votar/anonimo')
 }
