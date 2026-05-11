@@ -67,11 +67,20 @@ function CedulaUrna({
 
   const completo = numero.length === cfg.digitos
 
-  const numeroLookup =
-    cfg.tipo === 'legenda' && completo ? numero.slice(0, 2) : numero
-  const opcaoSelecionada = completo
-    ? (mapaPorNumero.get(Number(numeroLookup)) ?? null)
-    : null
+  // Lookup com fallback pra legenda:
+  //   1. Primeiro tenta o numero COMPLETO (pra exibir candidato especifico
+  //      quando ele existe em candidatos_pesquisa — 4 digitos Federal,
+  //      5 Estadual).
+  //   2. Se nao achar e for legenda, extrai os 2 primeiros digitos pra
+  //      cair no partido (votacao por sigla).
+  let opcaoSelecionada: Opcao | null = null
+  if (completo) {
+    opcaoSelecionada = mapaPorNumero.get(Number(numero)) ?? null
+    if (!opcaoSelecionada && cfg.tipo === 'legenda') {
+      opcaoSelecionada =
+        mapaPorNumero.get(Number(numero.slice(0, 2))) ?? null
+    }
+  }
 
   const apertarDigito = (d: string) => {
     setServerMsg(null)

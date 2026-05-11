@@ -92,19 +92,57 @@ export default async function CedulaPage({ params }: PageProps) {
         }
       }) ?? []
   } else if (cfg.tipo === 'legenda') {
-    const { data } = await db
-      .from('partidos')
-      .select('numero, sigla, nome, cor_hex')
-      .eq('ativo', true)
-      .order('numero')
-    opcoes =
-      data?.map((p) => ({
+    // Pra legenda, carrega DOIS conjuntos:
+    //   1. Candidatos com numero completo (4 ou 5 digitos) — pra UX
+    //      estilo urna: digita "1311" -> mostra Joao Daniel + foto.
+    //   2. Partidos com numero curto (2 digitos) — fallback quando o
+    //      eleitor digita um numero que nao bate em nenhum candidato
+    //      mas o partido existe (ex.: 1399 -> PT como legenda).
+    const [partidosResp, candidatosResp] = await Promise.all([
+      db
+        .from('partidos')
+        .select('numero, sigla, nome, cor_hex')
+        .eq('ativo', true)
+        .order('numero'),
+      db
+        .from('candidatos_pesquisa')
+        .select(`
+          numero,
+          nome_urna,
+          foto_url,
+          partidos!inner ( sigla, cor_hex )
+        `)
+        .eq('edicao_id', tokenReg.edicao_id)
+        .eq('cargo', cargo)
+        .eq('ativo', true)
+        .order('numero'),
+    ])
+
+    const opcoesPartido: Opcao[] =
+      partidosResp.data?.map((p) => ({
         numero: p.numero as number,
         nome: (p.nome as string) ?? (p.sigla as string),
         partidoSigla: p.sigla as string,
         fotoUrl: null,
         corHex: (p.cor_hex as string | null) ?? null,
       })) ?? []
+
+    const opcoesCandidato: Opcao[] =
+      candidatosResp.data?.map((c) => {
+        const p = c.partidos as unknown as {
+          sigla: string
+          cor_hex: string | null
+        }
+        return {
+          numero: c.numero as number,
+          nome: c.nome_urna as string,
+          partidoSigla: p.sigla,
+          fotoUrl: (c.foto_url as string | null) ?? null,
+          corHex: p.cor_hex ?? null,
+        }
+      }) ?? []
+
+    opcoes = [...opcoesCandidato, ...opcoesPartido]
   }
   // tipo === 'consulta' usa cfg.opcoesConsulta diretamente — sem precisar de DB
 

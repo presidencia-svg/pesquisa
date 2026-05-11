@@ -154,7 +154,113 @@ begin
   select v_edicao_id, 'senador', 161, 'CLARCKSON MESSIAS', 'Clarckson Messias',
          id, 12, 2018, 2960 from partidos where numero = 16;
 
-  raise notice 'Candidatos de referencia (Pres+Gov 2022, Sen 2018) importados.';
+  -- ─── DEPUTADO FEDERAL SE 2022 (8 ELEITOS) ──────────────────────────────
+  -- Numero de urna: 4 digitos (partido + 2 do candidato).
+  -- O voto na pesquisa e' contado como LEGENDA (partido_id), mas o
+  -- candidato aparece na tela de confirmacao com foto pra fidelidade urna.
+  insert into candidatos_pesquisa
+    (edicao_id, cargo, numero, nome_urna, nome_completo, partido_id, ordem, ano_referencia, votos_referencia)
+  select v_edicao_id, 'federal', 4444, 'YANDRA DE ANDRÉ', 'Yandra de Oliveira Borges Mourra',
+         id, 1, 2022, 131471 from partidos where numero = 25  -- UNIAO (era UB/PSL antes)
+  union all
+  select v_edicao_id, 'federal', 2244, 'ÍCARO DE VALMIR', 'Ícaro Aragão Calazans',
+         id, 2, 2022, 75912 from partidos where numero = 22
+  union all
+  select v_edicao_id, 'federal', 5555, 'FÁBIO REIS', 'Antônio Carlos Fábio Mendonça dos Reis',
+         id, 3, 2022, 75848 from partidos where numero = 55
+  union all
+  select v_edicao_id, 'federal', 1077, 'GUSTINHO RIBEIRO', 'Gustinho Ribeiro',
+         id, 4, 2022, 71831 from partidos where numero = 10
+  union all
+  select v_edicao_id, 'federal', 1311, 'JOÃO DANIEL', 'João Daniel Macedo Sá',
+         id, 5, 2022, 68969 from partidos where numero = 13
+  union all
+  select v_edicao_id, 'federal', 4477, 'RODRIGO VALADARES', 'Rodrigo Valadares',
+         id, 6, 2022, 49696 from partidos where numero = 25  -- UNIAO
+  union all
+  select v_edicao_id, 'federal', 1133, 'THIAGO DE JOALDO', 'Thiago de Joaldo',
+         id, 7, 2022, 45698 from partidos where numero = 11
+  union all
+  select v_edicao_id, 'federal', 5505, 'DELEGADA KATARINA', 'Katarina Feitoza',
+         id, 8, 2022, 38135 from partidos where numero = 55;
+
+  -- ─── DEPUTADO ESTADUAL SE 2022 (24 ELEITOS) ────────────────────────────
+  -- Numero de urna: 5 digitos.
+  insert into candidatos_pesquisa
+    (edicao_id, cargo, numero, nome_urna, nome_completo, partido_id, ordem, ano_referencia, votos_referencia)
+  select v_edicao_id, 'estadual', 44444, 'CRISTIANO CAVALCANTE', 'Cristiano Cavalcante',
+         id, 1, 2022, 45314 from partidos where numero = 25
+  union all
+  select v_edicao_id, 'estadual', 10000, 'DRA. LIDIANE LUCENA', 'Lidiane Lucena',
+         id, 2, 2022, 37332 from partidos where numero = 10
+  union all
+  select v_edicao_id, 'estadual', 55250, 'JEFERSON ANDRADE', 'Jeferson Andrade',
+         id, 3, 2022, 35909 from partidos where numero = 55
+  union all
+  select v_edicao_id, 'estadual', 22444, 'MARCOS OLIVEIRA', 'Marcos Oliveira',
+         id, 4, 2022, 35114 from partidos where numero = 22
+  union all
+  select v_edicao_id, 'estadual', 10200, 'CARMINHA PAIVA', 'Carminha Paiva',
+         id, 5, 2022, 34790 from partidos where numero = 10
+  union all
+  select v_edicao_id, 'estadual', 55015, 'LUCIANO BISPO', 'Luciano Bispo',
+         id, 6, 2022, 30867 from partidos where numero = 55
+  union all
+  select v_edicao_id, 'estadual', 50180, 'LINDA BRASIL', 'Linda Brasil',
+         id, 7, 2022, 28704 from partidos where numero = 50
+  union all
+  select v_edicao_id, 'estadual', 55555, 'MAISA MITIDIERI', 'Maisa Mitidieri',
+         id, 8, 2022, 28174 from partidos where numero = 55
+  union all
+  select v_edicao_id, 'estadual', 43777, 'PAULO JR.', 'Paulo Júnior',
+         id, 9, 2022, 27947 from partidos where numero = 43
+  union all
+  select v_edicao_id, 'estadual', 22222, 'PATO MARAVILHA', 'Pato Maravilha',
+         id, 10, 2022, 27552 from partidos where numero = 22
+  union all
+  select v_edicao_id, 'estadual', 10777, 'ÁUREA RIBEIRO', 'Áurea Ribeiro',
+         id, 11, 2022, 26200 from partidos where numero = 10
+  union all
+  select v_edicao_id, 'estadual', 55123, 'ADAILTON MARTINS', 'Adailton Martins',
+         id, 12, 2022, 24175 from partidos where numero = 55
+  union all
+  select v_edicao_id, 'estadual', 22111, 'NETINHO GUIMARÃES', 'Netinho Guimarães',
+         id, 13, 2022, 24164 from partidos where numero = 22
+  union all
+  select v_edicao_id, 'estadual', 55777, 'JORGINHO ARAÚJO', 'Jorginho Araújo',
+         id, 14, 2022, 23854 from partidos where numero = 55
+  union all
+  select v_edicao_id, 'estadual', 44111, 'MARCELO SOBRAL', 'Marcelo Sobral',
+         id, 15, 2022, 22159 from partidos where numero = 25
+  union all
+  select v_edicao_id, 'estadual', 44555, 'KAKÁ SANTOS', 'Kaká Santos',
+         id, 16, 2022, 20280 from partidos where numero = 25
+  union all
+  select v_edicao_id, 'estadual', 44022, 'LUIZÃO DONA TRAMPI', 'Luizão Dona Trampi',
+         id, 17, 2022, 18921 from partidos where numero = 25
+  union all
+  select v_edicao_id, 'estadual', 13333, 'CHICO DO CORREIO', 'Chico do Correio',
+         id, 18, 2022, 18523 from partidos where numero = 13
+  union all
+  select v_edicao_id, 'estadual', 23777, 'GEORGEO PASSOS', 'Georgeo Passos',
+         id, 19, 2022, 18429 from partidos where numero = 23
+  union all
+  select v_edicao_id, 'estadual', 12111, 'GARIBALDE MENDONÇA', 'Garibalde Mendonça',
+         id, 20, 2022, 18073 from partidos where numero = 12
+  union all
+  select v_edicao_id, 'estadual', 11123, 'LUCIANO PIMENTEL', 'Luciano Pimentel',
+         id, 21, 2022, 18073 from partidos where numero = 11
+  union all
+  select v_edicao_id, 'estadual', 43000, 'IBRAIN DE VALMIR', 'Ibrain de Valmir',
+         id, 22, 2022, 16554 from partidos where numero = 43
+  union all
+  select v_edicao_id, 'estadual', 23456, 'DR. SAMUEL CARVALHO', 'Samuel Carvalho',
+         id, 23, 2022, 15621 from partidos where numero = 23
+  union all
+  select v_edicao_id, 'estadual', 11888, 'NETO BATALHA', 'Neto Batalha',
+         id, 24, 2022, 14990 from partidos where numero = 11;
+
+  raise notice 'Candidatos (Pres+Gov 2022, Sen 2018, Fed+Est 2022) importados.';
 end $$;
 
 -- --------------------------------------------------------------------------
