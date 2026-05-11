@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/cdl-logo.png" alt="CDL Aracaju" width="160" />
+</p>
+
 # Pesquisa Sergipe 2026
 
 Pesquisa eleitoral via internet pra Sergipe, com identidade verificada, voto desvinculado do eleitor e metodologia espontânea estilo urna.
