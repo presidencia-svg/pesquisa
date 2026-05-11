@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export const metadata = { title: 'Resultados · Admin' }
@@ -22,6 +24,13 @@ type LegendaLinha = {
   nome: string
   cor_hex: string | null
   votos: number
+}
+
+type CandidatoLegenda = {
+  id: string
+  numero: number
+  nome_urna: string
+  foto_url: string | null
 }
 
 type ZonaLinha = {
@@ -127,6 +136,38 @@ export default async function ResultadosPage() {
     }
   }
 
+  // -------- Candidatos fed/est por partido (lista de referencia) --------
+  // Voto e' por legenda, mas mostramos os candidatos dessa legenda pra
+  // contexto (TSE 2022 eleitos / candidatos cadastrados na edicao).
+  const candidatosPorPartido = new Map<string, CandidatoLegenda[]>()
+  {
+    const { data: candidatos } = await db
+      .from('candidatos_pesquisa')
+      .select('id, cargo, numero, nome_urna, foto_url, partido_id')
+      .eq('edicao_id', edicao.id)
+      .eq('ativo', true)
+      .in('cargo', ['federal', 'estadual'])
+      .order('numero')
+    for (const c of (candidatos ?? []) as Array<{
+      id: string
+      cargo: 'federal' | 'estadual'
+      numero: number
+      nome_urna: string
+      foto_url: string | null
+      partido_id: string
+    }>) {
+      const key = `${c.cargo}:${c.partido_id}`
+      const arr = candidatosPorPartido.get(key) ?? []
+      arr.push({
+        id: c.id,
+        numero: c.numero,
+        nome_urna: c.nome_urna,
+        foto_url: c.foto_url,
+      })
+      candidatosPorPartido.set(key, arr)
+    }
+  }
+
   // -------- Zona expansão (view) --------
   const { data: zonaRows } = await db
     .from('v_resultados_zona')
@@ -163,6 +204,50 @@ export default async function ResultadosPage() {
         antecedência).
       </div>
 
+      <details className="rounded-md border border-accent/30 bg-accent/5 px-4 py-3 text-xs leading-relaxed">
+        <summary className="cursor-pointer text-foreground font-semibold list-none">
+          Como ler estes resultados (metodologia) ▾
+        </summary>
+        <div className="mt-3 flex flex-col gap-2 text-muted-foreground">
+          <p>
+            <strong>Presidente, Governador e Senador:</strong> voto por
+            candidato. O eleitor digita o número completo na cédula e o
+            sistema armazena qual candidato recebeu o voto. Listagem mostra
+            cada candidato com sua contagem.
+          </p>
+          <p>
+            <strong>Deputado Federal e Estadual:</strong> voto por{' '}
+            <strong>legenda (partido)</strong>. O eleitor digita os 4 ou 5
+            dígitos completos para ver o nome + foto e confirmar — mas o que
+            entra na contagem é só o partido (2 primeiros dígitos). Essa é
+            a metodologia oficial para fins de projeção de cadeiras
+            (Quociente Eleitoral, Quociente Partidário, sobras por maiores
+            médias) conforme Lei 9.504/97. A lista de candidatos sob cada
+            legenda é exibida apenas como referência.
+          </p>
+          <p>
+            <strong>Zona de Expansão:</strong> consulta extra apresentada
+            apenas a eleitores de Aracaju e São Cristóvão.
+          </p>
+          <p>
+            <strong>Branco / Não sei:</strong> contados em separado em cada
+            cargo. Entram no denominador do percentual, mas não no total
+            de “votos válidos” do candidato.
+          </p>
+          <p className="pt-1">
+            Metodologia completa, plano amostral e ponderação:{' '}
+            <Link
+              href="/transparencia"
+              target="_blank"
+              className="text-primary hover:underline font-medium"
+            >
+              /transparencia
+            </Link>
+            .
+          </p>
+        </div>
+      </details>
+
       {cargosCandidato.map((cargo) => (
         <SecaoCandidatos
           key={cargo}
@@ -176,8 +261,10 @@ export default async function ResultadosPage() {
       {cargosLegenda.map((cargo) => (
         <SecaoLegendas
           key={cargo}
+          cargo={cargo}
           titulo={ROTULO_CARGO[cargo]}
           linhas={porLegenda[cargo] ?? []}
+          candidatosPorPartido={candidatosPorPartido}
           branco={brancoNaoSei[cargo]?.branco ?? 0}
           naoSabe={brancoNaoSei[cargo]?.nao_sabe ?? 0}
         />
@@ -247,13 +334,17 @@ function SecaoCandidatos({
 }
 
 function SecaoLegendas({
+  cargo,
   titulo,
   linhas,
+  candidatosPorPartido,
   branco,
   naoSabe,
 }: {
+  cargo: 'federal' | 'estadual'
   titulo: string
   linhas: LegendaLinha[]
+  candidatosPorPartido: Map<string, CandidatoLegenda[]>
   branco: number
   naoSabe: number
 }) {
@@ -267,23 +358,53 @@ function SecaoLegendas({
           ({total.toLocaleString('pt-BR')})
         </span>
       </h2>
+      <p className="text-xs text-muted-foreground italic">
+        Voto agregado por legenda. Lista de candidatos sob cada partido é
+        meramente informativa.
+      </p>
       {total === 0 ? (
         <p className="text-xs text-muted-foreground italic px-3 py-2">
           Nenhum voto ainda neste cargo.
         </p>
       ) : (
-        <div className="flex flex-col gap-1">
-          {linhas.map((l) => (
-            <Linha
-              key={l.id}
-              numero={l.numero}
-              nome={l.sigla}
-              detalhe={l.nome}
-              cor={l.cor_hex ?? '#52525b'}
-              votos={l.votos}
-              total={total}
-            />
-          ))}
+        <div className="flex flex-col gap-2">
+          {linhas.map((l) => {
+            const cands = candidatosPorPartido.get(`${cargo}:${l.id}`) ?? []
+            return (
+              <div key={l.id} className="flex flex-col">
+                <Linha
+                  numero={l.numero}
+                  nome={l.sigla}
+                  detalhe={l.nome}
+                  cor={l.cor_hex ?? '#52525b'}
+                  votos={l.votos}
+                  total={total}
+                />
+                {cands.length > 0 && (
+                  <details className="mt-1 ml-14 mr-2 text-xs">
+                    <summary className="cursor-pointer text-muted-foreground hover:text-foreground transition">
+                      {cands.length} candidato{cands.length !== 1 ? 's' : ''} desta legenda ▾
+                    </summary>
+                    <ul className="mt-2 flex flex-col gap-1 pl-2 border-l border-dashed border-border">
+                      {cands.map((c) => (
+                        <li
+                          key={c.id}
+                          className="flex items-center gap-2 py-1"
+                        >
+                          <span className="font-mono tabular-nums text-[10px] text-muted-foreground w-12">
+                            {c.numero}
+                          </span>
+                          <span className="text-foreground truncate">
+                            {c.nome_urna}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+              </div>
+            )
+          })}
           {(branco > 0 || naoSabe > 0) && (
             <div className="flex flex-col gap-1 mt-1 pt-2 border-t border-dashed border-border">
               {branco > 0 && (
