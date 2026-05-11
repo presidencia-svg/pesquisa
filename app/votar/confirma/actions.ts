@@ -1,5 +1,6 @@
 'use server'
 
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
@@ -83,6 +84,12 @@ export async function confirmarDados(
     }
   }
 
+  // Captura IP + user_agent dos headers — antifraude + auditoria.
+  const h = await headers()
+  const xff = h.get('x-forwarded-for')
+  const ip = xff ? (xff.split(',')[0]?.trim() ?? null) : null
+  const userAgent = h.get('user-agent') ?? null
+
   const db = supabaseAdmin()
 
   // 1. Verificar cota do município (skip em DEV_MODE)
@@ -139,6 +146,9 @@ export async function confirmarDados(
         sexo,
         faixa_etaria,
         escolaridade,
+        whatsapp_e164: whatsappE164,
+        ip,
+        user_agent: userAgent,
       })
       .eq('id', existing.id)
     if (errUpd) {
@@ -160,9 +170,12 @@ export async function confirmarDados(
       sexo,
       faixa_etaria,
       escolaridade,
+      whatsapp_e164: whatsappE164,
       spc_validado: draft.spcValidado,
       wa_validado: false,
       fonte: draft.fonte,
+      ip,
+      user_agent: userAgent,
     })
     if (errIns) {
       console.error('[confirma] erro insert eleitores_pesquisa:', errIns)
