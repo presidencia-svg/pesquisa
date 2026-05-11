@@ -25,14 +25,36 @@
 -- ==========================================================================
 
 -- --------------------------------------------------------------------------
--- (0) Insere partidos historicos que aparecem nas listas 2018/2022 mas
---     nao estavam no seed inicial. ON CONFLICT pra nao mexer no que ja tem.
+-- (0) Corrige partidos com nomes errados + insere os faltantes.
+--
+-- Bug do seed 01: NOVO tava em 44 (errado, NOVO oficial = 30) e UNIAO
+-- BRASIL tava em 25 (errado, UB oficial = 44). Esta secao reorganiza:
+--   30 = NOVO
+--   44 = UNIAO BRASIL
+--   25 = DEM (historico, extinto apos fusao com PSL=17 virando UB)
 -- --------------------------------------------------------------------------
+
+-- Corrige sigla/nome do numero 44 (era NOVO, virou UNIAO):
+update partidos
+   set sigla = 'UNIAO',
+       nome  = 'União Brasil',
+       cor_hex = '#fbb03b'
+ where numero = 44;
+
+-- Corrige sigla/nome do numero 25 (era UNIAO, agora DEM historico):
+update partidos
+   set sigla = 'DEM_HIST',
+       nome  = 'Democratas (historico, virou Uniao Brasil em 2022)',
+       cor_hex = '#0a2a6e'
+ where numero = 25 and sigla = 'UNIAO';
+
+-- Insere partidos historicos / faltantes (ON CONFLICT preserva)
 insert into partidos (numero, sigla, nome, cor_hex) values
   (16, 'PSTU',  'Partido Socialista dos Trabalhadores Unificado', '#cc0000'),
   (18, 'REDE',  'Rede Sustentabilidade',                          '#15ab53'),
   (21, 'PCB',   'Partido Comunista Brasileiro',                   '#a4161a'),
   (27, 'DC',    'Democracia Crista',                              '#143974'),
+  (30, 'NOVO',  'Partido Novo',                                   '#ff6f00'),
   (33, 'PMN',   'Partido da Mobilizacao Nacional',                '#5cabba'),
   (54, 'PPL',   'Partido Patria Livre (historico 2018)',          '#27ae60'),
   (80, 'UP',    'Unidade Popular',                                '#e3000f')
@@ -161,7 +183,7 @@ begin
   insert into candidatos_pesquisa
     (edicao_id, cargo, numero, nome_urna, nome_completo, partido_id, ordem, ano_referencia, votos_referencia)
   select v_edicao_id, 'federal', 4444, 'YANDRA DE ANDRÉ', 'Yandra de Oliveira Borges Mourra',
-         id, 1, 2022, 131471 from partidos where numero = 25  -- UNIAO (era UB/PSL antes)
+         id, 1, 2022, 131471 from partidos where numero = 44  -- UNIAO BRASIL
   union all
   select v_edicao_id, 'federal', 2244, 'ÍCARO DE VALMIR', 'Ícaro Aragão Calazans',
          id, 2, 2022, 75912 from partidos where numero = 22
@@ -176,7 +198,7 @@ begin
          id, 5, 2022, 68969 from partidos where numero = 13
   union all
   select v_edicao_id, 'federal', 4477, 'RODRIGO VALADARES', 'Rodrigo Valadares',
-         id, 6, 2022, 49696 from partidos where numero = 25  -- UNIAO
+         id, 6, 2022, 49696 from partidos where numero = 44  -- UNIAO
   union all
   select v_edicao_id, 'federal', 1133, 'THIAGO DE JOALDO', 'Thiago de Joaldo',
          id, 7, 2022, 45698 from partidos where numero = 11
@@ -189,7 +211,7 @@ begin
   insert into candidatos_pesquisa
     (edicao_id, cargo, numero, nome_urna, nome_completo, partido_id, ordem, ano_referencia, votos_referencia)
   select v_edicao_id, 'estadual', 44444, 'CRISTIANO CAVALCANTE', 'Cristiano Cavalcante',
-         id, 1, 2022, 45314 from partidos where numero = 25
+         id, 1, 2022, 45314 from partidos where numero = 44
   union all
   select v_edicao_id, 'estadual', 10000, 'DRA. LIDIANE LUCENA', 'Lidiane Lucena',
          id, 2, 2022, 37332 from partidos where numero = 10
@@ -231,13 +253,13 @@ begin
          id, 14, 2022, 23854 from partidos where numero = 55
   union all
   select v_edicao_id, 'estadual', 44111, 'MARCELO SOBRAL', 'Marcelo Sobral',
-         id, 15, 2022, 22159 from partidos where numero = 25
+         id, 15, 2022, 22159 from partidos where numero = 44
   union all
   select v_edicao_id, 'estadual', 44555, 'KAKÁ SANTOS', 'Kaká Santos',
-         id, 16, 2022, 20280 from partidos where numero = 25
+         id, 16, 2022, 20280 from partidos where numero = 44
   union all
   select v_edicao_id, 'estadual', 44022, 'LUIZÃO DONA TRAMPI', 'Luizão Dona Trampi',
-         id, 17, 2022, 18921 from partidos where numero = 25
+         id, 17, 2022, 18921 from partidos where numero = 44
   union all
   select v_edicao_id, 'estadual', 13333, 'CHICO DO CORREIO', 'Chico do Correio',
          id, 18, 2022, 18523 from partidos where numero = 13
