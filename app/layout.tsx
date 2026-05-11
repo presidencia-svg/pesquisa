@@ -26,10 +26,8 @@ export const metadata: Metadata = {
     title: 'Pesquisa SE',
     statusBarStyle: 'default',
   },
-  icons: {
-    icon: '/icon.svg',
-    apple: '/icon.svg',
-  },
+  // icons auto-detectado por Next.js a partir de app/icon.png +
+  // app/apple-icon.png + app/favicon.ico (convencao do app router).
   robots: {
     index: false,
     follow: false,
