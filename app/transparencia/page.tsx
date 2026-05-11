@@ -10,6 +10,7 @@ export const metadata = {
 }
 
 const secoes = [
+  { id: 'ficha-tecnica', label: 'Ficha técnica (formato instituto)' },
   { id: 'duas-salas', label: 'As duas salas (anonimato)' },
   { id: 'plano-amostral', label: 'Plano amostral' },
   { id: 'variaveis', label: 'Variáveis coletadas' },
@@ -81,6 +82,170 @@ export default function TransparenciaPage() {
                 ))}
               </ol>
             </nav>
+
+            {/* 0. Ficha técnica — formato instituto adaptado */}
+            <section id="ficha-tecnica" className="scroll-mt-8 flex flex-col gap-5">
+              <h2 className="text-2xl font-semibold text-foreground border-l-2 border-accent pl-4">
+                Ficha técnica
+              </h2>
+              <p className="text-foreground leading-relaxed">
+                Formato padrão que institutos como Datafolha, Quaest e
+                Paraná Pesquisas usam ao divulgar resultados, adaptado ao
+                nosso modelo (online + identidade verificada + allowlist).
+                Esta ficha acompanha toda divulgação pública e vai anexa
+                ao registro no PesqEle do TRE/SE.
+              </p>
+
+              <div className="grid sm:grid-cols-2 gap-3">
+                <LinhaFicha titulo="Contratante" valor="CDL Aracaju" />
+                <LinhaFicha titulo="Executor" valor="CDL Aracaju (execução direta)" />
+                <LinhaFicha titulo="Universo" valor="~1,45 milhão de eleitores TSE em SE" />
+                <LinhaFicha titulo="Abrangência" valor="75 municípios de Sergipe" />
+                <LinhaFicha
+                  titulo="Forma de coleta"
+                  valor="Online com identidade verificada (web/PWA)"
+                />
+                <LinhaFicha
+                  titulo="Tipo"
+                  valor="Espontânea (eleitor digita número, estilo urna)"
+                />
+                <LinhaFicha
+                  titulo="Amostragem"
+                  valor="Não-probabilística por cotas com identidade verificada"
+                />
+                <LinhaFicha
+                  titulo="Cota geográfica"
+                  valor="Proporcional ao eleitorado TSE de cada município"
+                />
+                <LinhaFicha
+                  titulo="Ponderação pós-coleta"
+                  valor="Sexo, faixa etária, escolaridade"
+                />
+                <LinhaFicha
+                  titulo="Nível de confiança"
+                  valor="95%"
+                />
+                <LinhaFicha
+                  titulo="Margem de erro"
+                  valor="Diretriz: ±3 p.p. máx. (definido pelo estatístico CONRE)"
+                />
+                <LinhaFicha
+                  titulo="Período de coleta"
+                  valor="Setembro/2026 (a confirmar)"
+                />
+              </div>
+
+              <div className="rounded-md border border-accent/30 bg-accent/5 px-5 py-4 flex flex-col gap-2 text-sm">
+                <p className="font-semibold text-foreground">
+                  Cédulas — o que cada eleitor responde
+                </p>
+                <ul className="flex flex-col gap-1 text-foreground">
+                  <li>1. Presidente — espontânea (1 número)</li>
+                  <li>2. Governador — espontânea (1 número)</li>
+                  <li>3. Senador — espontânea (até 2 números)</li>
+                  <li>
+                    4. Deputado Federal — espontânea por legenda + candidato (4
+                    dígitos)
+                  </li>
+                  <li>
+                    5. Deputado Estadual — espontânea por legenda + candidato (5
+                    dígitos)
+                  </li>
+                  <li>
+                    6. Consulta Zona de Expansão — estimulada de duas opções,
+                    apenas para eleitores de Aracaju e São Cristóvão
+                  </li>
+                </ul>
+                <p className="text-xs text-muted-foreground pt-2 border-t border-accent/20">
+                  Em todas as cédulas o eleitor pode optar por{' '}
+                  <strong>voto em branco</strong> ou{' '}
+                  <strong>não sabe / não quis responder</strong>. Em federal e
+                  estadual, voto na legenda define cadeiras via Quociente
+                  Eleitoral (Lei 9.504/97); voto no candidato individual define
+                  a ordem dentro da legenda.
+                </p>
+              </div>
+
+              <div className="rounded-md border border-border bg-muted px-5 py-4 flex flex-col gap-3 text-sm">
+                <p className="font-semibold text-foreground">
+                  Onde diferimos de institutos tradicionais
+                </p>
+                <table className="text-xs sm:text-sm">
+                  <thead>
+                    <tr className="text-left">
+                      <th className="font-medium text-muted-foreground pb-2 pr-3">
+                        Item
+                      </th>
+                      <th className="font-medium text-muted-foreground pb-2 pr-3">
+                        Tradicional
+                      </th>
+                      <th className="font-medium text-muted-foreground pb-2">
+                        Nosso modelo
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-foreground align-top">
+                    <tr>
+                      <td className="py-1 pr-3 font-medium">Forma</td>
+                      <td className="py-1 pr-3">Presencial / telefone</td>
+                      <td className="py-1">Online com OTP</td>
+                    </tr>
+                    <tr>
+                      <td className="py-1 pr-3 font-medium">Amostragem</td>
+                      <td className="py-1 pr-3">Sorteio probabilístico</td>
+                      <td className="py-1">Allowlist verificada + cotas</td>
+                    </tr>
+                    <tr>
+                      <td className="py-1 pr-3 font-medium">Entrevistador</td>
+                      <td className="py-1 pr-3">Sim (introduz viés)</td>
+                      <td className="py-1">Autopreenchimento</td>
+                    </tr>
+                    <tr>
+                      <td className="py-1 pr-3 font-medium">Tipo</td>
+                      <td className="py-1 pr-3">Geralmente estimulada</td>
+                      <td className="py-1">
+                        <strong>Espontânea pura</strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-1 pr-3 font-medium">Anonimato</td>
+                      <td className="py-1 pr-3">Promessa operacional</td>
+                      <td className="py-1">Garantia arquitetural</td>
+                    </tr>
+                    <tr>
+                      <td className="py-1 pr-3 font-medium">Auditoria</td>
+                      <td className="py-1 pr-3">Material físico</td>
+                      <td className="py-1">Código aberto + dados auditáveis</td>
+                    </tr>
+                    <tr>
+                      <td className="py-1 pr-3 font-medium">Custo</td>
+                      <td className="py-1 pr-3">R$ 80k–300k por onda</td>
+                      <td className="py-1">≈ R$ 0 (infraestrutura própria)</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p className="text-xs text-muted-foreground pt-2 border-t border-border">
+                  Cada diferença foi consciente e tem trade-offs declarados.
+                  Ganhos: transparência total e anonimato arquitetural.
+                  Limites: amostra não-aleatória (corrigida por ponderação)
+                  e viés digital (smartphone + WhatsApp). Ambos publicados
+                  junto com o resultado.
+                </p>
+              </div>
+
+              <p className="text-xs text-muted-foreground border-t border-border pt-4 leading-relaxed">
+                Versão técnica completa (sem cortes) está em{' '}
+                <a
+                  href="https://github.com/presidencia-svg/pesquisa/blob/main/docs/ficha-tecnica.md"
+                  className="text-primary hover:underline font-medium"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  docs/ficha-tecnica.md
+                </a>{' '}
+                no repositório público.
+              </p>
+            </section>
 
             {/* 1. As duas salas */}
             <section id="duas-salas" className="scroll-mt-8 flex flex-col gap-5">
@@ -592,6 +757,18 @@ function DiagramaDuasSalas() {
         A única ponte entre as duas salas é um cookie httpOnly no navegador
         do eleitor. O servidor não persiste essa ponte.
       </p>
+    </div>
+  )
+}
+
+
+function LinhaFicha({ titulo, valor }: { titulo: string; valor: string }) {
+  return (
+    <div className="rounded-md border border-border bg-background px-4 py-3 flex flex-col gap-0.5">
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
+        {titulo}
+      </p>
+      <p className="text-sm text-foreground leading-snug">{valor}</p>
     </div>
   )
 }
