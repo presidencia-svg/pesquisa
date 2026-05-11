@@ -163,9 +163,7 @@ export async function entrarComCpf(
         default:
           return {
             ok: false,
-            // DEBUG TEMPORARIO: expoe o detalhe na tela pra diagnostico.
-            // TODO: reverter pra mensagem generica apos resolver.
-            message: `Erro na validação [debug: ${spc.detalhe ?? 'sem detalhe'}]. Tente novamente em alguns minutos.`,
+            message: 'Erro na validação. Tente novamente em alguns minutos.',
           }
       }
     }

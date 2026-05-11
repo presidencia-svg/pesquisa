@@ -57,7 +57,9 @@ export const SERVER_ENV = {
 
   // ─── SPC Brasil (nomes do Melhores do Ano) ────────────────────────────
   get SPC_AMBIENTE() {
-    return optional('SPC_AMBIENTE', 'homologacao') as 'homologacao' | 'producao'
+    // Default = producao (este projeto e' real, nao sandbox).
+    // Pra rodar contra homologacao, setar SPC_AMBIENTE=homologacao no .env.
+    return optional('SPC_AMBIENTE', 'producao') as 'homologacao' | 'producao'
   },
   /**
    * Base da API SPC JUD pra consulta cadastral. O codigo apenda
