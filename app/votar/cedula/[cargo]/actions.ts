@@ -158,16 +158,35 @@ export async function submeterVoto(
 
         // Resolve candidato_id pelo numero completo (4/5 digitos). Se
         // existir, registra junto. Nao bloqueia o voto se nao existir.
-        const { data: candFedEst } = await db
+        const { data: candFedEst, error: errCand } = await db
           .from('candidatos_pesquisa')
-          .select('id')
+          .select('id, nome_urna')
           .eq('edicao_id', edicaoId)
           .eq('cargo', cargo)
           .eq('numero', numero)
           .eq('ativo', true)
           .maybeSingle()
+        if (errCand) {
+          console.error('[voto-fed-est] erro lookup candidato:', {
+            cargo,
+            numero,
+            error: errCand.message,
+          })
+        }
         if (candFedEst) {
           candidatoId = candFedEst.id
+          console.log('[voto-fed-est] candidato resolvido:', {
+            cargo,
+            numero,
+            candidato_id: candFedEst.id,
+            nome: candFedEst.nome_urna,
+          })
+        } else {
+          console.log('[voto-fed-est] candidato nao encontrado:', {
+            cargo,
+            numero,
+            partido_id: partidoId,
+          })
         }
       }
 
