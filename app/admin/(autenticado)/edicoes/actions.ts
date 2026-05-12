@@ -124,6 +124,22 @@ export async function divulgarEdicao(formData: FormData): Promise<EdicaoState> {
 }
 
 /**
+ * Atualiza o turno da pesquisa (1 ou 2). Aparece como badge no
+ * /resultados publico e no header.
+ */
+export async function atualizarTurno(formData: FormData): Promise<void> {
+  const id = String(formData.get('id') ?? '')
+  const turnoRaw = String(formData.get('turno') ?? '1')
+  const turno = turnoRaw === '2' ? 2 : 1
+  if (!id) return
+  const db = supabaseAdmin()
+  await db.from('edicao').update({ turno }).eq('id', id)
+  revalidatePath('/admin/edicoes')
+  revalidatePath('/admin')
+  revalidatePath('/resultados')
+}
+
+/**
  * Tira a divulgacao publica (volta /resultados pra o estado de
  * "aguarde"). Util pra corrigir erro ou desfazer durante o piloto.
  */

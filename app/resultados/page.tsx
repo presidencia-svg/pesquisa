@@ -50,13 +50,14 @@ type EdicaoRow = {
   divulgada_em: string | null
   divulgacao_prevista: string | null
   registro_tre: string | null
+  turno: number | null
 }
 
 export default async function ResultadosPublicosPage() {
   const db = supabaseAdmin()
   const { data: edicao } = await db
     .from('edicao')
-    .select('id, nome, divulgada_em, divulgacao_prevista, registro_tre')
+    .select('id, nome, divulgada_em, divulgacao_prevista, registro_tre, turno')
     .eq('ativa', true)
     .maybeSingle<EdicaoRow>()
 
@@ -428,6 +429,7 @@ export default async function ResultadosPublicosPage() {
       divulgada_em: formatarData(edicao.divulgada_em),
       registro_tre: edicao.registro_tre ?? '—',
       edicao: edicao.nome,
+      turno: (edicao.turno === 2 ? 2 : 1) as 1 | 2,
     },
     governador: montaCargoCandidato('governador'),
     senador: montaCargoCandidato('senador'),
@@ -451,9 +453,16 @@ export default async function ResultadosPublicosPage() {
           </Link>
           <span className="rs-header-tag">Pesquisa Sergipe 2026</span>
           <span className="rs-header-spacer" />
-          <span className="rs-live">
-            <span className="rs-live-dot" />
-            AO VIVO · {pesquisa.meta.edicao}
+          <span
+            className="rs-live"
+            style={{
+              background: pesquisa.meta.turno === 2 ? '#0a1428' : '#fff',
+              color: pesquisa.meta.turno === 2 ? '#fff' : 'inherit',
+              borderColor:
+                pesquisa.meta.turno === 2 ? '#0a1428' : 'var(--border)',
+            }}
+          >
+            {pesquisa.meta.turno}º TURNO · {pesquisa.meta.edicao}
           </span>
         </div>
       </header>
@@ -462,13 +471,15 @@ export default async function ResultadosPublicosPage() {
         <div className="rs-hero-inner">
           <div className="rs-hero-text">
             <p className="rs-hero-kicker">
-              Pesquisa Sergipe 2026 · {pesquisa.meta.edicao}
+              Pesquisa Sergipe 2026 · {pesquisa.meta.turno}º Turno ·{' '}
+              {pesquisa.meta.edicao}
             </p>
             <h1 className="rs-hero-title">Eleições em Sergipe</h1>
             <p className="rs-hero-sub">
-              Intenção de voto em 75 municípios. Identidade verificada por
-              CPF + WhatsApp. Registrada no PesqEle/TRE conforme Lei
-              9.504/97.
+              Intenção de voto para o{' '}
+              <strong>{pesquisa.meta.turno}º turno</strong> em 75
+              municípios. Identidade verificada por CPF + WhatsApp.
+              Registrada no PesqEle/TRE conforme Lei 9.504/97.
             </p>
           </div>
           <div className="rs-ficha">

@@ -15,6 +15,7 @@ type Edicao = {
   registro_tre: string | null
   divulgada_em: string | null
   divulgacao_prevista: string | null
+  turno: number
   criado_em: string
 }
 
@@ -105,6 +106,7 @@ export default async function EdicoesPage() {
                 divulgadaEm={e.divulgada_em}
                 registroTre={e.registro_tre}
                 divulgacaoPrevista={e.divulgacao_prevista}
+                turno={e.turno ?? 1}
               />
             </div>
           ))

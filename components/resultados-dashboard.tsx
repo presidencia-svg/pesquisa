@@ -78,6 +78,7 @@ export type Meta = {
   divulgada_em: string
   registro_tre: string
   edicao: string
+  turno: 1 | 2
 }
 
 export type Pesquisa = {

@@ -3,6 +3,7 @@
 import { useActionState, useState } from 'react'
 
 import {
+  atualizarTurno,
   divulgarEdicao,
   retirarDivulgacao,
   salvarMetadadosDivulgacao,
@@ -16,6 +17,7 @@ type Props = {
   divulgadaEm: string | null
   registroTre: string | null
   divulgacaoPrevista: string | null
+  turno: number
 }
 
 /**
@@ -29,6 +31,7 @@ export function ControlesDivulgacao({
   divulgadaEm,
   registroTre,
   divulgacaoPrevista,
+  turno,
 }: Props) {
   const [editando, setEditando] = useState(false)
   const [estadoMeta, salvarMeta, salvandoMeta] = useActionState(
@@ -42,78 +45,115 @@ export function ControlesDivulgacao({
 
   const divulgada = Boolean(divulgadaEm)
 
+  // Bloco do turno, sempre visivel acima dos demais controles.
+  const blocoTurno = (
+    <form
+      action={atualizarTurno}
+      className="flex items-center justify-between gap-3 pt-3 mt-2 border-t border-dashed border-border"
+    >
+      <input type="hidden" name="id" value={edicaoId} />
+      <div className="flex items-center gap-3">
+        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+          Turno
+        </span>
+        <select
+          name="turno"
+          defaultValue={String(turno)}
+          className="h-8 px-2 rounded-md border border-border bg-background text-xs"
+        >
+          <option value="1">1º Turno</option>
+          <option value="2">2º Turno</option>
+        </select>
+      </div>
+      <button
+        type="submit"
+        className="h-8 px-3 rounded-md border border-border text-[11px] hover:bg-muted transition"
+      >
+        Salvar turno
+      </button>
+    </form>
+  )
+
   if (!editando && !divulgada) {
     return (
-      <div className="flex flex-col gap-2 mt-2 pt-3 border-t border-dashed border-border">
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-xs text-muted-foreground">
-            Divulgação pública: <strong className="text-foreground">não divulgada</strong>
-            {divulgacaoPrevista && (
-              <>
-                {' '}
-                · Prevista pra{' '}
-                <span className="font-medium text-foreground">
-                  {formatarPrevista(divulgacaoPrevista)}
-                </span>
-              </>
-            )}
-          </p>
-          <button
-            type="button"
-            onClick={() => setEditando(true)}
-            className="h-8 px-3 rounded-md border border-border text-[11px] hover:bg-muted transition whitespace-nowrap"
-          >
-            Editar registro / divulgar
-          </button>
+      <>
+        {blocoTurno}
+        <div className="flex flex-col gap-2 mt-2 pt-3 border-t border-dashed border-border">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs text-muted-foreground">
+              Divulgação pública: <strong className="text-foreground">não divulgada</strong>
+              {divulgacaoPrevista && (
+                <>
+                  {' '}
+                  · Prevista pra{' '}
+                  <span className="font-medium text-foreground">
+                    {formatarPrevista(divulgacaoPrevista)}
+                  </span>
+                </>
+              )}
+            </p>
+            <button
+              type="button"
+              onClick={() => setEditando(true)}
+              className="h-8 px-3 rounded-md border border-border text-[11px] hover:bg-muted transition whitespace-nowrap"
+            >
+              Editar registro / divulgar
+            </button>
+          </div>
+          {estadoDivulgar.message && (
+            <p className="text-[11px] text-error">{estadoDivulgar.message}</p>
+          )}
         </div>
-        {estadoDivulgar.message && (
-          <p className="text-[11px] text-error">{estadoDivulgar.message}</p>
-        )}
-      </div>
+      </>
     )
   }
 
   if (divulgada && !editando) {
     return (
-      <div className="flex flex-col gap-2 mt-2 pt-3 border-t border-dashed border-border">
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-xs">
-            <span className="text-[10px] uppercase tracking-widest text-accent bg-accent/10 border border-accent/30 rounded-full px-2 py-0.5">
-              divulgada
-            </span>
-            <span className="ml-2 text-muted-foreground">
-              em{' '}
-              <span className="font-medium text-foreground">
-                {formatarPrevista(divulgadaEm!)}
+      <>
+        {blocoTurno}
+        <div className="flex flex-col gap-2 mt-2 pt-3 border-t border-dashed border-border">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs">
+              <span className="text-[10px] uppercase tracking-widest text-accent bg-accent/10 border border-accent/30 rounded-full px-2 py-0.5">
+                divulgada
               </span>
-            </span>
-          </p>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setEditando(true)}
-              className="h-8 px-3 rounded-md border border-border text-[11px] hover:bg-muted transition"
-            >
-              Editar
-            </button>
-            <form action={retirarDivulgacao}>
-              <input type="hidden" name="id" value={edicaoId} />
+              <span className="ml-2 text-muted-foreground">
+                em{' '}
+                <span className="font-medium text-foreground">
+                  {formatarPrevista(divulgadaEm!)}
+                </span>
+              </span>
+            </p>
+            <div className="flex gap-2">
               <button
-                type="submit"
-                className="h-8 px-3 rounded-md border border-error/40 text-error text-[11px] hover:bg-error/5 transition"
+                type="button"
+                onClick={() => setEditando(true)}
+                className="h-8 px-3 rounded-md border border-border text-[11px] hover:bg-muted transition"
               >
-                Retirar divulgação
+                Editar
               </button>
-            </form>
+              <form action={retirarDivulgacao}>
+                <input type="hidden" name="id" value={edicaoId} />
+                <button
+                  type="submit"
+                  className="h-8 px-3 rounded-md border border-error/40 text-error text-[11px] hover:bg-error/5 transition"
+                >
+                  Retirar divulgação
+                </button>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     )
   }
 
   // Modo editando — formulario de metadados + acao divulgar
   return (
-    <div className="flex flex-col gap-3 mt-2 pt-3 border-t border-dashed border-border">
+    <>
+      {blocoTurno}
+      <div className="flex flex-col gap-3 mt-2 pt-3 border-t border-dashed border-border">
       <form action={salvarMeta} className="flex flex-col gap-3">
         <input type="hidden" name="id" value={edicaoId} />
         <label className="flex flex-col gap-1">
@@ -190,7 +230,8 @@ export function ControlesDivulgacao({
           </button>
         </form>
       )}
-    </div>
+      </div>
+    </>
   )
 }
 
