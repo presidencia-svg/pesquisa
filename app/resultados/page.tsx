@@ -166,6 +166,7 @@ export default async function ResultadosPublicosPage() {
       r.regiao === 'grande_aracaju' ||
       r.regiao === 'leste' ||
       r.regiao === 'agreste' ||
+      r.regiao === 'centro_sul' ||
       r.regiao === 'sertao'
     ) {
       regiaoPorMunicipio.set(r.ibge_codigo, r.regiao)

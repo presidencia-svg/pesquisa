@@ -7,13 +7,19 @@
  * Funcao pura, sem DB — pra usar em Server Component que ja' fetchou.
  */
 
-export type RegiaoKey = 'grande_aracaju' | 'leste' | 'agreste' | 'sertao'
+export type RegiaoKey =
+  | 'grande_aracaju'
+  | 'leste'
+  | 'agreste'
+  | 'centro_sul'
+  | 'sertao'
 
-/** Ordem de exibicao: Grande Aracaju primeiro (dominante), depois IBGE. */
+/** Ordem de exibicao norte-sul/dominancia. */
 export const REGIAO_ORDEM: RegiaoKey[] = [
   'grande_aracaju',
   'leste',
   'agreste',
+  'centro_sul',
   'sertao',
 ]
 
@@ -21,13 +27,15 @@ export const ROTULO_REGIAO: Record<RegiaoKey, string> = {
   grande_aracaju: 'Grande Aracaju',
   leste: 'Leste Sergipano',
   agreste: 'Agreste Sergipano',
+  centro_sul: 'Centro-Sul',
   sertao: 'Sertão Sergipano',
 }
 
 export const SUBTITULO_REGIAO: Record<RegiaoKey, string> = {
   grande_aracaju: 'Capital + cidades-dormitório (RMA)',
   leste: 'Cotinguiba + baixo S. Francisco + litoral',
-  agreste: 'Centro-sul: Itabaiana, Lagarto, Estância',
+  agreste: 'Itabaiana + entorno (agreste central)',
+  centro_sul: 'Lagarto + Estância + Tobias Barreto + sul',
   sertao: 'Norte/noroeste: Glória, Canindé, Porto da Folha',
 }
 
