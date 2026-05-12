@@ -51,6 +51,12 @@ type Partido = {
   numero: number
 }
 
+type Municipio = {
+  ibge_codigo: number
+  nome: string
+  eleitorado: number | null
+}
+
 const N = Number(process.argv[2] ?? '500')
 if (!Number.isFinite(N) || N < 1) {
   console.error('Uso: npm run simular -- <N>   (ex: 500)')
@@ -143,6 +149,25 @@ async function main() {
     )
   }
 
+  // 3.5. Municipios — pra simular distribuicao geografica realista.
+  // Cada eleitor sintetico e' atribuido a um municipio sorteado proporcional
+  // ao eleitorado. Pra simular vies de adesao (cidade grande responde mais),
+  // multiplica o peso de Aracaju por 2 (super-representacao) e de cidades
+  // < 10k eleitores por 0.5 (sub-representacao). Aproxima o que vai
+  // acontecer na pesquisa real.
+  const { data: municipiosDb } = await db
+    .from('municipios_se')
+    .select('ibge_codigo, nome, eleitorado')
+  const municipios = (municipiosDb ?? []) as Municipio[]
+  const municipioPesos = municipios.map((m) => {
+    const base = m.eleitorado ?? 1
+    let mult = 1
+    if (m.ibge_codigo === 2800308) mult = 2 // Aracaju super-representada
+    else if ((m.eleitorado ?? 0) < 10000) mult = 0.5 // cidades pequenas sub
+    return Math.max(base * mult, 1)
+  })
+  console.log(`   municipios: ${municipios.length}\n`)
+
   // 4. Loop principal
   const tokensInsert: Array<{
     token_hash: string
@@ -158,6 +183,7 @@ async function main() {
     partido_id: string | null
     resposta: string | null
     metodo: string
+    municipio_ibge: number
     criado_hora: string
   }> = []
 
@@ -171,6 +197,11 @@ async function main() {
       usado: true,
       criado_hora: horaIso,
     })
+
+    // Atribui um municipio ao eleitor sintetico (proporcional ao
+    // eleitorado, com vies de Aracaju).
+    const municipio = sortearPonderado(municipios, municipioPesos)
+    const municipioIbge = municipio.ibge_codigo
 
     // Cargos candidato (pres/gov/sen)
     for (const cargo of ['presidente', 'governador', 'senador'] as const) {
@@ -188,6 +219,7 @@ async function main() {
             partido_id: null,
             resposta: null,
             metodo: 'branco',
+            municipio_ibge: municipioIbge,
             criado_hora: horaIso,
           })
         } else if (r < 0.10) {
@@ -200,6 +232,7 @@ async function main() {
             partido_id: null,
             resposta: null,
             metodo: 'nao_sabe',
+            municipio_ibge: municipioIbge,
             criado_hora: horaIso,
           })
         } else if (cands.length > 0) {
@@ -231,6 +264,7 @@ async function main() {
             partido_id: null,
             resposta: null,
             metodo: 'numero',
+            municipio_ibge: municipioIbge,
             criado_hora: horaIso,
           })
         }
@@ -250,6 +284,7 @@ async function main() {
           partido_id: null,
           resposta: null,
           metodo: 'branco',
+          municipio_ibge: municipioIbge,
           criado_hora: horaIso,
         })
       } else if (r < 0.10) {
@@ -261,6 +296,7 @@ async function main() {
           partido_id: null,
           resposta: null,
           metodo: 'nao_sabe',
+          municipio_ibge: municipioIbge,
           criado_hora: horaIso,
         })
       } else if (cands.length > 0) {
@@ -281,6 +317,7 @@ async function main() {
           partido_id: escolhido.partido_id,
           resposta: null,
           metodo: 'numero',
+          municipio_ibge: municipioIbge,
           criado_hora: horaIso,
         })
       } else if (partidos.length > 0) {
@@ -294,6 +331,7 @@ async function main() {
           partido_id: p.id,
           resposta: null,
           metodo: 'numero',
+          municipio_ibge: municipioIbge,
           criado_hora: horaIso,
         })
       }

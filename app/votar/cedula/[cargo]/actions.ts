@@ -220,6 +220,7 @@ export async function submeterVoto(
     partido_id: partidoId,
     resposta,
     metodo,
+    municipio_ibge: municipioIbge,
     criado_hora: horaCheia.toISOString(),
   })
   if (errVoto) {
