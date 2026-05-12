@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { BaseEleitoralSe } from '@/components/base-eleitoral-se'
 import { MarcaCdl } from '@/components/marca-cdl'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
 
@@ -293,11 +294,13 @@ export default function TransparenciaPage() {
               </h2>
               <p className="text-foreground leading-relaxed">
                 Universo: eleitorado oficial de Sergipe segundo o TSE,
-                aproximadamente <strong>1,45 milhão de eleitores</strong>{' '}
+                aproximadamente <strong>1,42 milhão de eleitores</strong>{' '}
                 distribuídos em 75 municípios. Cargos em disputa: Presidente
                 da República, Governador, 2 Senadores, 8 Deputados Federais,
                 24 Deputados Estaduais.
               </p>
+
+              <BaseEleitoralSe />
 
               <div className="grid sm:grid-cols-3 gap-3">
                 <FichaCampo

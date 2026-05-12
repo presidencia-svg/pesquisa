@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { BaseEleitoralSe } from '@/components/base-eleitoral-se'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export const metadata = { title: 'Visão geral · Admin' }
@@ -130,6 +131,8 @@ export default async function DashboardPage() {
           <CardConfig titulo="Base CDL" valor={cdlCount ?? 0} href="/admin" />
         </div>
       </section>
+
+      <BaseEleitoralSe />
     </div>
   )
 }
