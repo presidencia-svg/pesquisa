@@ -74,7 +74,7 @@ export default async function ResultadosPublicosPage() {
       .order('votos', { ascending: false }),
     db
       .from('candidatos_pesquisa')
-      .select('id, cargo, numero, nome_urna, partido_id')
+      .select('id, cargo, numero, nome_urna, foto_url, partido_id')
       .eq('edicao_id', edicao.id)
       .eq('ativo', true)
       .in('cargo', ['federal', 'estadual'])
@@ -132,6 +132,7 @@ export default async function ResultadosPublicosPage() {
       cargo: 'federal' | 'estadual'
       numero: number
       nome_urna: string
+      foto_url: string | null
       partido_id: string
     }>) {
       const key = `${c.cargo}:${c.partido_id}`
@@ -140,6 +141,7 @@ export default async function ResultadosPublicosPage() {
         id: c.id,
         numero: c.numero,
         nome_urna: c.nome_urna,
+        foto_url: c.foto_url,
         votos: votosPorCand.get(c.id) ?? 0,
       })
       candidatosPorPartido.set(key, arr)
@@ -200,6 +202,7 @@ export default async function ResultadosPublicosPage() {
           candidatoId: c.id,
           numero: c.numero,
           nomeUrna: c.nome_urna,
+          fotoUrl: c.foto_url,
           sigla: l.sigla,
           corHex: l.cor_hex,
           votos: c.votos,

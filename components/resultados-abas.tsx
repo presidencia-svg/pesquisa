@@ -35,6 +35,7 @@ export type CandidatoLegenda = {
   id: string
   numero: number
   nome_urna: string
+  foto_url: string | null
   votos: number
 }
 
@@ -42,6 +43,7 @@ export type RankingItem = {
   candidatoId: string
   numero: number
   nomeUrna: string
+  fotoUrl: string | null
   sigla: string
   corHex: string | null
   votos: number
@@ -249,6 +251,8 @@ function AbaCandidatos({
               segundoPct={segundoPct}
               diferenca={dif}
               impedimento={impedimentos.get(lider.candidato_id)}
+              fotoUrl={lider.foto_url}
+              numero={lider.numero}
             />
           )}
 
@@ -264,6 +268,7 @@ function AbaCandidatos({
                 votos={l.votos}
                 total={total}
                 impedimento={impedimentos.get(l.candidato_id)}
+                fotoUrl={l.foto_url}
               />
             ))}
           </Lista>
@@ -390,8 +395,15 @@ function AbaLegenda({
                             return (
                               <li
                                 key={c.id}
-                                className="flex items-baseline gap-2 py-1"
+                                className="flex items-center gap-2 py-1"
                               >
+                                <AvatarCandidato
+                                  fotoUrl={c.foto_url}
+                                  numero={c.numero}
+                                  cor={l.cor_hex ?? '#52525b'}
+                                  alt={c.nome_urna}
+                                  tamanho="sm"
+                                />
                                 <span className="font-mono tabular-nums text-[10px] text-muted-foreground w-12 flex-none">
                                   {c.numero}
                                 </span>
@@ -562,9 +574,17 @@ function RankingCandidatos({
               <span className="text-xs sm:text-sm text-muted-foreground tabular-nums w-5 flex-none text-center">
                 {i + 1}
               </span>
+              <AvatarCandidato
+                fotoUrl={c.fotoUrl}
+                numero={c.numero}
+                cor={c.corHex ?? '#52525b'}
+                alt={c.nomeUrna}
+                tamanho="md"
+              />
               <div
-                className="w-11 h-11 sm:w-12 sm:h-12 rounded-md flex items-center justify-center text-xs sm:text-sm font-bold text-white tabular-nums flex-none shadow-sm"
+                className="hidden sm:flex w-8 h-8 rounded-md items-center justify-center text-[10px] font-bold text-white tabular-nums flex-none"
                 style={{ background: c.corHex ?? '#52525b' }}
+                aria-hidden
               >
                 {c.numero}
               </div>
@@ -664,6 +684,8 @@ function CardLider({
   diferenca,
   rotuloLider = 'Lidera a corrida',
   impedimento,
+  fotoUrl,
+  numero,
 }: {
   nome: string
   sigla: string
@@ -674,44 +696,113 @@ function CardLider({
   diferenca: number
   rotuloLider?: string
   impedimento?: string
+  fotoUrl?: string | null
+  numero?: number
 }) {
   return (
     <div
-      className="rounded-md border-l-4 px-5 sm:px-6 py-5 sm:py-6 bg-muted/40 border border-border"
+      className="rounded-md border-l-4 px-5 sm:px-6 py-5 sm:py-6 bg-muted/40 border border-border flex items-start gap-4 sm:gap-6"
       style={{ borderLeftColor: cor }}
     >
-      <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
-        {rotuloLider}
-      </p>
-      <p className="text-2xl sm:text-4xl font-bold text-foreground leading-tight">
-        {nome}
-        {sigla && (
-          <span className="text-base sm:text-xl font-normal text-muted-foreground ml-2">
-            ({sigla})
-          </span>
-        )}
-      </p>
-      <p className="text-5xl sm:text-6xl font-bold tabular-nums mt-3 leading-none" style={{ color: cor }}>
-        {pct.toFixed(1)}%
-      </p>
-      {segundoNome ? (
-        <p className="text-sm text-muted-foreground mt-3">
-          {diferenca > 0
-            ? `${diferenca.toFixed(1)} pontos à frente de ${segundoNome} (${segundoPct.toFixed(1)}%)`
-            : 'Empate técnico no topo'}
-        </p>
-      ) : null}
-      {impedimento && (
-        <p className="text-xs text-amber-700 italic mt-3 border-t border-border pt-3">
-          <strong>Atenção:</strong> {impedimento}
-        </p>
+      {(fotoUrl || numero !== undefined) && (
+        <AvatarCandidato
+          fotoUrl={fotoUrl ?? null}
+          numero={numero ?? 0}
+          cor={cor}
+          alt={nome}
+          tamanho="xl"
+        />
       )}
+      <div className="flex-1 min-w-0">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
+          {rotuloLider}
+        </p>
+        <p className="text-2xl sm:text-4xl font-bold text-foreground leading-tight">
+          {nome}
+          {sigla && (
+            <span className="text-base sm:text-xl font-normal text-muted-foreground ml-2">
+              ({sigla})
+            </span>
+          )}
+        </p>
+        <p
+          className="text-5xl sm:text-6xl font-bold tabular-nums mt-3 leading-none"
+          style={{ color: cor }}
+        >
+          {pct.toFixed(1)}%
+        </p>
+        {segundoNome ? (
+          <p className="text-sm text-muted-foreground mt-3">
+            {diferenca > 0
+              ? `${diferenca.toFixed(1)} pontos à frente de ${segundoNome} (${segundoPct.toFixed(1)}%)`
+              : 'Empate técnico no topo'}
+          </p>
+        ) : null}
+        {impedimento && (
+          <p className="text-xs text-amber-700 italic mt-3 border-t border-border pt-3">
+            <strong>Atenção:</strong> {impedimento}
+          </p>
+        )}
+      </div>
     </div>
   )
 }
 
 function Lista({ children }: { children: React.ReactNode }) {
   return <div className="flex flex-col gap-2">{children}</div>
+}
+
+/**
+ * Avatar do candidato — foto se houver, fallback pra "numero" colorido.
+ * Tamanhos: 'sm' (32px), 'md' (48px), 'lg' (96px), 'xl' (128px).
+ *
+ * Usa <img> simples (nao next/image) pra evitar config de domains
+ * externos (Wikipedia retorna URLs de upload.wikimedia.org).
+ */
+function AvatarCandidato({
+  fotoUrl,
+  numero,
+  cor,
+  alt,
+  tamanho = 'md',
+}: {
+  fotoUrl: string | null
+  numero: number
+  cor: string
+  alt: string
+  tamanho?: 'sm' | 'md' | 'lg' | 'xl'
+}) {
+  const dims = {
+    sm: 'w-8 h-8 text-[10px]',
+    md: 'w-11 h-11 sm:w-12 sm:h-12 text-xs sm:text-sm',
+    lg: 'w-20 h-20 sm:w-24 sm:h-24 text-base',
+    xl: 'w-24 h-24 sm:w-32 sm:h-32 text-lg',
+  }[tamanho]
+
+  if (fotoUrl) {
+    return (
+      <div
+        className={`${dims} rounded-full overflow-hidden flex-none shadow-sm border-2 bg-muted`}
+        style={{ borderColor: cor }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={fotoUrl}
+          alt={alt}
+          loading="lazy"
+          className="w-full h-full object-cover"
+        />
+      </div>
+    )
+  }
+  return (
+    <div
+      className={`${dims} rounded-full flex items-center justify-center font-bold text-white tabular-nums flex-none shadow-sm`}
+      style={{ background: cor }}
+    >
+      {numero}
+    </div>
+  )
 }
 
 function LinhaCandidato({
@@ -723,6 +814,7 @@ function LinhaCandidato({
   votos,
   total,
   impedimento,
+  fotoUrl,
 }: {
   posicao: number
   numero: number
@@ -732,6 +824,7 @@ function LinhaCandidato({
   votos: number
   total: number
   impedimento?: string
+  fotoUrl?: string | null
 }) {
   const pct = total === 0 ? 0 : (votos / total) * 100
   return (
@@ -739,9 +832,17 @@ function LinhaCandidato({
       <span className="text-xs sm:text-sm text-muted-foreground tabular-nums w-5 flex-none text-center">
         {posicao}
       </span>
+      <AvatarCandidato
+        fotoUrl={fotoUrl ?? null}
+        numero={numero}
+        cor={cor}
+        alt={nome}
+        tamanho="md"
+      />
       <div
-        className="w-11 h-11 sm:w-12 sm:h-12 rounded-md flex items-center justify-center text-xs sm:text-sm font-bold text-white tabular-nums flex-none shadow-sm"
+        className="hidden sm:flex w-8 h-8 rounded-md items-center justify-center text-[10px] font-bold text-white tabular-nums flex-none"
         style={{ background: cor }}
+        aria-hidden
       >
         {numero}
       </div>
