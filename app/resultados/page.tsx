@@ -12,6 +12,11 @@ import {
   projetarCadeiras,
   type PartidoVotos,
 } from '@/lib/projecao'
+import {
+  montaRegionais,
+  type CandidatoLeve,
+  type RegiaoKey,
+} from '@/lib/regional'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 import './resultados.css'
@@ -70,6 +75,8 @@ export default async function ResultadosPublicosPage() {
     { count: eleitoresCount },
     { data: impedimentosData },
     { data: candidatosCargoSimples },
+    { data: municipiosRegiaoData },
+    { data: votosRegionaisData },
   ] = await Promise.all([
     db
       .from('candidatos_pesquisa')
@@ -117,6 +124,17 @@ export default async function ResultadosPublicosPage() {
       .eq('edicao_id', edicao.id)
       .eq('ativo', true)
       .in('cargo', ['presidente', 'governador', 'senador']),
+    db
+      .from('municipios_se')
+      .select('ibge_codigo, regiao'),
+    db
+      .from('votos_pesquisa')
+      .select('candidato_id, municipio_ibge, cargo')
+      .eq('edicao_id', edicao.id)
+      .eq('metodo', 'numero')
+      .in('cargo', ['presidente', 'governador', 'senador'])
+      .not('candidato_id', 'is', null)
+      .not('municipio_ibge', 'is', null),
   ])
 
   // ----- Branco / Não sei -----
@@ -135,6 +153,22 @@ export default async function ResultadosPublicosPage() {
     impedimento: string | null
   }>) {
     if (r.impedimento) impedimentos.set(r.id, r.impedimento)
+  }
+
+  // ----- Mapa município → região + count por região -----
+  const regiaoPorMunicipio = new Map<number, RegiaoKey>()
+  const municipiosPorRegiao = new Map<RegiaoKey, number>()
+  for (const r of (municipiosRegiaoData ?? []) as Array<{
+    ibge_codigo: number
+    regiao: string | null
+  }>) {
+    if (r.regiao === 'leste' || r.regiao === 'agreste' || r.regiao === 'sertao') {
+      regiaoPorMunicipio.set(r.ibge_codigo, r.regiao)
+      municipiosPorRegiao.set(
+        r.regiao,
+        (municipiosPorRegiao.get(r.regiao) ?? 0) + 1,
+      )
+    }
   }
 
   // ----- Pres/Gov/Sen — monta CargoCandidato -----
@@ -205,6 +239,39 @@ export default async function ResultadosPublicosPage() {
     if (candidatos.length === 0 && bns.branco === 0 && bns.nao_sabe === 0) {
       return null
     }
+
+    // ---- Regional (Leste/Agreste/Sertão) ----
+    const candLeve = new Map<string, CandidatoLeve>()
+    for (const c of candidatos) {
+      candLeve.set(c.id, {
+        id: c.id,
+        nome: c.nome,
+        partido: c.partido,
+        cor: c.cor,
+        foto: c.foto,
+      })
+    }
+    const votosCargo = ((votosRegionaisData ?? []) as Array<{
+      candidato_id: string
+      municipio_ibge: number
+      cargo: string
+    }>)
+      .filter((v) => v.cargo === cargoKey)
+      .map((v) => ({
+        candidato_id: v.candidato_id,
+        municipio_ibge: v.municipio_ibge,
+        votos: 1, // cada linha = 1 voto
+      }))
+    let regionalLeve: ReturnType<typeof montaRegionais> | undefined
+    if (votosCargo.length > 0) {
+      regionalLeve = montaRegionais(
+        votosCargo,
+        regiaoPorMunicipio,
+        municipiosPorRegiao,
+        candLeve,
+      )
+    }
+
     return {
       titulo,
       regra: REGRA[cargoKey],
@@ -212,6 +279,19 @@ export default async function ResultadosPublicosPage() {
       candidatos,
       branco: bns.branco,
       nao_sabe: bns.nao_sabe,
+      regional: regionalLeve?.map((r) => ({
+        regiao: r.regiao,
+        rotulo: r.rotulo,
+        subtitulo: r.subtitulo,
+        municipios: r.municipios,
+        totalVotos: r.totalVotos,
+        liderNome: r.lider?.nome ?? null,
+        liderPartido: r.lider?.partido ?? '',
+        liderCor: r.lider?.cor ?? '#52525b',
+        liderFoto: r.lider?.foto ?? null,
+        liderVotos: r.liderVotos,
+        liderPct: r.liderPct,
+      })),
     }
   }
 

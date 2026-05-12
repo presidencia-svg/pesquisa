@@ -39,6 +39,20 @@ export type Candidato = {
   delta?: number
 }
 
+export type RegiaoResultadoLeve = {
+  regiao: 'leste' | 'agreste' | 'sertao'
+  rotulo: string
+  subtitulo: string
+  municipios: number
+  totalVotos: number
+  liderNome: string | null
+  liderPartido: string
+  liderCor: string
+  liderFoto: string | null
+  liderVotos: number
+  liderPct: number
+}
+
 export type CargoCandidato = {
   titulo: string
   vagas?: number
@@ -46,6 +60,7 @@ export type CargoCandidato = {
   candidatos: Candidato[]
   branco: number
   nao_sabe: number
+  regional?: RegiaoResultadoLeve[]
 }
 
 export type CargoZona = {
@@ -553,6 +568,10 @@ function Detalhe({
 
       <Totais t={t} />
 
+      {cargo.regional && cargo.regional.length > 0 && (
+        <RegionalStrip regional={cargo.regional} />
+      )}
+
       <MetodoNota texto={cargo.regra} />
 
       <p className="rs-impedimento" style={{ marginTop: 16 }}>
@@ -692,6 +711,57 @@ function LinhaCandidato({
           <span className="rs-row-num-small">nº {c.numero}</span>
         </div>
         {c.impedimento && <p className="rs-row-imped">{c.impedimento}</p>}
+      </div>
+    </div>
+  )
+}
+
+function RegionalStrip({ regional }: { regional: RegiaoResultadoLeve[] }) {
+  return (
+    <div className="rs-regional">
+      <div className="rs-regional-head">
+        <div>
+          <p className="rs-regional-kicker">Recorte territorial</p>
+          <h3 className="rs-regional-title">Liderança por mesorregião</h3>
+        </div>
+        <p className="rs-regional-meta">
+          3 mesorregiões IBGE · 75 municípios
+        </p>
+      </div>
+      <div className="rs-regional-grid">
+        {regional.map((r) => (
+          <div key={r.regiao} className="rs-regional-card">
+            <p className="rs-regional-nome">{r.rotulo}</p>
+            <p className="rs-regional-mun">
+              {r.municipios} municípios · {fmt(r.totalVotos)}{' '}
+              {r.totalVotos === 1 ? 'voto' : 'votos'}
+            </p>
+            {r.liderNome ? (
+              <>
+                <div className="rs-regional-lider">
+                  <Avatar
+                    nome={r.liderNome}
+                    foto={r.liderFoto}
+                    size={32}
+                  />
+                  <span className="rs-regional-lider-nome">{r.liderNome}</span>
+                  <span className="rs-regional-sigla">{r.liderPartido}</span>
+                </div>
+                <p
+                  className="rs-regional-pct"
+                  style={{ color: r.liderCor }}
+                >
+                  {r.liderPct.toFixed(1).replace('.', ',')}
+                  <span>%</span>
+                </p>
+              </>
+            ) : (
+              <p className="rs-regional-mun" style={{ marginTop: 12 }}>
+                Sem votos nesta região ainda.
+              </p>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   )
