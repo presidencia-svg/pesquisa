@@ -26,7 +26,7 @@ export const metadata = {
 export const dynamic = 'force-dynamic'
 
 const VAGAS = { federal: 8, estadual: 24 } as const
-const CARGOS_CANDIDATO = ['governador', 'senador', 'presidente'] as const
+const CARGOS_CANDIDATO = ['presidente', 'governador', 'senador'] as const
 const CARGOS_LEGENDA = ['federal', 'estadual'] as const
 
 type Edicao = {

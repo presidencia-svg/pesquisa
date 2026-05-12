@@ -153,7 +153,7 @@ export function ResultadosAbas(props: Props) {
 
       <section className="px-5 sm:px-6 pt-8 sm:pt-12 pb-16">
         <div className="max-w-4xl mx-auto">
-          {(['governador', 'senador', 'presidente'] as const).includes(active as 'governador' | 'senador' | 'presidente') && (
+          {(['presidente', 'governador', 'senador'] as const).includes(active as 'presidente' | 'governador' | 'senador') && (
             <AbaCandidatos
               cargo={active}
               titulo={ROTULO_CARGO[active]}
