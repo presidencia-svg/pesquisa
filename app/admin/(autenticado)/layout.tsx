@@ -31,8 +31,15 @@ export default async function AdminLayout({
           </div>
           <div className="flex items-center gap-4">
             <Link
-              href="/"
+              href="/resultados"
+              target="_blank"
               className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              Resultados públicos ↗
+            </Link>
+            <Link
+              href="/"
+              className="text-xs text-muted-foreground hover:text-foreground hidden sm:inline-block"
             >
               Site público ↗
             </Link>

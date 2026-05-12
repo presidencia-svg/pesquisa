@@ -159,6 +159,12 @@ export default function Home() {
               Quero participar
             </Link>
             <Link
+              href="/resultados"
+              className="flex-1 inline-flex justify-center items-center h-12 px-6 rounded-md border border-border text-foreground font-medium hover:bg-muted transition"
+            >
+              Ver resultados
+            </Link>
+            <Link
               href="/transparencia"
               className="flex-1 inline-flex justify-center items-center h-12 px-6 rounded-md border border-border text-foreground font-medium hover:bg-muted transition"
             >

@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 import { ativarEdicao, desativarEdicao } from './actions'
+import { ControlesDivulgacao } from './controles-divulgacao'
 import { NovaEdicaoForm } from './nova-edicao-form'
 
 export const metadata = { title: 'Edições · Admin' }
@@ -12,6 +13,8 @@ type Edicao = {
   fim: string
   ativa: boolean
   registro_tre: string | null
+  divulgada_em: string | null
+  divulgacao_prevista: string | null
   criado_em: string
 }
 
@@ -44,51 +47,65 @@ export default async function EdicoesPage() {
           (edicoes ?? []).map((e) => (
             <div
               key={e.id}
-              className="rounded-md border border-border bg-background p-5 flex flex-col sm:flex-row sm:items-center gap-4"
+              className="rounded-md border border-border bg-background p-5 flex flex-col gap-4"
             >
-              <div className="flex-1 flex flex-col gap-1">
-                <div className="flex items-baseline gap-3">
-                  <p className="text-base font-semibold">{e.nome}</p>
-                  {e.ativa ? (
-                    <span className="text-[10px] uppercase tracking-widest text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">
-                      ativa
-                    </span>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                <div className="flex-1 flex flex-col gap-1">
+                  <div className="flex items-baseline gap-3 flex-wrap">
+                    <p className="text-base font-semibold">{e.nome}</p>
+                    {e.ativa ? (
+                      <span className="text-[10px] uppercase tracking-widest text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">
+                        ativa
+                      </span>
+                    ) : null}
+                    {e.divulgada_em ? (
+                      <span className="text-[10px] uppercase tracking-widest text-accent bg-accent/10 border border-accent/30 rounded-full px-2 py-0.5">
+                        divulgada
+                      </span>
+                    ) : null}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {formatarDataCurta(e.inicio)} → {formatarDataCurta(e.fim)}
+                  </p>
+                  {e.registro_tre ? (
+                    <p className="text-[11px] text-muted-foreground">
+                      Registro TRE/SE:{' '}
+                      <span className="font-mono">{e.registro_tre}</span>
+                    </p>
                   ) : null}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {formatarDataCurta(e.inicio)} → {formatarDataCurta(e.fim)}
-                </p>
-                {e.registro_tre ? (
-                  <p className="text-[11px] text-muted-foreground">
-                    Registro TRE/SE:{' '}
-                    <span className="font-mono">{e.registro_tre}</span>
-                  </p>
-                ) : null}
+
+                <div className="flex gap-2">
+                  {e.ativa ? (
+                    <form action={desativarEdicao}>
+                      <input type="hidden" name="id" value={e.id} />
+                      <button
+                        type="submit"
+                        className="h-9 px-3 rounded-md border border-border text-xs hover:bg-muted transition"
+                      >
+                        Desativar
+                      </button>
+                    </form>
+                  ) : (
+                    <form action={ativarEdicao}>
+                      <input type="hidden" name="id" value={e.id} />
+                      <button
+                        type="submit"
+                        className="h-9 px-3 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition"
+                      >
+                        Ativar
+                      </button>
+                    </form>
+                  )}
+                </div>
               </div>
 
-              <div className="flex gap-2">
-                {e.ativa ? (
-                  <form action={desativarEdicao}>
-                    <input type="hidden" name="id" value={e.id} />
-                    <button
-                      type="submit"
-                      className="h-9 px-3 rounded-md border border-border text-xs hover:bg-muted transition"
-                    >
-                      Desativar
-                    </button>
-                  </form>
-                ) : (
-                  <form action={ativarEdicao}>
-                    <input type="hidden" name="id" value={e.id} />
-                    <button
-                      type="submit"
-                      className="h-9 px-3 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition"
-                    >
-                      Ativar
-                    </button>
-                  </form>
-                )}
-              </div>
+              <ControlesDivulgacao
+                edicaoId={e.id}
+                divulgadaEm={e.divulgada_em}
+                registroTre={e.registro_tre}
+                divulgacaoPrevista={e.divulgacao_prevista}
+              />
             </div>
           ))
         )}
