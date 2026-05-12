@@ -68,17 +68,49 @@ Definido **antes** do registro pelo estatístico CONRE. Diretrizes pra ele decid
 - Pra **margem de erro de ±2 p.p. e nível de confiança de 95%**, n ≈ 2.401.
 - A escolha entre 1.067 ou 2.401 (ou número diferente) é decisão do estatístico baseada em orçamento, prazo e quanto desagregar resultados sub-amostrais.
 
-### 2.3 Estratificação por município
+### 2.3 Ponderação por município (pós-coleta)
 
-Cada um dos 75 municípios entra com cota proporcional ao seu eleitorado TSE. Tabela `municipios_se.cota_pesquisa` carrega o limite máximo de respostas por município pra evitar que Aracaju ou outro grande município sature a amostra.
+Cada um dos 75 municípios tem eleitorado oficial registrado em `municipios_se.eleitorado` (TSE/TRE-SE 2024, total ≈ 1,42 milhão).
 
-Fórmula:
+**Mudança em relação à versão anterior:** a pesquisa **não bloqueia mais por cota** (coleta tudo que vier). A distorção de adesão geográfica é corrigida **pós-coleta** via ponderação por peso amostral (técnica padrão *post-stratification*).
+
+Fórmula do peso aplicado a cada resposta:
 
 ```
-cota_municipio = round( eleitorado_municipio / eleitorado_total * n_amostral )
+w(M) = (N(M) / N_total) / (n(M) / n_total)
+     = (N(M) × n_total) / (n(M) × N_total)
 ```
 
-Quando uma cota se esgotar, novos cadastros daquele município são bloqueados ainda na Sala 1 (`/votar/confirma`).
+Onde:
+- `N(M)` = eleitorado oficial do município M (TSE 2024)
+- `N_total` = soma dos eleitorados (≈ 1,42M)
+- `n(M)` = número de respostas validadas (OTP confirmado) do município M
+- `n_total` = total de respostas
+
+**Propriedades da fórmula:**
+
+1. `SUM_M [ n(M) × w(M) ] = n_total` — o tamanho amostral efetivo não muda; só redistribui o peso entre municípios.
+2. Município sub-representado (peso > 1) compensa com cada voto valendo mais que 1.
+3. Município super-representado (peso < 1) tem cada voto valendo menos que 1.
+4. Município com 0 respostas tem peso 0 (não contribui — sem distorção pra esse município, mas também sem inflar amostra).
+
+**Exemplo prático:**
+
+| Município | N(M) eleitorado | % do estado | n(M) respostas | % das respostas | Peso w(M) |
+|---|---|---|---|---|---|
+| Aracaju | 416.605 | 29.4% | 2.500 | 50% | 0.59 |
+| Pedra Mole | 3.476 | 0.25% | 1 | 0.02% | 12.5 |
+| Itabaiana | 75.563 | 5.3% | 100 | 2% | 2.65 |
+
+Resultado: a projeção estadual reflete o estado, não o "viral" de campanha de divulgação que se concentra em capitais.
+
+**Por que não bloquear:**
+
+- Bloquear cria mensagens negativas pro eleitor ("sua cidade já tem cota cheia"), prejudicando a credibilidade.
+- A internet permite n efetivo muito maior que pesquisa tradicional — o gargalo deixa de ser orçamento e passa a ser adesão. Trabalhar com a curva real de adesão e corrigir post-hoc é mais rigoroso.
+- Padrão metodológico de institutos digitais (DataFolha online, Quaest, Genial/Quaest).
+
+**Implementação técnica:** `lib/ponderacao.ts` calcula os pesos; `/admin/projecao?ponderado=1` aplica em tempo real sobre os votos atuais.
 
 ### 2.4 Estratificação cruzada (sexo × faixa etária)
 
@@ -181,7 +213,8 @@ Antes de publicar qualquer corte (ex.: "intenção de voto entre mulheres de 25-
 - [ ] Definir formalmente n amostral, margem de erro, IC com o estatístico.
 - [ ] Importar a `cdl_base` (oriunda do Melhores do Ano da CDL Aracaju).
 - [ ] Popular `municipios_se` com eleitorado TSE 2026 (ou 2024 com nota explicativa).
-- [ ] Calcular `cota_pesquisa` por município em função do n decidido.
+- [x] Atualizar `eleitorado` 2024 oficial em `municipios_se` (migração 012).
+- [x] Implementar ponderação pós-coleta por município (`lib/ponderacao.ts` + `/admin/projecao?ponderado=1`).
 - [ ] Habilitar integração SPC Brasil (contrato + chaves).
 - [ ] Habilitar integração Meta WhatsApp Cloud API + aprovação do template OTP.
 - [ ] Habilitar Cloudflare Turnstile.

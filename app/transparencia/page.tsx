@@ -112,11 +112,11 @@ export default function TransparenciaPage() {
                 />
                 <LinhaFicha
                   titulo="Amostragem"
-                  valor="Não-probabilística por cotas com identidade verificada"
+                  valor="Não-probabilística com identidade verificada (post-stratification)"
                 />
                 <LinhaFicha
-                  titulo="Cota geográfica"
-                  valor="Proporcional ao eleitorado TSE de cada município"
+                  titulo="Ponderação geográfica"
+                  valor="Pós-coleta, proporcional ao eleitorado TSE de cada município"
                 />
                 <LinhaFicha
                   titulo="Ponderação pós-coleta"
@@ -198,7 +198,7 @@ export default function TransparenciaPage() {
                     <tr>
                       <td className="py-1 pr-3 font-medium">Amostragem</td>
                       <td className="py-1 pr-3">Sorteio probabilístico</td>
-                      <td className="py-1">Allowlist verificada + cotas</td>
+                      <td className="py-1">Allowlist verificada + ponderação pós-coleta</td>
                     </tr>
                     <tr>
                       <td className="py-1 pr-3 font-medium">Entrevistador</td>
@@ -321,21 +321,44 @@ export default function TransparenciaPage() {
               </div>
 
               <h3 className="text-base font-semibold uppercase tracking-wide text-foreground pt-3">
-                Estratificação
+                Ponderação por município (pós-coleta)
               </h3>
-              <ul className="text-foreground leading-relaxed list-disc pl-5 flex flex-col gap-2">
-                <li>
-                  <strong>Município:</strong> cota proporcional ao eleitorado
-                  TSE de cada município. Quando uma cota se esgota, novos
-                  cadastros daquele município são bloqueados na entrada.
-                </li>
-                <li>
-                  <strong>Sexo, faixa etária, escolaridade:</strong> coletados
-                  durante o cadastro. Após coleta, a amostra é ponderada
-                  contra a distribuição TSE pra corrigir desbalanços —
-                  exigência da Resolução TSE 23.747/2026.
-                </li>
-              </ul>
+              <p className="text-foreground leading-relaxed">
+                A pesquisa <strong>não bloqueia respostas por cota</strong>:
+                qualquer eleitor de Sergipe pode participar enquanto a
+                coleta estiver aberta. A distorção de adesão geográfica
+                (capital responde mais, interior responde menos) é
+                corrigida <strong>após a coleta</strong> por ponderação
+                pós-estratificação, técnica padrão de institutos digitais
+                (DataFolha online, Quaest, Genial/Quaest).
+              </p>
+              <p className="text-foreground leading-relaxed">
+                Cada resposta recebe um peso proporcional à
+                sub-representação do seu município na amostra:
+              </p>
+              <pre className="text-xs font-mono bg-muted rounded-md px-4 py-3 overflow-x-auto leading-relaxed">
+                <code>w(M) = (N(M) / N_total) / (n(M) / n_total)</code>
+              </pre>
+              <p className="text-foreground leading-relaxed">
+                Onde <code className="font-mono text-xs">N(M)</code> é o
+                eleitorado oficial do município (TSE 2024) e{' '}
+                <code className="font-mono text-xs">n(M)</code> é o número
+                de respostas validadas vindas dele. Município com peso
+                maior que 1 estava sub-representado; menor que 1, super.
+                Tamanho amostral total não muda — só o peso de cada
+                resposta. Tabela completa com pesos por município fica
+                pública após o registro no TRE/SE.
+              </p>
+
+              <h3 className="text-base font-semibold uppercase tracking-wide text-foreground pt-3">
+                Outras ponderações
+              </h3>
+              <p className="text-foreground leading-relaxed">
+                Além de município, a amostra também é ponderada contra a
+                distribuição TSE de <strong>sexo, faixa etária e
+                escolaridade</strong> — coletadas no cadastro, exigência
+                da Resolução TSE 23.747/2026 art. 2 §3.
+              </p>
 
               <h3 className="text-base font-semibold uppercase tracking-wide text-foreground pt-3">
                 Recrutamento
@@ -349,8 +372,8 @@ export default function TransparenciaPage() {
                   na premiação popular Melhores do Ano da CDL Aracaju —
                   CPFs já conhecidos, dispensa nova consulta ao SPC. Dá
                   perfil largo de consumidor (não só associados); o viés
-                  geográfico (Aracaju concentra Melhores do Ano) é mitigado
-                  pela cota por município.
+                  geográfico (Aracaju concentra Melhores do Ano) é
+                  corrigido pela ponderação pós-coleta descrita acima.
                 </li>
                 <li>
                   <strong>Validação SPC Brasil:</strong> qualquer eleitor
@@ -475,9 +498,10 @@ export default function TransparenciaPage() {
                   duas vezes na mesma edição da pesquisa.
                 </li>
                 <li>
-                  <strong>Cota de município:</strong> quando o município
-                  atinge a cota proporcional ao eleitorado TSE, não aceita
-                  novos cadastros dali.
+                  <strong>Ponderação geográfica:</strong> mesmo sem
+                  bloqueio por cota, a projeção final aplica peso
+                  proporcional ao eleitorado de cada município, evitando
+                  que excesso de adesão de uma região distorça o resultado.
                 </li>
                 <li>
                   <strong>Limite por dispositivo:</strong> mesmo navegador
