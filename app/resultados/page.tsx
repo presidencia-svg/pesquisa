@@ -2,7 +2,13 @@ import Link from 'next/link'
 
 import { MarcaCdl } from '@/components/marca-cdl'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
+import {
+  projetarCadeiras,
+  type PartidoVotos,
+} from '@/lib/projecao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+
+const VAGAS = { federal: 8, estadual: 24 } as const
 
 export const metadata = {
   title: 'Resultados · Pesquisa Sergipe 2026',
@@ -185,6 +191,69 @@ export default async function ResultadosPublicosPage() {
   const zona = (zonaRowsData ?? []) as ZonaLinha[]
   const temZona = zona.length > 0
 
+  // --- projeção TSE pra fed/est: identifica eleitosIds ---
+  const eleitosIds: Record<'federal' | 'estadual', Set<string>> = {
+    federal: new Set(),
+    estadual: new Set(),
+  }
+  // Cria um ranking completo (todos candidatos do cargo ordenados por voto)
+  // pra renderizar a aba "Por candidato"
+  const rankingCandidatos: Record<
+    'federal' | 'estadual',
+    Array<{
+      candidatoId: string
+      numero: number
+      nomeUrna: string
+      sigla: string
+      corHex: string | null
+      votos: number
+      partidoId: string
+    }>
+  > = { federal: [], estadual: [] }
+
+  for (const cargo of CARGOS_LEGENDA) {
+    const partidosInput: PartidoVotos[] = (porLegenda[cargo] ?? []).map((l) => ({
+      partidoId: l.partido_id,
+      numero: l.numero,
+      sigla: l.sigla,
+      nome: l.nome,
+      corHex: l.cor_hex,
+      votosLegenda: l.votos,
+      candidatos: (candidatosPorPartido.get(`${cargo}:${l.partido_id}`) ?? []).map(
+        (c) => ({
+          candidatoId: c.id,
+          numero: c.numero,
+          nomeUrna: c.nome_urna,
+          votos: c.votos,
+        }),
+      ),
+    }))
+    const projecao = projetarCadeiras(partidosInput, VAGAS[cargo])
+    for (const p of projecao.partidos) {
+      for (const e of p.eleitosProjetados) {
+        eleitosIds[cargo].add(e.candidatoId)
+      }
+    }
+
+    // Constroi ranking individual: todos os candidatos do cargo
+    for (const l of porLegenda[cargo] ?? []) {
+      const cands =
+        candidatosPorPartido.get(`${cargo}:${l.partido_id}`) ?? []
+      for (const c of cands) {
+        rankingCandidatos[cargo].push({
+          candidatoId: c.id,
+          numero: c.numero,
+          nomeUrna: c.nome_urna,
+          sigla: l.sigla,
+          corHex: l.cor_hex,
+          votos: c.votos,
+          partidoId: l.partido_id,
+        })
+      }
+    }
+    rankingCandidatos[cargo].sort((a, b) => b.votos - a.votos)
+  }
+
   const brancoNaoSei: Record<string, { branco: number; nao_sabe: number }> = {}
   for (const r of (bnsRowsData ?? []) as { cargo: string; metodo: string }[]) {
     if (!brancoNaoSei[r.cargo])
@@ -253,17 +322,32 @@ export default async function ResultadosPublicosPage() {
 
         {/* Pills de navegação */}
         <nav className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border">
-          <div className="max-w-4xl mx-auto px-5 sm:px-6 py-3 flex gap-2 overflow-x-auto -mx-0">
-            {([...CARGOS_CANDIDATO, ...CARGOS_LEGENDA, ...(temZona ? (['zona_expansao'] as const) : [])] as const).map(
-              (cargo) => (
-                <a
-                  key={cargo}
-                  href={`#${cargo}`}
-                  className="inline-flex items-center justify-center h-9 px-4 rounded-full border border-border bg-background text-sm font-medium text-foreground hover:bg-muted hover:border-accent transition whitespace-nowrap"
-                >
-                  {ROTULO_NAV[cargo]}
-                </a>
-              ),
+          <div className="max-w-4xl mx-auto px-5 sm:px-6 py-3 flex gap-2 overflow-x-auto">
+            {CARGOS_CANDIDATO.map((cargo) => (
+              <a
+                key={cargo}
+                href={`#${cargo}`}
+                className="inline-flex items-center justify-center h-9 px-4 rounded-full border border-border bg-background text-sm font-medium text-foreground hover:bg-muted hover:border-accent transition whitespace-nowrap"
+              >
+                {ROTULO_NAV[cargo]}
+              </a>
+            ))}
+            {CARGOS_LEGENDA.map((cargo) => (
+              <a
+                key={cargo}
+                href={`#${cargo}-candidatos`}
+                className="inline-flex items-center justify-center h-9 px-4 rounded-full border border-border bg-background text-sm font-medium text-foreground hover:bg-muted hover:border-accent transition whitespace-nowrap"
+              >
+                {ROTULO_NAV[cargo]}
+              </a>
+            ))}
+            {temZona && (
+              <a
+                href="#zona_expansao"
+                className="inline-flex items-center justify-center h-9 px-4 rounded-full border border-border bg-background text-sm font-medium text-foreground hover:bg-muted hover:border-accent transition whitespace-nowrap"
+              >
+                Zona Expansão
+              </a>
             )}
           </div>
         </nav>
@@ -282,15 +366,24 @@ export default async function ResultadosPublicosPage() {
             ))}
 
             {CARGOS_LEGENDA.map((cargo) => (
-              <SecaoLegendas
-                key={cargo}
-                cargo={cargo}
-                titulo={ROTULO_CARGO[cargo]}
-                linhas={porLegenda[cargo] ?? []}
-                candidatosPorPartido={candidatosPorPartido}
-                branco={brancoNaoSei[cargo]?.branco ?? 0}
-                naoSabe={brancoNaoSei[cargo]?.nao_sabe ?? 0}
-              />
+              <div key={cargo} className="flex flex-col gap-10">
+                <SecaoLegendas
+                  cargo={cargo}
+                  titulo={ROTULO_CARGO[cargo]}
+                  linhas={porLegenda[cargo] ?? []}
+                  candidatosPorPartido={candidatosPorPartido}
+                  eleitosIds={eleitosIds[cargo]}
+                  branco={brancoNaoSei[cargo]?.branco ?? 0}
+                  naoSabe={brancoNaoSei[cargo]?.nao_sabe ?? 0}
+                  vagas={VAGAS[cargo]}
+                />
+                <SecaoRankingIndividual
+                  cargo={cargo}
+                  vagas={VAGAS[cargo]}
+                  linhas={rankingCandidatos[cargo]}
+                  eleitosIds={eleitosIds[cargo]}
+                />
+              </div>
             ))}
 
             {temZona && (
@@ -498,15 +591,19 @@ function SecaoLegendas({
   titulo,
   linhas,
   candidatosPorPartido,
+  eleitosIds,
   branco,
   naoSabe,
+  vagas,
 }: {
   cargo: 'federal' | 'estadual'
   titulo: string
   linhas: LegendaLinha[]
   candidatosPorPartido: Map<string, CandidatoLegenda[]>
+  eleitosIds: Set<string>
   branco: number
   naoSabe: number
+  vagas: number
 }) {
   const totalNum = linhas.reduce((acc, l) => acc + l.votos, 0)
   const total = totalNum + branco + naoSabe
@@ -515,13 +612,18 @@ function SecaoLegendas({
 
   return (
     <section id={cargo} className="scroll-mt-20 flex flex-col gap-5">
-      <h2 className="text-2xl sm:text-3xl font-bold text-foreground border-l-4 border-accent pl-4">
-        {titulo}
-      </h2>
-      <p className="text-xs sm:text-sm text-muted-foreground -mt-2">
-        Voto por legenda. O percentual define quantas cadeiras a chapa
-        elege (Quociente Eleitoral).
-      </p>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground border-l-4 border-accent pl-4">
+          {titulo}
+        </h2>
+        <p className="text-xs sm:text-sm text-muted-foreground pl-5">
+          {vagas} cadeiras em disputa · voto por legenda · projeção pelo
+          Quociente Eleitoral (Lei 9.504/97 art. 109)
+        </p>
+        <p className="text-[11px] uppercase tracking-widest text-muted-foreground pl-5 pt-1">
+          Por legenda (cadeiras projetadas)
+        </p>
+      </div>
 
       {total === 0 ? (
         <p className="text-sm text-muted-foreground italic">
@@ -577,6 +679,7 @@ function SecaoLegendas({
                       <ul className="mt-1 flex flex-col gap-1 pl-3 border-l border-dashed border-border">
                         {cands.map((c) => {
                           const pct = l.votos === 0 ? 0 : (c.votos / l.votos) * 100
+                          const eleito = eleitosIds.has(c.id)
                           return (
                             <li
                               key={c.id}
@@ -587,6 +690,11 @@ function SecaoLegendas({
                               </span>
                               <span className="text-foreground truncate flex-1">
                                 {c.nome_urna}
+                                {eleito && (
+                                  <span className="ml-2 inline-flex items-center gap-1 text-[9px] uppercase tracking-widest font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-1.5 py-0.5">
+                                    eleito
+                                  </span>
+                                )}
                               </span>
                               <span className="tabular-nums whitespace-nowrap text-foreground">
                                 {c.votos.toLocaleString('pt-BR')}
@@ -629,6 +737,121 @@ function SecaoLegendas({
           </div>
         </>
       )}
+    </section>
+  )
+}
+
+function SecaoRankingIndividual({
+  cargo,
+  vagas,
+  linhas,
+  eleitosIds,
+}: {
+  cargo: 'federal' | 'estadual'
+  vagas: number
+  linhas: Array<{
+    candidatoId: string
+    numero: number
+    nomeUrna: string
+    sigla: string
+    corHex: string | null
+    votos: number
+    partidoId: string
+  }>
+  eleitosIds: Set<string>
+}) {
+  // Mostra os top N+10 (pra dar contexto pos-corte)
+  const TOPO = Math.max(vagas + 10, 30)
+  const visiveis = linhas.slice(0, TOPO)
+  const ocultas = linhas.length - visiveis.length
+  const totalVotos = linhas.reduce((acc, l) => acc + l.votos, 0)
+
+  if (visiveis.length === 0) return null
+
+  return (
+    <section
+      id={`${cargo}-candidatos`}
+      className="scroll-mt-20 flex flex-col gap-4"
+    >
+      <div className="flex flex-col gap-1 pl-5">
+        <p className="text-[11px] uppercase tracking-widest text-muted-foreground">
+          Por candidato (ranking individual)
+        </p>
+        <p className="text-sm text-muted-foreground">
+          {linhas.length} candidatos com voto individual nesta pesquisa.
+          Os <strong>top {vagas}</strong> seriam eleitos se a eleição
+          fosse hoje, considerando a regra do Quociente Eleitoral.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {visiveis.map((c, i) => {
+          const eleito = eleitosIds.has(c.candidatoId)
+          const pct = totalVotos === 0 ? 0 : (c.votos / totalVotos) * 100
+          return (
+            <div
+              key={c.candidatoId}
+              className={`rounded-md border px-3 sm:px-4 py-3 flex items-center gap-3 sm:gap-4 ${
+                eleito
+                  ? 'border-emerald-200 bg-emerald-50/40'
+                  : 'border-border bg-background'
+              }`}
+            >
+              <span className="text-xs sm:text-sm text-muted-foreground tabular-nums w-5 flex-none text-center">
+                {i + 1}
+              </span>
+              <div
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-md flex items-center justify-center text-xs sm:text-sm font-bold text-white tabular-nums flex-none shadow-sm"
+                style={{ background: c.corHex ?? '#52525b' }}
+              >
+                {c.numero}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-sm sm:text-base font-semibold truncate">
+                    {c.nomeUrna}
+                  </p>
+                  {eleito && (
+                    <span className="inline-flex items-center text-[10px] uppercase tracking-widest font-bold text-emerald-700 bg-emerald-100 border border-emerald-300 rounded-full px-2 py-0.5">
+                      eleito
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-baseline justify-between gap-3 mt-0.5">
+                  <p className="text-xs text-muted-foreground truncate">
+                    {c.sigla}
+                  </p>
+                  <p className="text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                    {c.votos.toLocaleString('pt-BR')}{' '}
+                    {c.votos === 1 ? 'voto' : 'votos'}
+                    {pct > 0 && (
+                      <span className="ml-1">
+                        ({pct.toFixed(2)}%)
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {ocultas > 0 && (
+        <p className="text-[11px] text-muted-foreground italic text-center pt-2">
+          +{ocultas} candidato{ocultas !== 1 ? 's' : ''} fora do top {TOPO}.
+        </p>
+      )}
+
+      <p className="text-[11px] text-muted-foreground italic pt-1 leading-relaxed">
+        A projeção de quem seria eleito segue a regra TSE: o total da
+        legenda define quantas cadeiras o partido ganha (Quociente
+        Eleitoral + sobras por maiores médias), depois os candidatos mais
+        votados <em>dentro do partido</em> ocupam essas cadeiras. Por
+        isso um candidato com mais votos individuais pode ficar de fora
+        se a legenda dele não atinge o QE — e um candidato com menos
+        votos individuais pode entrar se seu partido elege muitas cadeiras.
+      </p>
     </section>
   )
 }
