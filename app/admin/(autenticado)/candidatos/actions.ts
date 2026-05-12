@@ -84,3 +84,25 @@ export async function alternarAtivo(formData: FormData): Promise<void> {
   await db.from('candidatos_pesquisa').update({ ativo }).eq('id', id)
   revalidatePath('/admin/candidatos')
 }
+
+/**
+ * Salva (ou apaga) o texto de impedimento de um candidato.
+ *
+ * Texto vazio -> NULL no banco (candidato sem impedimento).
+ * Texto preenchido -> aparece como badge "sub judice" pra eleitor +
+ * tooltip com o texto na pagina publica /resultados.
+ */
+export async function salvarImpedimento(formData: FormData): Promise<void> {
+  const id = String(formData.get('id') ?? '')
+  if (!id) return
+  const raw = String(formData.get('impedimento') ?? '').trim()
+  const valor = raw.length > 0 ? raw.slice(0, 500) : null
+
+  const db = supabaseAdmin()
+  await db
+    .from('candidatos_pesquisa')
+    .update({ impedimento: valor })
+    .eq('id', id)
+  revalidatePath('/admin/candidatos')
+  revalidatePath('/resultados')
+}

@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 import { alternarAtivo } from './actions'
+import { EditarImpedimento } from './editar-impedimento'
 import { NovoCandidatoForm } from './novo-candidato-form'
 
 export const metadata = { title: 'Candidatos · Admin' }
@@ -13,6 +14,7 @@ type Candidato = {
   nome_completo: string | null
   ativo: boolean
   foto_url: string | null
+  impedimento: string | null
   partidos: { sigla: string; cor_hex: string | null } | null
 }
 
@@ -44,7 +46,7 @@ export default async function CandidatosPage() {
         await db
           .from('candidatos_pesquisa')
           .select(
-            'id, cargo, numero, nome_urna, nome_completo, ativo, foto_url, partidos!inner ( sigla, cor_hex )',
+            'id, cargo, numero, nome_urna, nome_completo, ativo, foto_url, impedimento, partidos!inner ( sigla, cor_hex )',
           )
           .eq('edicao_id', edicao.id)
           .order('cargo')
@@ -104,41 +106,55 @@ export default async function CandidatosPage() {
               {(porCargo.get(cargo) ?? []).map((c) => (
                 <div
                   key={c.id}
-                  className={`rounded-md border px-4 py-3 flex items-center gap-4 ${
+                  className={`rounded-md border px-4 py-3 flex flex-col gap-2 ${
                     c.ativo
                       ? 'border-border bg-background'
                       : 'border-border/50 bg-muted opacity-60'
                   }`}
                 >
-                  <div
-                    className="w-12 h-12 rounded-md flex items-center justify-center text-xs font-bold text-white tabular-nums"
-                    style={{ background: c.partidos?.cor_hex ?? '#52525b' }}
-                  >
-                    {c.numero}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold truncate">
-                      {c.nome_urna}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {c.partidos?.sigla}
-                      {c.nome_completo ? ` · ${c.nome_completo}` : ''}
-                    </p>
-                  </div>
-                  <form action={alternarAtivo}>
-                    <input type="hidden" name="id" value={c.id} />
-                    <input
-                      type="hidden"
-                      name="ativo"
-                      value={String(!c.ativo)}
-                    />
-                    <button
-                      type="submit"
-                      className="h-8 px-3 rounded-md border border-border text-xs hover:bg-muted transition whitespace-nowrap"
+                  <div className="flex items-center gap-4">
+                    <div
+                      className="w-12 h-12 rounded-md flex items-center justify-center text-xs font-bold text-white tabular-nums flex-none"
+                      style={{ background: c.partidos?.cor_hex ?? '#52525b' }}
                     >
-                      {c.ativo ? 'Desativar' : 'Ativar'}
-                    </button>
-                  </form>
+                      {c.numero}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold truncate flex items-center gap-2">
+                        {c.nome_urna}
+                        {c.impedimento && (
+                          <span
+                            className="inline-flex items-center text-[9px] uppercase tracking-widest font-bold text-amber-700 bg-amber-50 border border-amber-300 rounded-full px-1.5 py-0.5"
+                            title={c.impedimento}
+                          >
+                            sub judice
+                          </span>
+                        )}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {c.partidos?.sigla}
+                        {c.nome_completo ? ` · ${c.nome_completo}` : ''}
+                      </p>
+                    </div>
+                    <form action={alternarAtivo}>
+                      <input type="hidden" name="id" value={c.id} />
+                      <input
+                        type="hidden"
+                        name="ativo"
+                        value={String(!c.ativo)}
+                      />
+                      <button
+                        type="submit"
+                        className="h-8 px-3 rounded-md border border-border text-xs hover:bg-muted transition whitespace-nowrap"
+                      >
+                        {c.ativo ? 'Desativar' : 'Ativar'}
+                      </button>
+                    </form>
+                  </div>
+                  <EditarImpedimento
+                    candidatoId={c.id}
+                    valorAtual={c.impedimento ?? ''}
+                  />
                 </div>
               ))}
             </div>

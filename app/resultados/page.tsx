@@ -143,6 +143,20 @@ export default async function ResultadosPublicosPage() {
       .eq('wa_validado', true),
   ])
 
+  // Impedimentos de candidatos (sub judice / inelegivel / cassado)
+  const { data: impedimentosData } = await db
+    .from('candidatos_pesquisa')
+    .select('id, impedimento')
+    .eq('edicao_id', edicao.id)
+    .not('impedimento', 'is', null)
+  const impedimentos = new Map<string, string>()
+  for (const r of (impedimentosData ?? []) as Array<{
+    id: string
+    impedimento: string | null
+  }>) {
+    if (r.impedimento) impedimentos.set(r.id, r.impedimento)
+  }
+
   // Reorganiza dados pro render
   const porCandidato: Record<string, CandidatoLinha[]> = {}
   for (const c of CARGOS_CANDIDATO) porCandidato[c] = []
@@ -362,6 +376,7 @@ export default async function ResultadosPublicosPage() {
                 linhas={porCandidato[cargo] ?? []}
                 branco={brancoNaoSei[cargo]?.branco ?? 0}
                 naoSabe={brancoNaoSei[cargo]?.nao_sabe ?? 0}
+                impedimentos={impedimentos}
               />
             ))}
 
@@ -376,12 +391,14 @@ export default async function ResultadosPublicosPage() {
                   branco={brancoNaoSei[cargo]?.branco ?? 0}
                   naoSabe={brancoNaoSei[cargo]?.nao_sabe ?? 0}
                   vagas={VAGAS[cargo]}
+                  impedimentos={impedimentos}
                 />
                 <SecaoRankingIndividual
                   cargo={cargo}
                   vagas={VAGAS[cargo]}
                   linhas={rankingCandidatos[cargo]}
                   eleitosIds={eleitosIds[cargo]}
+                  impedimentos={impedimentos}
                 />
               </div>
             ))}
@@ -497,15 +514,17 @@ function SecaoCandidatos({
   linhas,
   branco,
   naoSabe,
+  impedimentos,
 }: {
   cargo: string
   titulo: string
   linhas: CandidatoLinha[]
   branco: number
   naoSabe: number
+  impedimentos: Map<string, string>
 }) {
-  const totalNum = linhas.reduce((acc, l) => acc + l.votos, 0)
-  const total = totalNum + branco + naoSabe
+  const validos = linhas.reduce((acc, l) => acc + l.votos, 0)
+  const total = validos + branco + naoSabe
   const lider = linhas[0]
   const liderPct = total === 0 || !lider ? 0 : (lider.votos / total) * 100
   const segundo = linhas[1]
@@ -567,19 +586,12 @@ function SecaoCandidatos({
                 cor={l.cor_hex ?? '#52525b'}
                 votos={l.votos}
                 total={total}
+                impedimento={impedimentos.get(l.candidato_id) ?? null}
               />
             ))}
-            {(branco > 0 || naoSabe > 0) && (
-              <div className="mt-2 pt-3 border-t border-dashed border-border flex flex-col gap-1">
-                {branco > 0 && (
-                  <LinhaSec rotulo="Branco" votos={branco} total={total} />
-                )}
-                {naoSabe > 0 && (
-                  <LinhaSec rotulo="Não sabe / não quis responder" votos={naoSabe} total={total} />
-                )}
-              </div>
-            )}
           </div>
+
+          <TotaisCargo validos={validos} brancos={branco} naoSabe={naoSabe} />
         </>
       )}
     </section>
@@ -595,6 +607,7 @@ function SecaoLegendas({
   branco,
   naoSabe,
   vagas,
+  impedimentos,
 }: {
   cargo: 'federal' | 'estadual'
   titulo: string
@@ -604,9 +617,10 @@ function SecaoLegendas({
   branco: number
   naoSabe: number
   vagas: number
+  impedimentos: Map<string, string>
 }) {
-  const totalNum = linhas.reduce((acc, l) => acc + l.votos, 0)
-  const total = totalNum + branco + naoSabe
+  const validos = linhas.reduce((acc, l) => acc + l.votos, 0)
+  const total = validos + branco + naoSabe
   const lider = linhas[0]
   const liderPct = total === 0 || !lider ? 0 : (lider.votos / total) * 100
 
@@ -680,6 +694,7 @@ function SecaoLegendas({
                         {cands.map((c) => {
                           const pct = l.votos === 0 ? 0 : (c.votos / l.votos) * 100
                           const eleito = eleitosIds.has(c.id)
+                          const imped = impedimentos.get(c.id)
                           return (
                             <li
                               key={c.id}
@@ -688,10 +703,18 @@ function SecaoLegendas({
                               <span className="font-mono tabular-nums text-[10px] text-muted-foreground w-12 flex-none">
                                 {c.numero}
                               </span>
-                              <span className="text-foreground truncate flex-1">
-                                {c.nome_urna}
+                              <span className="text-foreground truncate flex-1 inline-flex items-center gap-1.5">
+                                <span className="truncate">{c.nome_urna}</span>
+                                {imped && (
+                                  <span
+                                    className="inline-flex items-center text-[9px] uppercase tracking-widest font-bold text-amber-700 bg-amber-50 border border-amber-300 rounded-full px-1.5 py-0.5"
+                                    title={imped}
+                                  >
+                                    sub judice
+                                  </span>
+                                )}
                                 {eleito && (
-                                  <span className="ml-2 inline-flex items-center gap-1 text-[9px] uppercase tracking-widest font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-1.5 py-0.5">
+                                  <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-widest font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-1.5 py-0.5">
                                     eleito
                                   </span>
                                 )}
@@ -724,17 +747,9 @@ function SecaoLegendas({
                 </div>
               )
             })}
-            {(branco > 0 || naoSabe > 0) && (
-              <div className="mt-2 pt-3 border-t border-dashed border-border flex flex-col gap-1">
-                {branco > 0 && (
-                  <LinhaSec rotulo="Branco" votos={branco} total={total} />
-                )}
-                {naoSabe > 0 && (
-                  <LinhaSec rotulo="Não sabe / não quis responder" votos={naoSabe} total={total} />
-                )}
-              </div>
-            )}
           </div>
+
+          <TotaisCargo validos={validos} brancos={branco} naoSabe={naoSabe} />
         </>
       )}
     </section>
@@ -746,6 +761,7 @@ function SecaoRankingIndividual({
   vagas,
   linhas,
   eleitosIds,
+  impedimentos,
 }: {
   cargo: 'federal' | 'estadual'
   vagas: number
@@ -759,6 +775,7 @@ function SecaoRankingIndividual({
     partidoId: string
   }>
   eleitosIds: Set<string>
+  impedimentos: Map<string, string>
 }) {
   // Mostra os top N+10 (pra dar contexto pos-corte)
   const TOPO = Math.max(vagas + 10, 30)
@@ -787,6 +804,7 @@ function SecaoRankingIndividual({
       <div className="flex flex-col gap-2">
         {visiveis.map((c, i) => {
           const eleito = eleitosIds.has(c.candidatoId)
+          const imped = impedimentos.get(c.candidatoId)
           const pct = totalVotos === 0 ? 0 : (c.votos / totalVotos) * 100
           return (
             <div
@@ -811,12 +829,25 @@ function SecaoRankingIndividual({
                   <p className="text-sm sm:text-base font-semibold truncate">
                     {c.nomeUrna}
                   </p>
+                  {imped && (
+                    <span
+                      className="inline-flex items-center text-[10px] uppercase tracking-widest font-bold text-amber-700 bg-amber-100 border border-amber-300 rounded-full px-2 py-0.5"
+                      title={imped}
+                    >
+                      sub judice
+                    </span>
+                  )}
                   {eleito && (
                     <span className="inline-flex items-center text-[10px] uppercase tracking-widest font-bold text-emerald-700 bg-emerald-100 border border-emerald-300 rounded-full px-2 py-0.5">
                       eleito
                     </span>
                   )}
                 </div>
+                {imped && (
+                  <p className="text-[11px] text-amber-700 italic mt-0.5">
+                    {imped}
+                  </p>
+                )}
                 <div className="flex items-baseline justify-between gap-3 mt-0.5">
                   <p className="text-xs text-muted-foreground truncate">
                     {c.sigla}
@@ -900,6 +931,7 @@ function LinhaCandidato({
   cor,
   votos,
   total,
+  impedimento,
 }: {
   posicao: number
   numero: number
@@ -908,6 +940,7 @@ function LinhaCandidato({
   cor: string
   votos: number
   total: number
+  impedimento?: string | null
 }) {
   const pct = total === 0 ? 0 : (votos / total) * 100
   return (
@@ -923,7 +956,17 @@ function LinhaCandidato({
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline justify-between gap-3">
-          <p className="text-sm sm:text-base font-semibold truncate">{nome}</p>
+          <p className="text-sm sm:text-base font-semibold truncate inline-flex items-center gap-1.5">
+            <span className="truncate">{nome}</span>
+            {impedimento && (
+              <span
+                className="inline-flex items-center text-[9px] uppercase tracking-widest font-bold text-amber-700 bg-amber-50 border border-amber-300 rounded-full px-1.5 py-0.5 whitespace-nowrap"
+                title={impedimento}
+              >
+                sub judice
+              </span>
+            )}
+          </p>
           <p className="text-base sm:text-lg font-bold tabular-nums whitespace-nowrap">
             {pct.toFixed(1)}%
           </p>
@@ -936,6 +979,11 @@ function LinhaCandidato({
             {votos.toLocaleString('pt-BR')} {votos === 1 ? 'voto' : 'votos'}
           </p>
         </div>
+        {impedimento && (
+          <p className="text-[11px] text-amber-700 italic mt-1">
+            {impedimento}
+          </p>
+        )}
         <div className="mt-2 h-2 rounded-full bg-muted overflow-hidden">
           <div
             className="h-full rounded-full transition-all"
@@ -943,6 +991,62 @@ function LinhaCandidato({
           />
         </div>
       </div>
+    </div>
+  )
+}
+
+function TotaisCargo({
+  validos,
+  brancos,
+  naoSabe,
+}: {
+  validos: number
+  brancos: number
+  naoSabe: number
+}) {
+  const total = validos + brancos + naoSabe
+  if (total === 0) return null
+  const pct = (n: number) => (total === 0 ? '0,00' : ((n / total) * 100).toFixed(2).replace('.', ','))
+  return (
+    <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-4 mt-2 border-t border-border">
+      <CardTotal
+        rotulo="Válidos"
+        pct={pct(validos)}
+        abs={validos}
+        destaque
+      />
+      <CardTotal rotulo="Brancos" pct={pct(brancos)} abs={brancos} />
+      <CardTotal rotulo="Não sabe" pct={pct(naoSabe)} abs={naoSabe} />
+    </div>
+  )
+}
+
+function CardTotal({
+  rotulo,
+  pct,
+  abs,
+  destaque = false,
+}: {
+  rotulo: string
+  pct: string
+  abs: number
+  destaque?: boolean
+}) {
+  return (
+    <div className="flex flex-col gap-0.5 items-center text-center py-2">
+      <p
+        className={`text-lg sm:text-2xl font-bold tabular-nums ${
+          destaque ? 'text-foreground' : 'text-muted-foreground'
+        }`}
+      >
+        {pct}%
+      </p>
+      <p className="text-xs sm:text-sm tabular-nums text-muted-foreground">
+        {abs.toLocaleString('pt-BR')}
+      </p>
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
+        {rotulo}
+      </p>
     </div>
   )
 }
