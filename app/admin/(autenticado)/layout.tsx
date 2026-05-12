@@ -8,6 +8,7 @@ import { SairButton } from './sair-button'
 const NAV = [
   { href: '/admin', label: 'Visão geral' },
   { href: '/admin/resultados', label: 'Resultados' },
+  { href: '/admin/projecao', label: 'Projeção' },
   { href: '/admin/edicoes', label: 'Edições' },
   { href: '/admin/candidatos', label: 'Candidatos' },
 ] as const
