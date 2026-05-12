@@ -162,7 +162,12 @@ export default async function ResultadosPublicosPage() {
     ibge_codigo: number
     regiao: string | null
   }>) {
-    if (r.regiao === 'leste' || r.regiao === 'agreste' || r.regiao === 'sertao') {
+    if (
+      r.regiao === 'grande_aracaju' ||
+      r.regiao === 'leste' ||
+      r.regiao === 'agreste' ||
+      r.regiao === 'sertao'
+    ) {
       regiaoPorMunicipio.set(r.ibge_codigo, r.regiao)
       municipiosPorRegiao.set(
         r.regiao,

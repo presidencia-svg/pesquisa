@@ -7,17 +7,26 @@
  * Funcao pura, sem DB — pra usar em Server Component que ja' fetchou.
  */
 
-export type RegiaoKey = 'leste' | 'agreste' | 'sertao'
+export type RegiaoKey = 'grande_aracaju' | 'leste' | 'agreste' | 'sertao'
+
+/** Ordem de exibicao: Grande Aracaju primeiro (dominante), depois IBGE. */
+export const REGIAO_ORDEM: RegiaoKey[] = [
+  'grande_aracaju',
+  'leste',
+  'agreste',
+  'sertao',
+]
 
 export const ROTULO_REGIAO: Record<RegiaoKey, string> = {
+  grande_aracaju: 'Grande Aracaju',
   leste: 'Leste Sergipano',
   agreste: 'Agreste Sergipano',
   sertao: 'Sertão Sergipano',
 }
 
-/** "Grande Aracaju + litoral + baixo São Francisco" — etc. Apresentado abaixo do nome. */
 export const SUBTITULO_REGIAO: Record<RegiaoKey, string> = {
-  leste: 'Grande Aracaju + litoral + baixo S. Francisco',
+  grande_aracaju: 'Capital + cidades-dormitório (RMA)',
+  leste: 'Cotinguiba + baixo S. Francisco + litoral',
   agreste: 'Centro-sul: Itabaiana, Lagarto, Estância',
   sertao: 'Norte/noroeste: Glória, Canindé, Porto da Folha',
 }
@@ -55,12 +64,10 @@ export function montaRegionais(
   municipiosPorRegiao: Map<RegiaoKey, number>,
   candidatos: Map<string, CandidatoLeve>,
 ): RegiaoResultado[] {
-  const REGIOES: RegiaoKey[] = ['leste', 'agreste', 'sertao']
-
   // Agrega votos por (regiao, candidato_id)
   const agregado = new Map<string, Map<string, number>>()
   const totalPorRegiao = new Map<RegiaoKey, number>()
-  for (const reg of REGIOES) {
+  for (const reg of REGIAO_ORDEM) {
     agregado.set(reg, new Map())
     totalPorRegiao.set(reg, 0)
   }
@@ -73,7 +80,7 @@ export function montaRegionais(
     totalPorRegiao.set(regiao, (totalPorRegiao.get(regiao) ?? 0) + v.votos)
   }
 
-  return REGIOES.map((regiao) => {
+  return REGIAO_ORDEM.map((regiao) => {
     const inner = agregado.get(regiao)!
     let melhorId: string | null = null
     let melhorVotos = 0

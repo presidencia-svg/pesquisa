@@ -40,7 +40,7 @@ export type Candidato = {
 }
 
 export type RegiaoResultadoLeve = {
-  regiao: 'leste' | 'agreste' | 'sertao'
+  regiao: 'grande_aracaju' | 'leste' | 'agreste' | 'sertao'
   rotulo: string
   subtitulo: string
   municipios: number
@@ -725,7 +725,7 @@ function RegionalStrip({ regional }: { regional: RegiaoResultadoLeve[] }) {
           <h3 className="rs-regional-title">Liderança por mesorregião</h3>
         </div>
         <p className="rs-regional-meta">
-          3 mesorregiões IBGE · 75 municípios
+          Grande Aracaju + 3 mesorregiões IBGE · 75 municípios
         </p>
       </div>
       <div className="rs-regional-grid">
