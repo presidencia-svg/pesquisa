@@ -39,6 +39,8 @@ export type Candidato = {
   eleito?: boolean
   /** Empate técnico com o candidato no corte das vagas (margem de erro overlap) */
   empate?: boolean
+  /** Posição na fila de suplentes do partido (1, 2, 3...). Só pra proporcional, em partido que ganhou cadeira. */
+  suplente?: number
   delta?: number
 }
 
@@ -99,6 +101,11 @@ const fmt = (n: number) => n.toLocaleString('pt-BR')
 const pct = (a: number, b: number) => (b === 0 ? 0 : (a / b) * 100)
 const fmtPct = (x: number, d = 1) =>
   x.toFixed(d).replace('.', ',') + '%'
+
+/** Formato ordinal pt-BR: 1 -> "1º", 2 -> "2º", ... */
+function ordinal(n: number) {
+  return `${n}º`
+}
 
 function initials(name: string) {
   const parts = name.trim().split(/\s+/)
@@ -703,6 +710,14 @@ function LinhaCandidato({
               title="Diferença para o corte das vagas está dentro da margem de erro"
             >
               empate técnico
+            </span>
+          )}
+          {vagas && !eleito && c.suplente && (
+            <span
+              className="rs-tag rs-tag-suplente"
+              title={`Ordem de suplência do ${c.partido} — assumiria a cadeira em caso de vacância`}
+            >
+              {ordinal(c.suplente)} suplente do {c.partido}
             </span>
           )}
           {c.impedimento && (

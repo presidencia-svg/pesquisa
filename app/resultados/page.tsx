@@ -438,6 +438,29 @@ export default async function ResultadosPublicosPage() {
     const cadeirasPorPartido = new Map(
       projecao.partidos.map((p) => [p.partidoId, p.cadeirasTotal]),
     )
+
+    // Para cada partido com cadeiras, ordena candidatos por votos pessoais.
+    // Os não-eleitos viram 1º, 2º, 3º suplente do partido — ordem real de
+    // assunção em caso de vacância, conforme Lei 9.504/97 art. 112.
+    // LIMITAÇÃO: schema atual não modela federações partidárias (Lei 14.208/21).
+    // Quando um partido participa de federação, a ordem de suplência é dentro
+    // da federação inteira, não do partido isolado. Documentado em TODO abaixo.
+    for (const p of partidosInput) {
+      const cadeiras = cadeirasPorPartido.get(p.partidoId) ?? 0
+      if (cadeiras === 0) continue // partido sem cadeira não tem suplência
+      const candsPartido = [...p.candidatos].sort((a, b) => b.votos - a.votos)
+      for (let i = cadeiras; i < candsPartido.length; i++) {
+        const found = candidatos.find((x) => x.id === candsPartido[i].candidatoId)
+        if (found) found.suplente = i - cadeiras + 1
+      }
+    }
+
+    // Empate técnico INTRA-PARTIDO: na proporcional, a cadeira do partido vai
+    // pro candidato mais votado dentro do partido. Os imediatos abaixo do
+    // último eleito do mesmo partido podem ultrapassá-lo se a diferença de
+    // votos pessoais estiver dentro da margem de erro (IC 95%, conservador).
+    // Margem inter-partidária (partido na fronteira de ganhar/perder cadeira
+    // via QE+sobras) não é coberta aqui — mais complexa de comunicar.
     if (totalNominal > 0) {
       for (const p of partidosInput) {
         const cadeiras = cadeirasPorPartido.get(p.partidoId) ?? 0
