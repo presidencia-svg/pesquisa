@@ -27,7 +27,14 @@ export const metadata = {
     'Resultados da Pesquisa Sergipe 2026 realizada pela CDL Aracaju. Registrada no TRE/SE.',
 }
 
-export const dynamic = 'force-dynamic'
+// Cache de 60s — resultado eleitoral nao precisa ser real-time absoluto.
+// No pico de divulgacao (link viralizando), com cache compartilhado a app
+// aguenta 1000+ req/s em vez de 2.4. Trade-off aceitavel: leitor pode ver
+// numero ate 60s desatualizado, mas a apuracao oficial nao muda nesse intervalo.
+//
+// Quando o admin "divulga" / "retira divulgacao", as actions chamam
+// revalidatePath('/resultados') — invalida o cache imediatamente.
+export const revalidate = 60
 
 const VAGAS = { federal: 8, estadual: 24 } as const
 
