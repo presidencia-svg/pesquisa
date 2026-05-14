@@ -179,4 +179,4 @@ Cada diferença foi consciente e tem trade-offs documentados. Os ganhos: **trans
 
 ## Contato
 
-CDL Aracaju — `contato@cdlaju.com.br` | (79) 3211-1500
+CDL Aracaju — `contato@cdlaju.com.br` | (79) 3212-7700

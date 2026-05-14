@@ -6,10 +6,11 @@ Documento interno + anexo do registro PesqEle/TRE.
 ## 1. Identificação do controlador
 
 - **Razão social:** Câmara de Dirigentes Lojistas de Aracaju
-- **CNPJ:** 13.018.260/0001-90
-- **Endereço:** Rua Itabaiana, 47, Centro, Aracaju/SE
+- **CNPJ:** 13.045.935/0001-36
+- **Endereço:** Rua Santa Luzia, 570, São José, Aracaju/SE — CEP 49015-190
 - **Natureza jurídica:** associação civil sem fins lucrativos
-- **Base legal pra existir:** Lei Municipal nº 63 de 1967 (utilidade pública)
+- **Fundação:** 21 de dezembro de 1961 (Estatutos publicados no DOE/SE em 10/05/1962)
+- **Utilidade pública:** Lei Municipal nº 63 de 6 de dezembro de 1967 (Pref. Aracaju, assinada por José Teixeira Machado — documento original reproduzido em *Os 50 Anos do CDL Aracaju*, p. 84)
 
 ## 2. Encarregado pelo Tratamento de Dados (DPO)
 

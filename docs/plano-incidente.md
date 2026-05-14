@@ -34,10 +34,10 @@ Composição **mínima** (todos com atribuições simultâneas):
 
 | Papel | Função | Responsável |
 |---|---|---|
-| **Coordenador** | Decisão final, comunicação externa | Presidente da CDL ou suplente |
+| **Coordenador** | Decisão final, comunicação externa | Elison Vieira Santos do Bomfim (Presidente CDL) — suplente: Milton Arthur Vasconcelos de Andrade Cruz (Vice-Presidente) |
 | **DPO** | Comunicação ANPD + titulares, atendimento jurídico | [NOME DPO] |
 | **Tech Lead** | Diagnóstico técnico, contenção, mitigação | [NOME TÉCNICO] |
-| **Jurídico** | Análise legal, comunicação com TRE/SE | Advogado eleitoralista da CDL |
+| **Jurídico** | Análise legal, comunicação com TRE/SE | Victor Ribeiro Barreto (Diretor de Relações Institucionais e Governamentais) + advogado eleitoralista contratado |
 | **Comunicação** | Notas oficiais para imprensa, redes sociais | Departamento de comunicação |
 
 **Acionamento:** qualquer membro da equipe técnica que **suspeite** de incidente deve comunicar imediatamente o DPO. O DPO **decide em até 1 hora** se aciona o Comitê.

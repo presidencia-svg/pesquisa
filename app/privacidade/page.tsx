@@ -36,9 +36,10 @@ export default function PrivacidadePage() {
             <p className="leading-relaxed">
               <strong>CDL Aracaju</strong> — Câmara de Dirigentes Lojistas
               de Aracaju, associação civil sem fins lucrativos, CNPJ
-              13.018.260/0001-90, com sede na Rua Itabaiana, 47, Centro,
-              Aracaju/SE. Entidade declarada de utilidade pública pela
-              Lei Municipal nº 63 de 1967.
+              13.045.935/0001-36, com sede na Rua Santa Luzia, 570, São
+              José, Aracaju/SE — CEP 49015-190. Fundada em 21 de dezembro
+              de 1961 e declarada entidade de utilidade pública pela Lei
+              Municipal nº 63 de 6 de dezembro de 1967.
             </p>
             <p className="leading-relaxed">
               Esta política descreve como tratamos seus dados pessoais
@@ -346,8 +347,8 @@ export default function PrivacidadePage() {
             </p>
             <ul className="list-none leading-relaxed flex flex-col gap-1 pl-1">
               <li>📧 dpo@cdlaju.com.br</li>
-              <li>📱 WhatsApp institucional: (79) 99999-9999</li>
-              <li>📮 Rua Itabaiana, 47, Centro, Aracaju/SE</li>
+              <li>📞 Telefone institucional: (79) 3212-7700</li>
+              <li>📮 Rua Santa Luzia, 570, São José, Aracaju/SE — CEP 49015-190</li>
             </ul>
             <p className="leading-relaxed">
               Para reclamações sobre tratamento de dados, você também

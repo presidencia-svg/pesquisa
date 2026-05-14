@@ -1,7 +1,7 @@
 # Relatório de Impacto à Proteção de Dados Pessoais (RIPD)
 
 **Pesquisa Sergipe 2026**
-**Controlador:** Câmara de Dirigentes Lojistas de Aracaju (CDL Aracaju) — CNPJ 13.018.260/0001-90
+**Controlador:** Câmara de Dirigentes Lojistas de Aracaju (CDL Aracaju) — CNPJ 13.045.935/0001-36
 **Operação:** Pesquisa eleitoral de intenção de voto para Eleições 2026
 **Data do relatório:** 13 de maio de 2026 · Versão 1.0
 **Elaborado por:** Encarregado pelo Tratamento de Dados Pessoais (DPO)
@@ -20,10 +20,12 @@ Este documento segue o modelo de RIPD recomendado pela Autoridade Nacional de Pr
 ### 1.1 Identificação do Controlador
 
 - **Razão social:** Câmara de Dirigentes Lojistas de Aracaju
-- **CNPJ:** 13.018.260/0001-90
+- **CNPJ:** 13.045.935/0001-36
 - **Natureza jurídica:** Associação civil sem fins lucrativos
-- **Endereço:** Rua Itabaiana, 47, Centro, Aracaju/SE
-- **Representante legal:** [NOME DO PRESIDENTE]
+- **Fundação:** 21 de dezembro de 1961 (Estatutos publicados no Diário Oficial do Estado de Sergipe em 10 de maio de 1962)
+- **Utilidade pública:** Lei Municipal nº 63 de 6 de dezembro de 1967, Prefeitura de Aracaju, assinada pelo Prefeito José Teixeira Machado. Documento original reproduzido em *Os 50 Anos do Clube de Diretores Lojistas de Aracaju* (livro institucional), página 84.
+- **Endereço:** Rua Santa Luzia, 570, São José, Aracaju/SE — CEP 49015-190
+- **Representante legal:** Elison Vieira Santos do Bomfim (Presidente, triênio 2026–2028)
 
 ### 1.2 Identificação do Encarregado (DPO)
 

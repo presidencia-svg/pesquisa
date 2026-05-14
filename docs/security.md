@@ -141,6 +141,6 @@ Atualizar trimestralmente. Vulnerabilidades severity ≥ moderate devem ser corr
 
 Em caso de descoberta de vulnerabilidade, contatar **CDL Aracaju** via:
 - Email: presidencia@cdlaju.com.br
-- WhatsApp institucional: (79) 99999-9999
+- Telefone institucional: (79) 3212-7700
 
 Disclosure responsável: 90 dias entre report e divulgação pública. CDL compromete-se a corrigir vulnerabilidades críticas em até 48h.

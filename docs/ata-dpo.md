@@ -1,8 +1,10 @@
 # Ata de Reunião · Designação do Encarregado pelo Tratamento de Dados Pessoais
 
 **Câmara de Dirigentes Lojistas de Aracaju · CDL Aracaju**
-CNPJ 13.018.260/0001-90
-Rua Itabaiana, 47, Centro, Aracaju/SE
+Associação civil sem fins lucrativos, fundada em 21 de dezembro de 1961
+Entidade de utilidade pública — Lei Municipal nº 63 de 6 de dezembro de 1967
+CNPJ 13.045.935/0001-36
+Rua Santa Luzia, 570, São José, Aracaju/SE — CEP 49015-190
 
 ---
 
@@ -11,10 +13,10 @@ Rua Itabaiana, 47, Centro, Aracaju/SE
 **Data:** ____ de __________ de 2026
 **Hora de início:** ____ h ____ min
 **Hora de encerramento:** ____ h ____ min
-**Local:** Sede da CDL Aracaju · Rua Itabaiana, 47, Centro, Aracaju/SE
+**Local:** Sede da CDL Aracaju · Rua Santa Luzia, 570, São José, Aracaju/SE
 
-**Presidente da reunião:** _________________________________________
-**Secretário(a) ad hoc:** _________________________________________
+**Presidente da reunião:** Elison Vieira Santos do Bomfim — Presidente da CDL Aracaju (triênio 2026–2028)
+**Secretário(a) ad hoc:** Claudimara Fontes Carvalho — 1ª Secretária da Diretoria
 
 **Presentes:** conforme lista de presença anexa.
 
@@ -54,8 +56,8 @@ inscrito(a) no CPF sob o nº ________________________, com vínculo instituciona
 Ficam disponibilizados, como canais de comunicação oficiais do Encarregado, os seguintes meios, que serão amplamente divulgados nos sítios institucionais, na política de privacidade da Pesquisa Sergipe 2026 e em demais documentos:
 
 - **Endereço eletrônico:** dpo@cdlaju.com.br
-- **Telefone / WhatsApp institucional:** (79) _____-_____
-- **Endereço postal:** Rua Itabaiana, 47, Centro, Aracaju/SE — CEP 49010-______
+- **Telefone institucional:** (79) 3212-7700
+- **Endereço postal:** Rua Santa Luzia, 570, São José, Aracaju/SE — CEP 49015-190
 
 ### Art. 3º — Atribuições do Encarregado
 
@@ -112,8 +114,8 @@ Aracaju, ____ de __________ de 2026.
 \
 
 **_________________________________________________________**
-**[NOME COMPLETO DO PRESIDENTE]**
-Presidente da CDL Aracaju
+**ELISON VIEIRA SANTOS DO BOMFIM**
+Presidente da CDL Aracaju (triênio 2026–2028)
 CPF ________________________
 
 \
@@ -121,8 +123,8 @@ CPF ________________________
 \
 
 **_________________________________________________________**
-**[NOME COMPLETO DO(A) SECRETÁRIO(A) AD HOC]**
-Secretário(a) ad hoc
+**CLAUDIMARA FONTES CARVALHO**
+1ª Secretária da Diretoria · Secretária ad hoc desta reunião
 CPF ________________________
 
 \
