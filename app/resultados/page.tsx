@@ -258,9 +258,9 @@ export default async function ResultadosPublicosPage() {
       .sort((a, b) => b.votos - a.votos)
 
     // Projeção de eleitos baseada nos votos atuais (não espera fechar a edição).
-    // Senado é majoritária plurinominal: top 2 por votos = eleitos.
-    // Presidente/governador: 1 vaga, só eleito se top 1 ultrapassa 50% dos
-    // válidos (senão vai pra 2º turno e ninguém é "eleito projetado").
+    // Senado é majoritária plurinominal: top 2 por votos = "estariam eleitos".
+    // Presidente/governador: 1 vaga, só "estaria eleito" se top 1 ultrapassa
+    // 50% dos válidos (senão vai pra 2º turno e ninguém é eleito projetado).
     if (cargoKey === 'senador') {
       for (let i = 0; i < Math.min(2, candidatos.length); i++) {
         if (candidatos[i].votos > 0) candidatos[i].eleito = true
@@ -269,6 +269,28 @@ export default async function ResultadosPublicosPage() {
       const totalValidos = candidatos.reduce((acc, c) => acc + c.votos, 0)
       if (candidatos[0].votos / totalValidos > 0.5) {
         candidatos[0].eleito = true
+      }
+    }
+
+    // Empate técnico: candidatos abaixo do corte cuja margem de erro (IC 95%)
+    // overlap com a margem do candidato na última cadeira. Usa amostra total
+    // do cargo como n. Critério conservador: |pA - pB| <= ME_A + ME_B.
+    if (cargoKey === 'senador' && candidatos.length > 2) {
+      const totalCargo = candidatos.reduce((s, c) => s + c.votos, 0)
+      if (totalCargo > 0) {
+        const cutoff = candidatos[1] // último eleito (posição 2)
+        const pCut = cutoff.votos / totalCargo
+        const meCut = 1.96 * Math.sqrt((pCut * (1 - pCut)) / totalCargo)
+        for (let i = 2; i < candidatos.length; i++) {
+          const cand = candidatos[i]
+          const p = cand.votos / totalCargo
+          const me = 1.96 * Math.sqrt((p * (1 - p)) / totalCargo)
+          if (pCut - p <= meCut + me) {
+            cand.empate = true
+          } else {
+            break // ordenado por votos → ninguém depois pode empatar
+          }
+        }
       }
     }
 

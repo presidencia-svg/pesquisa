@@ -11,7 +11,7 @@
  *   - "Falta fotos" → Avatar com foto_url + fallback iniciais
  *
  * Server passa shape `pesquisa` ja' montado; este componente faz apenas
- * estado de UI (cargo aberto, filtro de eleitos/bolha).
+ * estado de UI (cargo aberto, filtro de eleitos/empate técnico).
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -35,7 +35,10 @@ export type Candidato = {
   votos: number
   foto: string | null
   impedimento: string | null
+  /** Projeção: ficaria eleito se a eleição fosse agora */
   eleito?: boolean
+  /** Empate técnico com o candidato no corte das vagas (margem de erro overlap) */
+  empate?: boolean
   delta?: number
 }
 
@@ -500,16 +503,13 @@ function Detalhe({
   const segundoPct = segundo ? pct(segundo.votos, t.total) : 0
   const dif = liderPct - segundoPct
 
-  const [filtro, setFiltro] = useState<'todos' | 'eleitos' | 'bolha'>('todos')
+  const [filtro, setFiltro] = useState<'todos' | 'eleitos' | 'empate'>('todos')
   const filtrados = useMemo(() => {
     if (filtro === 'todos') return ordered
     if (filtro === 'eleitos') return ordered.filter((c) => c.eleito)
-    if (filtro === 'bolha')
-      return ordered.filter(
-        (_, i) => cargo.vagas && i >= cargo.vagas - 3 && i < cargo.vagas + 5,
-      )
+    if (filtro === 'empate') return ordered.filter((c) => c.empate)
     return ordered
-  }, [filtro, ordered, cargo.vagas])
+  }, [filtro, ordered])
 
   return (
     <article className="rs-detail">
@@ -539,18 +539,22 @@ function Detalhe({
 
       {cargo.vagas ? (
         <div className="rs-filtros">
-          {(['todos', 'eleitos', 'bolha'] as const).map((k) => (
-            <button
-              key={k}
-              type="button"
-              className={`rs-filtro ${filtro === k ? 'is-active' : ''}`}
-              onClick={() => setFiltro(k)}
-            >
-              {k === 'todos' && `Todos (${ordered.length})`}
-              {k === 'eleitos' && `Eleitos (${cargo.vagas})`}
-              {k === 'bolha' && 'Na bolha do corte'}
-            </button>
-          ))}
+          {(['todos', 'eleitos', 'empate'] as const).map((k) => {
+            const qtdEleitos = ordered.filter((c) => c.eleito).length
+            const qtdEmpate = ordered.filter((c) => c.empate).length
+            return (
+              <button
+                key={k}
+                type="button"
+                className={`rs-filtro ${filtro === k ? 'is-active' : ''}`}
+                onClick={() => setFiltro(k)}
+              >
+                {k === 'todos' && `Todos (${ordered.length})`}
+                {k === 'eleitos' && `Estariam eleitos (${qtdEleitos})`}
+                {k === 'empate' && `Empate técnico (${qtdEmpate})`}
+              </button>
+            )
+          })}
         </div>
       ) : null}
 
@@ -685,9 +689,21 @@ function LinhaCandidato({
         <div className="rs-row-line1">
           <span className="rs-row-nome">{c.nome}</span>
           <span className="rs-row-sigla">{c.partido}</span>
-          {vagas && eleito && <span className="rs-tag rs-tag-ok">eleito</span>}
-          {vagas && !eleito && posicao <= vagas + 3 && (
-            <span className="rs-tag rs-tag-near">na bolha</span>
+          {vagas && eleito && (
+            <span
+              className="rs-tag rs-tag-ok"
+              title="Projeção: estaria eleito se a eleição fosse agora"
+            >
+              estaria eleito
+            </span>
+          )}
+          {vagas && !eleito && c.empate && (
+            <span
+              className="rs-tag rs-tag-near"
+              title="Diferença para o corte das vagas está dentro da margem de erro"
+            >
+              empate técnico
+            </span>
           )}
           {c.impedimento && (
             <span className="rs-tag rs-tag-warn">sub judice</span>
