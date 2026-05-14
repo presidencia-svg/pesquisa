@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 
 import { setAdminSessao, verificarSenha } from '@/lib/admin-auth'
 import { SERVER_ENV } from '@/lib/env'
+import { checarRateLimit } from '@/lib/rate-limit'
 import { verifyTotp } from '@/lib/totp'
 
 export type LoginState = { ok: boolean; message?: string }
@@ -14,6 +15,23 @@ export async function entrarAdmin(
 ): Promise<LoginState> {
   const senha = String(formData.get('senha') ?? '')
   const codigo = String(formData.get('codigo') ?? '').replace(/\s/g, '')
+
+  // Rate limit por IP — critico. Sem isso, ataque ao TOTP (10^6 com
+  // janela de 90s) so' precisa de senha admin pra ficar viavel em
+  // ~14min. Com 5 tentativas / 15min, o ataque mais rapido seria de
+  // 1.000.000 / 5 * 15min = 5.700 anos. RESISTENTE.
+  const rl = await checarRateLimit({
+    acao: 'admin_login',
+    max: 5,
+    janelaMin: 15,
+  })
+  if (!rl.ok) {
+    return {
+      ok: false,
+      message:
+        'Muitas tentativas de login. Aguarde 15 minutos e tente novamente.',
+    }
+  }
 
   // Pequeno atraso constante pra dificultar timing attacks de fora,
   // alem do timingSafeEqual interno. ~50ms eh aceitavel pro UX.
