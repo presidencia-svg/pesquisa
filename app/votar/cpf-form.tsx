@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import Script from 'next/script'
 import { useActionState, useState } from 'react'
 
@@ -19,6 +20,7 @@ const initialState: VotarFormState = { ok: true }
 export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
   const [state, formAction, pending] = useActionState(entrarComCpf, initialState)
   const [cpfDisplay, setCpfDisplay] = useState('')
+  const [consentido, setConsentido] = useState(false)
 
   const showTurnstile =
     typeof turnstileSiteKey === 'string' && turnstileSiteKey.length > 0
@@ -78,9 +80,38 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
           </p>
         ) : null}
 
+        <label className="flex items-start gap-3 text-sm text-foreground border border-border rounded-md px-4 py-3 bg-muted/40 cursor-pointer hover:bg-muted/60 transition">
+          <input
+            type="checkbox"
+            name="consentimento"
+            required
+            checked={consentido}
+            onChange={(e) => setConsentido(e.target.checked)}
+            className="mt-0.5 w-4 h-4 flex-none"
+          />
+          <span className="leading-snug">
+            Li e concordo com a{' '}
+            <Link
+              href="/privacidade"
+              target="_blank"
+              className="text-primary underline font-medium"
+            >
+              Política de Privacidade
+            </Link>
+            . Autorizo a CDL Aracaju a tratar meu CPF, WhatsApp,
+            município e dados demográficos para validação de identidade
+            e ponderação amostral, conforme Lei 13.709/2018 (LGPD) e
+            Resolução TSE 23.747/2026.
+          </span>
+        </label>
+
         <button
           type="submit"
-          disabled={pending || cpfDisplay.replace(/\D/g, '').length !== 11}
+          disabled={
+            pending ||
+            cpfDisplay.replace(/\D/g, '').length !== 11 ||
+            !consentido
+          }
           className="h-14 px-6 rounded-md bg-primary text-primary-foreground font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition"
         >
           {pending ? 'Validando…' : 'Continuar'}
@@ -88,7 +119,12 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
 
         <p className="text-xs text-muted-foreground">
           Seu CPF é validado e armazenado apenas como um código embaralhado
-          (hash). O número original nunca fica gravado.
+          (hash). O número original nunca fica gravado. Você pode pedir
+          exclusão dos seus dados a qualquer momento em{' '}
+          <Link href="/privacidade/excluir" className="text-primary hover:underline">
+            /privacidade/excluir
+          </Link>
+          .
         </p>
       </form>
     </>
