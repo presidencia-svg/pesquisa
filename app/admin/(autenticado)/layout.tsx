@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import { MarcaCdl } from '@/components/marca-cdl'
+import { TreinamentoLgpd } from '@/components/treinamento-lgpd'
 import { requireAdmin } from '@/lib/admin-auth'
 
 import { SairButton } from './sair-button'
@@ -67,6 +68,8 @@ export default async function AdminLayout({
 
         <main className="flex-1 min-w-0">{children}</main>
       </div>
+
+      <TreinamentoLgpd />
     </div>
   )
 }
