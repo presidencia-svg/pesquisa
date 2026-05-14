@@ -347,6 +347,7 @@
     .rs-tag-warn { color: #a16207; background: #fffbeb; border-color: #fde68a; }
     .rs-tag-near { color: var(--muted-foreground); background: var(--muted); border-color: var(--border); }
     .rs-tag-suplente { color: #1e40af; background: #eff6ff; border-color: #bfdbfe; text-transform: none; letter-spacing: 0; }
+    .rs-tag-2turno { color: #7c2d12; background: #fff7ed; border-color: #fed7aa; }
 
     /* Avatar */
     .avatar {

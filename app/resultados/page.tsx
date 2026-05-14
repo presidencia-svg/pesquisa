@@ -259,8 +259,8 @@ export default async function ResultadosPublicosPage() {
 
     // Projeção de eleitos baseada nos votos atuais (não espera fechar a edição).
     // Senado é majoritária plurinominal: top 2 por votos = "estariam eleitos".
-    // Presidente/governador: 1 vaga, só "estaria eleito" se top 1 ultrapassa
-    // 50% dos válidos (senão vai pra 2º turno e ninguém é eleito projetado).
+    // Presidente/governador: 1 vaga. Se top 1 > 50% dos válidos = 1º turno.
+    // Senão, top 1 e top 2 vão pro 2º turno (CF art. 77 §3º e art. 28).
     if (cargoKey === 'senador') {
       for (let i = 0; i < Math.min(2, candidatos.length); i++) {
         if (candidatos[i].votos > 0) candidatos[i].eleito = true
@@ -269,6 +269,11 @@ export default async function ResultadosPublicosPage() {
       const totalValidos = candidatos.reduce((acc, c) => acc + c.votos, 0)
       if (candidatos[0].votos / totalValidos > 0.5) {
         candidatos[0].eleito = true
+      } else {
+        // Ninguém ganhou no 1º turno — top 2 vão pro 2º
+        for (let i = 0; i < Math.min(2, candidatos.length); i++) {
+          if (candidatos[i].votos > 0) candidatos[i].segundoTurno = true
+        }
       }
     }
 

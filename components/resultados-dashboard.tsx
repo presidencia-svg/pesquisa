@@ -41,6 +41,8 @@ export type Candidato = {
   empate?: boolean
   /** Posição na fila de suplentes do partido (1, 2, 3...). Só pra proporcional, em partido que ganhou cadeira. */
   suplente?: number
+  /** Pres/Gov: candidato vai pro 2º turno (top 1 e top 2 quando ninguém atingiu 50%) */
+  segundoTurno?: boolean
   delta?: number
 }
 
@@ -696,12 +698,24 @@ function LinhaCandidato({
         <div className="rs-row-line1">
           <span className="rs-row-nome">{c.nome}</span>
           <span className="rs-row-sigla">{c.partido}</span>
-          {vagas && eleito && (
+          {eleito && (
             <span
               className="rs-tag rs-tag-ok"
-              title="Projeção: estaria eleito se a eleição fosse agora"
+              title={
+                vagas
+                  ? 'Projeção: estaria eleito se a eleição fosse agora'
+                  : 'Projeção: estaria eleito no 1º turno (acima de 50% dos válidos)'
+              }
             >
-              estaria eleito
+              {vagas ? 'estaria eleito' : 'estaria eleito no 1º turno'}
+            </span>
+          )}
+          {!eleito && c.segundoTurno && (
+            <span
+              className="rs-tag rs-tag-2turno"
+              title="Projeção: nenhum candidato atingiu 50% dos válidos — top 2 vão pro 2º turno"
+            >
+              vai pro 2º turno
             </span>
           )}
           {vagas && !eleito && c.empate && (
