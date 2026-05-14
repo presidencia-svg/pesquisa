@@ -221,6 +221,14 @@ Antes de publicar qualquer corte (ex.: "intenção de voto entre mulheres de 25-
 - [ ] Revisão jurídica do questionário e da página `/transparencia`.
 - [ ] Auditoria do código pelo time da CDL antes do piloto.
 - [ ] Backup do banco automatizado antes da abertura da coleta.
+- [ ] **Federações partidárias** (Lei 14.208/21): adicionar suporte
+      no schema (`federacoes` + `partidos.federacao_id`), ajustar
+      `lib/projecao.ts` pra somar votos da federação como uma unidade
+      antes do D'Hondt, atualizar UI pra "Nº suplente da Federação X
+      (Partido Y)". **Adiar até as federações de 2026 estarem
+      registradas no TSE e a nova resolução estar publicada** — em
+      05/2026 o registro ainda está aberto e a composição de cada
+      federação pode mudar.
 
 ---
 
