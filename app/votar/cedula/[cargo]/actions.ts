@@ -76,6 +76,16 @@ export async function submeterVoto(
   if (!compararHashes(tokenReg.token_hash, tokenHash)) {
     return { ok: false, message: 'Cápsula inválida. Volte ao início.' }
   }
+  // Defense in depth: cookie que sobreviveu apos clearVotoToken (ex.:
+  // backup do browser, atacante com acesso fisico ao device antes do
+  // fim da capsula) tentando re-votar. Sem essa checagem, o token usado
+  // ainda passaria no lookup e a defesa caia em contagem-por-cargo.
+  if (tokenReg.usado) {
+    return {
+      ok: false,
+      message: 'Esta cápsula já foi usada. Você já votou nesta edição.',
+    }
+  }
   const edicaoId = tokenReg.edicao_id
 
   // 2. Conta votos ja emitidos por este token neste cargo

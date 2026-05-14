@@ -141,14 +141,34 @@ export async function validarOtp(
 
   // 3. CODIGO VALIDO — vamos atravessar a ponte.
 
-  // 3a. Marca o codigo como consumido.
-  const { error: errMark } = await db
+  // 3a. Marca o codigo como consumido COM CHECK DE RACE.
+  //
+  // Usar UPDATE ... WHERE validado=false e checar rowsAffected eh um
+  // compare-and-swap atomico do Postgres. Se 2 requests simultaneas
+  // chegarem com o mesmo OTP correto, so' UMA consegue passar daqui —
+  // a outra recebera 0 linhas atualizadas e sera abortada antes de
+  // gerar um segundo token pro mesmo CPF.
+  //
+  // SEM esse check, o atacante que intercepta o OTP pode fazer 2 POSTs
+  // simultaneos e ganhar 2 tokens validos pra votar 2x.
+  const { data: marcados, error: errMark } = await db
     .from('whatsapp_codigos')
     .update({ validado: true })
     .eq('id', otp.id)
+    .eq('validado', false)
+    .select('id')
   if (errMark) {
     console.error('[otp] erro marcando codigo validado:', errMark)
     return { ok: false, message: 'Erro de sistema. Tente novamente.' }
+  }
+  if (!marcados || marcados.length === 0) {
+    // Outra request paralela ja' consumiu este OTP. Aborta antes
+    // de gerar token duplicado.
+    return {
+      ok: false,
+      message:
+        'Este código já foi usado. Solicite um novo se ainda quiser participar.',
+    }
   }
 
   // 3b. Marca o eleitor como WhatsApp-validado.
