@@ -257,6 +257,21 @@ export default async function ResultadosPublicosPage() {
       })
       .sort((a, b) => b.votos - a.votos)
 
+    // Projeção de eleitos baseada nos votos atuais (não espera fechar a edição).
+    // Senado é majoritária plurinominal: top 2 por votos = eleitos.
+    // Presidente/governador: 1 vaga, só eleito se top 1 ultrapassa 50% dos
+    // válidos (senão vai pra 2º turno e ninguém é "eleito projetado").
+    if (cargoKey === 'senador') {
+      for (let i = 0; i < Math.min(2, candidatos.length); i++) {
+        if (candidatos[i].votos > 0) candidatos[i].eleito = true
+      }
+    } else if (candidatos.length > 0 && candidatos[0].votos > 0) {
+      const totalValidos = candidatos.reduce((acc, c) => acc + c.votos, 0)
+      if (candidatos[0].votos / totalValidos > 0.5) {
+        candidatos[0].eleito = true
+      }
+    }
+
     const bns = brancoNaoSei[cargoKey] ?? { branco: 0, nao_sabe: 0 }
     if (candidatos.length === 0 && bns.branco === 0 && bns.nao_sabe === 0) {
       return null
