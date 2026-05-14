@@ -175,19 +175,10 @@ export async function submeterVoto(
         }
         if (candFedEst) {
           candidatoId = candFedEst.id
-          console.log('[voto-fed-est] candidato resolvido:', {
-            cargo,
-            numero,
-            candidato_id: candFedEst.id,
-            nome: candFedEst.nome_urna,
-          })
-        } else {
-          console.log('[voto-fed-est] candidato nao encontrado:', {
-            cargo,
-            numero,
-            partido_id: partidoId,
-          })
         }
+        // Nao logamos sucesso/falha do lookup pra nao vazar
+        // (numero digitado + candidato_id) nos logs do servidor —
+        // permitiria correlacao com eleitores_pesquisa via timestamp.
       }
 
       // Pra senador (2 vagas): nao deixa votar 2x no mesmo candidato

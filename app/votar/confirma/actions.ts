@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { gerarOtp, hashOtp } from '@/lib/crypto'
 import { DEV_MODE } from '@/lib/env'
 import { enviarOtpWhatsApp, metaWhatsappConfigurada } from '@/lib/meta-whatsapp'
+import { checarRateLimit } from '@/lib/rate-limit'
 import { getPreVoto, setPreVoto } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
@@ -89,6 +90,18 @@ export async function confirmarDados(
   const xff = h.get('x-forwarded-for')
   const ip = xff ? (xff.split(',')[0]?.trim() ?? null) : null
   const userAgent = h.get('user-agent') ?? null
+
+  // Rate limit: max 5 envios de OTP por IP / 15min. Protege contra
+  // bot que tentaria spammear WhatsApps de CPFs reais (custo Meta +
+  // incomodo ao eleitor titular).
+  const rl = await checarRateLimit({
+    acao: 'otp_enviar',
+    max: 5,
+    janelaMin: 15,
+  })
+  if (!rl.ok) {
+    return { ok: false, message: rl.message }
+  }
 
   const db = supabaseAdmin()
 

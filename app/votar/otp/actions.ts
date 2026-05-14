@@ -12,6 +12,7 @@ import {
 } from '@/lib/crypto'
 import { DEV_MODE } from '@/lib/env'
 import { enviarOtpWhatsApp, metaWhatsappConfigurada } from '@/lib/meta-whatsapp'
+import { checarRateLimit } from '@/lib/rate-limit'
 import {
   clearPreVoto,
   getPreVoto,
@@ -65,6 +66,18 @@ export async function validarOtp(
       ok: false,
       message: parsed.error.issues[0]?.message ?? 'Código inválido.',
     }
+  }
+
+  // Rate limit: max 15 validacoes de OTP por IP / 15min.
+  // O bruteforce ja' tem TENTATIVAS_MAX=3 por codigo; isso eh defesa
+  // adicional contra rotacao de CPF/codigos por bot.
+  const rl = await checarRateLimit({
+    acao: 'otp_validar',
+    max: 15,
+    janelaMin: 15,
+  })
+  if (!rl.ok) {
+    return { ok: false, message: rl.message }
   }
 
   const codigoDigitado = parsed.data
