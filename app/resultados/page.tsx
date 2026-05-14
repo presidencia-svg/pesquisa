@@ -428,6 +428,39 @@ export default async function ResultadosPublicosPage() {
       })
       .sort((a, b) => b.votos - a.votos)
 
+    // Empate técnico INTRA-PARTIDO: na proporcional, a cadeira do partido vai
+    // pro candidato mais votado dentro do partido. Os imediatos abaixo do
+    // último eleito do mesmo partido podem ultrapassá-lo se a diferença de
+    // votos pessoais estiver dentro da margem de erro (IC 95%, conservador).
+    // Margem inter-partidária (partido na fronteira de ganhar/perder cadeira
+    // via QE+sobras) não é coberta aqui — mais complexa de comunicar.
+    const totalNominal = candidatos.reduce((s, c) => s + c.votos, 0)
+    const cadeirasPorPartido = new Map(
+      projecao.partidos.map((p) => [p.partidoId, p.cadeirasTotal]),
+    )
+    if (totalNominal > 0) {
+      for (const p of partidosInput) {
+        const cadeiras = cadeirasPorPartido.get(p.partidoId) ?? 0
+        if (cadeiras === 0) continue
+        const candsPartido = [...p.candidatos].sort((a, b) => b.votos - a.votos)
+        const ultimoEleito = candsPartido[cadeiras - 1]
+        if (!ultimoEleito || ultimoEleito.votos === 0) continue
+        const pCut = ultimoEleito.votos / totalNominal
+        const meCut = 1.96 * Math.sqrt((pCut * (1 - pCut)) / totalNominal)
+        for (let i = cadeiras; i < candsPartido.length; i++) {
+          const c = candsPartido[i]
+          const pC = c.votos / totalNominal
+          const meC = 1.96 * Math.sqrt((pC * (1 - pC)) / totalNominal)
+          if (pCut - pC <= meCut + meC) {
+            const found = candidatos.find((x) => x.id === c.candidatoId)
+            if (found) found.empate = true
+          } else {
+            break
+          }
+        }
+      }
+    }
+
     const bns = brancoNaoSei[cargoKey] ?? { branco: 0, nao_sabe: 0 }
     if (
       candidatos.every((c) => c.votos === 0) &&
