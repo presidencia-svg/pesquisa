@@ -1,5 +1,7 @@
 'use client'
 
+import { BiografiaModal } from './biografia-modal'
+
 /**
  * Dashboard publico de resultados — overview cards + drill-down.
  *
@@ -520,6 +522,10 @@ function Detalhe({
     return ordered
   }, [filtro, ordered])
 
+  const [bioOpen, setBioOpen] = useState<{ nome: string; partido: string } | null>(
+    null,
+  )
+
   return (
     <article className="rs-detail">
       <div className="rs-detail-head">
@@ -576,9 +582,18 @@ function Detalhe({
             totalVal={t.total}
             vagas={cargo.vagas}
             totalLista={ordered.length}
+            onAbrirBio={() => setBioOpen({ nome: c.nome, partido: c.partido })}
           />
         ))}
       </div>
+
+      {bioOpen && (
+        <BiografiaModal
+          nome={bioOpen.nome}
+          partido={bioOpen.partido}
+          onClose={() => setBioOpen(null)}
+        />
+      )}
 
       <Totais t={t} />
 
@@ -680,12 +695,14 @@ function LinhaCandidato({
   totalVal,
   vagas,
   totalLista,
+  onAbrirBio,
 }: {
   c: Candidato
   posicao: number
   totalVal: number
   vagas?: number
   totalLista: number
+  onAbrirBio?: () => void
 }) {
   const p = pct(c.votos, totalVal)
   const barColor = rankColor((posicao || 1) - 1, totalLista || 10)
@@ -696,7 +713,21 @@ function LinhaCandidato({
       <Avatar nome={c.nome} foto={c.foto} size={44} />
       <div className="rs-row-body">
         <div className="rs-row-line1">
-          <span className="rs-row-nome">{c.nome}</span>
+          {onAbrirBio ? (
+            <button
+              type="button"
+              onClick={onAbrirBio}
+              className="rs-row-nome rs-row-nome-btn"
+              title="Ver biografia"
+            >
+              {c.nome}
+              <span className="rs-bio-icon" aria-hidden="true">
+                ⓘ
+              </span>
+            </button>
+          ) : (
+            <span className="rs-row-nome">{c.nome}</span>
+          )}
           <span className="rs-row-sigla">{c.partido}</span>
           {eleito && (
             <span

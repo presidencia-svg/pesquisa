@@ -314,6 +314,17 @@
     .rs-row-line1 { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .rs-row-nome { font-size: 14px; font-weight: 600; }
     .rs-row.is-compact .rs-row-nome { font-size: 13px; }
+    .rs-row-nome-btn {
+      background: none; border: 0; padding: 0; cursor: pointer;
+      color: inherit; font: inherit; text-align: left;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .rs-row-nome-btn:hover { color: var(--primary); }
+    .rs-bio-icon {
+      font-size: 11px; color: var(--muted-foreground);
+      opacity: .55; transition: opacity .15s;
+    }
+    .rs-row-nome-btn:hover .rs-bio-icon { opacity: 1; color: var(--primary); }
     .rs-row-sigla {
       display: inline-flex; align-items: center; gap: 5px;
       font-size: 10px; font-weight: 600; color: var(--muted-foreground);
@@ -417,3 +428,50 @@
     .rs-footer-links a:hover { color: #fff; }
     .rs-footer-meta { grid-column: 1 / -1; font-size: 11px; color: #6b7280; line-height: 1.7; padding-top: 20px; border-top: 1px solid #1f2937; margin: 0; }
 
+
+    /* ─── Biografia modal ─── */
+    .bio-overlay {
+      position: fixed; inset: 0; z-index: 60;
+      background: rgba(10,20,40,.55);
+      display: flex; align-items: center; justify-content: center;
+      padding: 16px; backdrop-filter: blur(4px);
+      animation: bio-fade .15s ease-out;
+    }
+    @keyframes bio-fade { from { opacity: 0; } to { opacity: 1; } }
+    .bio-card {
+      background: var(--background); color: var(--foreground);
+      border-radius: 16px; box-shadow: var(--shadow-lg);
+      max-width: 540px; width: 100%; max-height: 90vh; overflow: auto;
+      display: flex; flex-direction: column;
+    }
+    .bio-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 24px 24px 16px; gap: 16px; border-bottom: 1px solid var(--border-soft);
+    }
+    .bio-kicker { font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .2em; color: var(--muted-foreground); margin: 0 0 4px; }
+    .bio-title { font-size: 22px; font-weight: 800; letter-spacing: -.01em; margin: 0; }
+    .bio-partido { font-size: 13px; color: var(--muted-foreground); margin: 4px 0 0; }
+    .bio-close {
+      background: transparent; border: 0; font-size: 28px; line-height: 1;
+      color: var(--muted-foreground); cursor: pointer; padding: 0 4px;
+    }
+    .bio-close:hover { color: var(--foreground); }
+    .bio-body { padding: 20px 24px 24px; }
+    .bio-loading, .bio-empty { color: var(--muted-foreground); font-size: 14px; margin: 0; }
+    .bio-thumb {
+      float: right; margin: 0 0 12px 16px; border-radius: 10px;
+      object-fit: cover; border: 1px solid var(--border);
+    }
+    .bio-extrato { font-size: 14px; line-height: 1.65; margin: 0 0 16px; }
+    .bio-link {
+      display: inline-block; color: var(--primary); font-size: 13px;
+      font-weight: 600; text-decoration: none;
+    }
+    .bio-link:hover { text-decoration: underline; }
+    .bio-fonte {
+      clear: both; margin: 20px 0 0; padding-top: 12px;
+      border-top: 1px solid var(--border-soft);
+      font-size: 11px; color: var(--muted-foreground);
+    }
+    .bio-fonte a { color: var(--muted-foreground); }
