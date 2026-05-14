@@ -27,14 +27,22 @@ export const metadata = {
     'Resultados da Pesquisa Sergipe 2026 realizada pela CDL Aracaju. Registrada no TRE/SE.',
 }
 
-// Cache de 60s — resultado eleitoral nao precisa ser real-time absoluto.
-// No pico de divulgacao (link viralizando), com cache compartilhado a app
-// aguenta 1000+ req/s em vez de 2.4. Trade-off aceitavel: leitor pode ver
-// numero ate 60s desatualizado, mas a apuracao oficial nao muda nesse intervalo.
+// Cache de 15s — equilibrio entre freshness e capacidade.
+//
+// Projeção de carga (cenario 500k votantes em 36h):
+//   - Pico de leitura /resultados (pos-divulgacao, link viralizando):
+//     10k-100k req/min = 167-1666 req/s
+//   - Sem cache: ~2 req/s (estoura em segundos)
+//   - Cache 60s: 1 miss/min, ~1000+ req/s hot
+//   - Cache 15s: 4 misses/min (=2.8s Lambda/min), ~1000+ req/s hot
+//
+// 15s da' freshness razoavel (resultado atualizado 4x/min) sem
+// comprometer capacidade. Em 36h de pesquisa: 4 misses × 60 × 36 =
+// 8.640 invocacoes do Lambda total — Supabase nem sente.
 //
 // Quando o admin "divulga" / "retira divulgacao", as actions chamam
 // revalidatePath('/resultados') — invalida o cache imediatamente.
-export const revalidate = 60
+export const revalidate = 15
 
 const VAGAS = { federal: 8, estadual: 24 } as const
 
