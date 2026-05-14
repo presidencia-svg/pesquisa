@@ -705,8 +705,22 @@ function formatarData(iso: string | null): string {
   })
 }
 
+/**
+ * Margem de erro (IC 95%) usando o pior caso p=0.5: 1.96 * sqrt(0.25/n).
+ *
+ * Mostra o número real sempre que houver ao menos 1 respondente — o "—"
+ * só aparece quando a edição ainda não recebeu nada (n=0). Com n pequeno
+ * o número fica grande (ex.: n=13 → ±27pp), o que é honesto: a margem
+ * cresce quando a amostra é pouca, e o painel deixa isso explícito em
+ * vez de esconder atrás de um placeholder enigmático.
+ *
+ * Para uso estatístico rigoroso com proporções, a normalidade só vale
+ * com n*p ≥ 10 e n*(1-p) ≥ 10. Para a divulgação ao público, usar a
+ * fórmula mesmo com n menor é prática comum (TSE, IBOPE, Datafolha)
+ * e é melhor que ocultar o número.
+ */
 function calcularMargem(n: number): string {
-  if (n < 30) return '±—'
+  if (n <= 0) return '±—'
   const margem = (1.96 * Math.sqrt(0.25 / n) * 100).toFixed(1)
   return `±${margem}pp`
 }
