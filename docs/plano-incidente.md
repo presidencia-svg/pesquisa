@@ -35,17 +35,18 @@ Composição **mínima** (todos com atribuições simultâneas):
 | Papel | Função | Responsável |
 |---|---|---|
 | **Coordenador** | Decisão final, comunicação externa | Elison Vieira Santos do Bomfim (Presidente CDL) — suplente: Milton Arthur Vasconcelos de Andrade Cruz (Vice-Presidente) |
-| **DPO** | Comunicação ANPD + titulares, atendimento jurídico | [NOME DPO] |
-| **Tech Lead** | Diagnóstico técnico, contenção, mitigação | [NOME TÉCNICO] |
+| **DPO** | Comunicação ANPD + titulares, atendimento jurídico | Claudimara Fontes Carvalho (Diretora Secretária) — suplente: Verônica Castro Pedreira Peixoto (Diretora Administrativa e Financeira) |
+| **Tech Lead** | Diagnóstico técnico, contenção, mitigação | [PENDENTE — a designar pelo Coordenador antes do início da coleta em set/2026] |
 | **Jurídico** | Análise legal, comunicação com TRE/SE | Victor Ribeiro Barreto (Diretor de Relações Institucionais e Governamentais) + advogado eleitoralista contratado |
 | **Comunicação** | Notas oficiais para imprensa, redes sociais | Departamento de comunicação |
 
 **Acionamento:** qualquer membro da equipe técnica que **suspeite** de incidente deve comunicar imediatamente o DPO. O DPO **decide em até 1 hora** se aciona o Comitê.
 
 **Canais de acionamento (24/7):**
-- WhatsApp do DPO: (79) _____-_____
-- WhatsApp do Presidente: (79) _____-_____
+- WhatsApp do DPO (Claudimara): (79) 98115-5558
+- WhatsApp do Presidente (Elison): [PENDENTE — número pessoal 24/7 será cadastrado antes da coleta]
 - Email: dpo@cdlaju.com.br (monitorado nos dias úteis; em emergência usar WhatsApp)
+- Telefone institucional CDL Aracaju (horário comercial): (79) 3212-7700
 
 ---
 
@@ -265,13 +266,14 @@ Resultados dos drills atualizam este documento.
 
 - **Não temos hoje** monitoramento ativo 24/7 (Sentry, PagerDuty, etc). Detecção depende de admin ver alerta ou titular comunicar. **Pendente**: instalar Sentry pra `app/votar/**` antes do lançamento.
 - **Backup off-site não implementado** (apenas Supabase 7 dias). Em caso de ransomware do Supabase, perda de até 7 dias.
-- **CRI não tem ainda nomes preenchidos** — pendência administrativa.
+- **Tech Lead do CRI ainda a designar** — pendência administrativa, prazo set/2026 (início da coleta).
+- **WhatsApp 24/7 pessoal do Presidente** ainda a cadastrar — pendência administrativa.
 
 ---
 
 ## 13. Aprovação e revisão
 
-**Aprovado pela Diretoria em:** ____ / ____ / 2026 — Ata nº _____
+**Aprovado pela Diretoria em:** 26/05/2026 — Ata nº 001/2026-EXT
 
 | Versão | Data | Mudanças |
 |---|---|---|

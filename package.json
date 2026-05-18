@@ -11,7 +11,8 @@
     "import:fotos": "tsx scripts/importar-fotos-candidatos.ts",
     "totp:setup": "tsx scripts/gerar-totp-secret.ts",
     "spc:test": "tsx scripts/testar-spc.ts",
-    "simular": "tsx scripts/simular-votos.ts"
+    "simular": "tsx scripts/simular-votos.ts",
+    "ata:build": "node scripts/build-ata-dpo.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.3",

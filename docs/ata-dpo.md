@@ -10,10 +10,11 @@ Rua Santa Luzia, 570, São José, Aracaju/SE — CEP 49015-190
 
 ## Reunião Extraordinária da Diretoria
 
-**Data:** ____ de __________ de 2026
-**Hora de início:** ____ h ____ min
-**Hora de encerramento:** ____ h ____ min
-**Local:** Sede da CDL Aracaju · Rua Santa Luzia, 570, São José, Aracaju/SE
+**Ata nº:** 001/2026-EXT
+**Data:** 26 de maio de 2026
+**Hora de início:** 07h30
+**Hora de encerramento:** 09h30
+**Local:** Hotel Vidam, Aracaju/SE
 
 **Presidente da reunião:** Elison Vieira Santos do Bomfim — Presidente da CDL Aracaju (triênio 2026–2028)
 **Secretário(a) ad hoc:** Claudimara Fontes Carvalho — 1ª Secretária da Diretoria
@@ -48,8 +49,7 @@ A Diretoria da Câmara de Dirigentes Lojistas de Aracaju, por **unanimidade**, c
 
 ### Art. 1º — Designação
 
-Fica designado(a) **Sr(a). _____________________________________________________**,
-inscrito(a) no CPF sob o nº ________________________, com vínculo institucional de ____________________________ na CDL Aracaju, como **Encarregado pelo Tratamento de Dados Pessoais (DPO)**, na forma do art. 41 da Lei nº 13.709/2018 (LGPD).
+Fica designada **Sra. Claudimara Fontes Carvalho**, inscrita no CPF sob o nº **936.060.105-59**, com vínculo institucional de **Diretora Secretária (1ª Secretária)** da CDL Aracaju, como **Encarregada pelo Tratamento de Dados Pessoais (DPO)**, na forma do art. 41 da Lei nº 13.709/2018 (LGPD).
 
 ### Art. 2º — Canal de comunicação
 
@@ -57,6 +57,7 @@ Ficam disponibilizados, como canais de comunicação oficiais do Encarregado, os
 
 - **Endereço eletrônico:** dpo@cdlaju.com.br
 - **Telefone institucional:** (79) 3212-7700
+- **WhatsApp 24/7 do(a) Encarregado(a):** (79) 98115-5558 (uso restrito a acionamento em incidente de segurança da informação)
 - **Endereço postal:** Rua Santa Luzia, 570, São José, Aracaju/SE — CEP 49015-190
 
 ### Art. 3º — Atribuições do Encarregado
@@ -89,7 +90,7 @@ A presente designação produz efeitos a partir da data de sua aprovação, com 
 
 ### Art. 6º — Substituição temporária
 
-Em caso de impedimento temporário do Encarregado titular (férias, licença, viagem), fica designado(a) como suplente o(a) Sr(a). __________________________________________, inscrito(a) no CPF sob o nº ________________________.
+Em caso de impedimento temporário da Encarregada titular (férias, licença, viagem, vacância), fica designada como suplente a **Sra. Verônica Castro Pedreira Peixoto**, inscrita no CPF sob o nº **791.134.195-87**, Diretora Administrativa e Financeira da CDL Aracaju.
 
 ### Art. 7º — Publicidade
 
@@ -107,7 +108,7 @@ III — anexada ao registro da pesquisa junto ao TRE/SE no sistema PesqEle.
 
 Nada mais havendo a tratar, foi lavrada a presente ata que, lida e aprovada, vai assinada pelos presentes.
 
-Aracaju, ____ de __________ de 2026.
+Aracaju, 26 de maio de 2026.
 
 \
 
@@ -116,7 +117,7 @@ Aracaju, ____ de __________ de 2026.
 **_________________________________________________________**
 **ELISON VIEIRA SANTOS DO BOMFIM**
 Presidente da CDL Aracaju (triênio 2026–2028)
-CPF ________________________
+CPF 776.463.555-34
 
 \
 
@@ -125,16 +126,16 @@ CPF ________________________
 **_________________________________________________________**
 **CLAUDIMARA FONTES CARVALHO**
 1ª Secretária da Diretoria · Secretária ad hoc desta reunião
-CPF ________________________
+CPF 936.060.105-59
 
 \
 
 \
 
 **_________________________________________________________**
-**[NOME COMPLETO DO(A) ENCARREGADO(A) — DPO]**
-Encarregado(a) pelo Tratamento de Dados Pessoais
-CPF ________________________
+**CLAUDIMARA FONTES CARVALHO**
+Encarregada pelo Tratamento de Dados Pessoais (DPO)
+CPF 936.060.105-59
 *declara ciência e aceite da designação*
 
 ---

@@ -29,10 +29,12 @@ Este documento segue o modelo de RIPD recomendado pela Autoridade Nacional de Pr
 
 ### 1.2 Identificação do Encarregado (DPO)
 
-- **Nome:** [NOME DO DPO]
-- **CPF:** [CPF DO DPO]
-- **Contato:** dpo@cdlaju.com.br
-- **Designação formal:** Ata de Reunião Extraordinária da Diretoria de [DATA] (ver `docs/ata-dpo.docx`)
+- **Nome:** Claudimara Fontes Carvalho
+- **CPF:** 936.060.105-59
+- **Vínculo:** Diretora Secretária (1ª Secretária) da CDL Aracaju, triênio 2026–2028
+- **Contato:** dpo@cdlaju.com.br · (79) 3212-7700 · WhatsApp 24/7 (79) 98115-5558
+- **Suplente:** Verônica Castro Pedreira Peixoto — CPF 791.134.195-87 — Diretora Administrativa e Financeira
+- **Designação formal:** Ata de Reunião Extraordinária da Diretoria nº 001/2026-EXT, de 26 de maio de 2026 (ver `docs/ata-dpo.docx`)
 
 ### 1.3 Operadores (terceiros que tratam dados em nosso nome)
 
@@ -234,11 +236,11 @@ A operação de tratamento de dados pessoais conduzida pela Pesquisa Sergipe 202
 
 ## 7. Aprovação e revisão
 
-**Elaborado por:** [NOME DO DPO]
-**Data:** ____ / ____ / 2026
+**Elaborado por:** Claudimara Fontes Carvalho (DPO)
+**Data:** 26/05/2026
 
 **Aprovado por:** Diretoria da CDL Aracaju
-**Em reunião de:** ____ / ____ / 2026 — Ata nº _____
+**Em reunião de:** 26/05/2026 — Ata nº 001/2026-EXT
 
 ### Cronograma de revisão
 

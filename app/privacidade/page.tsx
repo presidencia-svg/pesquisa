@@ -342,8 +342,11 @@ export default function PrivacidadePage() {
               9. Encarregado de Dados (DPO)
             </h2>
             <p className="leading-relaxed">
-              Encarregado pelo Tratamento de Dados Pessoais da CDL
-              Aracaju:
+              Encarregada pelo Tratamento de Dados Pessoais da CDL
+              Aracaju: <strong>Claudimara Fontes Carvalho</strong>,
+              Diretora Secretária, designada por Ata de Reunião
+              Extraordinária da Diretoria nº 001/2026-EXT, de 26 de
+              maio de 2026, na forma do art. 41 da Lei 13.709/2018.
             </p>
             <ul className="list-none leading-relaxed flex flex-col gap-1 pl-1">
               <li>📧 dpo@cdlaju.com.br</li>
