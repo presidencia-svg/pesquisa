@@ -130,4 +130,15 @@ export const SERVER_ENV = {
   get JWT_SECRET() {
     return required('JWT_SECRET')
   },
+
+  // ─── Cron (Vercel Scheduled Functions) ────────────────────────────────
+  /**
+   * Segredo compartilhado pra autenticar chamadas a /api/cron/* fora do
+   * runtime de cron da Vercel. Em produção, Vercel injeta automaticamente
+   * o cabeçalho `vercel-cron` que dispensa esse segredo — mas usar Bearer
+   * permite acionar manualmente (curl/admin) sem expor o endpoint.
+   */
+  get CRON_SECRET() {
+    return optional('CRON_SECRET')
+  },
 } as const

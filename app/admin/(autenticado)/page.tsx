@@ -46,6 +46,20 @@ export default async function DashboardPage() {
     .from('cdl_base')
     .select('cpf_hash', { count: 'exact', head: true })
 
+  const { data: ultimoCron } = await db
+    .from('cron_log')
+    .select('status, resultado, executado_em, erro, duracao_ms')
+    .eq('nome', 'retencao_lgpd')
+    .order('executado_em', { ascending: false })
+    .limit(1)
+    .maybeSingle<{
+      status: 'ok' | 'erro'
+      resultado: Record<string, number> | null
+      executado_em: string
+      erro: string | null
+      duracao_ms: number | null
+    }>()
+
   return (
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-2">
@@ -132,8 +146,80 @@ export default async function DashboardPage() {
         </div>
       </section>
 
+      <RetencaoLgpdCard ultimo={ultimoCron} />
+
       <BaseEleitoralSe />
     </div>
+  )
+}
+
+function RetencaoLgpdCard({
+  ultimo,
+}: {
+  ultimo: {
+    status: 'ok' | 'erro'
+    resultado: Record<string, number> | null
+    executado_em: string
+    erro: string | null
+    duracao_ms: number | null
+  } | null
+}) {
+  return (
+    <section className="flex flex-col gap-3">
+      <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+        Retenção LGPD
+      </h2>
+      <div className="rounded-md border border-border bg-background px-5 py-4 flex flex-col gap-3">
+        {!ultimo ? (
+          <>
+            <p className="text-sm text-foreground">
+              Cron diário ainda não executou pela primeira vez.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Agendado pra rodar todo dia às 03h UTC (00h BRT). Limpa
+              OTPs &gt; 30d, rate limit &gt; 24h, identidade Sala 1 &gt; 6m
+              após fim da edição, cron_log &gt; 1 ano.
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <p
+                className={`text-xs uppercase tracking-widest ${
+                  ultimo.status === 'ok'
+                    ? 'text-emerald-700'
+                    : 'text-error'
+                }`}
+              >
+                {ultimo.status === 'ok' ? '✓ Última execução OK' : '⚠ Última execução falhou'}
+              </p>
+              <p className="text-xs text-muted-foreground tabular-nums">
+                {new Date(ultimo.executado_em).toLocaleString('pt-BR', {
+                  dateStyle: 'short',
+                  timeStyle: 'short',
+                })}
+                {ultimo.duracao_ms != null && ` · ${ultimo.duracao_ms}ms`}
+              </p>
+            </div>
+            {ultimo.status === 'ok' && ultimo.resultado ? (
+              <ul className="text-xs text-muted-foreground flex flex-col gap-1">
+                {Object.entries(ultimo.resultado).map(([k, v]) => (
+                  <li key={k} className="flex justify-between border-b border-border/60 py-1 last:border-0">
+                    <span>{k}</span>
+                    <span className="tabular-nums text-foreground">
+                      {v.toLocaleString('pt-BR')} registros removidos
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            {ultimo.erro ? (
+              <p className="text-xs text-error font-mono">{ultimo.erro}</p>
+            ) : null}
+          </>
+        )}
+      </div>
+    </section>
   )
 }
 

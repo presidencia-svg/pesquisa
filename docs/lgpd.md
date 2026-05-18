@@ -85,15 +85,18 @@ de privacidade pública).
 | Categoria | Retenção | Mecanismo de descarte |
 |---|---|---|
 | Votos (Sala 2, já anônimos) | Indefinido | — |
-| Identidade (Sala 1) | 6 meses após `edicao.fim` | **TODO:** cron job mensal |
-| Logs IP / User-Agent | 90 dias | **TODO:** cron diário |
+| Identidade (Sala 1) | 6 meses após `edicao.fim` | ✅ Cron diário Vercel — `/api/cron/retencao` (mig. 018) |
+| Logs IP / User-Agent | 90 dias | Hoje os logs IP/UA são gravados em `eleitores_pesquisa` (Sala 1) e seguem o mesmo prazo da identidade (mais conservador) |
 | Cookies httpOnly | 24h | Browser/servidor (TTL automático) |
-| OTP whatsapp_codigos | 30 dias | **TODO:** cron diário |
+| OTP whatsapp_codigos | 30 dias | ✅ Cron diário Vercel — `/api/cron/retencao` |
+| rate_limit_ip | 24 horas | ✅ Cron diário Vercel — `/api/cron/retencao` |
+| cron_log | 1 ano | ✅ Cron diário Vercel — `/api/cron/retencao` (auditoria ANPD) |
 | cdl_base | Indefinido (com consentimento original) | Exclusão via Art. 18 VI |
 | Backups Supabase | 7 dias (Free) → 14 dias (Pro pós-upgrade) | Provedor descarta auto |
 
-⚠️ **Implementar antes do lançamento (set/2026):** cron jobs do Supabase
-(scheduled functions) pra rodar diariamente os DELETEs de retenção.
+✅ **Cron implementado** (mig. 018 + `vercel.json` + `app/api/cron/retencao`).
+Agendado pra `0 3 * * *` (03h UTC = 00h BRT). Última execução visível no
+painel admin (visão geral). Autenticado via `CRON_SECRET` Bearer.
 Hoje os dados permaneceriam indefinidamente — não-conforme.
 
 ## 8. Compartilhamento com terceiros
