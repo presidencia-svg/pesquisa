@@ -170,21 +170,21 @@ export async function consultarSpc(cpfDigits: string): Promise<SpcResult> {
     nomeMascarado: mascararNome(nome),
   }
 
-  // Data de nascimento é obrigatória — sem ela não conseguimos validar
-  // idade mínima (16 anos) nem ponderar por faixa etária (TSE 23.747/2026).
-  if (!data.dataDeNascimento) {
-    return { ok: false, razao: 'idade_indeterminada' }
+  // Quando dataDeNascimento vem, validamos idade mínima e derivamos faixa.
+  // Quando não vem (depende do nível de contrato SPC), a faixa fica vazia
+  // e o formulário /votar/confirma pergunta ao eleitor como fallback —
+  // sem bloquear a consulta.
+  if (data.dataDeNascimento) {
+    const dt = parseDataDeNascimentoSpc(data.dataDeNascimento)
+    if (dt) {
+      const idade = calcularIdade(dt)
+      if (idade < IDADE_MINIMA_VOTAR) {
+        return { ok: false, razao: 'idade_minima' }
+      }
+      const faixa = calcularFaixaEtaria(dt)
+      if (faixa) dados.faixaEtaria = faixa
+    }
   }
-  const dt = parseDataDeNascimentoSpc(data.dataDeNascimento)
-  if (!dt) {
-    return { ok: false, razao: 'idade_indeterminada' }
-  }
-  const idade = calcularIdade(dt)
-  if (idade < IDADE_MINIMA_VOTAR) {
-    return { ok: false, razao: 'idade_minima' }
-  }
-  const faixa = calcularFaixaEtaria(dt)
-  if (faixa) dados.faixaEtaria = faixa
 
   return { ok: true, dados }
 }

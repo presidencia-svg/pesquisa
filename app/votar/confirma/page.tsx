@@ -64,6 +64,7 @@ export default async function ConfirmaPage() {
               draft.municipioIbge ||
                 draft.whatsappE164 ||
                 draft.sexo ||
+                draft.faixaEtaria ||
                 draft.escolaridade,
             )}
             {...(draft.municipioIbge !== undefined
@@ -74,6 +75,9 @@ export default async function ConfirmaPage() {
               : {})}
             {...(draft.sexo !== undefined
               ? { prefilledSexo: draft.sexo }
+              : {})}
+            {...(draft.faixaEtaria !== undefined
+              ? { prefilledFaixaEtaria: draft.faixaEtaria }
               : {})}
             {...(draft.escolaridade !== undefined
               ? { prefilledEscolaridade: draft.escolaridade }

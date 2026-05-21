@@ -30,22 +30,26 @@ const normalizarWhatsapp = (raw: string): string | null => {
   return null
 }
 
+const FAIXAS_VALIDAS = ['16-17', '18-24', '25-34', '35-44', '45-59', '60+'] as const
+type FaixaEtaria = (typeof FAIXAS_VALIDAS)[number]
+const isFaixaValida = (v: unknown): v is FaixaEtaria =>
+  typeof v === 'string' && (FAIXAS_VALIDAS as readonly string[]).includes(v)
+
 const schema = z.object({
   municipio_ibge: z.coerce
     .number()
     .int()
     .positive({ message: 'Selecione seu município.' }),
   sexo: z.enum(['M', 'F'], { message: 'Selecione uma opção.' }),
+  // faixa_etaria é opcional no schema: vem do form quando o prefill da
+  // consulta CPF não trouxe (cdl_base sem faixa OU SPC sem data de
+  // nascimento). Quando o prefill já tem, o form envia como hidden input.
+  faixa_etaria: z.enum(FAIXAS_VALIDAS).optional(),
   escolaridade: z.enum(['fundamental', 'medio', 'superior'], {
     message: 'Selecione sua escolaridade.',
   }),
   whatsapp: z.string().min(11, { message: 'Informe seu número com DDD.' }),
 })
-
-const FAIXAS_VALIDAS = ['16-17', '18-24', '25-34', '35-44', '45-59', '60+'] as const
-type FaixaEtaria = (typeof FAIXAS_VALIDAS)[number]
-const isFaixaValida = (v: unknown): v is FaixaEtaria =>
-  typeof v === 'string' && (FAIXAS_VALIDAS as readonly string[]).includes(v)
 
 const OTP_VALIDADE_MIN = 10
 
@@ -78,17 +82,19 @@ export async function confirmarDados(
 
   const { municipio_ibge, sexo, escolaridade, whatsapp } = parsed.data
 
-  // Faixa etária vem do rascunho de sessão (preenchida na consulta CPF
-  // a partir de cdl_base ou SPC). Não é perguntada ao eleitor — se chegou
-  // até aqui sem faixa válida, é falha grave e abortamos.
-  if (!isFaixaValida(draft.faixaEtaria)) {
+  // Faixa etária: prefere o prefill do draft (vem de cdl_base ou SPC),
+  // cai no form input quando o prefill não trouxe. Em qualquer dos casos
+  // precisa ser válida — sem isso, a ponderação demográfica TSE 23.747/2026
+  // não pode ser feita.
+  const faixaCandidata = draft.faixaEtaria ?? parsed.data.faixa_etaria
+  if (!isFaixaValida(faixaCandidata)) {
     return {
       ok: false,
-      message:
-        'Sessão sem faixa etária válida. Volte ao início e digite o CPF novamente.',
+      field: 'faixa_etaria',
+      message: 'Selecione uma faixa etária.',
     }
   }
-  const faixa_etaria: FaixaEtaria = draft.faixaEtaria
+  const faixa_etaria: FaixaEtaria = faixaCandidata
 
   const whatsappE164 = normalizarWhatsapp(whatsapp)
   if (!whatsappE164) {

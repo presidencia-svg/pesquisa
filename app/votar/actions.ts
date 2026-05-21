@@ -125,17 +125,15 @@ export async function entrarComCpf(
 
   const fonte: 'cdl_base' | 'spc' = cdl ? 'cdl_base' : 'spc'
 
-  // 4. SPC é consultado quando:
-  //    (a) cdl_base miss — caso primário, valida CPF + traz prefill;
-  //    (b) cdl_base hit SEM faixa_etaria — usa SPC apenas pra derivar
-  //        idade a partir da data de nascimento (faixa etária deve estar
-  //        sempre presente para ponderação demográfica TSE 23.747/2026).
+  // 4. SPC é consultado APENAS quando cdl_base miss — caso primário,
+  //    valida CPF + traz prefill. cdl_base hit confia integralmente nos
+  //    dados locais (mesmo que faixa esteja vazia, o formulário pergunta
+  //    como fallback — não dispara SPC extra pra evitar custo e quebrar
+  //    fluxo quando SPC ainda não estiver integrado em produção).
   let spcValidado: boolean
   let prefillSpc: SpcDadosEleitor = {}
-  const precisaSpc = !cdl || !cdl.faixa_etaria
 
-  if (!precisaSpc) {
-    // cdl_base hit completo (com faixa) — pode confiar
+  if (cdl) {
     spcValidado = true
   } else {
     const spc = await consultarSpc(cpf)
@@ -163,6 +161,7 @@ export async function entrarComCpf(
               'A Pesquisa Sergipe 2026 é uma pesquisa de intenção de voto e só pode ser respondida por eleitores com idade mínima de 16 anos (Constituição Federal, art. 14, §1º). Volte quando completar a idade mínima.',
           }
         case 'idade_indeterminada':
+          // Reservado pra cenário futuro — SPC atual não emite mais.
           return {
             ok: false,
             message:
@@ -214,18 +213,10 @@ export async function entrarComCpf(
   const faixaPrefill = (cdl?.faixa_etaria ?? prefillSpc.faixaEtaria) as
     | PreVotoDraft['faixaEtaria']
     | undefined
-  if (!faixaPrefill) {
-    // Faixa etária é obrigatória para ponderação (TSE 23.747/2026).
-    // Se cdl_base não tem e SPC tampouco trouxe data de nascimento útil,
-    // não há como prosseguir sem perguntar idade — e como o objetivo é
-    // não perguntar isso ao eleitor, rejeitamos com mensagem clara.
-    return {
-      ok: false,
-      message:
-        'Não foi possível confirmar sua faixa etária pelos cadastros oficiais. Tente novamente mais tarde.',
-    }
-  }
-  draft.faixaEtaria = faixaPrefill
+  // Faixa etária é pedida no formulário /votar/confirma como fallback
+  // quando o prefill não trouxe (cdl_base sem faixa OU SPC sem data de
+  // nascimento). Não bloqueia o fluxo de consulta.
+  if (faixaPrefill) draft.faixaEtaria = faixaPrefill
 
   const escolPrefill = (cdl?.escolaridade ?? prefillSpc.escolaridade) as
     | PreVotoDraft['escolaridade']
