@@ -153,6 +153,12 @@ export async function entrarComCpf(
             message:
               'CPF está em situação irregular na Receita Federal. Regularize e tente novamente.',
           }
+        case 'idade_minima':
+          return {
+            ok: false,
+            message:
+              'A Pesquisa Sergipe 2026 é uma pesquisa de intenção de voto e só pode ser respondida por eleitores com idade mínima de 16 anos (Constituição Federal, art. 14, §1º). Volte quando completar a idade mínima.',
+          }
         case 'nao_integrado':
           return {
             ok: false,

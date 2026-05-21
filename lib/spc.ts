@@ -30,7 +30,12 @@ export type SpcResult =
   | { ok: true; dados: SpcDadosEleitor }
   | {
       ok: false
-      razao: 'cpf_inexistente' | 'cpf_irregular' | 'erro_api' | 'nao_integrado'
+      razao:
+        | 'cpf_inexistente'
+        | 'cpf_irregular'
+        | 'erro_api'
+        | 'nao_integrado'
+        | 'idade_minima'
       detalhe?: string
     }
 
@@ -167,6 +172,10 @@ export async function consultarSpc(cpfDigits: string): Promise<SpcResult> {
   if (data.dataDeNascimento) {
     const dt = parseDataDeNascimentoSpc(data.dataDeNascimento)
     if (dt) {
+      const idade = calcularIdade(dt)
+      if (idade < IDADE_MINIMA_VOTAR) {
+        return { ok: false, razao: 'idade_minima' }
+      }
       const faixa = calcularFaixaEtaria(dt)
       if (faixa) dados.faixaEtaria = faixa
     }
@@ -229,20 +238,39 @@ function parseDataDeNascimentoSpc(raw: string): Date | null {
 }
 
 /**
- * Faixa etaria a partir de data de nascimento. Cortes alinhados com o
- * que o TSE publica em estatisticas de eleitorado.
+ * Idade em anos completos a partir da data de nascimento.
+ * Considera o aniversário ainda não atingido no ano corrente.
  */
-export const calcularFaixaEtaria = (
-  dataNascimento: Date,
-): SpcDadosEleitor['faixaEtaria'] => {
+export const calcularIdade = (dataNascimento: Date): number => {
   const hoje = new Date()
   let idade = hoje.getFullYear() - dataNascimento.getFullYear()
   const m = hoje.getMonth() - dataNascimento.getMonth()
   if (m < 0 || (m === 0 && hoje.getDate() < dataNascimento.getDate())) {
     idade--
   }
+  return idade
+}
 
-  if (idade < 16) return undefined
+/**
+ * Idade mínima para alistamento eleitoral conforme CF/88 art. 14, §1º, II.
+ * Como a Pesquisa Sergipe 2026 é de intenção de voto, restringimos a
+ * participação apenas a quem está em idade de votar.
+ */
+export const IDADE_MINIMA_VOTAR = 16
+
+/**
+ * Faixa etaria a partir de data de nascimento. Cortes alinhados com o
+ * que o TSE publica em estatisticas de eleitorado.
+ *
+ * Retorna `undefined` quando a pessoa ainda não atingiu a idade mínima
+ * para alistamento (16 anos) — esse caso deve ser tratado pelo chamador
+ * como rejeição (não como dado simplesmente ausente).
+ */
+export const calcularFaixaEtaria = (
+  dataNascimento: Date,
+): SpcDadosEleitor['faixaEtaria'] => {
+  const idade = calcularIdade(dataNascimento)
+  if (idade < IDADE_MINIMA_VOTAR) return undefined
   if (idade <= 17) return '16-17'
   if (idade <= 24) return '18-24'
   if (idade <= 34) return '25-34'
