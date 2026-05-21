@@ -16,7 +16,6 @@ const formatarWhatsappInput = (raw: string): string => {
 }
 
 type Sexo = 'M' | 'F'
-type FaixaEtaria = '16-17' | '18-24' | '25-34' | '35-44' | '45-59' | '60+'
 type Escolaridade = 'fundamental' | 'medio' | 'superior'
 
 export function DadosForm({
@@ -24,7 +23,6 @@ export function DadosForm({
   prefilledMunicipio,
   prefilledWhatsapp,
   prefilledSexo,
-  prefilledFaixaEtaria,
   prefilledEscolaridade,
   algumPrefill,
 }: {
@@ -32,7 +30,6 @@ export function DadosForm({
   prefilledMunicipio?: number
   prefilledWhatsapp?: string
   prefilledSexo?: Sexo
-  prefilledFaixaEtaria?: FaixaEtaria
   prefilledEscolaridade?: Escolaridade
   algumPrefill: boolean
 }) {
@@ -104,27 +101,6 @@ export function DadosForm({
           ))}
         </div>
       </fieldset>
-
-      <label className="flex flex-col gap-2">
-        <span className="text-sm font-medium text-foreground">Faixa etária</span>
-        <select
-          name="faixa_etaria"
-          required
-          defaultValue={prefilledFaixaEtaria ?? ''}
-          aria-invalid={state.field === 'faixa_etaria'}
-          className="h-12 px-3 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          <option value="" disabled>
-            Selecione…
-          </option>
-          <option value="16-17">16 a 17 anos</option>
-          <option value="18-24">18 a 24 anos</option>
-          <option value="25-34">25 a 34 anos</option>
-          <option value="35-44">35 a 44 anos</option>
-          <option value="45-59">45 a 59 anos</option>
-          <option value="60+">60 anos ou mais</option>
-        </select>
-      </label>
 
       <label className="flex flex-col gap-2">
         <span className="text-sm font-medium text-foreground">Escolaridade</span>
