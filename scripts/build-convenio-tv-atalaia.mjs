@@ -162,7 +162,8 @@ const children = [
   inciso('III', 'não divulgar publicamente, por qualquer meio (site institucional, redes sociais, releases à imprensa, entrevistas), os resultados da Pesquisa Sergipe 2026 antes do encerramento do telejornal da TV Atalaia que primeiro os divulgar — vigência do embargo;'),
   inciso('IV', 'garantir a presença do Presidente da CDL Aracaju (ou suplente) no estúdio da TV Atalaia, na data e horário acordados, para participar da divulgação ao vivo e responder a esclarecimentos sobre a metodologia;'),
   inciso('V', 'após o término do telejornal, disponibilizar imediatamente a íntegra dos resultados no portal https://pesquisa.cdlaju.com.br/resultados, em conformidade com o princípio da transparência (Resolução TSE 23.747/2026, art. 5º);'),
-  inciso('VI', 'fornecer à TV Atalaia a metodologia, ficha técnica, estatístico responsável (com CONRE), nome do contratante, valor, período de coleta e demais informações exigidas pelo art. 33 da Lei 9.504/1997, para inclusão na reportagem.'),
+  inciso('VI', 'fornecer à TV Atalaia a metodologia, ficha técnica, estatístico responsável (com CONRE), nome do contratante, valor, período de coleta e demais informações exigidas pelo art. 33 da Lei 9.504/1997, para inclusão na reportagem;'),
+  inciso('VII', 'encaminhar ao Tribunal Regional Eleitoral de Sergipe, em até 3 (três) dias úteis após a divulgação no telejornal, o relatório complementar previsto no § 7º-A do art. 2º da Resolução TSE nº 23.747/2026, contendo os resultados numéricos consolidados, a composição da amostra final por município, gênero, faixa etária, grau de instrução e nível econômico, e demais elementos exigidos para fins de auditoria e fiscalização eleitoral — sendo cópia disponibilizada à TV Atalaia para arquivo editorial mediante solicitação.'),
 
   // ─── Cláusula 3ª — Obrigações da TV Atalaia ───────────────────────────
   h2('Cláusula 3ª — Obrigações da TV Atalaia'),

@@ -51,7 +51,9 @@ A CDL Aracaju se compromete a:
 
 **V.** Após o término do telejornal, **disponibilizar imediatamente** a íntegra dos resultados no portal https://pesquisa.cdlaju.com.br/resultados, em conformidade com o princípio da transparência (Resolução TSE 23.747/2026, art. 5º);
 
-**VI.** Fornecer à TV Atalaia a metodologia, ficha técnica, estatístico responsável (com CONRE), nome do contratante, valor, período de coleta e demais informações exigidas pelo art. 33 da Lei 9.504/1997, para inclusão na reportagem.
+**VI.** Fornecer à TV Atalaia a metodologia, ficha técnica, estatístico responsável (com CONRE), nome do contratante, valor, período de coleta e demais informações exigidas pelo art. 33 da Lei 9.504/1997, para inclusão na reportagem;
+
+**VII.** Encaminhar ao Tribunal Regional Eleitoral de Sergipe, em até **3 (três) dias úteis** após a divulgação no telejornal, o **relatório complementar** previsto no § 7º-A do art. 2º da Resolução TSE nº 23.747/2026, contendo os resultados numéricos consolidados, a composição da amostra final por município, gênero, faixa etária, grau de instrução e nível econômico, e demais elementos exigidos para fins de auditoria e fiscalização eleitoral — sendo cópia disponibilizada à TV Atalaia para arquivo editorial mediante solicitação.
 
 ---
 
