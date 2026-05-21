@@ -112,10 +112,10 @@ const children = [
   para([
     txt('CONVENENTE 2 — TELEVISÃO ATALAIA LTDA (TV ATALAIA): ', { bold: true }),
     txt(
-      'sociedade empresária limitada, inscrita no CNPJ sob o nº 13.079.397/0001-09, com sede na Rua Cláudio Batista, 122, Santo Antônio, Aracaju/SE — CEP 49.060-100, dedicada à atividade de televisão aberta (CNAE 6021-7/00), afiliada à Record TV no Estado de Sergipe, neste ato representada por seu(sua) Diretor(a)-Geral, Sr(a). ',
+      'sociedade empresária limitada, inscrita no CNPJ sob o nº 13.079.397/0001-09, com sede na Rua Cláudio Batista, 122, Santo Antônio, Aracaju/SE — CEP 49.060-100, dedicada à atividade de televisão aberta (CNAE 6021-7/00), afiliada à Record TV no Estado de Sergipe, neste ato representada por seu Diretor-Geral, ',
     ),
-    txt('_____________________________________', { bold: true }),
-    txt(', inscrito(a) no CPF sob o nº ________________________, doravante denominada '),
+    txt('Sr. Walter do Prado Franco', { bold: true }),
+    txt(', inscrito no CPF sob o nº 003.685.395-04, doravante denominada '),
     txt('TV ATALAIA', { bold: true }),
     txt('.'),
   ]),
@@ -246,7 +246,7 @@ const children = [
     ),
   ]),
   para([txt('CDL Aracaju: ', { bold: true }), txt('Rua Santa Luzia, 570, São José, Aracaju/SE — CEP 49015-190 · presidencia@cdlaju.com.br · dpo@cdlaju.com.br (DPO para questões de dados).')]),
-  para([txt('TV Atalaia: ', { bold: true }), txt('Rua Cláudio Batista, 122, Santo Antônio, Aracaju/SE — CEP 49.060-100 · e-mail: ________________________________________')]),
+  para([txt('TV Atalaia: ', { bold: true }), txt('Rua Cláudio Batista, 122, Santo Antônio, Aracaju/SE — CEP 49.060-100 · e-mail: amalta@sisatalaia.com.br')]),
 
   // ─── Cláusula 11ª — Foro ──────────────────────────────────────────────
   h2('Cláusula 11ª — Foro'),
@@ -275,9 +275,9 @@ const children = [
   ...blank(4),
 
   linhaAssinatura(),
-  center('[NOME COMPLETO DO REPRESENTANTE LEGAL]', { bold: true }),
-  center('Diretor(a)-Geral · Televisão Atalaia Ltda'),
-  center('CPF ________________________'),
+  center('WALTER DO PRADO FRANCO', { bold: true }),
+  center('Diretor-Geral · Televisão Atalaia Ltda'),
+  center('CPF 003.685.395-04'),
   ...blank(3),
 
   h2('Testemunhas'),

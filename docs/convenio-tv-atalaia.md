@@ -11,7 +11,7 @@ Versão 1.0 · Aracaju/SE, 26 de maio de 2026
 Associação civil sem fins lucrativos, fundada em 21 de dezembro de 1961, entidade de utilidade pública pela Lei Municipal nº 63, de 6 de dezembro de 1967, inscrita no CNPJ sob o nº 13.045.935/0001-36, com sede na Rua Santa Luzia, 570, São José, Aracaju/SE — CEP 49015-190, neste ato representada por seu Presidente do triênio 2026–2028, **Sr. Elison Vieira Santos do Bomfim**, inscrito no CPF sob o nº 776.463.555-34, doravante denominada **CDL ARACAJU**.
 
 **CONVENENTE 2 — Televisão Atalaia Ltda**
-Sociedade empresária limitada, inscrita no CNPJ sob o nº 13.079.397/0001-09, com sede na Rua Cláudio Batista, 122, Santo Antônio, Aracaju/SE — CEP 49.060-100, dedicada à atividade de televisão aberta (CNAE 6021-7/00), afiliada à Record TV no Estado de Sergipe, neste ato representada por seu(sua) Diretor(a)-Geral, **Sr(a). _____________________________________**, inscrito(a) no CPF sob o nº ________________________, doravante denominada **TV ATALAIA**.
+Sociedade empresária limitada, inscrita no CNPJ sob o nº 13.079.397/0001-09, com sede na Rua Cláudio Batista, 122, Santo Antônio, Aracaju/SE — CEP 49.060-100, dedicada à atividade de televisão aberta (CNAE 6021-7/00), afiliada à Record TV no Estado de Sergipe, neste ato representada por seu Diretor-Geral, **Sr. Walter do Prado Franco**, inscrito no CPF sob o nº **003.685.395-04**, doravante denominada **TV ATALAIA**.
 
 ---
 
@@ -152,7 +152,7 @@ Toda e qualquer comunicação oficial entre as partes deverá ser enviada por es
 
 **TV Atalaia**
 - Endereço postal: Rua Cláudio Batista, 122, Santo Antônio, Aracaju/SE — CEP 49.060-100
-- E-mail: ________________________________________
+- E-mail: amalta@sisatalaia.com.br
 
 ---
 
@@ -182,9 +182,9 @@ CPF 776.463.555-34
 \
 
 **_________________________________________________________**
-**[NOME COMPLETO DO REPRESENTANTE LEGAL]**
-Diretor(a)-Geral · Televisão Atalaia Ltda
-CPF ________________________
+**WALTER DO PRADO FRANCO**
+Diretor-Geral · Televisão Atalaia Ltda
+CPF 003.685.395-04
 
 \
 
