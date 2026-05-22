@@ -71,13 +71,39 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
         ) : null}
 
         {state.message ? (
-          <p
+          <div
             role="alert"
             aria-live="polite"
-            className="text-sm text-error bg-error/5 border border-error/20 rounded-md px-3 py-2"
+            className={
+              state.code === 'idade_minima' || state.code === 'cpf_irregular'
+                ? 'text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 flex flex-col gap-2'
+                : 'text-sm text-error bg-error/5 border border-error/20 rounded-md px-3 py-2 flex flex-col gap-2'
+            }
           >
-            {state.message}
-          </p>
+            <p>{state.message}</p>
+            {state.code === 'servico_indisponivel' ||
+            state.code === 'sistema' ? (
+              <p className="text-xs opacity-80">
+                Código do erro:{' '}
+                <code className="font-mono">{state.code}</code> · {' '}
+                <Link
+                  href="mailto:dpo@cdlaju.com.br?subject=Pesquisa%20Sergipe%202026%20-%20Erro%20no%20cadastro"
+                  className="underline hover:no-underline"
+                >
+                  Contatar suporte
+                </Link>
+              </p>
+            ) : null}
+            {state.code === 'idade_minima' ? (
+              <p className="text-xs opacity-80">
+                Veja a metodologia em{' '}
+                <Link href="/transparencia" className="underline">
+                  /transparencia
+                </Link>
+                .
+              </p>
+            ) : null}
+          </div>
         ) : null}
 
         <label className="flex items-start gap-3 text-sm text-foreground border border-border rounded-md px-4 py-3 bg-muted/40 cursor-pointer hover:bg-muted/60 transition">

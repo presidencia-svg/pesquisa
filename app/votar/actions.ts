@@ -10,9 +10,30 @@ import { setPreVoto, type PreVotoDraft } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { verifyTurnstile } from '@/lib/turnstile'
 
+/**
+ * Códigos de erro estruturados para o cliente diferenciar UX:
+ *  - input_invalido    → erro do usuário, mostra mensagem simples
+ *  - cpf_invalido      → mesmo grupo, foco no input do CPF
+ *  - idade_minima      → bloqueio definitivo, sem botão "tentar de novo"
+ *  - cpf_irregular     → bloqueio definitivo, instrui regularização
+ *  - servico_indisponivel → falha transitória, sugere tentar mais tarde +
+ *                            mostra canal de suporte
+ *  - rate_limit        → muitas tentativas, espera
+ *  - sistema           → erro nosso, mostra suporte
+ */
+export type VotarErroCode =
+  | 'input_invalido'
+  | 'cpf_invalido'
+  | 'idade_minima'
+  | 'cpf_irregular'
+  | 'servico_indisponivel'
+  | 'rate_limit'
+  | 'sistema'
+
 export type VotarFormState = {
   ok: boolean
   message?: string
+  code?: VotarErroCode
 }
 
 const RATE_LIMIT_WINDOW_MIN = 5
@@ -40,12 +61,16 @@ export async function entrarComCpf(
 ): Promise<VotarFormState> {
   const raw = formData.get('cpf')
   if (typeof raw !== 'string' || raw.length === 0) {
-    return { ok: false, message: 'Informe o CPF.' }
+    return { ok: false, code: 'input_invalido', message: 'Informe o CPF.' }
   }
 
   const cpf = normalizarCpf(raw)
   if (!cpfValido(cpf)) {
-    return { ok: false, message: 'CPF inválido. Verifique os dígitos.' }
+    return {
+      ok: false,
+      code: 'cpf_invalido',
+      message: 'CPF inválido. Verifique os dígitos.',
+    }
   }
 
   // 0. Anti-bot (Turnstile) — antes de tudo. Em DEV_MODE faz bypass.
@@ -58,6 +83,7 @@ export async function entrarComCpf(
   if (!turnstile.ok) {
     return {
       ok: false,
+      code: 'input_invalido',
       message:
         'Verificação anti-bot falhou. Recarregue a página e tente novamente.',
     }
@@ -75,17 +101,23 @@ export async function entrarComCpf(
     console.error('[votar] erro buscando edicao:', errEdicao)
     return {
       ok: false,
+      code: 'sistema',
       message: 'Erro de sistema. Tente novamente em instantes.',
     }
   }
   if (!edicao) {
     return {
       ok: false,
+      code: 'sistema',
       message: 'Nenhuma pesquisa está ativa neste momento.',
     }
   }
   if (new Date(edicao.fim) < new Date()) {
-    return { ok: false, message: 'Esta edição da pesquisa já foi encerrada.' }
+    return {
+      ok: false,
+      code: 'sistema',
+      message: 'Esta edição da pesquisa já foi encerrada.',
+    }
   }
 
   // 2. Rate limit por IP
@@ -106,6 +138,7 @@ export async function entrarComCpf(
     if ((count ?? 0) >= RATE_LIMIT_MAX) {
       return {
         ok: false,
+        code: 'rate_limit',
         message: 'Muitas tentativas. Aguarde alguns minutos e tente novamente.',
       }
     }
@@ -151,37 +184,44 @@ export async function entrarComCpf(
         case 'cpf_inexistente':
           return {
             ok: false,
+            code: 'cpf_invalido',
             message: 'CPF não localizado. Confirme os dígitos e tente de novo.',
           }
         case 'cpf_irregular':
           return {
             ok: false,
+            code: 'cpf_irregular',
             message:
               'CPF está em situação irregular na Receita Federal. Regularize e tente novamente.',
           }
         case 'idade_minima':
           return {
             ok: false,
+            code: 'idade_minima',
             message:
               'A Pesquisa Sergipe 2026 é uma pesquisa de intenção de voto e só pode ser respondida por eleitores com idade mínima de 16 anos (Constituição Federal, art. 14, §1º). Volte quando completar a idade mínima.',
           }
         case 'idade_indeterminada':
           return {
             ok: false,
+            code: 'servico_indisponivel',
             message:
-              'Não foi possível confirmar sua data de nascimento na Receita Federal. Verifique seus dados ou tente novamente mais tarde.',
+              'Não foi possível confirmar sua data de nascimento na Receita Federal. Tente novamente em alguns minutos — se persistir, contate dpo@cdlaju.com.br.',
           }
         case 'nao_integrado':
           return {
             ok: false,
+            code: 'servico_indisponivel',
             message:
-              'Validação SPC ainda não está disponível nesta versão. Aguarde o piloto fechado.',
+              'A validação de identidade está temporariamente indisponível. A pesquisa abrirá em breve — acompanhe em pesquisa.cdlaju.com.br.',
           }
         case 'erro_api':
         default:
           return {
             ok: false,
-            message: 'Erro na validação. Tente novamente em alguns minutos.',
+            code: 'servico_indisponivel',
+            message:
+              'Não foi possível validar seu CPF no momento. Tente novamente em alguns minutos. Se o problema persistir, contate dpo@cdlaju.com.br informando o horário da tentativa.',
           }
       }
     }
@@ -194,8 +234,9 @@ export async function entrarComCpf(
       console.error('[votar] SPC ok mas sem faixaEtaria', { cpfHash })
       return {
         ok: false,
+        code: 'servico_indisponivel',
         message:
-          'Não foi possível confirmar sua faixa etária nos cadastros oficiais. Tente novamente mais tarde.',
+          'Não foi possível confirmar sua faixa etária nos cadastros oficiais. Tente novamente em alguns minutos. Se persistir, contate dpo@cdlaju.com.br.',
       }
     }
 
@@ -260,8 +301,9 @@ export async function entrarComCpf(
     console.error('[votar] faixaEtaria ausente após resolução', { cpfHash })
     return {
       ok: false,
+      code: 'sistema',
       message:
-        'Não foi possível determinar sua faixa etária. Tente novamente mais tarde.',
+        'Não foi possível determinar sua faixa etária. Contate dpo@cdlaju.com.br se persistir.',
     }
   }
   draft.faixaEtaria = faixaPrefill
