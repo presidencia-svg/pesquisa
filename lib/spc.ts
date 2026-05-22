@@ -33,6 +33,8 @@ export type SpcResult =
       razao:
         | 'cpf_inexistente'
         | 'cpf_irregular'
+        | 'cpf_inativo'
+        | 'cpf_falecido'
         | 'erro_api'
         | 'nao_integrado'
         | 'idade_minima'
@@ -43,10 +45,26 @@ export type SpcResult =
 /**
  * Resposta da API SPC JUD pra consulta cadastral de CPF.
  * Campos opcionais — alguns só vem se SPC tiver registro.
+ *
+ * `situacaoReceitaFederal` espelha o status oficial do CPF na RF.
+ * Valores comuns observados em produção:
+ *   REGULAR / ATIVA              → pode prosseguir
+ *   PENDENTE_REGULARIZACAO       → bloqueia (cpf_irregular)
+ *   SUSPENSO / SUSPENSA          → bloqueia (cpf_inativo)
+ *   CANCELADO_MULTIPLICIDADE     → bloqueia (cpf_inativo)
+ *   CANCELADO_OFICIO             → bloqueia (cpf_inativo)
+ *   NULA                         → bloqueia (cpf_inativo)
+ *   TITULAR_FALECIDO / OBITO     → bloqueia (cpf_falecido)
+ *
+ * Comparações são feitas case-insensitive e tolerantes a underscore/espaço.
  */
 type SpcCadastralResponse = {
   nome?: string
   dataDeNascimento?: string // formato DDMMYYYY (ex: "23011938")
+  dataObito?: string
+  obitoOcorrido?: boolean
+  situacaoReceitaFederal?: string
+  situacaoCadastral?: string
   cpf?: string
   cep?: string
   endereco?: string
@@ -58,6 +76,42 @@ type SpcCadastralResponse = {
   // Campo de erro retornado em 400/404
   message?: string
 }
+
+/**
+ * Normaliza string de status pra comparação tolerante.
+ * "Cancelado de Ofício" → "cancelado_oficio"
+ */
+const normalizarStatus = (s: string | undefined): string =>
+  (s ?? '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\s-]+/g, '_')
+
+/** Conjuntos de status interpretados em cada razão de rejeição. */
+const STATUS_FALECIDO = new Set([
+  'titular_falecido',
+  'obito',
+  'falecido',
+  'obito_ocorrido',
+])
+const STATUS_REGULAR = new Set(['regular', 'ativa', 'ativo'])
+const STATUS_IRREGULAR = new Set([
+  'pendente_regularizacao',
+  'pendente_de_regularizacao',
+  'pendente',
+])
+const STATUS_INATIVO = new Set([
+  'suspenso',
+  'suspensa',
+  'cancelado_multiplicidade',
+  'cancelado_de_multiplicidade',
+  'cancelado_oficio',
+  'cancelado_de_oficio',
+  'cancelado',
+  'nula',
+  'nulo',
+])
 
 const TIMEOUT_MS = 15_000
 
@@ -87,7 +141,18 @@ export async function consultarSpc(cpfDigits: string): Promise<SpcResult> {
   }
 
   // DEV_MODE / SPC_MOCK — stub deterministico pra testar UX sem credencial.
+  // Convenção pra simular cada cenário:
+  //   CPF terminando em 000 → cpf_falecido
+  //   CPF terminando em 111 → cpf_inativo
+  //   CPF terminando em 222 → cpf_irregular
+  //   CPF terminando em 333 → idade_minima (criança)
+  //   Demais → sucesso com dados determinísticos
   if (DEV_MODE || SERVER_ENV.SPC_MOCK) {
+    const ultimos3 = cpfDigits.slice(-3)
+    if (ultimos3 === '000') return { ok: false, razao: 'cpf_falecido' }
+    if (ultimos3 === '111') return { ok: false, razao: 'cpf_inativo' }
+    if (ultimos3 === '222') return { ok: false, razao: 'cpf_irregular' }
+    if (ultimos3 === '333') return { ok: false, razao: 'idade_minima' }
     return { ok: true, dados: stubDevPrefill(cpfDigits) }
   }
 
@@ -164,6 +229,29 @@ export async function consultarSpc(cpfDigits: string): Promise<SpcResult> {
   const nome = data.nome?.trim()
   if (!nome) {
     return { ok: false, razao: 'cpf_inexistente' }
+  }
+
+  // Antes de prosseguir, valida situação cadastral.
+  //  • Óbito: bloqueio prioritário, pra mensagem digna ao familiar.
+  //  • Inativo (suspenso/cancelado/nulo): bloqueio.
+  //  • Irregular (pendente regularização): bloqueio.
+  const statusReceita = normalizarStatus(
+    data.situacaoReceitaFederal ?? data.situacaoCadastral,
+  )
+
+  if (data.obitoOcorrido === true || data.dataObito || STATUS_FALECIDO.has(statusReceita)) {
+    return { ok: false, razao: 'cpf_falecido', detalhe: statusReceita || 'obito_ocorrido' }
+  }
+
+  if (statusReceita && !STATUS_REGULAR.has(statusReceita)) {
+    if (STATUS_INATIVO.has(statusReceita)) {
+      return { ok: false, razao: 'cpf_inativo', detalhe: statusReceita }
+    }
+    if (STATUS_IRREGULAR.has(statusReceita)) {
+      return { ok: false, razao: 'cpf_irregular', detalhe: statusReceita }
+    }
+    // Status desconhecido — tratamos como irregular por precaução.
+    return { ok: false, razao: 'cpf_irregular', detalhe: statusReceita }
   }
 
   const dados: SpcDadosEleitor = {

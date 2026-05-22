@@ -2,9 +2,33 @@
 
 import Link from 'next/link'
 import Script from 'next/script'
-import { useActionState, useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 
 import { entrarComCpf, type VotarFormState } from './actions'
+
+/**
+ * Heurística de detecção de modo anônimo/incógnito.
+ *
+ * Usa navigator.storage.estimate() — em modo anônimo, browsers
+ * (Chrome, Edge, Brave, Safari, Firefox) limitam a cota a ~120MB.
+ * Modo normal tem cota de 1GB+.
+ *
+ * Não é detecção 100% precisa (Brave em modo padrão também limita,
+ * dispositivos com pouco disco podem reportar baixo), mas é o
+ * sinal mais confiável cross-browser sem libs externas.
+ */
+async function detectarNavegadorAnonimo(): Promise<boolean> {
+  if (typeof navigator === 'undefined') return false
+  if (!navigator.storage || !navigator.storage.estimate) return false
+  try {
+    const { quota } = await navigator.storage.estimate()
+    if (quota === undefined) return false
+    // Limiar conservador: 400 MB. Abaixo disso é provável anonimato.
+    return quota < 400_000_000
+  } catch {
+    return false
+  }
+}
 
 const formatarCpfInput = (raw: string): string => {
   const digits = raw.replace(/\D/g, '').slice(0, 11)
@@ -21,9 +45,15 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
   const [state, formAction, pending] = useActionState(entrarComCpf, initialState)
   const [cpfDisplay, setCpfDisplay] = useState('')
   const [consentido, setConsentido] = useState(false)
+  const [navegadorAnonimo, setNavegadorAnonimo] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    detectarNavegadorAnonimo().then(setNavegadorAnonimo)
+  }, [])
 
   const showTurnstile =
     typeof turnstileSiteKey === 'string' && turnstileSiteKey.length > 0
+  const bloqueadoPorAnonimato = navegadorAnonimo === true
 
   return (
     <>
@@ -75,7 +105,11 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
             role="alert"
             aria-live="polite"
             className={
-              state.code === 'idade_minima' || state.code === 'cpf_irregular'
+              state.code === 'idade_minima' ||
+              state.code === 'cpf_irregular' ||
+              state.code === 'cpf_inativo' ||
+              state.code === 'cpf_falecido' ||
+              state.code === 'navegador_anonimo'
                 ? 'text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 flex flex-col gap-2'
                 : 'text-sm text-error bg-error/5 border border-error/20 rounded-md px-3 py-2 flex flex-col gap-2'
             }
@@ -131,16 +165,52 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
           </span>
         </label>
 
+        {/* Flag anonimato pra defesa em profundidade no servidor.
+            Cliente pode mentir, mas se mentir e a checagem JS falhar
+            silenciosamente, o usuário ainda passa — apenas o filtro
+            client-side é perdido. */}
+        <input
+          type="hidden"
+          name="navegador_anonimo"
+          value={navegadorAnonimo === true ? '1' : '0'}
+        />
+
+        {bloqueadoPorAnonimato ? (
+          <div
+            role="alert"
+            className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 flex flex-col gap-2"
+          >
+            <p>
+              <strong>Modo anônimo detectado.</strong> O cadastro na
+              Pesquisa Sergipe 2026 não é permitido em navegação privativa
+              ou janela anônima — medida antifraude para evitar voto
+              múltiplo no mesmo dispositivo.
+            </p>
+            <p className="text-xs opacity-80">
+              Abra a página em uma janela normal do seu navegador e tente
+              novamente.
+            </p>
+          </div>
+        ) : null}
+
         <button
           type="submit"
           disabled={
             pending ||
             cpfDisplay.replace(/\D/g, '').length !== 11 ||
-            !consentido
+            !consentido ||
+            bloqueadoPorAnonimato ||
+            navegadorAnonimo === null
           }
           className="h-14 px-6 rounded-md bg-primary text-primary-foreground font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition"
         >
-          {pending ? 'Validando…' : 'Continuar'}
+          {pending
+            ? 'Validando…'
+            : navegadorAnonimo === null
+              ? 'Verificando navegador…'
+              : bloqueadoPorAnonimato
+                ? 'Não permitido em modo anônimo'
+                : 'Continuar'}
         </button>
 
         <p className="text-xs text-muted-foreground">

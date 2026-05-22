@@ -26,6 +26,9 @@ export type VotarErroCode =
   | 'cpf_invalido'
   | 'idade_minima'
   | 'cpf_irregular'
+  | 'cpf_inativo'
+  | 'cpf_falecido'
+  | 'navegador_anonimo'
   | 'servico_indisponivel'
   | 'rate_limit'
   | 'sistema'
@@ -70,6 +73,18 @@ export async function entrarComCpf(
       ok: false,
       code: 'cpf_invalido',
       message: 'CPF inválido. Verifique os dígitos.',
+    }
+  }
+
+  // Bloqueio de modo anônimo/incógnito. O cliente detecta via
+  // navigator.storage.estimate() e envia este flag — se vier "1",
+  // recusa o cadastro mesmo que o JS tenha sido contornado.
+  if (formData.get('navegador_anonimo') === '1') {
+    return {
+      ok: false,
+      code: 'navegador_anonimo',
+      message:
+        'O cadastro não é permitido em navegação anônima ou privativa. Abra esta página em uma janela normal e tente novamente.',
     }
   }
 
@@ -192,7 +207,21 @@ export async function entrarComCpf(
             ok: false,
             code: 'cpf_irregular',
             message:
-              'CPF está em situação irregular na Receita Federal. Regularize e tente novamente.',
+              'Seu CPF está com pendência de regularização na Receita Federal. Acesse gov.br/receitafederal para regularizar e tente novamente.',
+          }
+        case 'cpf_inativo':
+          return {
+            ok: false,
+            code: 'cpf_inativo',
+            message:
+              'Seu CPF não está ativo na Receita Federal (suspenso, cancelado ou nulo). Apenas eleitores com CPF regular podem participar desta pesquisa.',
+          }
+        case 'cpf_falecido':
+          return {
+            ok: false,
+            code: 'cpf_falecido',
+            message:
+              'A Receita Federal indica óbito vinculado a este CPF. Em respeito ao titular, não é possível prosseguir.',
           }
         case 'idade_minima':
           return {
