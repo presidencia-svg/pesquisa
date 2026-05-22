@@ -260,7 +260,14 @@ export async function entrarComCpf(
     // SPC respondeu OK mas sem faixaEtaria (dataDeNascimento ausente
     // ou inválida). Não permitimos prosseguir sem idade comprovada.
     if (!prefillSpc.faixaEtaria) {
-      console.error('[votar] SPC ok mas sem faixaEtaria', { cpfHash })
+      console.error('[votar] SPC ok mas sem faixaEtaria', {
+        cpfHash,
+        // Quais campos vieram (sem expor dados pessoais reais).
+        // Útil pra diagnosticar mudanças do payload SPC.
+        camposPrefill: Object.keys(prefillSpc),
+        temNome: Boolean(prefillSpc.nomeMascarado),
+        temSexo: Boolean(prefillSpc.sexo),
+      })
       return {
         ok: false,
         code: 'servico_indisponivel',

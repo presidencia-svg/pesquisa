@@ -304,30 +304,52 @@ function stubDevPrefill(cpfDigits: string): SpcDadosEleitor {
 }
 
 /**
- * Parse da data de nascimento que o SPC JUD retorna no formato DDMMYYYY
- * (ex.: "23011938" -> 1938-01-23). Aceita tambem com separadores caso
- * a API mude no futuro.
+ * Parse de data de nascimento tolerante a 3 formatos comuns que a API
+ * SPC JUD pode retornar dependendo do nível de contrato:
+ *
+ *   1. DDMMYYYY   — formato JUD legado (ex.: "23011938")
+ *   2. DD/MM/YYYY — com separadores (ex.: "23/01/1938")
+ *   3. YYYY-MM-DD — ISO 8601 (ex.: "1938-01-23")
+ *
+ * Estratégia: tenta ambos os layouts (DDMM ou YYYY no início), valida
+ * faixas humanas (ano 1900-2100, mes 1-12, dia 1-31). Retorna a primeira
+ * interpretação válida.
  */
 function parseDataDeNascimentoSpc(raw: string): Date | null {
   const limpa = raw.replace(/\D/g, '')
   if (limpa.length !== 8) return null
-  const dia = Number(limpa.slice(0, 2))
-  const mes = Number(limpa.slice(2, 4))
-  const ano = Number(limpa.slice(4, 8))
-  if (
-    !Number.isFinite(dia) ||
-    !Number.isFinite(mes) ||
-    !Number.isFinite(ano) ||
-    mes < 1 ||
-    mes > 12 ||
-    dia < 1 ||
-    dia > 31 ||
-    ano < 1900 ||
-    ano > 2100
-  ) {
-    return null
+
+  const checa = (dia: number, mes: number, ano: number): Date | null => {
+    if (
+      !Number.isFinite(dia) ||
+      !Number.isFinite(mes) ||
+      !Number.isFinite(ano) ||
+      mes < 1 || mes > 12 ||
+      dia < 1 || dia > 31 ||
+      ano < 1900 || ano > 2100
+    ) {
+      return null
+    }
+    return new Date(ano, mes - 1, dia)
   }
-  return new Date(ano, mes - 1, dia)
+
+  // Tenta DDMMYYYY
+  const dt1 = checa(
+    Number(limpa.slice(0, 2)),
+    Number(limpa.slice(2, 4)),
+    Number(limpa.slice(4, 8)),
+  )
+  if (dt1) return dt1
+
+  // Tenta YYYYMMDD (caso SPC tenha mudado pra ISO)
+  const dt2 = checa(
+    Number(limpa.slice(6, 8)),
+    Number(limpa.slice(4, 6)),
+    Number(limpa.slice(0, 4)),
+  )
+  if (dt2) return dt2
+
+  return null
 }
 
 /**
