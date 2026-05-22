@@ -38,6 +38,11 @@ const isFaixaValida = (v: unknown): v is FaixaEtaria =>
 // Schema do formulário /votar/confirma — NÃO inclui faixa_etaria.
 // Faixa vem 100% do draft de sessão (preenchida em /votar pela consulta
 // CPF → cdl_base ou SPC). O eleitor não tem opção de alterar.
+//
+// device_fingerprint vem como hidden input gerado client-side (canvas +
+// UA + screen + timezone + hardware concurrency, hash SHA-256). É
+// opcional aqui — se ausente (cliente sem JS), o cadastro segue mas a
+// trava por dispositivo não terá efeito pra esse eleitor.
 const schema = z.object({
   municipio_ibge: z.coerce
     .number()
@@ -48,6 +53,10 @@ const schema = z.object({
     message: 'Selecione sua escolaridade.',
   }),
   whatsapp: z.string().min(11, { message: 'Informe seu número com DDD.' }),
+  device_fingerprint: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/, { message: 'Fingerprint inválido.' })
+    .optional(),
 })
 
 const OTP_VALIDADE_MIN = 10
@@ -79,7 +88,8 @@ export async function confirmarDados(
     }
   }
 
-  const { municipio_ibge, sexo, escolaridade, whatsapp } = parsed.data
+  const { municipio_ibge, sexo, escolaridade, whatsapp, device_fingerprint } =
+    parsed.data
 
   // Faixa etária vem 100% do draft de sessão (preenchida em /votar pela
   // consulta CPF). Não é perguntada ao eleitor. Se chegou aqui sem faixa
@@ -172,6 +182,47 @@ export async function confirmarDados(
     }
   }
 
+  // 2a. Voto único por WhatsApp: outro CPF já votou usando este número?
+  //     Defesa em profundidade: o índice UNIQUE parcial
+  //     (edicao_id, whatsapp_e164) WHERE wa_validado=true trava no DB.
+  //     Aqui antecipa o erro pra mensagem amigável.
+  const { data: outroPorWa } = await db
+    .from('eleitores_pesquisa')
+    .select('id')
+    .eq('edicao_id', draft.edicaoId)
+    .eq('whatsapp_e164', whatsappE164)
+    .eq('wa_validado', true)
+    .neq('cpf_hash', draft.cpfHash)
+    .maybeSingle()
+  if (outroPorWa) {
+    return {
+      ok: false,
+      field: 'whatsapp',
+      message:
+        'Este número de WhatsApp já foi usado para votar nesta pesquisa por outro CPF.',
+    }
+  }
+
+  // 2b. Voto único por dispositivo: outro CPF já votou neste aparelho?
+  //     Trava por device_fingerprint quando o cliente o enviou.
+  if (device_fingerprint) {
+    const { data: outroPorDispositivo } = await db
+      .from('eleitores_pesquisa')
+      .select('id')
+      .eq('edicao_id', draft.edicaoId)
+      .eq('device_fingerprint', device_fingerprint)
+      .eq('wa_validado', true)
+      .neq('cpf_hash', draft.cpfHash)
+      .maybeSingle()
+    if (outroPorDispositivo) {
+      return {
+        ok: false,
+        message:
+          'Este dispositivo já foi usado para votar nesta pesquisa por outro CPF.',
+      }
+    }
+  }
+
   if (existing) {
     const { error: errUpd } = await db
       .from('eleitores_pesquisa')
@@ -183,6 +234,7 @@ export async function confirmarDados(
         whatsapp_e164: whatsappE164,
         ip,
         user_agent: userAgent,
+        device_fingerprint: device_fingerprint ?? null,
       })
       .eq('id', existing.id)
     if (errUpd) {
@@ -210,6 +262,7 @@ export async function confirmarDados(
       fonte: draft.fonte,
       ip,
       user_agent: userAgent,
+      device_fingerprint: device_fingerprint ?? null,
     })
     if (errIns) {
       console.error('[confirma] erro insert eleitores_pesquisa:', errIns)

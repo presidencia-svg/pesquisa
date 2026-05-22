@@ -172,6 +172,11 @@ export async function validarOtp(
   }
 
   // 3b. Marca o eleitor como WhatsApp-validado.
+  //     Defesa em profundidade: os índices UNIQUE parciais
+  //     eleitores_wa_unico_validado_idx e eleitores_device_unico_validado_idx
+  //     (migration 020) garantem que mesmo numa race condition entre
+  //     dois eleitores validando ao mesmo tempo, só um vai conseguir.
+  //     O outro recebe constraint violation (Postgres 23505).
   const { error: errEleitor } = await db
     .from('eleitores_pesquisa')
     .update({ wa_validado: true })
@@ -179,6 +184,23 @@ export async function validarOtp(
     .eq('cpf_hash', draft.cpfHash)
   if (errEleitor) {
     console.error('[otp] erro marcando eleitor wa_validado:', errEleitor)
+    if (errEleitor.code === '23505') {
+      const msg = (errEleitor.message ?? '').toLowerCase()
+      if (msg.includes('whatsapp') || msg.includes('wa_unico')) {
+        return {
+          ok: false,
+          message:
+            'Este número de WhatsApp acabou de ser validado por outro CPF. Cada número participa uma única vez.',
+        }
+      }
+      if (msg.includes('device')) {
+        return {
+          ok: false,
+          message:
+            'Este dispositivo acabou de ser validado por outro CPF. Cada aparelho participa uma única vez.',
+        }
+      }
+    }
     return { ok: false, message: 'Erro de sistema. Tente novamente.' }
   }
 
