@@ -135,18 +135,18 @@ const construirUrlConsulta = (cpfDigits: string): string => {
   return `${baseClean}/cpf/${cpfDigits}/1`
 }
 
+/**
+ * Dispatcher principal — exporta a função usada pelo resto do app.
+ * Escolhe a implementação (JUD legada ou API nova) baseado em env.
+ *
+ * Mantém a mesma interface SpcResult/SpcDadosEleitor pros callers.
+ */
 export async function consultarSpc(cpfDigits: string): Promise<SpcResult> {
   if (!/^\d{11}$/.test(cpfDigits)) {
     return { ok: false, razao: 'erro_api', detalhe: 'CPF inválido (formato)' }
   }
 
   // DEV_MODE / SPC_MOCK — stub deterministico pra testar UX sem credencial.
-  // Convenção pra simular cada cenário:
-  //   CPF terminando em 000 → cpf_falecido
-  //   CPF terminando em 111 → cpf_inativo
-  //   CPF terminando em 222 → cpf_irregular
-  //   CPF terminando em 333 → idade_minima (criança)
-  //   Demais → sucesso com dados determinísticos
   if (DEV_MODE || SERVER_ENV.SPC_MOCK) {
     const ultimos3 = cpfDigits.slice(-3)
     if (ultimos3 === '000') return { ok: false, razao: 'cpf_falecido' }
@@ -156,6 +156,17 @@ export async function consultarSpc(cpfDigits: string): Promise<SpcResult> {
     return { ok: true, dados: stubDevPrefill(cpfDigits) }
   }
 
+  if (SERVER_ENV.SPC_USAR_API_NOVA) {
+    return consultarSpcNova(cpfDigits)
+  }
+  return consultarSpcJud(cpfDigits)
+}
+
+/**
+ * Implementação SPC JUD (legada) — GET /spc/remoting/rest/consultaCadastral.
+ * Mantida como fallback. Resposta flat com nome/dataDeNascimento.
+ */
+async function consultarSpcJud(cpfDigits: string): Promise<SpcResult> {
   const user = SERVER_ENV.SPC_USER
   const password = SERVER_ENV.SPC_PASSWORD
   if (!user || !password) {
@@ -278,6 +289,184 @@ export async function consultarSpc(cpfDigits: string): Promise<SpcResult> {
 }
 
 /**
+ * Implementação SPC API NOVA — POST /spcconsulta/recurso/consulta/padrao.
+ *
+ * Estrutura do request:
+ *   {
+ *     "codigoProduto": "11",
+ *     "tipoConsumidor": "F",
+ *     "documentoConsumidor": "12345678901",
+ *     "codigoInsumoOpcional": []
+ *   }
+ *
+ * Estrutura da resposta (caminho relevante):
+ *   result.return_object.resultado.consumidor.consumidorPessoaFisica
+ *     ├── nome
+ *     ├── dataNascimento  (epoch ms, pode ser negativo pra pré-1970)
+ *     ├── idade           (anos completos calculado pelo SPC)
+ *     ├── sexo            ('MASCULINO' | 'FEMININO')
+ *     └── situacaoCpf.descricaoSituacao  ('REGULAR' | 'CANCELADA' | ...)
+ */
+type SpcConsultaPadraoResponse = {
+  result?: {
+    return_object?: {
+      resultado?: {
+        consumidor?: {
+          consumidorPessoaFisica?: {
+            nome?: string
+            nomeMae?: string
+            dataNascimento?: number
+            idade?: number
+            sexo?: string
+            estadoCivil?: string
+            situacaoCpf?: {
+              descricaoSituacao?: string
+              dataSituacao?: number
+            }
+          }
+        }
+      }
+    }
+  }
+  message?: string
+}
+
+async function consultarSpcNova(cpfDigits: string): Promise<SpcResult> {
+  const token = SERVER_ENV.SPC_USER
+  const senha = SERVER_ENV.SPC_PASSWORD
+
+  if (!token) return { ok: false, razao: 'nao_integrado' }
+  if (!senha) return { ok: false, razao: 'nao_integrado' }
+
+  const url =
+    SERVER_ENV.SPC_AMBIENTE === 'producao'
+      ? SERVER_ENV.SPC_API_URL_NOVA
+      : SERVER_ENV.SPC_API_URL_NOVA_HOMOLOG
+
+  const auth = Buffer.from(`${token}:${senha}`).toString('base64')
+
+  const body = JSON.stringify({
+    codigoProduto: SERVER_ENV.SPC_CODIGO_PRODUTO_NOVO,
+    tipoConsumidor: 'F',
+    documentoConsumidor: cpfDigits,
+    codigoInsumoOpcional: [],
+  })
+
+  let response: Response
+  try {
+    const ctrl = new AbortController()
+    const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS)
+    response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${auth}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body,
+      signal: ctrl.signal,
+      cache: 'no-store',
+    })
+    clearTimeout(timer)
+  } catch (err) {
+    console.error('[spc-nova] erro de rede:', err)
+    return {
+      ok: false,
+      razao: 'erro_api',
+      detalhe: err instanceof Error ? err.message : 'falha de rede',
+    }
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    return { ok: false, razao: 'erro_api', detalhe: 'Auth SPC inválida' }
+  }
+  if (response.status === 429) {
+    return { ok: false, razao: 'erro_api', detalhe: 'Rate limit SPC' }
+  }
+
+  let data: SpcConsultaPadraoResponse
+  try {
+    data = (await response.json()) as SpcConsultaPadraoResponse
+  } catch {
+    return {
+      ok: false,
+      razao: 'erro_api',
+      detalhe: 'resposta nao-JSON do SPC',
+    }
+  }
+
+  if (response.status >= 400) {
+    const msg = (data.message ?? '').toLowerCase()
+    if (msg.includes('não foi encontrado') || msg.includes('nao foi encontrado')) {
+      return { ok: false, razao: 'cpf_inexistente' }
+    }
+    if (msg.includes('inválido') || msg.includes('invalido')) {
+      return { ok: false, razao: 'cpf_inexistente', detalhe: data.message }
+    }
+    return {
+      ok: false,
+      razao: 'erro_api',
+      detalhe: data.message ?? `HTTP ${response.status}`,
+    }
+  }
+
+  // Extração defensiva — qualquer camada faltando vira cpf_inexistente.
+  const pf =
+    data?.result?.return_object?.resultado?.consumidor?.consumidorPessoaFisica
+  if (!pf || !pf.nome) {
+    return { ok: false, razao: 'cpf_inexistente' }
+  }
+
+  // 1. Situação do CPF (RF)
+  const statusReceita = normalizarStatus(pf.situacaoCpf?.descricaoSituacao)
+  if (STATUS_FALECIDO.has(statusReceita)) {
+    return { ok: false, razao: 'cpf_falecido', detalhe: statusReceita }
+  }
+  if (statusReceita && !STATUS_REGULAR.has(statusReceita)) {
+    if (STATUS_INATIVO.has(statusReceita)) {
+      return { ok: false, razao: 'cpf_inativo', detalhe: statusReceita }
+    }
+    if (STATUS_IRREGULAR.has(statusReceita)) {
+      return { ok: false, razao: 'cpf_irregular', detalhe: statusReceita }
+    }
+    return { ok: false, razao: 'cpf_irregular', detalhe: statusReceita }
+  }
+
+  // 2. Idade — preferimos a `idade` direta; senão calculamos via epoch
+  let idade: number | null = null
+  if (typeof pf.idade === 'number' && Number.isFinite(pf.idade)) {
+    idade = pf.idade
+  } else if (
+    typeof pf.dataNascimento === 'number' &&
+    Number.isFinite(pf.dataNascimento)
+  ) {
+    idade = calcularIdade(new Date(pf.dataNascimento))
+  }
+
+  if (idade === null) {
+    console.error('[spc-nova] sem idade nem dataNascimento', {
+      campos: Object.keys(pf),
+    })
+    return { ok: false, razao: 'idade_indeterminada' }
+  }
+
+  if (idade < IDADE_MINIMA_VOTAR) {
+    return { ok: false, razao: 'idade_minima' }
+  }
+
+  // 3. Monta dados de retorno
+  const dados: SpcDadosEleitor = {
+    nomeMascarado: mascararNome(pf.nome),
+  }
+  const faixa = idadeParaFaixa(idade)
+  if (faixa) dados.faixaEtaria = faixa
+  if (pf.sexo === 'FEMININO') dados.sexo = 'F'
+  if (pf.sexo === 'MASCULINO') dados.sexo = 'M'
+
+  return { ok: true, dados }
+}
+
+/**
  * Stub determinístico pra DEV_MODE/SPC_MOCK.
  */
 function stubDevPrefill(cpfDigits: string): SpcDadosEleitor {
@@ -374,6 +563,22 @@ export const calcularIdade = (dataNascimento: Date): number => {
 export const IDADE_MINIMA_VOTAR = 16
 
 /**
+ * Faixa etária a partir da IDADE em anos (não da data). Útil quando a
+ * API já devolve a idade calculada (caso da API nova SPC).
+ */
+export const idadeParaFaixa = (
+  idade: number,
+): SpcDadosEleitor['faixaEtaria'] => {
+  if (idade < IDADE_MINIMA_VOTAR) return undefined
+  if (idade <= 17) return '16-17'
+  if (idade <= 24) return '18-24'
+  if (idade <= 34) return '25-34'
+  if (idade <= 44) return '35-44'
+  if (idade <= 59) return '45-59'
+  return '60+'
+}
+
+/**
  * Faixa etaria a partir de data de nascimento. Cortes alinhados com o
  * que o TSE publica em estatisticas de eleitorado.
  *
@@ -384,14 +589,7 @@ export const IDADE_MINIMA_VOTAR = 16
 export const calcularFaixaEtaria = (
   dataNascimento: Date,
 ): SpcDadosEleitor['faixaEtaria'] => {
-  const idade = calcularIdade(dataNascimento)
-  if (idade < IDADE_MINIMA_VOTAR) return undefined
-  if (idade <= 17) return '16-17'
-  if (idade <= 24) return '18-24'
-  if (idade <= 34) return '25-34'
-  if (idade <= 44) return '35-44'
-  if (idade <= 59) return '45-59'
-  return '60+'
+  return idadeParaFaixa(calcularIdade(dataNascimento))
 }
 
 /**

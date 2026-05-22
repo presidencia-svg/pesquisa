@@ -87,6 +87,43 @@ export const SERVER_ENV = {
   get SPC_CODIGO_PRODUTO() {
     return optional('SPC_CODIGO_PRODUTO', '11')
   },
+  /**
+   * Quando 'true', a aplicação usa a API REST nova da SPC
+   * (`/spcconsulta/recurso/consulta/padrao` POST) em vez da SPC JUD
+   * legada (`/spc/remoting/rest/consultaCadastral` GET).
+   *
+   * A API nova retorna estrutura aninhada com situacaoCpf,
+   * dataNascimento (epoch ms), idade direta — mais robusto.
+   */
+  get SPC_USAR_API_NOVA() {
+    return process.env.SPC_USAR_API_NOVA === 'true'
+  },
+  /** URL da API nova (POST /spcconsulta/recurso/consulta/padrao). */
+  get SPC_API_URL_NOVA() {
+    return optional(
+      'SPC_API_URL_NOVA',
+      'https://api.spcbrasil.com.br/spcconsulta/recurso/consulta/padrao',
+    )
+  },
+  get SPC_API_URL_NOVA_HOMOLOG() {
+    return optional(
+      'SPC_API_URL_NOVA_HOMOLOG',
+      'https://treinamento.spcbrasil.com.br/spcconsulta/recurso/consulta/padrao',
+    )
+  },
+  /**
+   * codigoProduto usado na API nova. Recomendados pra fluxo de
+   * cadastro eleitor (precisa apenas de nome + data nascimento +
+   * situação CPF):
+   *   11  CONFIRME PF        — mais barato, traz CPF básico + status RF
+   *   222 CONFIRME PF RF     — com receita federal explícita
+   *   320 CONSULTA COMPLETA  — mais cara, todos os insumos
+   *   479 CONSULTA CPF SPC   — padrão consulta cadastral
+   * Default '11' (CONFIRME PF) — suficiente pro nosso caso.
+   */
+  get SPC_CODIGO_PRODUTO_NOVO() {
+    return optional('SPC_CODIGO_PRODUTO_NOVO', '11')
+  },
   get SPC_MOCK() {
     return process.env.SPC_MOCK === 'true'
   },

@@ -32,24 +32,49 @@ export default async function DiagnosticoSpcPage({
       const senha = SERVER_ENV.SPC_PASSWORD
       if (user && senha) {
         try {
-          const base =
-            SERVER_ENV.SPC_AMBIENTE === 'producao'
-              ? SERVER_ENV.SPC_API_URL
-              : SERVER_ENV.SPC_API_URL_HOMOLOG
-          const url = `${base.replace(/\/+$/, '')}/cpf/${cpf}/1`
+          const usarNova = SERVER_ENV.SPC_USAR_API_NOVA
+          let url: string
+          let init: RequestInit
           const auth = Buffer.from(`${user}:${senha}`).toString('base64')
+          if (usarNova) {
+            url =
+              SERVER_ENV.SPC_AMBIENTE === 'producao'
+                ? SERVER_ENV.SPC_API_URL_NOVA
+                : SERVER_ENV.SPC_API_URL_NOVA_HOMOLOG
+            init = {
+              method: 'POST',
+              headers: {
+                Authorization: `Basic ${auth}`,
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+              },
+              body: JSON.stringify({
+                codigoProduto: SERVER_ENV.SPC_CODIGO_PRODUTO_NOVO,
+                tipoConsumidor: 'F',
+                documentoConsumidor: cpf,
+                codigoInsumoOpcional: [],
+              }),
+              cache: 'no-store',
+            }
+          } else {
+            const base =
+              SERVER_ENV.SPC_AMBIENTE === 'producao'
+                ? SERVER_ENV.SPC_API_URL
+                : SERVER_ENV.SPC_API_URL_HOMOLOG
+            url = `${base.replace(/\/+$/, '')}/cpf/${cpf}/1`
+            init = {
+              method: 'GET',
+              headers: {
+                Authorization: `Basic ${auth}`,
+                Accept: 'application/json',
+              },
+              cache: 'no-store',
+            }
+          }
           const ctrl = new AbortController()
           const timer = setTimeout(() => ctrl.abort(), 10_000)
           const t1 = Date.now()
-          const res = await fetch(url, {
-            method: 'GET',
-            headers: {
-              Authorization: `Basic ${auth}`,
-              Accept: 'application/json',
-            },
-            signal: ctrl.signal,
-            cache: 'no-store',
-          })
+          const res = await fetch(url, { ...init, signal: ctrl.signal })
           clearTimeout(timer)
           const duracaoBruto = Date.now() - t1
           const text = await res.text()
@@ -181,8 +206,25 @@ function SecaoContexto() {
         <dd className="font-mono text-[10px] break-all">
           {SERVER_ENV.SPC_API_URL}
         </dd>
-        <dt className="text-muted-foreground">SPC_CODIGO_PRODUTO</dt>
+        <dt className="text-muted-foreground">SPC_CODIGO_PRODUTO (JUD)</dt>
         <dd className="font-mono">{SERVER_ENV.SPC_CODIGO_PRODUTO}</dd>
+        <dt className="text-muted-foreground font-bold text-foreground">
+          SPC_USAR_API_NOVA
+        </dt>
+        <dd className="font-mono font-bold text-foreground">
+          {String(SERVER_ENV.SPC_USAR_API_NOVA)}{' '}
+          {SERVER_ENV.SPC_USAR_API_NOVA ? '← POST /spcconsulta' : '← GET /spc/remoting (JUD legado)'}
+        </dd>
+        {SERVER_ENV.SPC_USAR_API_NOVA ? (
+          <>
+            <dt className="text-muted-foreground">SPC_API_URL_NOVA</dt>
+            <dd className="font-mono text-[10px] break-all">
+              {SERVER_ENV.SPC_API_URL_NOVA}
+            </dd>
+            <dt className="text-muted-foreground">SPC_CODIGO_PRODUTO_NOVO</dt>
+            <dd className="font-mono">{SERVER_ENV.SPC_CODIGO_PRODUTO_NOVO}</dd>
+          </>
+        ) : null}
       </dl>
     </section>
   )
