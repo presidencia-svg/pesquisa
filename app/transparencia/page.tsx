@@ -12,6 +12,7 @@ export const metadata = {
 
 const secoes = [
   { id: 'ficha-tecnica', label: 'Ficha técnica (formato instituto)' },
+  { id: 'codigo-aberto', label: 'Código aberto e proteção dos dados' },
   { id: 'duas-salas', label: 'As duas salas (anonimato)' },
   { id: 'plano-amostral', label: 'Plano amostral' },
   { id: 'variaveis', label: 'Variáveis coletadas' },
@@ -19,7 +20,7 @@ const secoes = [
   { id: 'antifraude', label: 'Anti-fraude' },
   { id: 'k-anonymity', label: 'K-anonymity' },
   { id: 'cronograma', label: 'Cronograma' },
-  { id: 'auditar', label: 'Como auditar' },
+  { id: 'auditar', label: 'Como auditar (3 níveis)' },
   { id: 'cdl', label: 'Quem executa' },
 ]
 
@@ -345,40 +346,41 @@ export default function TransparenciaPage() {
                 <p className="leading-relaxed text-sm">
                   É uma dúvida legítima: <em>&quot;se o código é público,
                   qualquer um vê os resultados antes da divulgação?&quot;</em>
-                  A resposta é não, e a separação acontece em 3 camadas
-                  reforçadas independentemente:
+                  Não. A separação acontece em <strong>três camadas
+                  independentes</strong>:
                 </p>
                 <ol className="list-decimal pl-5 text-sm leading-relaxed flex flex-col gap-2">
                   <li>
-                    <strong>Banco de dados em Supabase com RLS DENY ALL</strong>{' '}
-                    — toda tabela sensível (votos, eleitores, edição, candidatos)
-                    rejeita qualquer requisição que não venha do nosso servidor
-                    em Vercel. A chave pública (&quot;anon&quot;) que aparece no
-                    HTML não consegue ler nada. Só o servidor, com a chave
-                    &quot;service_role&quot; (guardada em variável de ambiente
-                    Vercel — fora do código), tem acesso.
+                    <strong>Banco de dados isolado.</strong> As tabelas
+                    sensíveis ficam atrás de regras de acesso server-side
+                    que rejeitam qualquer conexão externa. Mesmo quem
+                    tivesse a URL do banco e qualquer chave pública embutida
+                    em página HTML não consegue ler nada — só o nosso
+                    servidor, com credenciais privilegiadas guardadas em
+                    variáveis de ambiente (fora do código-fonte).
                   </li>
                   <li>
-                    <strong>Página /resultados tem trava por divulgação</strong>{' '}
-                    — antes da CDL Aracaju marcar a edição como divulgada
-                    (após o telejornal parceiro), a página exibe apenas
-                    &quot;Aguardando divulgação&quot;. Os números não saem do
-                    servidor.
+                    <strong>Página de resultados com trava de divulgação.</strong>{' '}
+                    Antes da CDL Aracaju marcar a edição como divulgada
+                    (após o telejornal parceiro, conforme convênio com a
+                    emissora), a página exibe apenas &quot;Aguardando
+                    divulgação&quot;. Os números não saem do servidor.
                   </li>
                   <li>
-                    <strong>Auditoria de acessos admin</strong> — todo acesso
-                    aos resultados pelo painel administrativo gera registro
-                    em <code className="text-xs bg-muted px-1 py-0.5 rounded">admin_audit_log</code>{' '}
-                    (LGPD art. 37). Quem viu, quando, de qual IP, antes ou
-                    depois da divulgação — tudo rastreado, sem exceção.
+                    <strong>Auditoria de acessos administrativos.</strong>{' '}
+                    Todo acesso a resultados ou dados pessoais pelo painel
+                    administrativo gera registro carimbado (timestamp, IP,
+                    user-agent, contexto). Acessos ANTES da divulgação são
+                    destacados — caso mais sensível, exige justificativa
+                    operacional. Em conformidade com o art. 37 da LGPD.
                   </li>
                 </ol>
                 <p className="text-sm leading-relaxed">
                   Conclusão: o <strong>código</strong> é público porque
                   permite que qualquer cientista político ou pesquisador
                   audite COMO os votos são contados. Os <strong>dados</strong>{' '}
-                  ficam privados até o momento autorizado da divulgação. Após
-                  a divulgação, tornam-se públicos em{' '}
+                  ficam privados até o momento autorizado da divulgação.
+                  Após a divulgação, tornam-se públicos em{' '}
                   <a
                     href="/resultados"
                     className="text-primary hover:underline font-medium"
@@ -386,6 +388,13 @@ export default function TransparenciaPage() {
                     /resultados
                   </a>{' '}
                   — automaticamente.
+                </p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Esta é uma descrição em linguagem leiga. Detalhes
+                  técnicos (nomes de tabelas, configurações de segurança,
+                  parâmetros operacionais) são compartilhados sob NDA com
+                  auditores formais credenciados pela CDL — sem exposição
+                  pública, pra não dar mapa a quem queira atacar.
                 </p>
               </div>
             </section>
@@ -623,43 +632,59 @@ export default function TransparenciaPage() {
               <ul className="text-foreground leading-relaxed list-disc pl-5 flex flex-col gap-2">
                 <li>
                   <strong>Validação documental:</strong> CPF tem que existir
-                  na base CDL ou passar pelo SPC Brasil. Sem isso, o cadastro
-                  nem começa.
+                  na base CDL ou na consulta cadastral à Receita Federal
+                  (via SPC Brasil), com situação regular e idade mínima de
+                  16 anos. Sem isso, o cadastro nem começa.
                 </li>
                 <li>
-                  <strong>Validação de propriedade:</strong> código de 6
-                  dígitos enviado por WhatsApp. Sem confirmação, não emite
-                  token de voto.
+                  <strong>Validação de propriedade do número:</strong>{' '}
+                  código de 6 dígitos enviado por WhatsApp. Sem confirmação,
+                  não emite token de voto.
                 </li>
                 <li>
-                  <strong>Limite por edição:</strong> mesmo CPF não passa
-                  duas vezes na mesma edição da pesquisa.
+                  <strong>Voto único por CPF, WhatsApp e dispositivo:</strong>{' '}
+                  trava em três dimensões independentes. Quem repete em
+                  qualquer uma é bloqueado.
                 </li>
                 <li>
-                  <strong>Ponderação geográfica:</strong> mesmo sem
-                  bloqueio por cota, a projeção final aplica peso
-                  proporcional ao eleitorado de cada município, evitando
-                  que excesso de adesão de uma região distorça o resultado.
+                  <strong>Ponderação geográfica:</strong> a projeção final
+                  aplica peso proporcional ao eleitorado de cada município,
+                  evitando que excesso de adesão de uma região distorça o
+                  resultado.
                 </li>
                 <li>
-                  <strong>Limite por dispositivo:</strong> mesmo navegador
-                  não pode cadastrar mais de 2 CPFs (impressão digital
-                  client-side).
+                  <strong>Limites de taxa por endereço de rede:</strong>{' '}
+                  tentativas repetidas são contidas em janelas curtas. Os
+                  parâmetros operacionais são revistos periodicamente —
+                  publicá-los daria orçamento de ataque a quem tente burlar.
                 </li>
                 <li>
-                  <strong>Rate limit por IP:</strong> 5 tentativas em
-                  5 minutos no mesmo endereço.
+                  <strong>Anti-bot externo:</strong> verificação humana via
+                  provedor especializado (Cloudflare Turnstile) na entrada do
+                  formulário.
                 </li>
                 <li>
-                  <strong>Anti-bot:</strong> Cloudflare Turnstile no
-                  formulário de entrada.
+                  <strong>Bloqueio de navegação anônima/incógnita:</strong>{' '}
+                  modo privado impede a trava por dispositivo, então
+                  rejeitamos o cadastro nessas condições.
                 </li>
                 <li>
-                  <strong>Análise pós-coleta:</strong> view de risco detecta
-                  clusters anômalos (mesmo IP, mesma hora, mesma intenção)
-                  pra revisão manual antes da divulgação.
+                  <strong>Análise pós-coleta:</strong> rotinas internas
+                  detectam clusters anômalos (concentração temporal, IP,
+                  padrão de resposta) pra revisão antes da divulgação.
                 </li>
               </ul>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Pode parecer pouco transparente não citar números exatos
+                (quantas tentativas em quanto tempo). É proposital: em
+                segurança, divulgar o limite exato vira receita de bolo
+                pra fraude. O auditor formal com credencial pode ver tudo
+                em detalhe — ver{' '}
+                <a href="#auditar" className="text-primary hover:underline">
+                  Como auditar
+                </a>{' '}
+                abaixo.
+              </p>
             </section>
 
             {/* 6. K-anonymity */}
@@ -716,15 +741,81 @@ export default function TransparenciaPage() {
                 Como auditar
               </h2>
               <p className="text-foreground leading-relaxed">
-                Toda afirmação aqui pode ser verificada por qualquer pessoa.
-                Os caminhos:
+                A pesquisa foi desenhada para ser verificável em três níveis
+                de acesso. Escolha o que cabe no seu papel:
               </p>
+
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="rounded-lg border border-border bg-background p-5 flex flex-col gap-3">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-semibold">
+                    Nível 1
+                  </p>
+                  <h3 className="text-base font-semibold text-foreground">
+                    Cidadão / Imprensa
+                  </h3>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    O que está totalmente público, sem precisar cadastro:
+                  </p>
+                  <ul className="text-sm text-muted-foreground list-disc pl-4 flex flex-col gap-1">
+                    <li>Ficha técnica nesta página</li>
+                    <li>Resultados (após divulgação) em /resultados</li>
+                    <li>Política de privacidade em /privacidade</li>
+                    <li>Registro PesqEle no TRE/SE</li>
+                  </ul>
+                </div>
+
+                <div className="rounded-lg border border-border bg-background p-5 flex flex-col gap-3">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-semibold">
+                    Nível 2
+                  </p>
+                  <h3 className="text-base font-semibold text-foreground">
+                    Pesquisador acadêmico
+                  </h3>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    Quem quer auditar o sistema independentemente:
+                  </p>
+                  <ul className="text-sm text-muted-foreground list-disc pl-4 flex flex-col gap-1">
+                    <li>Código-fonte completo no GitHub</li>
+                    <li>
+                      Metodologia técnica em{' '}
+                      <code className="text-xs">docs/</code>
+                    </li>
+                    <li>Política de divulgação responsável (SECURITY.md)</li>
+                    <li>
+                      Microdados anonimizados em{' '}
+                      <code className="text-xs">/.well-known</code>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="rounded-lg border-2 border-primary/40 bg-primary/5 p-5 flex flex-col gap-3">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-primary font-semibold">
+                    Nível 3
+                  </p>
+                  <h3 className="text-base font-semibold text-foreground">
+                    Auditor formal credenciado
+                  </h3>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    Acesso sob NDA, exigência da Justiça Eleitoral:
+                  </p>
+                  <ul className="text-sm text-muted-foreground list-disc pl-4 flex flex-col gap-1">
+                    <li>Sistema interno de controle (Res. 23.747/2026)</li>
+                    <li>Microdados completos (sem identificadores diretos)</li>
+                    <li>Logs de auditoria do painel admin</li>
+                    <li>Parâmetros operacionais antifraude</li>
+                  </ul>
+                </div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-foreground mt-2">
+                Caminhos detalhados
+              </h3>
 
               <ol className="flex flex-col gap-4 text-foreground leading-relaxed list-decimal list-outside pl-5">
                 <li>
-                  <strong>Código fonte aberto.</strong> O sistema inteiro —
-                  back-end, banco, formulários, lógica anti-fraude — está
-                  publicado em repositório aberto:{' '}
+                  <strong>Código fonte aberto.</strong> Back-end, banco,
+                  formulários, lógica de validação — tudo publicado em
+                  repositório auditável:{' '}
                   <a
                     href="https://github.com/presidencia-svg/pesquisa"
                     target="_blank"
@@ -733,34 +824,88 @@ export default function TransparenciaPage() {
                   >
                     github.com/presidencia-svg/pesquisa ↗
                   </a>
+                  . Uso comercial restrito por{' '}
+                  <a
+                    href="https://github.com/presidencia-svg/pesquisa/blob/main/LICENSE"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    licença específica
+                  </a>
+                  .
                 </li>
                 <li>
                   <strong>Documento técnico completo</strong> com fórmulas,
-                  schema do banco e detalhes de implementação está em{' '}
+                  estrutura conceitual do banco e detalhes de implementação
+                  está em{' '}
                   <code className="font-mono text-sm">docs/metodologia.md</code>{' '}
                   no repositório.
                 </li>
                 <li>
-                  <strong>Registro no PesqEle (TRE/SE).</strong> Após o
-                  registro formal, qualquer interessado pode consultar a
-                  ficha técnica completa diretamente no sistema oficial da
-                  Justiça Eleitoral. O número do registro será publicado
-                  aqui.
+                  <strong>Política de segurança e disclosure.</strong>{' '}
+                  Vulnerabilidades podem ser reportadas conforme{' '}
+                  <a
+                    href="https://github.com/presidencia-svg/pesquisa/blob/main/SECURITY.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    SECURITY.md
+                  </a>
+                  . Reportes de boa-fé não geram represália legal.
+                  Formato machine-readable em{' '}
+                  <code className="font-mono text-xs">/.well-known/security.txt</code>
+                  {' '}(RFC 9116).
                 </li>
                 <li>
-                  <strong>Pedido de dados auditáveis.</strong> Conforme o
-                  Art. 13, §§ 8º e 9º da Resolução TSE 23.747/2026,
-                  qualquer interessado pode requerer os dados e o sistema
-                  interno de controle. A CDL responde em até 2 dias úteis.
-                  Custos da inspeção, conforme a Resolução, são arcados pelo
+                  <strong>Registro no PesqEle (TRE/SE).</strong> Após o
+                  registro formal, qualquer interessado pode consultar a
+                  ficha técnica diretamente no sistema oficial da Justiça
+                  Eleitoral. O número do registro será publicado nesta
+                  página.
+                </li>
+                <li>
+                  <strong>Pedido de dados auditáveis (Res. TSE 23.747/2026,
+                  art. 13, §§ 8º e 9º).</strong> Qualquer interessado pode
+                  requerer os dados consolidados e o sistema interno de
+                  controle. A CDL responde em até 2 dias úteis. Custos da
+                  inspeção, conforme a Resolução, são arcados pelo
                   requerente.
                 </li>
                 <li>
                   <strong>Estatístico responsável.</strong> Identificado no
-                  registro PesqEle, com número CONRE ativo, declaração
+                  registro PesqEle, com número CONRE ativo e declaração
                   assinada com certificado digital.
                 </li>
+                <li>
+                  <strong>Encarregada de Dados (DPO).</strong> Claudimara
+                  Fontes Carvalho, designada pela ata 001/2026-EXT de
+                  26/05/2026. Atende solicitações da LGPD pelo e-mail{' '}
+                  <a
+                    href="mailto:dpo@cdlaju.com.br"
+                    className="text-primary hover:underline"
+                  >
+                    dpo@cdlaju.com.br
+                  </a>
+                  .
+                </li>
               </ol>
+
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 flex flex-col gap-2">
+                <p className="font-semibold">
+                  Por que alguns detalhes são privados?
+                </p>
+                <p className="leading-relaxed">
+                  Detalhes de configuração operacional (parâmetros exatos
+                  de rate limit, nomes de tabelas internas, chaves
+                  criptográficas, IPs de origem) não aparecem aqui — não
+                  por opacidade, mas porque cada item destes facilitaria
+                  um ataque de fraude se exposto publicamente. Auditores
+                  formais credenciados acessam tudo isso sob NDA, conforme
+                  a Resolução TSE.
+                </p>
+              </div>
             </section>
 
             {/* 9. Quem executa */}
