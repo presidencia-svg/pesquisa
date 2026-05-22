@@ -21,6 +21,21 @@ export default async function NotificarResultadoPage() {
     enviados: 0,
     pendentes: 0,
   }
+  let ultimaExecucaoCron: {
+    executado_em: string
+    status: string
+    resultado: unknown
+  } | null = null
+
+  // Última execução do cron (pra mostrar quando rodou e o resultado)
+  const { data: ultimoLog } = await db
+    .from('cron_log')
+    .select('executado_em, status, resultado')
+    .eq('nome', 'notificar-resultados')
+    .order('executado_em', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (ultimoLog) ultimaExecucaoCron = ultimoLog
 
   if (edicao) {
     const [
@@ -124,13 +139,59 @@ export default async function NotificarResultadoPage() {
         </div>
       </section>
 
+      <section className="flex flex-col gap-3 rounded-md border-2 border-accent/40 bg-accent/5 p-5">
+        <div className="flex flex-col gap-1">
+          <p className="text-[10px] uppercase tracking-[0.18em] text-accent font-semibold">
+            Automatizado
+          </p>
+          <h2 className="text-base font-semibold">
+            Envio automático a cada 5 minutos
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            A Vercel dispara <code>/api/cron/notificar-resultados</code> a
+            cada 5 minutos. Cada execução processa até <strong>500
+            mensagens</strong> com throttle de 50ms (~20 msgs/seg). Em
+            fluxo normal, 15.000 opt-in escoam em ~6 horas sem intervenção.
+            Status registrado em <code>cron_log</code>.
+          </p>
+        </div>
+        {ultimaExecucaoCron ? (
+          <div className="text-xs text-muted-foreground bg-background border border-border rounded-md p-3 flex flex-col gap-1">
+            <p>
+              <span className="font-medium text-foreground">
+                Última execução:
+              </span>{' '}
+              {new Date(ultimaExecucaoCron.executado_em).toLocaleString(
+                'pt-BR',
+                { dateStyle: 'short', timeStyle: 'medium' },
+              )}{' '}
+              <span
+                className={
+                  ultimaExecucaoCron.status === 'ok'
+                    ? 'text-accent font-medium'
+                    : 'text-error font-medium'
+                }
+              >
+                ({ultimaExecucaoCron.status})
+              </span>
+            </p>
+            <pre className="text-[10px] font-mono text-muted-foreground/80 overflow-x-auto whitespace-pre-wrap">
+              {JSON.stringify(ultimaExecucaoCron.resultado, null, 2).slice(0, 400)}
+            </pre>
+          </div>
+        ) : (
+          <p className="text-xs text-muted-foreground italic">
+            Cron ainda não rodou (aguarde até 5 min após o deploy).
+          </p>
+        )}
+      </section>
+
       <section className="flex flex-col gap-4 rounded-md border border-border bg-muted/40 p-5">
         <div className="flex flex-col gap-1">
-          <h2 className="text-base font-semibold">Disparar próximo lote</h2>
+          <h2 className="text-base font-semibold">Disparar manualmente</h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Processa até <strong>100 eleitores por clique</strong>. O envio é
-            limitado a ~5 mensagens/segundo (Meta tolera 80/s — folga ampla).
-            Você pode clicar várias vezes em sequência até a fila zerar.
+            Útil pra teste ou pra forçar envio entre execuções do cron.
+            Processa um lote de até <strong>500 mensagens</strong>.
           </p>
         </div>
         <DispararLoteForm
