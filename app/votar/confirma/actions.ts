@@ -35,16 +35,15 @@ type FaixaEtaria = (typeof FAIXAS_VALIDAS)[number]
 const isFaixaValida = (v: unknown): v is FaixaEtaria =>
   typeof v === 'string' && (FAIXAS_VALIDAS as readonly string[]).includes(v)
 
+// Schema do formulário /votar/confirma — NÃO inclui faixa_etaria.
+// Faixa vem 100% do draft de sessão (preenchida em /votar pela consulta
+// CPF → cdl_base ou SPC). O eleitor não tem opção de alterar.
 const schema = z.object({
   municipio_ibge: z.coerce
     .number()
     .int()
     .positive({ message: 'Selecione seu município.' }),
   sexo: z.enum(['M', 'F'], { message: 'Selecione uma opção.' }),
-  // faixa_etaria é opcional no schema: vem do form quando o prefill da
-  // consulta CPF não trouxe (cdl_base sem faixa OU SPC sem data de
-  // nascimento). Quando o prefill já tem, o form envia como hidden input.
-  faixa_etaria: z.enum(FAIXAS_VALIDAS).optional(),
   escolaridade: z.enum(['fundamental', 'medio', 'superior'], {
     message: 'Selecione sua escolaridade.',
   }),
@@ -82,19 +81,21 @@ export async function confirmarDados(
 
   const { municipio_ibge, sexo, escolaridade, whatsapp } = parsed.data
 
-  // Faixa etária: prefere o prefill do draft (vem de cdl_base ou SPC),
-  // cai no form input quando o prefill não trouxe. Em qualquer dos casos
-  // precisa ser válida — sem isso, a ponderação demográfica TSE 23.747/2026
-  // não pode ser feita.
-  const faixaCandidata = draft.faixaEtaria ?? parsed.data.faixa_etaria
-  if (!isFaixaValida(faixaCandidata)) {
+  // Faixa etária vem 100% do draft de sessão (preenchida em /votar pela
+  // consulta CPF). Não é perguntada ao eleitor. Se chegou aqui sem faixa
+  // válida no draft, é estado inconsistente — voltar pro início.
+  if (!isFaixaValida(draft.faixaEtaria)) {
+    console.error('[confirma] draft sem faixaEtaria válida', {
+      cpfHash: draft.cpfHash,
+      faixaNoDraft: draft.faixaEtaria,
+    })
     return {
       ok: false,
-      field: 'faixa_etaria',
-      message: 'Selecione uma faixa etária.',
+      message:
+        'Sessão sem faixa etária válida. Volte ao início e digite o CPF novamente.',
     }
   }
-  const faixa_etaria: FaixaEtaria = faixaCandidata
+  const faixa_etaria: FaixaEtaria = draft.faixaEtaria
 
   const whatsappE164 = normalizarWhatsapp(whatsapp)
   if (!whatsappE164) {
