@@ -102,6 +102,15 @@ export default async function DiagnosticoSpcPage({
           }
 
           payloadBruto = {
+            request: {
+              metodo: init.method,
+              url_chamada: url,
+              api_em_uso: usarNova ? 'NOVA (POST /spcconsulta)' : 'JUD legada (GET /spc/remoting)',
+              body_enviado:
+                typeof init.body === 'string'
+                  ? JSON.parse(init.body)
+                  : null,
+            },
             http_status: res.status,
             http_status_text: res.statusText,
             duracao_ms: duracaoBruto,
