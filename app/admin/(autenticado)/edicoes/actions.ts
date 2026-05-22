@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { registrarAcessoAdmin } from '@/lib/admin-audit'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export type EdicaoState = { ok: boolean; message?: string }
@@ -109,13 +110,20 @@ export async function divulgarEdicao(formData: FormData): Promise<EdicaoState> {
     return { ok: false, message: 'Edição já está divulgada.' }
   }
 
+  const divulgadaEm = new Date().toISOString()
   const { error } = await db
     .from('edicao')
-    .update({ divulgada_em: new Date().toISOString() })
+    .update({ divulgada_em: divulgadaEm })
     .eq('id', id)
   if (error) {
     return { ok: false, message: error.message }
   }
+
+  await registrarAcessoAdmin(
+    'marcar_divulgacao',
+    { edicao_id: id, divulgada_em: divulgadaEm, registro_tre: ed.registro_tre },
+    `edicao:${id}`,
+  )
 
   revalidatePath('/admin/edicoes')
   revalidatePath('/admin')
@@ -148,6 +156,11 @@ export async function retirarDivulgacao(formData: FormData): Promise<void> {
   if (!id) return
   const db = supabaseAdmin()
   await db.from('edicao').update({ divulgada_em: null }).eq('id', id)
+  await registrarAcessoAdmin(
+    'retirar_divulgacao',
+    { edicao_id: id },
+    `edicao:${id}`,
+  )
   revalidatePath('/admin/edicoes')
   revalidatePath('/admin')
   revalidatePath('/resultados')

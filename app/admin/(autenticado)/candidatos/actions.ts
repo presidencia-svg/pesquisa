@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { registrarAcessoAdmin } from '@/lib/admin-audit'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export type CandidatoState = { ok: boolean; message?: string }
@@ -71,6 +72,16 @@ export async function criarCandidato(
     return { ok: false, message: error.message }
   }
 
+  await registrarAcessoAdmin(
+    'criar_candidato',
+    {
+      cargo: parsed.data.cargo,
+      numero: parsed.data.numero,
+      nome_urna: parsed.data.nome_urna,
+    },
+    `edicao:${edicao.id}`,
+  )
+
   revalidatePath('/admin/candidatos')
   return { ok: true }
 }
@@ -82,6 +93,11 @@ export async function alternarAtivo(formData: FormData): Promise<void> {
   const ativo = ativarRaw === 'true'
   const db = supabaseAdmin()
   await db.from('candidatos_pesquisa').update({ ativo }).eq('id', id)
+  await registrarAcessoAdmin(
+    'alternar_ativo_candidato',
+    { ativo },
+    `candidato:${id}`,
+  )
   revalidatePath('/admin/candidatos')
 }
 
@@ -103,6 +119,11 @@ export async function salvarImpedimento(formData: FormData): Promise<void> {
     .from('candidatos_pesquisa')
     .update({ impedimento: valor })
     .eq('id', id)
+  await registrarAcessoAdmin(
+    'editar_impedimento_candidato',
+    { tem_impedimento: valor !== null, tamanho: valor?.length ?? 0 },
+    `candidato:${id}`,
+  )
   revalidatePath('/admin/candidatos')
   revalidatePath('/resultados')
 }

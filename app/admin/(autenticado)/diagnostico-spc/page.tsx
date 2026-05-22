@@ -1,3 +1,4 @@
+import { registrarAcessoAdmin } from '@/lib/admin-audit'
 import { requireAdmin } from '@/lib/admin-auth'
 import { DEV_MODE, SERVER_ENV } from '@/lib/env'
 import { consultarSpc } from '@/lib/spc'
@@ -22,6 +23,17 @@ export default async function DiagnosticoSpcPage({
   let payloadBruto: unknown = null
 
   if (cpf.length === 11) {
+    // Auditoria: registra a consulta de diagnóstico. CPF é hash-safe
+    // (já mascarado no detalhe, mas evitamos guardar plain text).
+    await registrarAcessoAdmin(
+      'view_diagnostico_spc',
+      {
+        cpf_mascarado: cpf.slice(0, 3) + '*****' + cpf.slice(-2),
+        api: SERVER_ENV.SPC_USAR_API_NOVA ? 'nova' : 'jud',
+      },
+      `cpf_lookup`,
+    )
+
     const t0 = Date.now()
     resultadoConsultarSpc = await consultarSpc(cpf)
     const duracaoConsulta = Date.now() - t0

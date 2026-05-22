@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 
+import { registrarAcessoAdmin } from '@/lib/admin-audit'
 import { requireAdmin } from '@/lib/admin-auth'
 
 import { processarLoteNotificacao } from '@/lib/notificar-resultado'
@@ -25,6 +26,10 @@ export type NotificarResultadoState = {
 export async function dispararLoteNotificacao(): Promise<NotificarResultadoState> {
   await requireAdmin()
   const r = await processarLoteNotificacao()
+  await registrarAcessoAdmin('notificar_resultado_manual', {
+    ok: r.ok,
+    ...(r.resumo ?? {}),
+  })
   if (r.ok) revalidatePath('/admin/notificar-resultado')
   return r
 }
