@@ -18,19 +18,28 @@ import { confirmarDados, type ConfirmaState } from './actions'
 async function gerarDeviceFingerprint(): Promise<string | null> {
   if (typeof window === 'undefined') return null
   try {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
+    // Detecta iOS. Safari iOS 17+ aplica anti-fingerprint no canvas
+    // (adiciona ruído por sessão), o que torna o canvas instável.
+    // Em iOS, omitimos o canvas pra ter fingerprint estável — perde
+    // alguma unicidade mas mantém o objetivo (1 voto por aparelho na
+    // mesma sessão funciona; aparelho diferente = fingerprint diferente).
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent)
+
     let canvasData = ''
-    if (ctx) {
-      ctx.textBaseline = 'top'
-      ctx.font = '14px Arial'
-      ctx.fillStyle = '#069'
-      ctx.fillText('pesquisa-sergipe-2026', 4, 4)
-      ctx.strokeStyle = '#3a8a1d'
-      ctx.beginPath()
-      ctx.arc(50, 18, 8, 0, Math.PI * 2)
-      ctx.stroke()
-      canvasData = canvas.toDataURL()
+    if (!isIOS) {
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      if (ctx) {
+        ctx.textBaseline = 'top'
+        ctx.font = '14px Arial'
+        ctx.fillStyle = '#069'
+        ctx.fillText('pesquisa-sergipe-2026', 4, 4)
+        ctx.strokeStyle = '#3a8a1d'
+        ctx.beginPath()
+        ctx.arc(50, 18, 8, 0, Math.PI * 2)
+        ctx.stroke()
+        canvasData = canvas.toDataURL()
+      }
     }
     const signals = [
       navigator.userAgent,
@@ -38,6 +47,10 @@ async function gerarDeviceFingerprint(): Promise<string | null> {
       `${screen.width}x${screen.height}x${screen.colorDepth}`,
       new Date().getTimezoneOffset().toString(),
       (navigator.hardwareConcurrency ?? 0).toString(),
+      // WebGL renderer/vendor são mais estáveis que canvas no iOS
+      // (Apple não randomiza esses) — adiciona unicidade sem
+      // instabilidade.
+      obterWebGLSignal(),
       canvasData,
     ].join('|')
     const enc = new TextEncoder()
@@ -47,6 +60,29 @@ async function gerarDeviceFingerprint(): Promise<string | null> {
       .join('')
   } catch {
     return null
+  }
+}
+
+/** WebGL vendor+renderer — estável em todos os browsers, inclusive iOS. */
+function obterWebGLSignal(): string {
+  try {
+    const canvas = document.createElement('canvas')
+    const gl =
+      (canvas.getContext('webgl') as WebGLRenderingContext | null) ??
+      (canvas.getContext(
+        'experimental-webgl',
+      ) as WebGLRenderingContext | null)
+    if (!gl) return 'no-webgl'
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info')
+    if (!dbg) {
+      return [gl.getParameter(gl.VENDOR), gl.getParameter(gl.RENDERER)].join(',')
+    }
+    return [
+      gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL),
+      gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL),
+    ].join(',')
+  } catch {
+    return 'webgl-err'
   }
 }
 

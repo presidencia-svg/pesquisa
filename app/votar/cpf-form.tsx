@@ -9,25 +9,65 @@ import { entrarComCpf, type VotarFormState } from './actions'
 /**
  * Heurística de detecção de modo anônimo/incógnito.
  *
- * Usa navigator.storage.estimate() — em modo anônimo, browsers
- * (Chrome, Edge, Brave, Safari, Firefox) limitam a cota a ~120MB.
- * Modo normal tem cota de 1GB+.
+ * Combina múltiplas estratégias pra cobrir as quirks de cada browser:
  *
- * Não é detecção 100% precisa (Brave em modo padrão também limita,
- * dispositivos com pouco disco podem reportar baixo), mas é o
- * sinal mais confiável cross-browser sem libs externas.
+ *   1. navigator.storage.estimate() — quota baixa em modo privado.
+ *      Chrome/Edge incognito ~120MB. Firefox private ~120MB.
+ *      Safari iOS private: 0 ou muito pequeno.
+ *      Modo normal: 1GB+ tipicamente.
+ *
+ *   2. localStorage.setItem — Safari (desktop e iOS) em Private Browsing
+ *      lança QuotaExceededError ao escrever. Detecção decisiva em Safari.
+ *
+ *   3. (não usamos) IndexedDB.open — também falha em alguns privados,
+ *      mas adiciona latência e tem mais falsos-positivos.
+ *
+ * Não é detecção 100% precisa (Brave normal também limita quota),
+ * mas com 2 sinais a especificidade fica alta. Falsos-positivos em
+ * voto eleitoral são preferíveis a falsos-negativos (multivoto).
  */
 async function detectarNavegadorAnonimo(): Promise<boolean> {
   if (typeof navigator === 'undefined') return false
-  if (!navigator.storage || !navigator.storage.estimate) return false
-  try {
-    const { quota } = await navigator.storage.estimate()
-    if (quota === undefined) return false
-    // Limiar conservador: 400 MB. Abaixo disso é provável anonimato.
-    return quota < 400_000_000
-  } catch {
-    return false
+
+  // Estratégia 1: storage.estimate quota
+  if (navigator.storage?.estimate) {
+    try {
+      const est = await navigator.storage.estimate()
+      const quota = est.quota ?? 0
+      // Safari iOS private retorna 0 ou muito baixo. Limiar 400MB
+      // pega Chrome/Edge/Firefox incognito (~120MB) com folga.
+      if (quota > 0 && quota < 400_000_000) return true
+    } catch {
+      // Ignora — passa pra próxima estratégia
+    }
   }
+
+  // Estratégia 2: localStorage write probe (decisivo no Safari)
+  try {
+    const chave = '__anon_probe_' + Math.random().toString(36).slice(2)
+    localStorage.setItem(chave, '1')
+    localStorage.removeItem(chave)
+  } catch {
+    return true
+  }
+
+  return false
+}
+
+/**
+ * Detecta se o browser é Safari rodando em iOS, pra ajustar a
+ * mensagem com instruções específicas (sair de Modo Privado no iOS
+ * é diferente do desktop — botão de Abas → "Privado" desligar).
+ */
+function isSafariIOS(): boolean {
+  if (typeof navigator === 'undefined') return false
+  const ua = navigator.userAgent
+  // Safari iOS UA contém "Safari" + "iPhone|iPad|iPod" e NÃO contém
+  // "CriOS" (Chrome iOS) ou "FxiOS" (Firefox iOS) ou "EdgiOS".
+  const isIOS = /iPhone|iPad|iPod/.test(ua)
+  const isSafari =
+    /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua)
+  return isIOS && isSafari
 }
 
 const formatarCpfInput = (raw: string): string => {
@@ -46,9 +86,11 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
   const [cpfDisplay, setCpfDisplay] = useState('')
   const [consentido, setConsentido] = useState(false)
   const [navegadorAnonimo, setNavegadorAnonimo] = useState<boolean | null>(null)
+  const [safariIOS, setSafariIOS] = useState(false)
 
   useEffect(() => {
     detectarNavegadorAnonimo().then(setNavegadorAnonimo)
+    setSafariIOS(isSafariIOS())
   }, [])
 
   const showTurnstile =
@@ -186,10 +228,22 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
               ou janela anônima — medida antifraude para evitar voto
               múltiplo no mesmo dispositivo.
             </p>
-            <p className="text-xs opacity-80">
-              Abra a página em uma janela normal do seu navegador e tente
-              novamente.
-            </p>
+            {safariIOS ? (
+              <div className="text-xs opacity-90 flex flex-col gap-1">
+                <p className="font-medium">Como sair do Modo Privado no iPhone/iPad (Safari):</p>
+                <ol className="list-decimal pl-5 flex flex-col gap-0.5">
+                  <li>Toque no botão de Abas (ícone de dois quadrados, canto inferior direito)</li>
+                  <li>Toque em &quot;Privado&quot; no rodapé</li>
+                  <li>Selecione &quot;Pessoal&quot; ou &quot;Início&quot;</li>
+                  <li>Abra novamente pesquisa.cdlaju.com.br/votar</li>
+                </ol>
+              </div>
+            ) : (
+              <p className="text-xs opacity-80">
+                Abra a página em uma janela normal do seu navegador e tente
+                novamente.
+              </p>
+            )}
           </div>
         ) : null}
 
