@@ -1,0 +1,11 @@
+# Política de divulgação responsável de vulnerabilidades
+# Pesquisa Sergipe 2026 — CDL Aracaju
+# Conforme RFC 9116
+
+Contact: mailto:dpo@cdlaju.com.br
+Contact: https://pesquisa.cdlaju.com.br/privacidade
+Expires: 2026-12-31T23:59:59.000Z
+Preferred-Languages: pt-BR, en
+Canonical: https://pesquisa.cdlaju.com.br/.well-known/security.txt
+Policy: https://github.com/presidencia-svg/pesquisa/blob/main/SECURITY.md
+Acknowledgments: https://github.com/presidencia-svg/pesquisa/blob/main/SECURITY.md

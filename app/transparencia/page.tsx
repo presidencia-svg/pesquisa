@@ -252,6 +252,93 @@ export default function TransparenciaPage() {
               </p>
             </section>
 
+            {/* Transparência de código + segurança */}
+            <section
+              id="codigo-aberto"
+              className="scroll-mt-8 flex flex-col gap-5"
+            >
+              <h2 className="text-2xl font-semibold text-foreground border-l-2 border-accent pl-4">
+                Código aberto para auditoria · proteção contra abuso
+              </h2>
+              <p className="text-foreground leading-relaxed">
+                Por que abrir o código numa pesquisa eleitoral? Porque a
+                única forma honesta de provar que um sistema não fraudou
+                resultados é deixar ele ser inspecionado por terceiros
+                independentes. Por isso o código-fonte está público em{' '}
+                <a
+                  href="https://github.com/presidencia-svg/pesquisa"
+                  className="text-primary hover:underline font-medium"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  github.com/presidencia-svg/pesquisa
+                </a>
+                . Qualquer pesquisador, jornalista ou cientista político
+                pode verificar como os votos são contados, como os
+                cruzamentos são feitos, como a separação CPF↔voto é
+                garantida.
+              </p>
+              <p className="text-foreground leading-relaxed">
+                Ao mesmo tempo, o código tem uma{' '}
+                <a
+                  href="https://github.com/presidencia-svg/pesquisa/blob/main/LICENSE"
+                  className="text-primary hover:underline font-medium"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  licença de uso restrito
+                </a>{' '}
+                que veda:
+              </p>
+              <ul className="list-disc pl-6 text-sm text-muted-foreground flex flex-col gap-2 leading-relaxed">
+                <li>
+                  uso comercial ou em pesquisa eleitoral de terceira
+                  entidade;
+                </li>
+                <li>
+                  uso para conduzir pesquisas em nome de partido,
+                  candidato, federação ou coligação;
+                </li>
+                <li>
+                  uso para fraude, manipulação ou desinformação eleitoral
+                  (Lei 9.504/97, Resolução TSE 23.747/2026);
+                </li>
+                <li>
+                  reprodução da marca, identidade visual ou domínio
+                  pesquisa.cdlaju.com.br.
+                </li>
+              </ul>
+              <p className="text-foreground leading-relaxed">
+                Vulnerabilidades de segurança devem ser reportadas por{' '}
+                <strong>dpo@cdlaju.com.br</strong>, conforme a{' '}
+                <a
+                  href="https://github.com/presidencia-svg/pesquisa/blob/main/SECURITY.md"
+                  className="text-primary hover:underline font-medium"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  política de divulgação responsável
+                </a>{' '}
+                (versão machine-readable em{' '}
+                <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
+                  /.well-known/security.txt
+                </code>
+                , conforme RFC 9116). Reportes de boa-fé não geram
+                represália legal.
+              </p>
+              <div className="bg-muted/40 border border-border rounded-lg p-4 text-sm flex flex-col gap-2">
+                <p className="font-medium text-foreground">
+                  O que é &quot;protegido&quot; do público:
+                </p>
+                <ul className="list-disc pl-5 text-muted-foreground flex flex-col gap-1">
+                  <li>credenciais (Supabase, SPC, Meta) — em variáveis de ambiente, jamais no código;</li>
+                  <li>dados pessoais dos respondentes — guardados em banco com acesso restrito;</li>
+                  <li>painel administrativo — protegido por senha + TOTP;</li>
+                  <li>endpoints de gerência — autenticação obrigatória, com auditoria.</li>
+                </ul>
+              </div>
+            </section>
+
             {/* 1. As duas salas */}
             <section id="duas-salas" className="scroll-mt-8 flex flex-col gap-5">
               <h2 className="text-2xl font-semibold text-foreground border-l-2 border-accent pl-4">

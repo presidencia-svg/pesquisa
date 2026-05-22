@@ -1,0 +1,103 @@
+LICENÇA DE USO RESTRITO
+Pesquisa Sergipe 2026
+Copyright (c) 2026 Câmara de Dirigentes Lojistas de Aracaju (CDL Aracaju)
+CNPJ 13.045.935/0001-36
+
+────────────────────────────────────────────────────────────────────
+
+CONCESSÕES (o que ESTÁ permitido)
+
+1.  AUDITORIA E PESQUISA ACADÊMICA
+    Qualquer pessoa pode ler, baixar e estudar este código-fonte com
+    a finalidade de:
+    a) verificar a integridade metodológica da Pesquisa Sergipe 2026;
+    b) auditoria por especialistas em ciência política, estatística,
+       segurança da informação ou ciência da computação;
+    c) ensino e pesquisa acadêmica, com citação da fonte;
+    d) reportar vulnerabilidades de segurança nos termos do arquivo
+       SECURITY.md.
+
+2.  ARQUIVAMENTO HISTÓRICO
+    É permitido manter cópia local para fins de arquivamento
+    histórico ou jornalístico.
+
+────────────────────────────────────────────────────────────────────
+
+RESTRIÇÕES (o que NÃO É permitido sem autorização prévia por escrito
+da CDL Aracaju)
+
+3.  USO COMERCIAL OU PRODUTIVO
+    É VEDADO executar, hospedar, implantar, distribuir ou explorar
+    comercialmente este código, no todo ou em parte, em qualquer
+    iniciativa que não seja a Pesquisa Sergipe 2026 oficial conduzida
+    pela CDL Aracaju.
+
+4.  USO EM PESQUISA ELEITORAL DE TERCEIROS
+    É EXPRESSAMENTE VEDADO usar este código, mesmo que modificado,
+    para conduzir pesquisas eleitorais, sondagens políticas ou
+    coleta de intenção de voto em nome de outra entidade, partido,
+    candidato, federação, coligação ou agência. Tal vedação visa
+    preservar a integridade e a singularidade institucional da
+    Pesquisa Sergipe 2026 perante o eleitor sergipano e a Justiça
+    Eleitoral.
+
+5.  USO PARA FRAUDE, MANIPULAÇÃO OU DESINFORMAÇÃO
+    É TERMINANTEMENTE VEDADO o uso deste código, no todo ou em
+    parte, para finalidades que violem:
+    a) a legislação eleitoral brasileira (Lei 9.504/1997 e
+       Resoluções do Tribunal Superior Eleitoral, especialmente a
+       Resolução TSE nº 23.747/2026);
+    b) a Lei Geral de Proteção de Dados Pessoais (Lei 13.709/2018);
+    c) o Código Penal brasileiro, em especial os crimes contra a
+       honra, contra a fé pública e os tipificados na Lei 14.197/2021;
+    d) o uso de pesquisa eleitoral como propaganda eleitoral
+       disfarçada (Lei 9.504/97, art. 36-A).
+
+6.  USO DA IDENTIDADE VISUAL E MARCA
+    A marca "Pesquisa Sergipe 2026", o domínio
+    pesquisa.cdlaju.com.br, o logotipo da CDL Aracaju e o conjunto
+    de elementos visuais característicos são de uso EXCLUSIVO da
+    CDL Aracaju. É vedada qualquer reprodução, imitação ou uso
+    indutivo de associação com a entidade.
+
+────────────────────────────────────────────────────────────────────
+
+AUSÊNCIA DE GARANTIA
+
+O código é fornecido "COMO ESTÁ", sem garantias de qualquer natureza,
+expressas ou implícitas, incluindo, mas não se limitando a, garantias
+de comercialização, adequação a um propósito particular ou não
+violação de direitos. Em nenhuma hipótese a CDL Aracaju ou seus
+diretores, servidores, contratados ou agentes serão responsáveis por
+qualquer reivindicação, dano ou outra responsabilidade decorrente de
+uso, manuseio ou negociação relacionada ao código.
+
+────────────────────────────────────────────────────────────────────
+
+JURISDIÇÃO E LEGISLAÇÃO APLICÁVEL
+
+Esta licença é regida pelas leis da República Federativa do Brasil.
+Fica eleito o Foro da Comarca de Aracaju, Estado de Sergipe, para
+dirimir quaisquer controvérsias decorrentes desta licença, com
+renúncia expressa a qualquer outro foro, por mais privilegiado que
+seja.
+
+────────────────────────────────────────────────────────────────────
+
+AUTORIZAÇÕES E CONTATO
+
+Solicitações de autorização excepcional para usos não cobertos pelas
+seções 1 e 2 acima devem ser enviadas, por escrito, para:
+
+    Câmara de Dirigentes Lojistas de Aracaju
+    Rua Santa Luzia, 570, São José, Aracaju/SE — CEP 49015-190
+    E-mail: presidencia@cdlaju.com.br
+    Telefone: (79) 3212-7700
+
+Reportes de vulnerabilidade de segurança devem seguir o procedimento
+descrito em SECURITY.md (canal direto à DPO em dpo@cdlaju.com.br).
+
+────────────────────────────────────────────────────────────────────
+
+Aracaju/SE, 18 de maio de 2026
+Versão 1.0
