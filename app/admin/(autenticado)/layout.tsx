@@ -24,7 +24,7 @@ export default async function AdminLayout({
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-background">
       <header className="border-b border-border bg-background sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between gap-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4 sm:gap-6">
           <div className="flex items-center gap-6">
             <MarcaCdl tamanho="sm" />
             <span className="hidden sm:inline-block text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
@@ -50,8 +50,8 @@ export default async function AdminLayout({
         </div>
       </header>
 
-      <div className="flex-1 max-w-6xl mx-auto w-full flex flex-col sm:flex-row gap-8 px-6 py-8">
-        <nav className="sm:w-48 flex-none -mx-6 sm:mx-0 px-6 sm:px-0 overflow-x-auto sm:overflow-visible">
+      <div className="flex-1 max-w-6xl mx-auto w-full flex flex-col sm:flex-row gap-6 sm:gap-8 px-4 sm:px-6 py-6 sm:py-8">
+        <nav className="sm:w-48 flex-none -mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto sm:overflow-visible">
           <ul className="flex sm:flex-col gap-1 min-w-max sm:min-w-0">
             {NAV.map((item) => (
               <li key={item.href}>

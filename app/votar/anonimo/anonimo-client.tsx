@@ -88,20 +88,20 @@ export function AnonimoClient({ token }: { token: string }) {
             >
               Seu link único
             </label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 id="magic-link"
                 type="text"
                 value={linkCompleto}
                 readOnly
                 onFocus={(e) => e.currentTarget.select()}
-                className="flex-1 h-10 px-3 rounded-md bg-capsule-foreground/10 border border-capsule-foreground/20 font-mono text-xs text-capsule-foreground focus:outline-none focus:ring-2 focus:ring-capsule-foreground/40"
+                className="flex-1 h-12 px-3 rounded-md bg-capsule-foreground/10 border border-capsule-foreground/20 font-mono text-xs text-capsule-foreground focus:outline-none focus:ring-2 focus:ring-capsule-foreground/40"
               />
               <button
                 type="button"
                 onClick={copiar}
                 disabled={!linkCompleto}
-                className="px-4 rounded-md bg-capsule-foreground text-capsule font-medium text-sm hover:opacity-90 disabled:opacity-50 transition whitespace-nowrap"
+                className="h-12 px-4 rounded-md bg-capsule-foreground text-capsule font-medium text-sm hover:opacity-90 disabled:opacity-50 transition whitespace-nowrap"
               >
                 {copiado ? 'Copiado!' : 'Copiar'}
               </button>

@@ -158,7 +158,7 @@ export default async function CedulaPage({ params }: PageProps) {
   return (
     <main className="flex flex-col flex-1 bg-capsule text-capsule-foreground">
       <header className="border-b border-capsule-foreground/15">
-        <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <p className="text-xs uppercase tracking-widest text-capsule-foreground/70">
             Cápsula anônima
           </p>
@@ -168,7 +168,7 @@ export default async function CedulaPage({ params }: PageProps) {
         </div>
       </header>
 
-      <section className="flex-1 flex flex-col px-6 py-10">
+      <section className="flex-1 flex flex-col px-4 sm:px-6 py-8 sm:py-10">
         <div className="max-w-2xl mx-auto w-full flex flex-col gap-8">
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-semibold">{cfg.label}</h1>

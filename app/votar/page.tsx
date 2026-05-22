@@ -24,7 +24,7 @@ export default async function VotarPage() {
     <>
     <main className="flex flex-col flex-1 bg-background">
       <header className="border-b border-border">
-        <div className="max-w-xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link
             href="/"
             className="text-sm font-medium text-muted-foreground hover:text-foreground"
@@ -37,8 +37,8 @@ export default async function VotarPage() {
         </div>
       </header>
 
-      <section className="flex-1 flex flex-col px-6 py-12 sm:py-16">
-        <div className="max-w-xl mx-auto w-full flex flex-col gap-8">
+      <section className="flex-1 flex flex-col px-4 sm:px-6 py-8 sm:py-16">
+        <div className="max-w-xl mx-auto w-full flex flex-col gap-6 sm:gap-8">
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-semibold text-foreground">
               Identifique-se

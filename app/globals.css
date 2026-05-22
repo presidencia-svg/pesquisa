@@ -51,4 +51,38 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* Respeita as safe areas do iPhone (notch, home indicator) e
+     deixa o conteúdo encostar nas bordas sem ficar embaixo de
+     elementos do sistema. */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* ─── Mobile tuning ────────────────────────────────────────────
+   Regras globais que afetam só o comportamento em telas pequenas
+   e em Safari iOS, sem mudar UX desktop.
+   ──────────────────────────────────────────────────────────── */
+
+/* Safari iOS dá zoom automático em <input>/<select>/<textarea> com
+   font-size < 16px. Pra evitar esse zoom indesejado (que estraga a
+   navegação por toque), forçamos 16px mínimo em inputs interativos.
+   Acima de 600px (desktop/tablet), Tailwind controla normalmente. */
+@media (max-width: 600px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Remove highlight cinza ao tocar em links/botões no iOS. */
+a,
+button,
+[role='button'] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Em iOS, scroll de container interno precisa de momentum. */
+* {
+  -webkit-overflow-scrolling: touch;
 }
