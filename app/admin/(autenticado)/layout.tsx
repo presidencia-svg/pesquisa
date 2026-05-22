@@ -13,6 +13,7 @@ const NAV = [
   { href: '/admin/edicoes', label: 'Edições' },
   { href: '/admin/candidatos', label: 'Candidatos' },
   { href: '/admin/notificar-resultado', label: 'Notificar resultados' },
+  { href: '/admin/diagnostico-spc', label: 'Diagnóstico SPC' },
 ] as const
 
 export default async function AdminLayout({
