@@ -57,6 +57,11 @@ const schema = z.object({
     .string()
     .regex(/^[a-f0-9]{64}$/, { message: 'Fingerprint inválido.' })
     .optional(),
+  // Opt-in opcional: receber resultados por WhatsApp em primeira mão.
+  // Vem do form como "1" ou ausente — não pré-marcado por design LGPD.
+  opt_in_resultados_wa: z
+    .union([z.literal('1'), z.literal('on'), z.literal(''), z.undefined()])
+    .optional(),
 })
 
 const OTP_VALIDADE_MIN = 10
@@ -90,6 +95,10 @@ export async function confirmarDados(
 
   const { municipio_ibge, sexo, escolaridade, whatsapp, device_fingerprint } =
     parsed.data
+  // Checkbox de opt-in vem como "1" ou "on" quando marcado; ausente quando não.
+  const optInResultadosWa =
+    parsed.data.opt_in_resultados_wa === '1' ||
+    parsed.data.opt_in_resultados_wa === 'on'
 
   // Faixa etária vem 100% do draft de sessão (preenchida em /votar pela
   // consulta CPF). Não é perguntada ao eleitor. Se chegou aqui sem faixa
@@ -235,6 +244,7 @@ export async function confirmarDados(
         ip,
         user_agent: userAgent,
         device_fingerprint: device_fingerprint ?? null,
+        opt_in_resultados_wa: optInResultadosWa,
       })
       .eq('id', existing.id)
     if (errUpd) {
@@ -263,6 +273,7 @@ export async function confirmarDados(
       ip,
       user_agent: userAgent,
       device_fingerprint: device_fingerprint ?? null,
+      opt_in_resultados_wa: optInResultadosWa,
     })
     if (errIns) {
       console.error('[confirma] erro insert eleitores_pesquisa:', errIns)

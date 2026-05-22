@@ -244,6 +244,24 @@ export function DadosForm({
         </p>
       ) : null}
 
+      {/* Opt-in opcional para receber os resultados via WhatsApp.
+          Default não-marcado (consentimento explícito LGPD art. 7º I).
+          Mensagem clara sobre quando e o que será enviado. */}
+      <label className="flex items-start gap-3 text-sm text-foreground border border-border rounded-md px-4 py-3 bg-accent/5 cursor-pointer hover:bg-accent/10 transition">
+        <input
+          type="checkbox"
+          name="opt_in_resultados_wa"
+          value="1"
+          className="mt-0.5 w-5 h-5 rounded border-border accent-accent cursor-pointer flex-none"
+        />
+        <span className="leading-relaxed">
+          <strong>Quero receber os resultados em primeira mão</strong> no meu
+          WhatsApp, logo que a CDL Aracaju divulgar a pesquisa no telejornal
+          parceiro. Envio único por edição, sem campanha ou propaganda. Posso
+          cancelar a qualquer momento solicitando exclusão dos meus dados.
+        </span>
+      </label>
+
       {/* Identificador antifraude do dispositivo (gerado client-side
           via canvas + UA + screen + timezone, hash SHA-256). Server
           usa pra travar 1 voto por aparelho por edição. */}

@@ -138,6 +138,23 @@ export default function PrivacidadePage() {
                 Auditoria, atendendo eventual requisição do TRE/SE ou
                 autoridades.
               </li>
+              <li>
+                <strong>Envio dos resultados ao seu WhatsApp</strong> —
+                apenas se você marcar explicitamente a caixa
+                &quot;Quero receber os resultados em primeira mão&quot;
+                no formulário de cadastro. Envio único por edição, com a
+                divulgação consolidada da pesquisa. Não é marketing nem
+                propaganda — é o resultado da pesquisa em que você
+                participou. Você pode cancelar a qualquer momento
+                solicitando exclusão dos dados em{' '}
+                <Link
+                  href="/privacidade/excluir"
+                  className="text-primary hover:underline"
+                >
+                  /privacidade/excluir
+                </Link>
+                .
+              </li>
             </ul>
             <p className="leading-relaxed">
               <strong>Não usamos seus dados</strong> para fins
