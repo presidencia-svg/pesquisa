@@ -337,6 +337,57 @@ export default function TransparenciaPage() {
                   <li>endpoints de gerência — autenticação obrigatória, com auditoria.</li>
                 </ul>
               </div>
+
+              <div className="border-2 border-primary/40 bg-primary/5 rounded-lg p-5 flex flex-col gap-3">
+                <h3 className="text-lg font-semibold text-foreground">
+                  Como código aberto + dados privados convivem
+                </h3>
+                <p className="leading-relaxed text-sm">
+                  É uma dúvida legítima: <em>&quot;se o código é público,
+                  qualquer um vê os resultados antes da divulgação?&quot;</em>
+                  A resposta é não, e a separação acontece em 3 camadas
+                  reforçadas independentemente:
+                </p>
+                <ol className="list-decimal pl-5 text-sm leading-relaxed flex flex-col gap-2">
+                  <li>
+                    <strong>Banco de dados em Supabase com RLS DENY ALL</strong>{' '}
+                    — toda tabela sensível (votos, eleitores, edição, candidatos)
+                    rejeita qualquer requisição que não venha do nosso servidor
+                    em Vercel. A chave pública (&quot;anon&quot;) que aparece no
+                    HTML não consegue ler nada. Só o servidor, com a chave
+                    &quot;service_role&quot; (guardada em variável de ambiente
+                    Vercel — fora do código), tem acesso.
+                  </li>
+                  <li>
+                    <strong>Página /resultados tem trava por divulgação</strong>{' '}
+                    — antes da CDL Aracaju marcar a edição como divulgada
+                    (após o telejornal parceiro), a página exibe apenas
+                    &quot;Aguardando divulgação&quot;. Os números não saem do
+                    servidor.
+                  </li>
+                  <li>
+                    <strong>Auditoria de acessos admin</strong> — todo acesso
+                    aos resultados pelo painel administrativo gera registro
+                    em <code className="text-xs bg-muted px-1 py-0.5 rounded">admin_audit_log</code>{' '}
+                    (LGPD art. 37). Quem viu, quando, de qual IP, antes ou
+                    depois da divulgação — tudo rastreado, sem exceção.
+                  </li>
+                </ol>
+                <p className="text-sm leading-relaxed">
+                  Conclusão: o <strong>código</strong> é público porque
+                  permite que qualquer cientista político ou pesquisador
+                  audite COMO os votos são contados. Os <strong>dados</strong>{' '}
+                  ficam privados até o momento autorizado da divulgação. Após
+                  a divulgação, tornam-se públicos em{' '}
+                  <a
+                    href="/resultados"
+                    className="text-primary hover:underline font-medium"
+                  >
+                    /resultados
+                  </a>{' '}
+                  — automaticamente.
+                </p>
+              </div>
             </section>
 
             {/* 1. As duas salas */}

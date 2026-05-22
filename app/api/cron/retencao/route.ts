@@ -42,6 +42,7 @@ type Resultado = {
   rate_limit_ip: number
   eleitores_pesquisa: number
   cron_log: number
+  admin_audit_log: number
 }
 
 export async function GET() {
@@ -66,6 +67,7 @@ export async function GET() {
     rate_limit_ip: 0,
     eleitores_pesquisa: 0,
     cron_log: 0,
+    admin_audit_log: 0,
   }
 
   try {
@@ -113,6 +115,16 @@ export async function GET() {
       .lt('executado_em', cutoff1y)
     if (e4) throw new Error(`cron_log: ${e4.message}`)
     resultado.cron_log = c4 ?? 0
+
+    // 5. admin_audit_log > 1 ano — registros de operações de tratamento.
+    //    LGPD art. 37 não exige retenção mínima, mas 1 ano é razoável
+    //    pra atender pedidos da ANPD ou auditoria interna.
+    const { count: c5, error: e5 } = await db
+      .from('admin_audit_log')
+      .delete({ count: 'exact' })
+      .lt('criado_em', cutoff1y)
+    if (e5) throw new Error(`admin_audit_log: ${e5.message}`)
+    resultado.admin_audit_log = c5 ?? 0
 
     // 5. Registra sucesso
     await db.from('cron_log').insert({

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { registrarAcessoAdmin } from '@/lib/admin-audit'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export const metadata = { title: 'Resultados · Admin' }
@@ -55,9 +56,26 @@ export default async function ResultadosPage() {
 
   const { data: edicao } = await db
     .from('edicao')
-    .select('id, nome')
+    .select('id, nome, divulgada_em')
     .eq('ativa', true)
     .maybeSingle()
+
+  // Auditoria: registra acesso a resultados. Distingue se foi ANTES
+  // ou DEPOIS da divulgação pública — antes da divulgação é o caso
+  // mais sensível (vantagem informacional sobre o público).
+  if (edicao) {
+    await registrarAcessoAdmin(
+      edicao.divulgada_em
+        ? 'view_resultados_pos_divulgacao'
+        : 'view_resultados_pre_divulgacao',
+      {
+        edicao_id: edicao.id,
+        edicao_nome: edicao.nome,
+        divulgada_em: edicao.divulgada_em,
+      },
+      `edicao:${edicao.id}`,
+    )
+  }
 
   if (!edicao) {
     return (
