@@ -17,6 +17,16 @@
 
 import { NextResponse } from 'next/server'
 
+import { checarRateLimit } from '@/lib/rate-limit'
+
+/**
+ * Caracteres válidos em nomes próprios brasileiros: letras com acentos,
+ * espaços, hífen e apóstrofo. Restringe pra evitar uso do endpoint como
+ * proxy genérico de Wikipedia.
+ */
+const NOME_REGEX = /^[A-Za-zÀ-ÖØ-öø-ÿ' \-.]{2,80}$/
+const PARTIDO_REGEX = /^[A-Za-z0-9 ]{2,20}$/
+
 const WIKI_API = 'https://pt.wikipedia.org/w/api.php'
 const WIKI_REST = 'https://pt.wikipedia.org/api/rest_v1/page/summary'
 const UA =
@@ -67,11 +77,32 @@ async function buscarSummary(titulo: string): Promise<WikiSummary | null> {
 }
 
 export async function GET(request: Request) {
+  // Rate limit: 60 consultas / IP / hora. Generoso porque cada candidato
+  // é consultado uma vez por sessão (Wikipedia cacheia agressivo),
+  // mas suficiente pra cortar abuso de "proxy aberto pra Wikipedia".
+  const rl = await checarRateLimit({
+    acao: 'biografia',
+    max: 60,
+    janelaMin: 60,
+  })
+  if (!rl.ok) {
+    return NextResponse.json(
+      { erro: 'rate_limit', message: rl.message },
+      { status: 429 },
+    )
+  }
+
   const { searchParams } = new URL(request.url)
   const nome = searchParams.get('nome')?.trim()
   const partido = searchParams.get('partido')?.trim()
 
-  if (!nome) {
+  if (!nome || !NOME_REGEX.test(nome)) {
+    return NextResponse.json(
+      { erro: 'parametro_invalido' },
+      { status: 400 },
+    )
+  }
+  if (partido && !PARTIDO_REGEX.test(partido)) {
     return NextResponse.json(
       { erro: 'parametro_invalido' },
       { status: 400 },
