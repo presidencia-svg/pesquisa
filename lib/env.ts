@@ -110,6 +110,10 @@ export const SERVER_ENV = {
   get META_TEMPLATE_OTP_LANG() {
     return optional('META_TEMPLATE_OTP_LANG', 'pt_BR')
   },
+  /** Template Meta (categoria UTILITY) pro envio de resultado consolidado. */
+  get META_TEMPLATE_RESULTADO() {
+    return optional('META_TEMPLATE_RESULTADO', 'resultado_pesquisa_sergipe')
+  },
 
   // ─── Cloudflare Turnstile ─────────────────────────────────────────────
   get TURNSTILE_SECRET_KEY() {

@@ -124,3 +124,88 @@ export async function enviarOtpWhatsApp(
   console.error('[meta-wa] todos os phone IDs falharam:', ultimoErro)
   return { ok: false, detalhe: ultimoErro ?? 'falha desconhecida' }
 }
+
+/**
+ * Envia o template de resultado consolidado da pesquisa (categoria
+ * UTILITY na Meta), com link pros resultados públicos.
+ *
+ * O template precisa estar APROVADO no Meta Business Manager. Nome
+ * vem de META_TEMPLATE_RESULTADO (default 'resultado_pesquisa_sergipe').
+ * Idioma reusa META_TEMPLATE_OTP_LANG (default 'pt_BR') porque é a
+ * mesma WABA.
+ *
+ * Body recebe 1 parâmetro: a URL pública dos resultados.
+ *
+ * Use SOMENTE para eleitores com opt_in_resultados_wa = true. A
+ * verificação de opt-in é responsabilidade do chamador (admin action).
+ */
+export async function enviarResultadoWhatsApp(
+  numero: string,
+  urlResultados: string,
+): Promise<MetaSendResult> {
+  const token = SERVER_ENV.META_WHATSAPP_TOKEN
+  const phoneIds = getPhoneIds()
+
+  if (!token) return { ok: false, detalhe: 'META_WHATSAPP_TOKEN ausente.' }
+  if (phoneIds.length === 0) {
+    return { ok: false, detalhe: 'META_WHATSAPP_PHONE_IDS vazio.' }
+  }
+
+  const to = normalizarTelefone(numero)
+  const baseStart = proximoIdx % phoneIds.length
+  proximoIdx++
+
+  const body = JSON.stringify({
+    messaging_product: 'whatsapp',
+    to,
+    type: 'template',
+    template: {
+      name: SERVER_ENV.META_TEMPLATE_RESULTADO,
+      language: { code: SERVER_ENV.META_TEMPLATE_OTP_LANG },
+      components: [
+        {
+          type: 'body',
+          parameters: [{ type: 'text', text: urlResultados }],
+        },
+      ],
+    },
+  })
+
+  let ultimoErro: string | undefined
+  for (let i = 0; i < phoneIds.length; i++) {
+    const phoneId = phoneIds[(baseStart + i) % phoneIds.length] as string
+    const url = `https://graph.facebook.com/${SERVER_ENV.META_API_VERSION}/${phoneId}/messages`
+
+    try {
+      const ctrl = new AbortController()
+      const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS)
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body,
+        signal: ctrl.signal,
+        cache: 'no-store',
+      })
+      clearTimeout(timer)
+      if (res.ok) {
+        return { ok: true, phoneId }
+      }
+      const errPayload = (await res.json().catch(() => ({}))) as {
+        error?: { message?: string }
+      }
+      ultimoErro = `[${phoneId}] ${
+        errPayload.error?.message ?? `HTTP ${res.status}`
+      }`
+    } catch (err) {
+      ultimoErro = `[${phoneId}] ${
+        err instanceof Error ? err.message : 'falha de rede'
+      }`
+    }
+  }
+
+  console.error('[meta-wa] resultado: todos os phone IDs falharam:', ultimoErro)
+  return { ok: false, detalhe: ultimoErro ?? 'falha desconhecida' }
+}

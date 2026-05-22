@@ -12,6 +12,7 @@ const NAV = [
   { href: '/admin/projecao', label: 'Projeção' },
   { href: '/admin/edicoes', label: 'Edições' },
   { href: '/admin/candidatos', label: 'Candidatos' },
+  { href: '/admin/notificar-resultado', label: 'Notificar resultados' },
 ] as const
 
 export default async function AdminLayout({
