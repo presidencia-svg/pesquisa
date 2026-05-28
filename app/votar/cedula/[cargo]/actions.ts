@@ -225,6 +225,22 @@ export async function submeterVoto(
     criado_hora: horaCheia.toISOString(),
   })
   if (errVoto) {
+    // 23505 = unique_violation. Vem de:
+    //   - votos_unico_token_cargo_singleshot (Pres/Gov/Fed/Est/Zona já votado)
+    //   - votos_unico_token_senador_candidato (senador 2x no mesmo cara)
+    //   - trg_max2_senador (3º voto de senador no mesmo token)
+    // Defesa de fundo contra TOCTOU/double-submit. App já tinha o `count`
+    // guard, mas em race condition (2 POSTs paralelos com mesmo cookie),
+    // o banco intervém e devolve este código. Tratamos como "já votado"
+    // e seguimos pro próximo cargo, igual ao caminho feliz.
+    if (errVoto.code === '23505') {
+      console.warn('[voto] duplicidade barrada pelo banco', {
+        cargo,
+        codigo: errVoto.code,
+        // não logamos token_hash nem candidato pra preservar anonimato
+      })
+      return proximoCargoOuObrigado(cargo, municipioIbge)
+    }
     console.error('[voto] erro insert:', errVoto)
     return {
       ok: false,
