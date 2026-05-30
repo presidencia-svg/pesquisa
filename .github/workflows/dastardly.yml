@@ -1,8 +1,8 @@
 # Dastardly (PortSwigger) DAST scanner
 #
-# Roda o scanner de PortSwigger Burp Suite contra o domínio de produção
-# em todo push pra `main` e em cada PR. Cobre 7 classes de issue
-# (XSS, header injection, mixed content, etc) em ROTAS PÚBLICAS.
+# Roda o scanner de PortSwigger Burp Suite contra a app, mensalmente +
+# sob demanda. Cobre 7 classes de issue (XSS, header injection,
+# mixed content, etc) em ROTAS PÚBLICAS.
 #
 # IMPORTANTE — Escopo do scan:
 #   ✓ Cobertas:    /, /transparencia, /resultados, /privacidade,
@@ -13,12 +13,25 @@
 #                  não resolve. Fluxo de voto é coberto via white-box no
 #                  pentest interno (docs/confidencial/pentest-2026-05-*).
 #
+# Por que NÃO escanear pesquisa.cdlaju.com.br diretamente?
+#   O domínio público fica atrás do Cloudflare, que bloqueia o UA do
+#   Dastardly e os IPs do GitHub Actions runners (testado: 1ª execução
+#   retornou "Could not connect to any start URLs" mesmo com prod
+#   respondendo 200 pra browser real).
+#
+#   Solução: escanear pesquisa-lovat.vercel.app, alias estável do Vercel
+#   que serve a MESMA app (mesmo deploy, mesmo bundle), sem o CDN+WAF
+#   na frente. Isso testa exatamente o que queremos — defeitos da
+#   aplicação — em vez do comportamento do Cloudflare. O Cloudflare
+#   continua sendo defesa-em-profundidade adicional contra atacantes
+#   reais.
+#
 # O Dastardly NÃO suporta headers/cookies customizados (apenas
 # target-url e output-filename). Tentar fazer bypass do Turnstile via
 # env distorceria a postura de segurança real.
 #
 # O scanner é DAST ativo — manda payloads contra o domínio. Por isso:
-#   - schedule mensal evita spam de logs Cloudflare
+#   - schedule mensal evita spam de logs
 #   - workflow_dispatch deixa rodar sob demanda quando necessário
 #   - artifact XML fica 30d pra inspeção
 
@@ -29,9 +42,9 @@ on:
   workflow_dispatch:
     inputs:
       target:
-        description: 'URL alvo (default: prod)'
+        description: 'URL alvo (default: alias Vercel sem Cloudflare)'
         required: false
-        default: 'https://pesquisa.cdlaju.com.br'
+        default: 'https://pesquisa-lovat.vercel.app'
   # Mensal, primeiro dia, 03h UTC = 00h Brasília
   schedule:
     - cron: '0 3 1 * *'
@@ -41,12 +54,13 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      checks: write     # action-junit-report precisa pra criar check
     steps:
       - name: Run Dastardly Action
         continue-on-error: true   # não derruba o workflow se achar issue
         uses: PortSwigger/dastardly-github-action@main
         with:
-          target-url: ${{ github.event.inputs.target || 'https://pesquisa.cdlaju.com.br' }}
+          target-url: ${{ github.event.inputs.target || 'https://pesquisa-lovat.vercel.app' }}
           output-filename: dastardly-report.xml
 
       - name: Upload report artifact
