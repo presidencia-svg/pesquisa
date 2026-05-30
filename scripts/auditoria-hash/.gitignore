@@ -1,0 +1,4 @@
+# Outputs da auditoria de hash NÃO entram no git.
+# Contêm CPFs sintéticos + hashes + pepper de produção em texto claro
+# (em cracked-com-pepper.txt). Recriáveis com `node gerar-amostra.mjs`.
+out/
