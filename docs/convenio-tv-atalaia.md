@@ -1,7 +1,7 @@
 # Convênio de Cooperação Jornalística
 
 **Pesquisa Sergipe 2026 — Divulgação Conjunta**
-Versão 1.0 · Aracaju/SE, 26 de maio de 2026
+Versão 1.1 · Aracaju/SE, 31 de maio de 2026
 
 ---
 
@@ -43,13 +43,13 @@ A CDL Aracaju se compromete a:
 
 **I.** Concluir o registro da pesquisa no sistema PesqEle do TRE/SE antes de qualquer divulgação, com pelo menos **5 (cinco) dias úteis** de antecedência em relação à data prevista da divulgação conjunta, conforme exigência do art. 2º da Resolução TSE nº 23.747/2026;
 
-**II.** Disponibilizar à TV Atalaia, em ambiente seguro e com **embargo jornalístico**, os resultados consolidados (números, percentuais, margem de erro, recortes regionais e demográficos) com antecedência mínima de **24 (vinte e quatro) horas** em relação ao horário do telejornal previsto, exclusivamente para fins de preparação editorial;
+**II.** Disponibilizar à TV Atalaia, em ambiente seguro e com **embargo jornalístico**, os resultados consolidados (números, percentuais, margem de erro, recortes regionais e demográficos) com antecedência mínima de **4 (quatro) horas** em relação ao horário do telejornal previsto, exclusivamente para fins de preparação editorial;
 
 **III.** Não divulgar publicamente, por qualquer meio (site institucional, redes sociais, releases à imprensa, entrevistas), os resultados da Pesquisa Sergipe 2026 antes do encerramento do telejornal da TV Atalaia que primeiro os divulgar — **vigência do embargo**;
 
 **IV.** Garantir a presença do Presidente da CDL Aracaju (ou suplente) no estúdio da TV Atalaia, na data e horário acordados, para participar da divulgação ao vivo e responder a esclarecimentos sobre a metodologia;
 
-**V.** Após o término do telejornal, **disponibilizar imediatamente** a íntegra dos resultados no portal https://pesquisa.cdlaju.com.br/resultados, em conformidade com o princípio da transparência (Resolução TSE 23.747/2026, art. 5º);
+**V.** **Imediatamente após o anúncio dos resultados no telejornal** da TV Atalaia, disponibilizar a íntegra dos números no portal https://pesquisa.cdlaju.com.br/resultados, em conformidade com o princípio da transparência (Resolução TSE 23.747/2026, art. 5º), encerrando-se nesse momento o embargo de que trata o inciso III;
 
 **VI.** Fornecer à TV Atalaia a metodologia, ficha técnica, estatístico responsável (com CONRE), nome do contratante, valor, período de coleta e demais informações exigidas pelo art. 33 da Lei 9.504/1997, para inclusão na reportagem;
 
@@ -91,7 +91,15 @@ As partes declaram e reconhecem que:
 
 ---
 
-## Cláusula 5ª — Sigilo durante o embargo
+## Cláusula 5ª — Independência operacional e contratação de colaboradores
+
+A contratação, gestão, remuneração e supervisão de **todos os colaboradores** envolvidos na confecção da Pesquisa Sergipe 2026 — incluindo, sem limitação, entrevistadores, supervisores de campo, estatístico responsável, equipe de tecnologia, desenvolvedores de software, encarregado pelo tratamento de dados (DPO) e prestadores de serviço técnico — é de **responsabilidade exclusiva da CDL Aracaju**, sem qualquer **participação, indicação, aprovação ou ingerência** da TV Atalaia.
+
+A TV Atalaia atua exclusivamente como **veículo jornalístico de divulgação** dos resultados, não existindo entre as partes qualquer vínculo de subordinação, parceria operacional, compartilhamento de equipe ou corresponsabilidade na produção, na execução ou na metodologia da pesquisa. Eventual erro, omissão ou impugnação relativos ao trabalho dos colaboradores da pesquisa serão tratados exclusivamente pela CDL Aracaju, sem repercussão jurídica ou reputacional para a TV Atalaia.
+
+---
+
+## Cláusula 6ª — Sigilo durante o embargo
 
 Durante o período de embargo (Cláusula 2ª, III), as partes manterão **sigilo absoluto** sobre os números da pesquisa, restringindo o acesso apenas aos profissionais diretamente envolvidos na preparação editorial e na coordenação institucional.
 
@@ -99,7 +107,7 @@ A violação do embargo por qualquer das partes — inclusive por funcionário, 
 
 ---
 
-## Cláusula 6ª — Marca, imagem e propriedade intelectual
+## Cláusula 7ª — Marca, imagem e propriedade intelectual
 
 **I.** A TV Atalaia poderá utilizar, na reportagem e em peças jornalísticas correlatas, a marca e o nome institucional da **CDL Aracaju**, exclusivamente no contexto da divulgação da Pesquisa Sergipe 2026 e sem caráter publicitário;
 
@@ -111,13 +119,13 @@ A violação do embargo por qualquer das partes — inclusive por funcionário, 
 
 ---
 
-## Cláusula 7ª — Natureza não comercial
+## Cláusula 8ª — Natureza não comercial
 
 O presente convênio é **gratuito**, sem contrapartida financeira entre as partes. Não há pagamento da CDL Aracaju à TV Atalaia, nem da TV Atalaia à CDL Aracaju, pela divulgação aqui pactuada. As partes reconhecem o **interesse público** como motivação central da cooperação.
 
 ---
 
-## Cláusula 8ª — Vigência
+## Cláusula 9ª — Vigência
 
 Este convênio entra em vigor na data de sua assinatura e vigorará até **31 de dezembro de 2026**, abrangendo todas as edições (1º e eventual 2º turno) da Pesquisa Sergipe 2026.
 
@@ -125,7 +133,7 @@ Caso a CDL Aracaju conduza pesquisas em ciclos eleitorais futuros, a renovação
 
 ---
 
-## Cláusula 9ª — Rescisão
+## Cláusula 10ª — Rescisão
 
 O convênio poderá ser rescindido:
 
@@ -133,7 +141,7 @@ O convênio poderá ser rescindido:
 
 **II.** **Unilateralmente**, com notificação prévia de 15 (quinze) dias, em caso de descumprimento de qualquer cláusula por uma das partes;
 
-**III.** **Imediatamente**, sem necessidade de notificação prévia, em caso de violação do embargo (Cláusula 5ª) ou de uso da pesquisa como propaganda eleitoral (Cláusula 4ª, III);
+**III.** **Imediatamente**, sem necessidade de notificação prévia, em caso de violação do embargo (Cláusula 6ª) ou de uso da pesquisa como propaganda eleitoral (Cláusula 4ª, III);
 
 **IV.** Por **decisão judicial** ou administrativa do TRE/SE que impeça a continuidade da divulgação.
 
@@ -141,7 +149,7 @@ A rescisão não exime as partes do cumprimento das obrigações já incorridas 
 
 ---
 
-## Cláusula 10ª — Comunicações
+## Cláusula 11ª — Comunicações
 
 Toda e qualquer comunicação oficial entre as partes deverá ser enviada por escrito, com confirmação de recebimento, aos seguintes endereços:
 
@@ -156,7 +164,7 @@ Toda e qualquer comunicação oficial entre as partes deverá ser enviada por es
 
 ---
 
-## Cláusula 11ª — Foro
+## Cláusula 12ª — Foro
 
 Fica eleito o **Foro da Comarca de Aracaju, Estado de Sergipe**, com renúncia expressa a qualquer outro, por mais privilegiado que seja, para dirimir quaisquer dúvidas ou controvérsias decorrentes deste convênio que não puderem ser resolvidas amigavelmente.
 
@@ -166,7 +174,7 @@ Fica eleito o **Foro da Comarca de Aracaju, Estado de Sergipe**, com renúncia e
 
 E, por estarem assim ajustadas, as partes firmam o presente convênio em 2 (duas) vias de igual teor e forma, na presença das testemunhas abaixo identificadas, para que produza seus jurídicos e legais efeitos.
 
-Aracaju, 26 de maio de 2026.
+Aracaju, 31 de maio de 2026.
 
 \
 
@@ -209,4 +217,4 @@ CPF: ________________________
 ---
 
 *Documento elaborado em conformidade com Lei nº 9.504/1997, Resolução TSE nº 23.747/2026 e Lei nº 13.709/2018 (LGPD).*
-*Versão 1.0 · convenio_tv_atalaia_v1.docx*
+*Versão 1.1 · convenio_tv_atalaia_v1_1.docx*
