@@ -1,0 +1,388 @@
+/*
+ * Layout do snapshot embargado pra envio à TV Atalaia.
+ *
+ * Princípios:
+ *   - Tipografia compacta (Times/Inter), tons sóbrios
+ *   - Tabelas estilo "ficha técnica" (não barras coloridas — fica feio
+ *     impresso em P&B)
+ *   - Carimbos visíveis: EMBARGO (vermelho), CDL (header), data/hora
+ *   - Quebra de página inteligente: cada seção tenta não cortar
+ *   - @media print: esconde botão, usa fonte serifada, garante 1 página
+ *     A4 sempre que possível, sem header/footer do browser na URL
+ */
+
+/* ====== Botão flutuante (só na tela) ====== */
+
+.botao-imprimir-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #fff;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.botao-imprimir {
+  background: #0a2a6e;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.botao-imprimir:hover {
+  opacity: 0.9;
+}
+
+.botao-imprimir-hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ====== Corpo do snapshot ====== */
+
+.snapshot {
+  max-width: 780px;
+  margin: 24px auto;
+  padding: 32px 40px;
+  background: #fff;
+  font-family: 'Times New Roman', Georgia, serif;
+  font-size: 11pt;
+  line-height: 1.45;
+  color: #111;
+}
+
+.snapshot-msg {
+  max-width: 600px;
+  margin: 80px auto;
+  padding: 32px;
+  text-align: center;
+  font-family: system-ui, sans-serif;
+}
+
+/* ====== Cabeçalho institucional ====== */
+
+.snapshot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #0a2a6e;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+.snapshot-brand h1 {
+  font-size: 18pt;
+  margin: 0 0 4px;
+  letter-spacing: 0.5px;
+  color: #0a2a6e;
+  font-weight: 700;
+}
+
+.snapshot-cnpj,
+.snapshot-endereco {
+  margin: 2px 0;
+  font-size: 9pt;
+  color: #4b5563;
+}
+
+.snapshot-qr {
+  flex: 0 0 90px;
+}
+
+.snapshot-qr svg {
+  width: 90px;
+  height: 90px;
+  display: block;
+}
+
+/* ====== Título e edição ====== */
+
+.snapshot-titulo-wrap {
+  text-align: center;
+  margin: 24px 0;
+}
+
+.snapshot-kicker {
+  margin: 0;
+  font-size: 9pt;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.snapshot-titulo {
+  margin: 8px 0 4px;
+  font-size: 22pt;
+  font-weight: 700;
+  color: #111;
+}
+
+.snapshot-edicao {
+  margin: 0;
+  font-size: 11pt;
+  color: #4b5563;
+}
+
+/* ====== Carimbo de embargo ====== */
+
+.snapshot-embargo {
+  background: #fef2f2;
+  border: 2px solid #b91c1c;
+  padding: 14px 16px;
+  margin: 16px 0 24px;
+  text-align: center;
+}
+
+.snapshot-embargo p {
+  margin: 0;
+  font-size: 10pt;
+  color: #b91c1c;
+}
+
+.snapshot-embargo p strong {
+  font-size: 11pt;
+  letter-spacing: 0.5px;
+}
+
+.snapshot-embargo-sub {
+  margin-top: 6px !important;
+  font-size: 8pt !important;
+  color: #7f1d1d !important;
+  line-height: 1.4;
+}
+
+/* ====== Ficha técnica ====== */
+
+.snapshot-ficha {
+  margin-bottom: 28px;
+  page-break-inside: avoid;
+}
+
+.snapshot-ficha dl {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px 24px;
+  margin: 0;
+}
+
+.snapshot-ficha dl > div {
+  border-left: 3px solid #0a2a6e;
+  padding-left: 12px;
+}
+
+.snapshot-ficha dt {
+  font-size: 8pt;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #6b7280;
+  margin-bottom: 3px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+}
+
+.snapshot-ficha dd {
+  margin: 0;
+  font-size: 10pt;
+  font-weight: 600;
+  color: #111;
+}
+
+.snapshot-ficha-sub {
+  font-size: 8pt;
+  font-weight: normal;
+  color: #6b7280;
+}
+
+.snapshot-status-divulgada {
+  color: #047857;
+  font-weight: 700;
+}
+
+.snapshot-status-aguardando {
+  color: #b45309;
+  font-weight: 700;
+}
+
+/* ====== Seções de cargo ====== */
+
+.snapshot-secao {
+  margin: 20px 0;
+  page-break-inside: avoid;
+}
+
+.snapshot-secao h3 {
+  font-size: 12pt;
+  margin: 0 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #d1d5db;
+  color: #111;
+  font-weight: 700;
+}
+
+.snapshot-secao-n {
+  font-size: 9pt;
+  color: #6b7280;
+  font-weight: normal;
+}
+
+.snapshot-vazio {
+  margin: 0;
+  padding: 8px 0;
+  font-size: 9pt;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.snapshot-secao table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10pt;
+}
+
+.snapshot-secao th,
+.snapshot-secao td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top;
+}
+
+.snapshot-secao th {
+  font-size: 8pt;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b7280;
+  font-weight: 600;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.snapshot-secao th.th-num,
+.snapshot-secao td.td-num {
+  width: 50px;
+  text-align: center;
+  font-family: 'Menlo', 'Courier New', monospace;
+  font-size: 9pt;
+}
+
+.snapshot-secao th.th-partido,
+.snapshot-secao td.td-partido {
+  width: 70px;
+  font-weight: 600;
+}
+
+.snapshot-secao th.th-votos,
+.snapshot-secao td.td-votos {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  width: 90px;
+  font-weight: 600;
+}
+
+.snapshot-secao th.th-pct,
+.snapshot-secao td.td-pct {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  width: 60px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.snapshot-secao td.td-nome-partido {
+  font-size: 9pt;
+  color: #4b5563;
+}
+
+.snapshot-secao tr.tr-extra td {
+  color: #6b7280;
+  font-style: italic;
+  font-size: 9pt;
+  background: #f9fafb;
+}
+
+/* ====== Rodapé ====== */
+
+.snapshot-footer {
+  margin-top: 36px;
+  padding-top: 12px;
+  border-top: 1px solid #d1d5db;
+  font-size: 8pt;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.snapshot-footer p {
+  margin: 3px 0;
+}
+
+.snapshot-footer-hash {
+  margin-top: 8px !important;
+  font-family: 'Menlo', 'Courier New', monospace;
+  font-size: 7pt !important;
+  color: #9ca3af !important;
+}
+
+/* ====== @media print ====== */
+
+@media print {
+  /* Esconde elementos não-imprimíveis */
+  .botao-imprimir-wrapper {
+    display: none;
+  }
+
+  /* O layout admin tem sidebar/header — esconde tudo que não é o snapshot */
+  body > div > header,
+  body > div > aside,
+  body > div > nav,
+  [data-admin-sidebar],
+  [data-admin-header] {
+    display: none !important;
+  }
+
+  .snapshot {
+    margin: 0;
+    padding: 16mm 14mm;
+    max-width: 100%;
+    font-size: 10pt;
+  }
+
+  .snapshot-titulo {
+    font-size: 18pt;
+  }
+
+  .snapshot-brand h1 {
+    font-size: 14pt;
+  }
+
+  .snapshot-secao {
+    page-break-inside: avoid;
+  }
+
+  /* Cabeçalho repete em cada página impressa (browser-dependent) */
+  .snapshot-header {
+    page-break-after: avoid;
+  }
+
+  /* Cor preservada — sem isso o browser tira o vermelho do embargo */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Página A4 retrato com margens razoáveis */
+  @page {
+    size: A4 portrait;
+    margin: 14mm;
+  }
+}

@@ -234,12 +234,22 @@ export default async function ResultadosPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-3xl font-semibold tracking-tight">Resultados</h1>
-        <p className="text-sm text-muted-foreground">
-          Apuração em tempo real da edição{' '}
-          <span className="font-medium text-foreground">{edicao.nome}</span>.
-        </p>
+      <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-semibold tracking-tight">Resultados</h1>
+          <p className="text-sm text-muted-foreground">
+            Apuração em tempo real da edição{' '}
+            <span className="font-medium text-foreground">{edicao.nome}</span>.
+          </p>
+        </div>
+        <Link
+          href="/admin/resultados/snapshot"
+          target="_blank"
+          rel="noopener"
+          className="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-accent text-white text-sm font-semibold hover:opacity-90 transition self-start sm:self-end whitespace-nowrap"
+        >
+          📥 Snapshot pra TV
+        </Link>
       </header>
 
       <div className="rounded-md border border-error/30 bg-error/5 px-4 py-3 text-xs text-error">
