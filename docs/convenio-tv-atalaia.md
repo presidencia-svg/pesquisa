@@ -1,7 +1,7 @@
 # Convênio de Cooperação Jornalística
 
 **Pesquisa Sergipe 2026 — Divulgação Conjunta**
-Versão 1.1 · Aracaju/SE, 31 de maio de 2026
+Versão 1.2 · Aracaju/SE, 1º de junho de 2026
 
 ---
 
@@ -127,9 +127,13 @@ O presente convênio é **gratuito**, sem contrapartida financeira entre as part
 
 ## Cláusula 9ª — Vigência
 
-Este convênio entra em vigor na data de sua assinatura e vigorará até **31 de dezembro de 2026**, abrangendo todas as edições (1º e eventual 2º turno) da Pesquisa Sergipe 2026.
+Este convênio entra em vigor na data de sua assinatura e tem por objeto **exclusivamente a primeira edição** da Pesquisa Sergipe 2026, referente ao **1º turno** das Eleições 2026.
 
-Caso a CDL Aracaju conduza pesquisas em ciclos eleitorais futuros, a renovação do convênio dependerá de **manifestação expressa** de ambas as partes, mediante termo aditivo.
+Esgotado o objeto previsto na Cláusula 1ª — divulgação no telejornal da TV Atalaia e cumpridas as obrigações dela decorrentes (incluindo a remessa do relatório complementar ao TRE/SE prevista na Cláusula 2ª, VII) — o presente convênio **extingue-se automaticamente**, sem necessidade de denúncia prévia.
+
+Eventual estensão a **edições subsequentes** — notadamente eventual **2º turno** das Eleições 2026, ondas complementares da mesma pesquisa, ou pesquisas em **ciclos eleitorais futuros** — dependerá de **manifestação expressa de ambas as partes**, formalizada por **termo aditivo escrito**, sem renovação automática.
+
+Em qualquer hipótese, este convênio não vigorará além de **31 de dezembro de 2026**, salvo se prorrogado por termo aditivo na forma do parágrafo anterior.
 
 ---
 
@@ -174,7 +178,7 @@ Fica eleito o **Foro da Comarca de Aracaju, Estado de Sergipe**, com renúncia e
 
 E, por estarem assim ajustadas, as partes firmam o presente convênio em 2 (duas) vias de igual teor e forma, na presença das testemunhas abaixo identificadas, para que produza seus jurídicos e legais efeitos.
 
-Aracaju, 31 de maio de 2026.
+Aracaju, 1º de junho de 2026.
 
 \
 
@@ -217,4 +221,4 @@ CPF: ________________________
 ---
 
 *Documento elaborado em conformidade com Lei nº 9.504/1997, Resolução TSE nº 23.747/2026 e Lei nº 13.709/2018 (LGPD).*
-*Versão 1.1 · convenio_tv_atalaia_v1_1.docx*
+*Versão 1.2 · convenio_tv_atalaia_v1_2.docx*
