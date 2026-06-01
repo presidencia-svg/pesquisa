@@ -215,8 +215,8 @@ export default async function SnapshotPage() {
     )?.votos ?? 0
 
   // Composição da amostra final (Resolução TSE 23.747/2026, Art. 2º §7º, IV).
-  // Agrega da view v_amostra_composicao (sexo, faixa_etaria, escolaridade,
-  // nivel_economico, municipio) — só eleitores com wa_validado=true.
+  // Agrega da view v_amostra_composicao. 6 dimensões: sexo, faixa_etaria,
+  // escolaridade, nivel_economico, municipio (nome legível), regiao.
   const { data: composicaoRows } = await db
     .from('v_amostra_composicao')
     .select('dimensao, valor, n')
@@ -226,6 +226,8 @@ export default async function SnapshotPage() {
     faixa_etaria: [],
     escolaridade: [],
     nivel_economico: [],
+    municipio: [],
+    regiao: [],
   }
   for (const r of (composicaoRows ?? []) as Array<{
     dimensao: string
@@ -546,6 +548,16 @@ const ROTULO_DIMENSAO: Record<string, string> = {
   faixa_etaria: 'Faixa etária',
   escolaridade: 'Grau de instrução',
   nivel_economico: 'Nível econômico',
+  municipio: 'Município (top 10)',
+  regiao: 'Região',
+}
+
+const ROTULO_REGIAO: Record<string, string> = {
+  grande_aracaju: 'Grande Aracaju',
+  leste: 'Leste',
+  agreste: 'Agreste',
+  centro_sul: 'Centro-Sul',
+  sertao: 'Sertão',
 }
 
 const ROTULO_VALOR: Record<string, string> = {
@@ -568,7 +580,16 @@ function SecaoComposicao({
   composicao: Record<string, Array<{ valor: string; n: number }>>
   n: number
 }) {
-  const dims = ['sexo', 'faixa_etaria', 'escolaridade', 'nivel_economico']
+  // Ordem fixa: as 4 dimensões "compactas" primeiro, depois região,
+  // depois top 10 municípios (que pode ser bem comprido).
+  const dims = [
+    'sexo',
+    'faixa_etaria',
+    'escolaridade',
+    'nivel_economico',
+    'regiao',
+    'municipio',
+  ]
   return (
     <section className="snapshot-secao">
       <h3>
@@ -580,29 +601,62 @@ function SecaoComposicao({
       </h3>
       <div className="snapshot-composicao-grid">
         {dims.map((d) => {
-          const linhas = composicao[d] ?? []
+          let linhas = composicao[d] ?? []
           if (linhas.length === 0) return null
-          const total = linhas.reduce((s, l) => s + l.n, 0)
+          // Pra município, agrega os de fora do top 10 em "Outros"
+          let suffix: { valor: string; n: number } | null = null
+          if (d === 'municipio' && linhas.length > 10) {
+            const top10 = linhas.slice(0, 10)
+            const restoSoma = linhas
+              .slice(10)
+              .reduce((s, l) => s + l.n, 0)
+            suffix = {
+              valor: `Outros ${linhas.length - 10} municípios`,
+              n: restoSoma,
+            }
+            linhas = top10
+          }
+          const total =
+            linhas.reduce((s, l) => s + l.n, 0) + (suffix?.n ?? 0)
           return (
             <div key={d} className="snapshot-composicao-bloco">
               <h4>{ROTULO_DIMENSAO[d]}</h4>
               <table>
                 <tbody>
-                  {linhas.map((l) => (
-                    <tr key={l.valor}>
-                      <td>{ROTULO_VALOR[l.valor] ?? l.valor}</td>
+                  {linhas.map((l) => {
+                    const rotulo =
+                      d === 'regiao'
+                        ? ROTULO_REGIAO[l.valor] ?? l.valor
+                        : ROTULO_VALOR[l.valor] ?? l.valor
+                    return (
+                      <tr key={l.valor}>
+                        <td>{rotulo}</td>
+                        <td className="td-votos">
+                          {l.n.toLocaleString('pt-BR')}
+                        </td>
+                        <td className="td-pct">
+                          {total > 0
+                            ? ((l.n / total) * 100)
+                                .toFixed(1)
+                                .replace('.', ',') + '%'
+                            : '—'}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                  {suffix && (
+                    <tr className="tr-extra">
+                      <td>{suffix.valor}</td>
                       <td className="td-votos">
-                        {l.n.toLocaleString('pt-BR')}
+                        {suffix.n.toLocaleString('pt-BR')}
                       </td>
                       <td className="td-pct">
-                        {total > 0
-                          ? ((l.n / total) * 100)
-                              .toFixed(1)
-                              .replace('.', ',') + '%'
-                          : '—'}
+                        {((suffix.n / total) * 100)
+                          .toFixed(1)
+                          .replace('.', ',') + '%'}
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>
