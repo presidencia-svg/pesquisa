@@ -1,7 +1,7 @@
 # Convênio de Cooperação Jornalística
 
 **Pesquisa Sergipe 2026 — Divulgação Conjunta**
-Versão 1.3 · Aracaju/SE, 1º de junho de 2026
+Versão 1.4 · Aracaju/SE, 1º de junho de 2026
 
 ---
 
@@ -33,7 +33,21 @@ Sociedade empresária limitada, inscrita no CNPJ sob o nº 13.079.397/0001-09, c
 
 ## Cláusula 1ª — Objeto
 
-O presente convênio tem por **objeto** a cooperação entre CDL Aracaju e TV Atalaia para **divulgação ao vivo, em telejornal de alcance estadual**, dos resultados da Pesquisa Sergipe 2026, em formato que garanta o direito à informação dos eleitores sergipanos, com presença simultânea de representante editorial da TV Atalaia e do Presidente da CDL Aracaju ou, na sua impossibilidade, de seu suplente formalmente designado.
+O presente convênio tem por **objeto** a cooperação entre CDL Aracaju e TV Atalaia para a **divulgação ao vivo, em telejornal de alcance estadual da TV Atalaia, exibido no dia 3 de setembro de 2026**, dos resultados da **1ª (primeira) edição da Pesquisa Sergipe 2026 referente ao 1º turno** das Eleições 2026, com coleta de campo realizada nos dias **1 e 2 de setembro de 2026**.
+
+A cooperação observará formato que garanta o direito à informação dos eleitores sergipanos, com presença simultânea de representante editorial da TV Atalaia e do Presidente da CDL Aracaju ou, na sua impossibilidade, de seu suplente formalmente designado.
+
+**Cronograma vinculado a este convênio:**
+
+| Etapa | Data |
+|---|---|
+| Coleta de campo (votação) | 1 e 2 de setembro de 2026 |
+| Entrega dos números à TV Atalaia, sob embargo | até 4 horas antes do telejornal de 3 de setembro de 2026 |
+| Divulgação ao vivo no telejornal | 3 de setembro de 2026 |
+| Disponibilização pública em https://pesquisa.cdlaju.com.br/resultados | imediatamente após o anúncio no telejornal |
+| Encaminhamento do relatório complementar ao TRE/SE | em até 3 (três) dias úteis após o telejornal |
+
+Eventual alteração no cronograma — incluindo postergação da exibição por motivo editorial ou ajuste técnico — dependerá de **comunicação formal entre as partes** com antecedência mínima de 48 (quarenta e oito) horas, preservadas a regularidade do registro PesqEle/TRE-SE e a observância de todos os prazos legais.
 
 ---
 
@@ -43,7 +57,7 @@ A CDL Aracaju se compromete a:
 
 **I.** Concluir o registro da pesquisa no sistema PesqEle do TRE/SE antes de qualquer divulgação, com pelo menos **5 (cinco) dias úteis** de antecedência em relação à data prevista da divulgação conjunta, conforme exigência do art. 2º da Resolução TSE nº 23.747/2026;
 
-**II.** Disponibilizar à TV Atalaia, em ambiente seguro e com **embargo jornalístico**, os resultados consolidados (números, percentuais, margem de erro, recortes regionais e demográficos) com antecedência mínima de **4 (quatro) horas** em relação ao horário do telejornal previsto, exclusivamente para fins de preparação editorial;
+**II.** Disponibilizar à TV Atalaia, em ambiente seguro e com **embargo jornalístico**, os resultados consolidados (números, percentuais, margem de erro, composição da amostra final por município, gênero, faixa etária, grau de instrução e nível econômico, e recortes regionais) com antecedência mínima de **4 (quatro) horas** em relação ao horário do telejornal de **3 de setembro de 2026**, exclusivamente para fins de preparação editorial. A entrega será feita em formato PDF assinado digitalmente pelo Presidente da CDL Aracaju, contendo carimbo de embargo;
 
 **III.** Não divulgar publicamente, por qualquer meio (site institucional, redes sociais, releases à imprensa, entrevistas), os resultados da Pesquisa Sergipe 2026 antes do encerramento do telejornal da TV Atalaia que primeiro os divulgar — **vigência do embargo**;
 
@@ -61,7 +75,7 @@ A CDL Aracaju se compromete a:
 
 A TV Atalaia se compromete a:
 
-**I.** **Veicular** a Pesquisa Sergipe 2026 em telejornal de horário nobre, com cobertura estadual, em data e horário previamente acordados entre as partes;
+**I.** **Veicular** a 1ª (primeira) edição da Pesquisa Sergipe 2026 referente ao 1º turno em telejornal de horário nobre, com cobertura estadual, **na data de 3 de setembro de 2026**, observado o cronograma da Cláusula 1ª;
 
 **II.** Realizar a divulgação **ao vivo**, com transmissão simultânea para todo o Estado de Sergipe via sinal aberto e plataformas digitais da emissora;
 
@@ -127,9 +141,9 @@ O presente convênio é **gratuito**, sem contrapartida financeira entre as part
 
 ## Cláusula 9ª — Vigência
 
-Este convênio entra em vigor na data de sua assinatura e tem por objeto **exclusivamente a 1ª (primeira) edição da Pesquisa Sergipe 2026 referente ao 1º turno** das Eleições 2026.
+Este convênio entra em vigor na data de sua assinatura e tem por objeto **exclusivamente** a 1ª (primeira) edição da Pesquisa Sergipe 2026 referente ao 1º turno das Eleições 2026, com **coleta de campo nos dias 1 e 2 de setembro de 2026** e **divulgação ao vivo no telejornal da TV Atalaia em 3 de setembro de 2026**, conforme cronograma da Cláusula 1ª.
 
-Esgotado o objeto previsto na Cláusula 1ª — divulgação dessa 1ª edição no telejornal da TV Atalaia e cumpridas as obrigações dela decorrentes (incluindo a remessa do relatório complementar ao TRE/SE prevista na Cláusula 2ª, VII) — o presente convênio **extingue-se automaticamente**, sem necessidade de denúncia prévia.
+Esgotado o objeto — divulgação dessa 1ª edição no telejornal de 3 de setembro de 2026 e cumpridas as obrigações dela decorrentes (incluindo a remessa do relatório complementar ao TRE/SE prevista na Cláusula 2ª, VII) — o presente convênio **extingue-se automaticamente**, sem necessidade de denúncia prévia.
 
 Eventual estensão a **qualquer outra edição** — incluindo, sem limitação, **2ª, 3ª ou demais ondas/edições da pesquisa anteriores ao mesmo 1º turno**, pesquisas referentes ao eventual **2º turno** das Eleições 2026, ou pesquisas em **ciclos eleitorais futuros** — dependerá de **manifestação expressa de ambas as partes**, formalizada por **termo aditivo escrito**, sem renovação automática.
 
@@ -221,4 +235,4 @@ CPF: ________________________
 ---
 
 *Documento elaborado em conformidade com Lei nº 9.504/1997, Resolução TSE nº 23.747/2026 e Lei nº 13.709/2018 (LGPD).*
-*Versão 1.3 · convenio_tv_atalaia_v1_3.docx*
+*Versão 1.4 · convenio_tv_atalaia_v1_4.docx*
