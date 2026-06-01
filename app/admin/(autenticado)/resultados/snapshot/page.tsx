@@ -214,6 +214,32 @@ export default async function SnapshotPage() {
       (r: { resposta: string; votos: number }) => r.resposta === 'sao_cristovao',
     )?.votos ?? 0
 
+  // Composição da amostra final (Resolução TSE 23.747/2026, Art. 2º §7º, IV).
+  // Agrega da view v_amostra_composicao (sexo, faixa_etaria, escolaridade,
+  // nivel_economico, municipio) — só eleitores com wa_validado=true.
+  const { data: composicaoRows } = await db
+    .from('v_amostra_composicao')
+    .select('dimensao, valor, n')
+    .eq('edicao_id', edicao.id)
+  const composicao: Record<string, Array<{ valor: string; n: number }>> = {
+    sexo: [],
+    faixa_etaria: [],
+    escolaridade: [],
+    nivel_economico: [],
+  }
+  for (const r of (composicaoRows ?? []) as Array<{
+    dimensao: string
+    valor: string
+    n: number
+  }>) {
+    if (composicao[r.dimensao]) {
+      composicao[r.dimensao].push({ valor: r.valor, n: r.n })
+    }
+  }
+  for (const k of Object.keys(composicao)) {
+    composicao[k].sort((a, b) => b.n - a.n)
+  }
+
   // QR code apontando pro endereço público (a TV pode chamar no ar)
   const qrSvg = await QRCode.toString(
     'https://pesquisa.cdlaju.com.br/resultados',
@@ -314,6 +340,9 @@ export default async function SnapshotPage() {
             </div>
           </dl>
         </section>
+
+        {/* Composição da amostra final (Resolução TSE 23.747/2026 §7º IV) */}
+        <SecaoComposicao composicao={composicao} n={n} />
 
         {/* Pres/Gov/Sen */}
         {cargosCand.map((cargo) => (
@@ -508,6 +537,78 @@ function SecaoLeg({
           </tbody>
         </table>
       )}
+    </section>
+  )
+}
+
+const ROTULO_DIMENSAO: Record<string, string> = {
+  sexo: 'Gênero',
+  faixa_etaria: 'Faixa etária',
+  escolaridade: 'Grau de instrução',
+  nivel_economico: 'Nível econômico',
+}
+
+const ROTULO_VALOR: Record<string, string> = {
+  M: 'Masculino',
+  F: 'Feminino',
+  fundamental: 'Fundamental',
+  medio: 'Médio',
+  superior: 'Superior',
+  A: 'Classe A (> R$ 25.000)',
+  B: 'Classe B (R$ 7.000 – 25.000)',
+  C: 'Classe C (R$ 2.800 – 7.000)',
+  D_E: 'Classe D-E (até R$ 2.800)',
+  nao_informado: 'Não declarado',
+}
+
+function SecaoComposicao({
+  composicao,
+  n,
+}: {
+  composicao: Record<string, Array<{ valor: string; n: number }>>
+  n: number
+}) {
+  const dims = ['sexo', 'faixa_etaria', 'escolaridade', 'nivel_economico']
+  return (
+    <section className="snapshot-secao">
+      <h3>
+        Composição da amostra final{' '}
+        <span className="snapshot-secao-n">
+          (Resolução TSE 23.747/2026, Art. 2º §7º, IV · n=
+          {n.toLocaleString('pt-BR')})
+        </span>
+      </h3>
+      <div className="snapshot-composicao-grid">
+        {dims.map((d) => {
+          const linhas = composicao[d] ?? []
+          if (linhas.length === 0) return null
+          const total = linhas.reduce((s, l) => s + l.n, 0)
+          return (
+            <div key={d} className="snapshot-composicao-bloco">
+              <h4>{ROTULO_DIMENSAO[d]}</h4>
+              <table>
+                <tbody>
+                  {linhas.map((l) => (
+                    <tr key={l.valor}>
+                      <td>{ROTULO_VALOR[l.valor] ?? l.valor}</td>
+                      <td className="td-votos">
+                        {l.n.toLocaleString('pt-BR')}
+                      </td>
+                      <td className="td-pct">
+                        {total > 0
+                          ? ((l.n / total) * 100)
+                              .toFixed(1)
+                              .replace('.', ',') + '%'
+                          : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
+        })}
+      </div>
     </section>
   )
 }

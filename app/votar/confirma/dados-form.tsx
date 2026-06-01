@@ -215,6 +215,33 @@ export function DadosForm({
       </label>
 
       <label className="flex flex-col gap-2">
+        <span className="text-sm font-medium text-foreground">
+          Renda familiar mensal
+        </span>
+        <select
+          name="nivel_economico"
+          required
+          defaultValue=""
+          aria-invalid={state.field === 'nivel_economico'}
+          className="h-12 px-3 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          <option value="" disabled>
+            Selecione…
+          </option>
+          <option value="A">Mais de R$ 25.000</option>
+          <option value="B">De R$ 7.000 a R$ 25.000</option>
+          <option value="C">De R$ 2.800 a R$ 7.000</option>
+          <option value="D_E">Até R$ 2.800</option>
+          <option value="nao_informado">Prefiro não informar</option>
+        </select>
+        <span className="text-xs text-muted-foreground">
+          Exigido pelo TRE/SE (Resolução 23.747/2026) para a composição da
+          amostra. Você pode optar por não informar — os dados são tratados
+          apenas em agregados estatísticos.
+        </span>
+      </label>
+
+      <label className="flex flex-col gap-2">
         <span className="text-sm font-medium text-foreground">WhatsApp</span>
         <input
           type="tel"

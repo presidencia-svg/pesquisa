@@ -98,6 +98,7 @@ export type PreVotoDraft = {
   sexo?: 'M' | 'F'
   faixaEtaria?: '16-17' | '18-24' | '25-34' | '35-44' | '45-59' | '60+'
   escolaridade?: 'fundamental' | 'medio' | 'superior'
+  nivelEconomico?: 'A' | 'B' | 'C' | 'D_E' | 'nao_informado'
 }
 
 export const setPreVoto = async (draft: PreVotoDraft): Promise<void> => {
@@ -144,15 +145,26 @@ const VOTO_COOKIE_TTL_SEGUNDOS = 24 * 60 * 60
  * Conteudo do cookie `voto`. Carrega:
  *   - token: gerado aleatoriamente, hash equivalente esta em tokens_emitidos
  *   - municipioIbge: pra roteamento condicional da cedula extra de
- *     zona_expansao (so aparece pra Aracaju + Sao Cristovao). NAO vai
- *     pro banco — fica so na sessao client-side.
+ *     zona_expansao (so aparece pra Aracaju + Sao Cristovao). TAMBÉM
+ *     entra em votos_pesquisa.municipio_ibge desde migration 011 (pra
+ *     permitir recorte regional dos resultados).
+ *   - demograficos: copia controlada de sexo/faixa/escol/nivel a partir
+ *     do draft pre_voto. Entram em votos_pesquisa nas colunas adicionadas
+ *     pela migration 026, sem cpf_hash. Permitem cruzamento demografico ×
+ *     voto pro relatorio TRE/SE e narrativa interna, com supressao por
+ *     N≥5 nas views agregadoras.
  *
- * IMPORTANTE: o votos_pesquisa NUNCA recebe municipio. O roteamento
- * com base em municipio aqui e' apenas pra UX (quais cedulas mostrar).
+ * Pseudonimizacao: o cookie carrega APENAS os atributos, sem CPF.
+ * Mesmo se o cookie vazar, atacante so' tem (token + perfil demografico),
+ * nao consegue voltar pro CPF.
  */
 export type VotoCookieData = {
   token: string
   municipioIbge?: number
+  sexo?: 'M' | 'F'
+  faixaEtaria?: '16-17' | '18-24' | '25-34' | '35-44' | '45-59' | '60+'
+  escolaridade?: 'fundamental' | 'medio' | 'superior'
+  nivelEconomico?: 'A' | 'B' | 'C' | 'D_E' | 'nao_informado'
 }
 
 /**
@@ -169,14 +181,22 @@ export const setVotoCookie = async (
   })
 }
 
-/** Compat de retro pra getVotoToken — retorna so o token. */
+/**
+ * Helper que aceita os atributos demográficos vindos do draft.
+ * Mantém compat: chamadores antigos que passavam só (token, municipio)
+ * continuam funcionando — campos opcionais são preservados.
+ */
 export const setVotoToken = async (
   token: string,
-  municipioIbge?: number,
+  extras?: {
+    municipioIbge?: number
+    sexo?: VotoCookieData['sexo']
+    faixaEtaria?: VotoCookieData['faixaEtaria']
+    escolaridade?: VotoCookieData['escolaridade']
+    nivelEconomico?: VotoCookieData['nivelEconomico']
+  },
 ): Promise<void> => {
-  const data: VotoCookieData = municipioIbge
-    ? { token, municipioIbge }
-    : { token }
+  const data: VotoCookieData = { token, ...(extras ?? {}) }
   await setVotoCookie(data)
 }
 
@@ -186,15 +206,36 @@ export const getVotoData = async (): Promise<VotoCookieData | null> => {
   if (!decoded) return null
   try {
     const parsed = JSON.parse(fromBase64Url(decoded)) as Partial<VotoCookieData>
-    if (typeof parsed.token === 'string') {
-      return {
-        token: parsed.token,
-        ...(typeof parsed.municipioIbge === 'number'
-          ? { municipioIbge: parsed.municipioIbge }
-          : {}),
-      }
+    if (typeof parsed.token !== 'string') return null
+    return {
+      token: parsed.token,
+      ...(typeof parsed.municipioIbge === 'number'
+        ? { municipioIbge: parsed.municipioIbge }
+        : {}),
+      ...(parsed.sexo === 'M' || parsed.sexo === 'F'
+        ? { sexo: parsed.sexo }
+        : {}),
+      ...(typeof parsed.faixaEtaria === 'string' &&
+      ['16-17', '18-24', '25-34', '35-44', '45-59', '60+'].includes(
+        parsed.faixaEtaria,
+      )
+        ? { faixaEtaria: parsed.faixaEtaria as VotoCookieData['faixaEtaria'] }
+        : {}),
+      ...(typeof parsed.escolaridade === 'string' &&
+      ['fundamental', 'medio', 'superior'].includes(parsed.escolaridade)
+        ? {
+            escolaridade:
+              parsed.escolaridade as VotoCookieData['escolaridade'],
+          }
+        : {}),
+      ...(typeof parsed.nivelEconomico === 'string' &&
+      ['A', 'B', 'C', 'D_E', 'nao_informado'].includes(parsed.nivelEconomico)
+        ? {
+            nivelEconomico:
+              parsed.nivelEconomico as VotoCookieData['nivelEconomico'],
+          }
+        : {}),
     }
-    return null
   } catch {
     // Compat retro: cookie antigo era apenas o token em claro.
     if (decoded.length === 64) return { token: decoded }

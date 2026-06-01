@@ -52,6 +52,12 @@ const schema = z.object({
   escolaridade: z.enum(['fundamental', 'medio', 'superior'], {
     message: 'Selecione sua escolaridade.',
   }),
+  // Nível econômico (ABEP) — exigido pela Resolução TSE 23.747/2026
+  // Art. 2º §7º, IV. Inclui 'nao_informado' pra respeitar LGPD: renda
+  // é dado sensível, eleitor pode optar por não declarar.
+  nivel_economico: z.enum(['A', 'B', 'C', 'D_E', 'nao_informado'], {
+    message: 'Selecione sua renda familiar.',
+  }),
   whatsapp: z.string().min(11, { message: 'Informe seu número com DDD.' }),
   device_fingerprint: z
     .string()
@@ -93,8 +99,14 @@ export async function confirmarDados(
     }
   }
 
-  const { municipio_ibge, sexo, escolaridade, whatsapp, device_fingerprint } =
-    parsed.data
+  const {
+    municipio_ibge,
+    sexo,
+    escolaridade,
+    nivel_economico,
+    whatsapp,
+    device_fingerprint,
+  } = parsed.data
   // Checkbox de opt-in vem como "1" ou "on" quando marcado; ausente quando não.
   const optInResultadosWa =
     parsed.data.opt_in_resultados_wa === '1' ||
@@ -240,6 +252,7 @@ export async function confirmarDados(
         sexo,
         faixa_etaria,
         escolaridade,
+        nivel_economico,
         whatsapp_e164: whatsappE164,
         ip,
         user_agent: userAgent,
@@ -266,6 +279,7 @@ export async function confirmarDados(
       sexo,
       faixa_etaria,
       escolaridade,
+      nivel_economico,
       whatsapp_e164: whatsappE164,
       spc_validado: draft.spcValidado,
       wa_validado: false,
@@ -304,6 +318,7 @@ export async function confirmarDados(
           sexo,
           faixa_etaria,
           escolaridade,
+          nivel_economico,
           origem: 'spc_pesquisa_2026',
         },
         { onConflict: 'cpf_hash', ignoreDuplicates: true },
@@ -319,6 +334,7 @@ export async function confirmarDados(
           sexo,
           faixa_etaria,
           escolaridade,
+          nivel_economico,
         })
         .eq('cpf_hash', draft.cpfHash)
       if (errCdl) console.error('[confirma] erro update cdl_base:', errCdl)
@@ -384,11 +400,17 @@ export async function confirmarDados(
     }
   }
 
-  // 5. Atualizar cookie com whatsapp + municipio confirmados
+  // 5. Atualizar cookie com whatsapp + municipio + nivel_economico
+  //    confirmados. Esses dados propagam pro cookie da capsula em
+  //    /votar/otp via setVotoToken, e entram em votos_pesquisa como
+  //    cópia controlada (sem cpf_hash).
   await setPreVoto({
     ...draft,
     municipioIbge: municipio_ibge,
     whatsappE164,
+    sexo,
+    escolaridade,
+    nivelEconomico: nivel_economico,
   })
 
   redirect('/votar/otp')

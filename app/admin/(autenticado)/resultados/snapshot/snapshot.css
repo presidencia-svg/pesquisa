@@ -310,6 +310,63 @@
   background: #f9fafb;
 }
 
+/* ====== Composição da amostra (grid 2x2) ====== */
+
+.snapshot-composicao-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+  margin-top: 6px;
+}
+
+.snapshot-composicao-bloco {
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 8px 10px;
+  page-break-inside: avoid;
+}
+
+.snapshot-composicao-bloco h4 {
+  margin: 0 0 6px;
+  font-size: 9pt;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #4b5563;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  border-bottom: 1px dashed #e5e7eb;
+  padding-bottom: 3px;
+}
+
+.snapshot-composicao-bloco table {
+  width: 100%;
+  font-size: 9pt;
+  border-collapse: collapse;
+}
+
+.snapshot-composicao-bloco td {
+  padding: 2px 0;
+  border-bottom: none;
+  vertical-align: middle;
+}
+
+.snapshot-composicao-bloco td:first-child {
+  color: #111;
+}
+
+.snapshot-composicao-bloco td.td-votos,
+.snapshot-composicao-bloco td.td-pct {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  width: auto;
+  padding-left: 8px;
+}
+
+.snapshot-composicao-bloco td.td-pct {
+  color: #6b7280;
+  width: 50px;
+}
+
 /* ====== Rodapé ====== */
 
 .snapshot-footer {

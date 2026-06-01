@@ -40,6 +40,13 @@ export async function submeterVoto(
   }
   const tokenClaro = votoData.token
   const municipioIbge = votoData.municipioIbge ?? null
+  // Cópia controlada de demográficos do cookie pra cada voto (migration
+  // 026). Sem cpf_hash. Permite cruzamento demográfico × voto com
+  // supressão N>=5 nas views agregadoras.
+  const sexo = votoData.sexo ?? null
+  const faixaEtaria = votoData.faixaEtaria ?? null
+  const escolaridade = votoData.escolaridade ?? null
+  const nivelEconomico = votoData.nivelEconomico ?? null
 
   const cargoRaw = String(formData.get('cargo') ?? '')
   if (!isCargo(cargoRaw)) {
@@ -222,6 +229,10 @@ export async function submeterVoto(
     resposta,
     metodo,
     municipio_ibge: municipioIbge,
+    sexo,
+    faixa_etaria: faixaEtaria,
+    escolaridade,
+    nivel_economico: nivelEconomico,
     criado_hora: horaCheia.toISOString(),
   })
   if (errVoto) {

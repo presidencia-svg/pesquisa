@@ -224,12 +224,22 @@ export async function validarOtp(
   }
 
   // 3d. PONTE DESTRUIDA: limpa cookie da Sala 1, planta cookie da Sala 2.
-  //     Inclui o municipioIbge no cookie pra que o /votar/cedula possa
-  //     decidir condicionalmente se mostra a cedula de zona_expansao
-  //     (apenas Aracaju + Sao Cristovao). Isso NAO escreve municipio
-  //     no votos_pesquisa — fica so client-side.
+  //     Cookie da capsula carrega:
+  //       - token: identifica o voto em tokens_emitidos (sem CPF)
+  //       - municipioIbge: roteamento condicional de zona_expansao +
+  //         gravacao em votos_pesquisa.municipio_ibge (migration 011)
+  //       - demograficos: copia controlada (sexo/faixa/escol/nivel) que
+  //         entra em votos_pesquisa nas colunas da migration 026,
+  //         permitindo cruzamento demografico × voto pro relatorio TRE
+  //         e narrativa interna (com supressao N>=5 nas views).
   await clearPreVoto()
-  await setVotoToken(tokenClaro, draft.municipioIbge)
+  await setVotoToken(tokenClaro, {
+    municipioIbge: draft.municipioIbge,
+    sexo: draft.sexo,
+    faixaEtaria: draft.faixaEtaria,
+    escolaridade: draft.escolaridade,
+    nivelEconomico: draft.nivelEconomico,
+  })
 
   redirect('/votar/anonimo')
 }
