@@ -150,7 +150,27 @@ const children = [
   h2('Cláusula 1ª — Objeto'),
   para([
     txt(
-      'O presente convênio tem por objeto a cooperação entre CDL Aracaju e TV Atalaia para divulgação ao vivo, em telejornal de alcance estadual, dos resultados da Pesquisa Sergipe 2026, em formato que garanta o direito à informação dos eleitores sergipanos, com presença simultânea de representante editorial da TV Atalaia e do Presidente da CDL Aracaju ou, na sua impossibilidade, de seu suplente formalmente designado.',
+      'O presente convênio tem por objeto a cooperação entre CDL Aracaju e TV Atalaia para a divulgação ao vivo, em telejornal de alcance estadual da TV Atalaia, exibido no dia 3 de setembro de 2026, dos resultados da ',
+    ),
+    txt('1ª (primeira) edição da Pesquisa Sergipe 2026 referente ao 1º turno', { bold: true }),
+    txt(' das Eleições 2026, com coleta de campo realizada nos dias '),
+    txt('1 e 2 de setembro de 2026', { bold: true }),
+    txt('.'),
+  ]),
+  para([
+    txt(
+      'A cooperação observará formato que garanta o direito à informação dos eleitores sergipanos, com presença simultânea de representante editorial da TV Atalaia e do Presidente da CDL Aracaju ou, na sua impossibilidade, de seu suplente formalmente designado.',
+    ),
+  ]),
+  para([txt('Cronograma vinculado a este convênio:', { bold: true })]),
+  inciso('a', 'coleta de campo (votação): 1 e 2 de setembro de 2026;'),
+  inciso('b', 'entrega dos números à TV Atalaia, sob embargo: até 4 (quatro) horas antes do telejornal de 3 de setembro de 2026;'),
+  inciso('c', 'divulgação ao vivo no telejornal: 3 de setembro de 2026;'),
+  inciso('d', 'disponibilização pública em https://pesquisa.cdlaju.com.br/resultados: imediatamente após o anúncio no telejornal;'),
+  inciso('e', 'encaminhamento do relatório complementar ao TRE/SE: em até 3 (três) dias úteis após o telejornal.'),
+  para([
+    txt(
+      'Eventual alteração no cronograma — incluindo postergação da exibição por motivo editorial ou ajuste técnico — dependerá de comunicação formal entre as partes com antecedência mínima de 48 (quarenta e oito) horas, preservadas a regularidade do registro PesqEle/TRE-SE e a observância de todos os prazos legais.',
     ),
   ]),
 
@@ -158,17 +178,17 @@ const children = [
   h2('Cláusula 2ª — Obrigações da CDL Aracaju'),
   para([txt('A CDL Aracaju se compromete a:')]),
   inciso('I', 'concluir o registro da pesquisa no sistema PesqEle do TRE/SE antes de qualquer divulgação, com pelo menos 5 (cinco) dias úteis de antecedência em relação à data prevista da divulgação conjunta, conforme exigência do art. 2º da Resolução TSE nº 23.747/2026;'),
-  inciso('II', 'disponibilizar à TV Atalaia, em ambiente seguro e com embargo jornalístico, os resultados consolidados (números, percentuais, margem de erro, recortes regionais e demográficos) com antecedência mínima de 24 (vinte e quatro) horas em relação ao horário do telejornal previsto, exclusivamente para fins de preparação editorial;'),
+  inciso('II', 'disponibilizar à TV Atalaia, em ambiente seguro e com embargo jornalístico, os resultados consolidados (números, percentuais, margem de erro, composição da amostra final por município, gênero, faixa etária, grau de instrução e nível econômico, e recortes regionais) com antecedência mínima de 4 (quatro) horas em relação ao horário do telejornal de 3 de setembro de 2026, exclusivamente para fins de preparação editorial. A entrega será feita em formato PDF assinado digitalmente pelo Presidente da CDL Aracaju, contendo carimbo de embargo;'),
   inciso('III', 'não divulgar publicamente, por qualquer meio (site institucional, redes sociais, releases à imprensa, entrevistas), os resultados da Pesquisa Sergipe 2026 antes do encerramento do telejornal da TV Atalaia que primeiro os divulgar — vigência do embargo;'),
   inciso('IV', 'garantir a presença do Presidente da CDL Aracaju (ou suplente) no estúdio da TV Atalaia, na data e horário acordados, para participar da divulgação ao vivo e responder a esclarecimentos sobre a metodologia;'),
-  inciso('V', 'após o término do telejornal, disponibilizar imediatamente a íntegra dos resultados no portal https://pesquisa.cdlaju.com.br/resultados, em conformidade com o princípio da transparência (Resolução TSE 23.747/2026, art. 5º);'),
+  inciso('V', 'imediatamente após o anúncio dos resultados no telejornal da TV Atalaia, disponibilizar a íntegra dos números no portal https://pesquisa.cdlaju.com.br/resultados, em conformidade com o princípio da transparência (Resolução TSE 23.747/2026, art. 5º), encerrando-se nesse momento o embargo de que trata o inciso III;'),
   inciso('VI', 'fornecer à TV Atalaia a metodologia, ficha técnica, estatístico responsável (com CONRE), nome do contratante, valor, período de coleta e demais informações exigidas pelo art. 33 da Lei 9.504/1997, para inclusão na reportagem;'),
   inciso('VII', 'encaminhar ao Tribunal Regional Eleitoral de Sergipe, em até 3 (três) dias úteis após a divulgação no telejornal, o relatório complementar previsto no § 7º-A do art. 2º da Resolução TSE nº 23.747/2026, contendo os resultados numéricos consolidados, a composição da amostra final por município, gênero, faixa etária, grau de instrução e nível econômico, e demais elementos exigidos para fins de auditoria e fiscalização eleitoral — sendo cópia disponibilizada à TV Atalaia para arquivo editorial mediante solicitação.'),
 
   // ─── Cláusula 3ª — Obrigações da TV Atalaia ───────────────────────────
   h2('Cláusula 3ª — Obrigações da TV Atalaia'),
   para([txt('A TV Atalaia se compromete a:')]),
-  inciso('I', 'veicular a Pesquisa Sergipe 2026 em telejornal de horário nobre, com cobertura estadual, em data e horário previamente acordados entre as partes;'),
+  inciso('I', 'veicular a 1ª (primeira) edição da Pesquisa Sergipe 2026 referente ao 1º turno em telejornal de horário nobre, com cobertura estadual, na data de 3 de setembro de 2026, observado o cronograma da Cláusula 1ª;'),
   inciso('II', 'realizar a divulgação ao vivo, com transmissão simultânea para todo o Estado de Sergipe via sinal aberto e plataformas digitais da emissora;'),
   inciso('III', 'conceder espaço editorial para participação do Presidente da CDL Aracaju (Elison Vieira Santos do Bomfim) ou, na sua impossibilidade, de seu suplente formalmente designado, com tempo de fala adequado para apresentação dos números e esclarecimento metodológico;'),
   inciso('IV', 'apresentar os resultados com fidelidade aos números fornecidos pela CDL Aracaju, sem manipulação editorial que altere ordem de classificação, percentuais ou contexto metodológico — admitindo-se livre análise jornalística, comentários e contraponto;'),
@@ -184,8 +204,23 @@ const children = [
   inciso('III', 'é vedado às partes utilizar a pesquisa ou sua divulgação como propaganda eleitoral, em favor ou desfavor de qualquer candidato, partido, federação ou coligação;'),
   inciso('IV', 'eventuais impugnações ou questionamentos quanto à pesquisa serão tratados pela CDL Aracaju, na qualidade de contratante e responsável institucional, junto ao TRE/SE.'),
 
-  // ─── Cláusula 5ª — Sigilo durante embargo ─────────────────────────────
-  h2('Cláusula 5ª — Sigilo durante o embargo'),
+  // ─── Cláusula 5ª — Independência operacional ──────────────────────────
+  h2('Cláusula 5ª — Independência operacional e contratação de colaboradores'),
+  para([
+    txt(
+      'A contratação, gestão, remuneração e supervisão de todos os colaboradores envolvidos na confecção da Pesquisa Sergipe 2026 — incluindo, sem limitação, entrevistadores, supervisores de campo, estatístico responsável, equipe de tecnologia, desenvolvedores de software, encarregado pelo tratamento de dados (DPO) e prestadores de serviço técnico — é de ',
+    ),
+    txt('responsabilidade exclusiva da CDL Aracaju', { bold: true }),
+    txt(', sem qualquer participação, indicação, aprovação ou ingerência da TV Atalaia.'),
+  ]),
+  para([
+    txt(
+      'A TV Atalaia atua exclusivamente como veículo jornalístico de divulgação dos resultados, não existindo entre as partes qualquer vínculo de subordinação, parceria operacional, compartilhamento de equipe ou corresponsabilidade na produção, na execução ou na metodologia da pesquisa. Eventual erro, omissão ou impugnação relativos ao trabalho dos colaboradores da pesquisa serão tratados exclusivamente pela CDL Aracaju, sem repercussão jurídica ou reputacional para a TV Atalaia.',
+    ),
+  ]),
+
+  // ─── Cláusula 6ª — Sigilo durante embargo ─────────────────────────────
+  h2('Cláusula 6ª — Sigilo durante o embargo'),
   para([
     txt(
       'Durante o período de embargo (Cláusula 2ª, III), as partes manterão sigilo absoluto sobre os números da pesquisa, restringindo o acesso apenas aos profissionais diretamente envolvidos na preparação editorial e na coordenação institucional.',
@@ -197,40 +232,66 @@ const children = [
     ),
   ]),
 
-  // ─── Cláusula 6ª — Marca e propriedade intelectual ─────────────────────
-  h2('Cláusula 6ª — Marca, imagem e propriedade intelectual'),
+  // ─── Cláusula 7ª — Marca e propriedade intelectual ─────────────────────
+  h2('Cláusula 7ª — Marca, imagem e propriedade intelectual'),
   inciso('I', 'a TV Atalaia poderá utilizar, na reportagem e em peças jornalísticas correlatas, a marca e o nome institucional da CDL Aracaju, exclusivamente no contexto da divulgação da Pesquisa Sergipe 2026 e sem caráter publicitário;'),
   inciso('II', 'a CDL Aracaju poderá mencionar a TV Atalaia em comunicados institucionais relativos à divulgação, identificando-a como veículo parceiro do convênio;'),
   inciso('III', 'a metodologia, base de dados, código-fonte do sistema de coleta e identidade visual da Pesquisa Sergipe 2026 permanecem de titularidade exclusiva da CDL Aracaju;'),
   inciso('IV', 'a reportagem e produção audiovisual elaboradas pela TV Atalaia são de titularidade exclusiva da emissora, respeitados os direitos morais dos jornalistas envolvidos.'),
 
-  // ─── Cláusula 7ª — Natureza não comercial ──────────────────────────────
-  h2('Cláusula 7ª — Natureza não comercial'),
+  // ─── Cláusula 8ª — Natureza não comercial ──────────────────────────────
+  h2('Cláusula 8ª — Natureza não comercial'),
   para([
     txt(
       'O presente convênio é gratuito, sem contrapartida financeira entre as partes. Não há pagamento da CDL Aracaju à TV Atalaia, nem da TV Atalaia à CDL Aracaju, pela divulgação aqui pactuada. As partes reconhecem o interesse público como motivação central da cooperação.',
     ),
   ]),
 
-  // ─── Cláusula 8ª — Vigência ────────────────────────────────────────────
-  h2('Cláusula 8ª — Vigência'),
+  // ─── Cláusula 9ª — Vigência ────────────────────────────────────────────
+  h2('Cláusula 9ª — Vigência'),
   para([
     txt(
-      'Este convênio entra em vigor na data de sua assinatura e vigorará até 31 de dezembro de 2026, abrangendo todas as edições (1º e eventual 2º turno) da Pesquisa Sergipe 2026.',
+      'Este convênio entra em vigor na data de sua assinatura e tem por objeto ',
     ),
+    txt('exclusivamente', { bold: true }),
+    txt(
+      ' a 1ª (primeira) edição da Pesquisa Sergipe 2026 referente ao 1º turno das Eleições 2026, com ',
+    ),
+    txt('coleta de campo nos dias 1 e 2 de setembro de 2026', { bold: true }),
+    txt(' e '),
+    txt('divulgação ao vivo no telejornal da TV Atalaia em 3 de setembro de 2026', { bold: true }),
+    txt(', conforme cronograma da Cláusula 1ª.'),
   ]),
   para([
     txt(
-      'Caso a CDL Aracaju conduza pesquisas em ciclos eleitorais futuros, a renovação do convênio dependerá de manifestação expressa de ambas as partes, mediante termo aditivo.',
+      'Esgotado o objeto — divulgação dessa 1ª edição no telejornal de 3 de setembro de 2026 e cumpridas as obrigações dela decorrentes (incluindo a remessa do relatório complementar ao TRE/SE prevista na Cláusula 2ª, VII) — o presente convênio ',
+    ),
+    txt('extingue-se automaticamente', { bold: true }),
+    txt(', sem necessidade de denúncia prévia.'),
+  ]),
+  para([
+    txt('Eventual estensão a '),
+    txt('qualquer outra edição', { bold: true }),
+    txt(
+      ' — incluindo, sem limitação, 2ª, 3ª ou demais ondas/edições da pesquisa anteriores ao mesmo 1º turno, pesquisas referentes ao eventual 2º turno das Eleições 2026, ou pesquisas em ciclos eleitorais futuros — dependerá de ',
+    ),
+    txt('manifestação expressa de ambas as partes', { bold: true }),
+    txt(', formalizada por '),
+    txt('termo aditivo escrito', { bold: true }),
+    txt(', sem renovação automática.'),
+  ]),
+  para([
+    txt(
+      'Em qualquer hipótese, este convênio não vigorará além de 31 de dezembro de 2026, salvo se prorrogado por termo aditivo na forma do parágrafo anterior.',
     ),
   ]),
 
-  // ─── Cláusula 9ª — Rescisão ────────────────────────────────────────────
-  h2('Cláusula 9ª — Rescisão'),
+  // ─── Cláusula 10ª — Rescisão ───────────────────────────────────────────
+  h2('Cláusula 10ª — Rescisão'),
   para([txt('O convênio poderá ser rescindido:')]),
   inciso('I', 'por mútuo acordo das partes, mediante termo escrito;'),
   inciso('II', 'unilateralmente, com notificação prévia de 15 (quinze) dias, em caso de descumprimento de qualquer cláusula por uma das partes;'),
-  inciso('III', 'imediatamente, sem necessidade de notificação prévia, em caso de violação do embargo (Cláusula 5ª) ou de uso da pesquisa como propaganda eleitoral (Cláusula 4ª, III);'),
+  inciso('III', 'imediatamente, sem necessidade de notificação prévia, em caso de violação do embargo (Cláusula 6ª) ou de uso da pesquisa como propaganda eleitoral (Cláusula 4ª, III);'),
   inciso('IV', 'por decisão judicial ou administrativa do TRE/SE que impeça a continuidade da divulgação.'),
   para([
     txt(
@@ -238,8 +299,8 @@ const children = [
     ),
   ]),
 
-  // ─── Cláusula 10ª — Comunicações ──────────────────────────────────────
-  h2('Cláusula 10ª — Comunicações'),
+  // ─── Cláusula 11ª — Comunicações ──────────────────────────────────────
+  h2('Cláusula 11ª — Comunicações'),
   para([
     txt(
       'Toda e qualquer comunicação oficial entre as partes deverá ser enviada por escrito, com confirmação de recebimento, aos seguintes endereços:',
@@ -248,8 +309,8 @@ const children = [
   para([txt('CDL Aracaju: ', { bold: true }), txt('Rua Santa Luzia, 570, São José, Aracaju/SE — CEP 49015-190 · presidencia@cdlaju.com.br · dpo@cdlaju.com.br (DPO para questões de dados).')]),
   para([txt('TV Atalaia: ', { bold: true }), txt('Rua Cláudio Batista, 122, Santo Antônio, Aracaju/SE — CEP 49.060-100 · e-mail: amalta@sisatalaia.com.br')]),
 
-  // ─── Cláusula 11ª — Foro ──────────────────────────────────────────────
-  h2('Cláusula 11ª — Foro'),
+  // ─── Cláusula 12ª — Foro ──────────────────────────────────────────────
+  h2('Cláusula 12ª — Foro'),
   para([
     txt(
       'Fica eleito o Foro da Comarca de Aracaju, Estado de Sergipe, com renúncia expressa a qualquer outro, por mais privilegiado que seja, para dirimir quaisquer dúvidas ou controvérsias decorrentes deste convênio que não puderem ser resolvidas amigavelmente.',
@@ -264,7 +325,7 @@ const children = [
     ),
   ]),
   ...blank(1),
-  center('Aracaju, 26 de maio de 2026.'),
+  center('Aracaju, 1º de junho de 2026.'),
   ...blank(4),
 
   // Assinaturas
@@ -298,7 +359,7 @@ const children = [
     'Documento elaborado em conformidade com Lei nº 9.504/1997, Resolução TSE nº 23.747/2026 e Lei nº 13.709/2018 (LGPD).',
     { kicker: true },
   ),
-  center('Versão 1.0', { kicker: true }),
+  center('Versão 1.4', { kicker: true }),
 ]
 
 const doc = new Document({
