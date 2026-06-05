@@ -76,9 +76,18 @@ export default function PrivacidadePage() {
                 mesorregião.
               </li>
               <li>
-                <strong>Sexo, faixa etária, escolaridade</strong> —
-                usados para ponderação amostral conforme exigência da
-                Resolução TSE 23.747/2026.
+                <strong>
+                  Sexo, faixa etária, escolaridade e renda familiar
+                </strong>{' '}
+                — coletados em conformidade com a{' '}
+                <strong>Resolução TSE 23.747/2026, Art. 2º § 7º, IV</strong>
+                , que exige reportar ao TRE/SE a composição da amostra final
+                por gênero, idade, grau de instrução e nível econômico. A
+                pergunta de renda familiar usa faixas amplas (classes ABEP) e
+                inclui a opção <em>&ldquo;prefiro não informar&rdquo;</em> —
+                sua escolha não bloqueia o cadastro. Dados sensíveis (renda)
+                são tratados apenas em <strong>agregados estatísticos</strong>,
+                nunca individualmente.
               </li>
               <li>
                 <strong>Endereço IP e User-Agent do navegador</strong> —
@@ -131,7 +140,9 @@ export default function PrivacidadePage() {
               <li>Verificação de identidade do respondente.</li>
               <li>
                 Ponderação estatística da amostra contra a distribuição
-                oficial do TSE (sexo × idade × escolaridade × município).
+                oficial do TSE (sexo × idade × escolaridade × renda ×
+                município) e composição do relatório complementar exigido
+                pelo § 7º-A do art. 2º da Resolução TSE 23.747/2026.
               </li>
               <li>Antifraude (rate limit, device fingerprint).</li>
               <li>
