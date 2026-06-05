@@ -86,11 +86,15 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
   const [cpfDisplay, setCpfDisplay] = useState('')
   const [consentido, setConsentido] = useState(false)
   const [navegadorAnonimo, setNavegadorAnonimo] = useState<boolean | null>(null)
-  const [safariIOS, setSafariIOS] = useState(false)
+  // Lazy initializer com guard SSR — calcula 1 vez no mount sem
+  // disparar setState dentro de effect (evita cascading renders
+  // flagado pelo lint react-hooks/purity).
+  const [safariIOS] = useState(() =>
+    typeof window !== 'undefined' ? isSafariIOS() : false,
+  )
 
   useEffect(() => {
     detectarNavegadorAnonimo().then(setNavegadorAnonimo)
-    setSafariIOS(isSafariIOS())
   }, [])
 
   const showTurnstile =

@@ -34,9 +34,14 @@ export default async function DiagnosticoSpcPage({
       `cpf_lookup`,
     )
 
-    const t0 = Date.now()
+    // RSC = renderiza 1 vez por request; performance.now() é
+    // intencional pra medir duração da chamada SPC. Lint react-hooks/
+    // purity é falso positivo (regra projetada pra Client Components).
+    // eslint-disable-next-line react-hooks/purity
+    const t0 = performance.now()
     resultadoConsultarSpc = await consultarSpc(cpf)
-    const duracaoConsulta = Date.now() - t0
+    // eslint-disable-next-line react-hooks/purity
+    const duracaoConsulta = performance.now() - t0
 
     // Chamada paralela direto na API SPC pra ver o payload bruto
     if (!DEV_MODE && !SERVER_ENV.SPC_MOCK) {
@@ -85,10 +90,12 @@ export default async function DiagnosticoSpcPage({
           }
           const ctrl = new AbortController()
           const timer = setTimeout(() => ctrl.abort(), 10_000)
-          const t1 = Date.now()
+          // eslint-disable-next-line react-hooks/purity
+          const t1 = performance.now()
           const res = await fetch(url, { ...init, signal: ctrl.signal })
           clearTimeout(timer)
-          const duracaoBruto = Date.now() - t1
+          // eslint-disable-next-line react-hooks/purity
+          const duracaoBruto = performance.now() - t1
           const text = await res.text()
           let parsed: unknown = null
           let erroParse: string | null = null
