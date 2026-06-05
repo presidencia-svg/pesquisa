@@ -570,12 +570,21 @@ export default function TransparenciaPage() {
                 </li>
               </ul>
 
-              <p className="text-foreground leading-relaxed pt-2 italic">
-                Nada de demográfico vai pra Sala 2. Cruzamentos como
-                &ldquo;intenção entre mulheres de 25-34 em Aracaju&rdquo; são
-                feitos comparando
-                distribuições agregadas das duas salas — nunca por linha
-                individual.
+              <p className="text-foreground leading-relaxed pt-2">
+                Pra atender o relatório complementar exigido pelo Art. 2º
+                § 7º, IV da Resolução TSE 23.747/2026 e permitir narrativa
+                tipo &ldquo;intenção entre mulheres de 25-34 em Aracaju&rdquo;,
+                a Sala 2 carrega uma <strong>cópia controlada</strong> dos
+                atributos demográficos (sexo, faixa etária, escolaridade,
+                renda, município) <em>sem o cpf_hash</em>. O voto continua
+                impossível de ligar a um CPF específico, mas cruzamentos
+                agregados ficam disponíveis para análise.
+              </p>
+              <p className="text-foreground leading-relaxed pt-1 italic">
+                Toda exibição agregada por cruzamento demográfico aplica
+                a regra de k-anonymity descrita abaixo — células com menos
+                de 30 respondentes são suprimidas ou agregadas a um nível
+                superior.
               </p>
             </section>
 
