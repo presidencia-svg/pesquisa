@@ -13,6 +13,7 @@
 
 import { NextResponse } from 'next/server'
 
+import { registrarAcessoAdmin } from '@/lib/admin-audit'
 import { isAdmin } from '@/lib/admin-auth'
 import { DEV_MODE, SERVER_ENV } from '@/lib/env'
 import { consultarSpc } from '@/lib/spc'
@@ -32,6 +33,21 @@ export async function GET(request: Request) {
       { status: 400 },
     )
   }
+
+  // Trilha de auditoria: rota API pode ser chamada via curl/fetch
+  // bypassando a UI. Registrar aqui garante que TODO acesso gera log.
+  // CPF mascarado (3 primeiros + 2 últimos) — coerente com o que
+  // a página /admin/diagnostico-spc grava.
+  await registrarAcessoAdmin(
+    'view_diagnostico_spc',
+    {
+      cpf_mascarado: cpf.slice(0, 3) + '*****' + cpf.slice(-2),
+      via: 'api',
+      include_raw: includeRaw,
+      api: SERVER_ENV.SPC_USAR_API_NOVA ? 'nova' : 'jud',
+    },
+    'cpf_lookup',
+  )
 
   const t0 = Date.now()
   const resultado = await consultarSpc(cpf)
