@@ -59,13 +59,24 @@ export async function processarLoteNotificacao(): Promise<ProcessarResultado> {
     .maybeSingle()
 
   if (!edicao) {
-    return { ok: false, message: 'Nenhuma edição ativa encontrada.' }
+    // Skip operacional — esperado entre desativação de edição teste
+    // e criação da edição real. Não é erro: cron continua disparando
+    // a cada 5min, e quando houver edição ativa+divulgada o lote roda.
+    return {
+      ok: true,
+      message: 'Skip: nenhuma edição ativa (no-op silencioso).',
+      resumo: { processados: 0, enviados: 0, falhas: 0, pendentes_restantes: 0 },
+    }
   }
   if (!edicao.divulgada_em) {
+    // Skip operacional — edição ativa mas ainda não divulgada.
+    // Cron volta a tentar a cada 5min; quando o admin clicar
+    // "Divulgar publicamente", o próximo tick processa o lote.
     return {
-      ok: false,
+      ok: true,
       message:
-        'Esta edição ainda não foi divulgada. Antes de notificar eleitores, marque a divulgação em /admin/edicoes.',
+        'Skip: edição ativa ainda não divulgada (no-op silencioso). Quando divulgar em /admin/edicoes, o cron processa o lote no próximo tick.',
+      resumo: { processados: 0, enviados: 0, falhas: 0, pendentes_restantes: 0 },
     }
   }
 
