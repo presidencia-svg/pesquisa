@@ -204,6 +204,74 @@ export default function PatrocinioPage() {
           </div>
         </section>
 
+        {/* Especificações de logo */}
+        <section className="border-t border-border bg-muted/30">
+          <div className="max-w-3xl mx-auto px-5 py-10 flex flex-col gap-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">
+              Especificações do logo
+            </p>
+            <h2 className="text-xl font-semibold">
+              Dimensões e formato por cota
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Cada cota tem um tamanho máximo de exibição. Logos de qualquer
+              proporção (horizontal, vertical ou quadrada) se encaixam
+              automaticamente preservando aspect ratio.
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-background border-b border-border">
+                  <tr>
+                    <th className="text-left p-3 font-semibold">Cota</th>
+                    <th className="text-left p-3 font-semibold">
+                      Tamanho desktop
+                    </th>
+                    <th className="text-left p-3 font-semibold">
+                      Tamanho mobile
+                    </th>
+                    <th className="text-left p-3 font-semibold">
+                      Arquivo recomendado
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-border/50 bg-cyan-50/50">
+                    <td className="p-3">
+                      <strong style={{ color: '#0891b2' }}>Diamante</strong>
+                    </td>
+                    <td className="p-3 font-mono text-xs">220 × 90 px</td>
+                    <td className="p-3 font-mono text-xs">180 × 70 px</td>
+                    <td className="p-3 text-xs">PNG transparente</td>
+                  </tr>
+                  <tr className="border-b border-border/50 bg-amber-50/50">
+                    <td className="p-3">
+                      <strong style={{ color: '#ca8a04' }}>Ouro</strong>
+                    </td>
+                    <td className="p-3 font-mono text-xs">160 × 60 px</td>
+                    <td className="p-3 font-mono text-xs">130 × 48 px</td>
+                    <td className="p-3 text-xs">PNG transparente</td>
+                  </tr>
+                  <tr className="bg-slate-50">
+                    <td className="p-3">
+                      <strong style={{ color: '#64748b' }}>Prata</strong>
+                    </td>
+                    <td className="p-3 font-mono text-xs">120 × 40 px</td>
+                    <td className="p-3 font-mono text-xs">100 × 32 px</td>
+                    <td className="p-3 text-xs">PNG transparente</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed pt-2 border-t border-border">
+              <strong>Aceitos:</strong> PNG, JPG, SVG ou WebP até 2 MB.{' '}
+              <strong>Recomendado:</strong> PNG com fundo transparente nas
+              dimensões ideais — garante renderização perfeita em qualquer
+              tela. Encaixe automático via{' '}
+              <code className="bg-muted px-1 rounded">object-fit: contain</code>.
+            </p>
+          </div>
+        </section>
+
         {/* Exposição visual */}
         <section className="border-t border-border">
           <div className="max-w-3xl mx-auto px-5 py-10 flex flex-col gap-4 items-center text-center">

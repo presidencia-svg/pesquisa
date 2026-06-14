@@ -513,7 +513,11 @@
 .rs-patro-img {
   display: block;
   width: auto;
+  height: auto;
   object-fit: contain;
+  /* object-fit:contain garante que qualquer aspect ratio cabe no
+     slot sem distorção. Logos quadradas, horizontais ou verticais
+     preservam proporção dentro do max-width/height. */
 }
 
 /* Diamante — bloco grande logo após o hero, fundo claro */

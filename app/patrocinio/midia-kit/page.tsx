@@ -238,6 +238,52 @@ export default async function MidiaKitPage() {
           </div>
         </section>
 
+        {/* Especificações de logo */}
+        <section className="kit-secao">
+          <h3>Especificações do logo</h3>
+          <table className="kit-tabela-comp">
+            <thead>
+              <tr>
+                <th>Cota</th>
+                <th className="td-num">Desktop</th>
+                <th className="td-num">Mobile</th>
+                <th>Arquivo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <strong style={{ color: '#0891b2' }}>Diamante</strong>
+                </td>
+                <td className="td-num">220×90 px</td>
+                <td className="td-num">180×70 px</td>
+                <td>PNG transparente</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong style={{ color: '#ca8a04' }}>Ouro</strong>
+                </td>
+                <td className="td-num">160×60 px</td>
+                <td className="td-num">130×48 px</td>
+                <td>PNG transparente</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong style={{ color: '#64748b' }}>Prata</strong>
+                </td>
+                <td className="td-num">120×40 px</td>
+                <td className="td-num">100×32 px</td>
+                <td>PNG transparente</td>
+              </tr>
+            </tbody>
+          </table>
+          <p className="kit-pequeno">
+            Aceitos: PNG, JPG, SVG ou WebP até 2 MB. Encaixe automático com
+            object-fit:contain — qualquer proporção cabe preservando aspect
+            ratio.
+          </p>
+        </section>
+
         {/* Independência editorial */}
         <section className="kit-secao kit-secao-destaque">
           <h3>Independência editorial garantida</h3>

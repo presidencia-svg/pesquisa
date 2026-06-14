@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from 'react'
 
+import { COTA_SPECS, estiloSlotDesktop } from '@/lib/patrocinio-specs'
+
 import {
   atualizarExibicaoPublica,
   atualizarStatus,
@@ -238,31 +240,14 @@ export function LinhaInteressado({ lead }: { lead: Lead }) {
                   />
                 )}
 
-                {/* Preview do logo atual */}
+                {/* Preview do logo atual + slot real */}
                 {logoUrl && (
-                  <div className="border border-border rounded-md p-3 bg-muted/30 flex items-center gap-3">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={logoUrl}
-                      alt={`Preview ${lead.empresa}`}
-                      className="max-h-12 w-auto"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
-                        Preview
-                      </p>
-                      <p className="text-[10px] text-muted-foreground font-mono truncate">
-                        {logoUrl}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setLogoUrl('')}
-                      className="text-[10px] text-error hover:underline whitespace-nowrap"
-                    >
-                      Remover
-                    </button>
-                  </div>
+                  <PreviewLogo
+                    logoUrl={logoUrl}
+                    empresa={lead.empresa}
+                    cota={lead.cota}
+                    onRemover={() => setLogoUrl('')}
+                  />
                 )}
               </div>
               <label className="flex flex-col gap-1">
@@ -309,5 +294,92 @@ export function LinhaInteressado({ lead }: { lead: Lead }) {
         </div>
       )}
     </article>
+  )
+}
+
+/**
+ * Preview do logo na exata dimensão do slot do /resultados.
+ *
+ * - Mostra ficha técnica (dimensões desktop + mobile + dica de
+ *   arquivo ideal)
+ * - Renderiza a logo dentro de uma caixa que reproduz visualmente o
+ *   slot real (fundo + borda + tamanho exato + object-fit:contain)
+ */
+function PreviewLogo({
+  logoUrl,
+  empresa,
+  cota,
+  onRemover,
+}: {
+  logoUrl: string
+  empresa: string
+  cota: 'diamante' | 'ouro' | 'prata'
+  onRemover: () => void
+}) {
+  const spec = COTA_SPECS[cota]
+
+  // Fundo simulado por cota (espelha resultados.css)
+  const fundoSlot =
+    cota === 'diamante'
+      ? 'linear-gradient(180deg, #ecfeff 0%, #fff 100%)'
+      : cota === 'ouro'
+        ? '#fff'
+        : '#f8fafc'
+
+  const opacityImg = cota === 'prata' ? 0.85 : 1
+
+  return (
+    <div className="border-2 border-border rounded-md p-4 bg-muted/20 flex flex-col gap-3">
+      <div className="flex items-baseline justify-between gap-2">
+        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+          Preview no slot real ({spec.nome})
+        </p>
+        <button
+          type="button"
+          onClick={onRemover}
+          className="text-[10px] text-error hover:underline whitespace-nowrap"
+        >
+          Remover logo
+        </button>
+      </div>
+
+      {/* Slot simulado */}
+      <div
+        className="rounded-md border border-border flex items-center justify-center p-4"
+        style={{ background: fundoSlot, minHeight: spec.desktop.height + 32 }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={logoUrl}
+          alt={`Logo ${empresa}`}
+          style={{ ...estiloSlotDesktop(cota), opacity: opacityImg }}
+        />
+      </div>
+
+      {/* Ficha técnica */}
+      <dl className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
+        <dt className="text-muted-foreground">Dimensão desktop</dt>
+        <dd className="font-mono">
+          {spec.desktop.width}×{spec.desktop.height} px (máx)
+        </dd>
+        <dt className="text-muted-foreground">Dimensão mobile</dt>
+        <dd className="font-mono">
+          {spec.mobile.width}×{spec.mobile.height} px (máx)
+        </dd>
+        <dt className="text-muted-foreground">Arquivo ideal</dt>
+        <dd>{spec.ideal}</dd>
+      </dl>
+
+      <p className="text-[10px] text-muted-foreground italic leading-relaxed pt-2 border-t border-dashed border-border">
+        {spec.descricao} A logo é encaixada com{' '}
+        <code className="bg-muted px-1 rounded">object-fit: contain</code> —
+        formato horizontal, vertical ou quadrado, qualquer um cabe no slot
+        preservando proporção.
+      </p>
+
+      <p className="text-[10px] text-muted-foreground font-mono truncate">
+        URL: {logoUrl}
+      </p>
+    </div>
   )
 }
