@@ -1,0 +1,295 @@
+import QRCode from 'qrcode'
+
+import { BotaoImprimirKit } from './botao-imprimir'
+import './midia-kit.css'
+
+export const metadata = {
+  title: 'Mídia Kit · Patrocínio Pesquisa Sergipe 2026',
+  robots: { index: false, follow: false },
+}
+
+const COTAS = [
+  {
+    nivel: 'diamante',
+    titulo: 'DIAMANTE',
+    valor: 30_000,
+    vagas: '1 vaga única · exclusividade de categoria',
+    cor: '#0891b2',
+    beneficios: [
+      'Exclusividade na categoria (nenhum concorrente patrocina)',
+      'Logo em destaque máximo no topo da página /resultados',
+      'Painel dedicado nos créditos de abertura do telejornal TV Atalaia',
+      'Entrevista exclusiva do Presidente da CDL para veículo do patrocinador',
+      'Snapshot embargado 48h antes da divulgação pública (sob NDA)',
+      'Relatório premium customizado com cortes demográficos × voto',
+      'Reunião privada com Presidente + estatístico responsável',
+      'Análise customizada do segmento de interesse do patrocinador',
+      'Marca "Patrocinador Master Pesquisa Sergipe 2026"',
+    ],
+  },
+  {
+    nivel: 'ouro',
+    titulo: 'OURO',
+    valor: 15_000,
+    vagas: 'até 3 vagas',
+    cor: '#ca8a04',
+    beneficios: [
+      'Logo em destaque na página /resultados',
+      'Menção institucional no telejornal da TV Atalaia (3/set/2026)',
+      'Relatório premium com cortes demográficos × voto',
+      'Snapshot embargado 24h antes da divulgação pública (sob NDA)',
+      'Reunião de apresentação com Presidente CDL e estatístico',
+      'Marca "Patrocinador Pesquisa Sergipe 2026"',
+    ],
+  },
+  {
+    nivel: 'prata',
+    titulo: 'PRATA',
+    valor: 8_000,
+    vagas: 'vagas ilimitadas',
+    cor: '#64748b',
+    beneficios: [
+      'Logo presente na página /resultados',
+      'Relatório premium com cortes demográficos × voto',
+      'Reunião de apresentação dos resultados',
+      'Marca "Apoiador Pesquisa Sergipe 2026"',
+    ],
+  },
+] as const
+
+export default async function MidiaKitPage() {
+  const qrSvg = await QRCode.toString(
+    'https://pesquisa.cdlaju.com.br/patrocinio',
+    { type: 'svg', errorCorrectionLevel: 'M', margin: 0, width: 110 },
+  )
+
+  return (
+    <>
+      <BotaoImprimirKit />
+
+      <main className="kit">
+        {/* ========================================================
+            PÁGINA 1 — Capa + argumento de venda
+            ======================================================== */}
+
+        <header className="kit-header">
+          <div className="kit-brand">
+            <h1>CDL ARACAJU</h1>
+            <p className="kit-cnpj">CNPJ 13.045.935/0001-36</p>
+            <p className="kit-endereco">
+              Rua Santa Luzia, 570 · São José · Aracaju/SE · CEP 49015-190
+            </p>
+          </div>
+          <div
+            className="kit-qr"
+            dangerouslySetInnerHTML={{ __html: qrSvg }}
+          />
+        </header>
+
+        <div className="kit-titulo-wrap">
+          <p className="kit-kicker">Cotas de patrocínio institucional</p>
+          <h2 className="kit-titulo">Pesquisa Sergipe 2026</h2>
+          <p className="kit-edicao">
+            1ª edição · 1º turno das Eleições 2026
+          </p>
+        </div>
+
+        {/* Hero argumento */}
+        <section className="kit-hero">
+          <p className="kit-hero-kicker">
+            A maior pesquisa eleitoral já produzida em Sergipe
+          </p>
+          <p className="kit-hero-numero">200.000+</p>
+          <p className="kit-hero-label">
+            votantes nos 75 municípios sergipanos
+          </p>
+          <p className="kit-hero-comp">
+            Escala <strong>100× superior</strong> aos institutos tradicionais
+            do país.
+          </p>
+        </section>
+
+        {/* Comparativo */}
+        <section className="kit-secao">
+          <h3>Comparativo com institutos tradicionais</h3>
+          <table className="kit-tabela-comp">
+            <thead>
+              <tr>
+                <th>Instituto</th>
+                <th className="td-num">Amostra (n)</th>
+                <th className="td-num">Margem de erro (IC 95%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Datafolha (típico estado)</td>
+                <td className="td-num">2.000</td>
+                <td className="td-num">±2,2 pp</td>
+              </tr>
+              <tr>
+                <td>IBOPE / Quaest</td>
+                <td className="td-num">1.500 – 2.500</td>
+                <td className="td-num">±2,0 – 2,5 pp</td>
+              </tr>
+              <tr>
+                <td>AtlasIntel / Paraná Pesquisas</td>
+                <td className="td-num">1.500 – 2.000</td>
+                <td className="td-num">±2,2 – 2,5 pp</td>
+              </tr>
+              <tr className="kit-tr-destaque">
+                <td>Pesquisa Sergipe 2026 — CDL Aracaju</td>
+                <td className="td-num">200.000+</td>
+                <td className="td-num">±0,11 pp</td>
+              </tr>
+            </tbody>
+          </table>
+          <p className="kit-pequeno">
+            Menor margem de erro significa que o número divulgado é mais
+            próximo da realidade. Com 200 mil respondentes, a Pesquisa
+            Sergipe 2026 entrega <strong>20× mais precisão</strong>.
+          </p>
+        </section>
+
+        {/* Cronograma */}
+        <section className="kit-secao kit-cronograma">
+          <h3>Cronograma</h3>
+          <table className="kit-tabela-crono">
+            <tbody>
+              <tr>
+                <td className="kit-crono-data">1 e 2 de setembro de 2026</td>
+                <td>Coleta de campo (votação online + WhatsApp)</td>
+              </tr>
+              <tr>
+                <td className="kit-crono-data">3 de setembro · até 4h antes</td>
+                <td>Entrega de números ao patrocinador Diamante (NDA)</td>
+              </tr>
+              <tr>
+                <td className="kit-crono-data">3 de setembro de 2026</td>
+                <td>
+                  <strong>Divulgação ao vivo no telejornal TV Atalaia</strong>
+                </td>
+              </tr>
+              <tr>
+                <td className="kit-crono-data">Imediatamente após anúncio</td>
+                <td>
+                  Publicação no portal pesquisa.cdlaju.com.br/resultados
+                </td>
+              </tr>
+              <tr>
+                <td className="kit-crono-data">Até 3 dias úteis após</td>
+                <td>Relatório complementar ao TRE/SE</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        {/* ========================================================
+            PÁGINA 2 — Cotas
+            ======================================================== */}
+        <div className="kit-quebra-pagina" />
+
+        <section className="kit-secao">
+          <h3>Cotas de patrocínio</h3>
+          <div className="kit-cotas">
+            {COTAS.map((cota) => (
+              <div
+                key={cota.nivel}
+                className="kit-cota"
+                style={{ borderColor: cota.cor }}
+              >
+                <header className="kit-cota-header">
+                  <h4 style={{ color: cota.cor }}>{cota.titulo}</h4>
+                  <p className="kit-cota-valor">
+                    R$ {cota.valor.toLocaleString('pt-BR')}
+                  </p>
+                  <p className="kit-cota-vagas">{cota.vagas}</p>
+                </header>
+                <ul>
+                  {cota.beneficios.map((b) => (
+                    <li key={b}>
+                      <span
+                        className="kit-bullet"
+                        style={{ color: cota.cor }}
+                      >
+                        ✓
+                      </span>
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Independência editorial */}
+        <section className="kit-secao kit-secao-destaque">
+          <h3>Independência editorial garantida</h3>
+          <p>
+            O patrocínio institucional é estritamente <strong>não
+            eleitoral</strong> e não confere ao patrocinador poder de
+            ingerência sobre metodologia, contratação de colaboradores,
+            resultados divulgados ou edição da reportagem. Cláusula
+            espelhada do Convênio CDL × TV Atalaia v1.4. Conforme exige a{' '}
+            <strong>Lei 9.504/1997, art. 33, §1º</strong>, a relação de
+            patrocinadores é informada ao TRE/SE no registro PesqEle.
+          </p>
+        </section>
+
+        {/* Quem não pode */}
+        <section className="kit-secao">
+          <h3>Quem NÃO pode patrocinar</h3>
+          <p className="kit-pequeno">
+            Vedações conforme <strong>Lei 9.504/1997, art. 33, §2º</strong>:
+          </p>
+          <ul className="kit-vedacoes">
+            <li>Candidatas e candidatos, suas coligações ou federações</li>
+            <li>Partidos políticos e seus diretórios</li>
+            <li>Pessoas físicas filiadas a partido ou candidatura ativa</li>
+            <li>
+              Pessoas jurídicas controladas por candidato ou partido
+            </li>
+            <li>
+              Órgãos da administração pública direta ou indireta
+            </li>
+          </ul>
+          <p className="kit-pequeno">
+            A CDL Aracaju realiza <strong>due diligence</strong> antes de
+            aceitar qualquer patrocínio.
+          </p>
+        </section>
+
+        {/* Contato */}
+        <section className="kit-contato">
+          <h3>Próximos passos</h3>
+          <p>
+            Entre em contato em{' '}
+            <strong>presidencia@cdlaju.com.br</strong> ou preencha o
+            formulário em{' '}
+            <strong>pesquisa.cdlaju.com.br/patrocinio</strong> — nossa
+            equipe responde em até 2 dias úteis com o contrato de
+            patrocínio para análise jurídica e formalização.
+          </p>
+          <div className="kit-assinatura">
+            <p>
+              <strong>Elison Vieira Santos do Bomfim</strong>
+            </p>
+            <p>Presidente da CDL Aracaju · Triênio 2026–2028</p>
+            <p>presidencia@cdlaju.com.br · (79) 3212-7700</p>
+          </div>
+        </section>
+
+        <footer className="kit-footer">
+          <p>
+            <strong>Pesquisa Sergipe 2026</strong> · Câmara de Dirigentes
+            Lojistas de Aracaju · CNPJ 13.045.935/0001-36
+          </p>
+          <p>
+            Em conformidade com Lei 9.504/1997, Resolução TSE 23.747/2026 e
+            LGPD 13.709/2018. Registro PesqEle/TRE-SE.
+          </p>
+        </footer>
+      </main>
+    </>
+  )
+}
