@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import QRCode from 'qrcode'
 
 import { BotaoImprimirKit } from './botao-imprimir'
@@ -74,7 +75,17 @@ export default async function MidiaKitPage() {
 
         <header className="kit-header">
           <div className="kit-brand">
-            <h1>CDL ARACAJU</h1>
+            <Image
+              src="/cdl-logo.png"
+              alt="CDL Aracaju"
+              width={180}
+              height={88}
+              className="kit-logo"
+              priority
+            />
+            <p className="kit-cnpj">
+              <strong>Câmara de Dirigentes Lojistas de Aracaju</strong>
+            </p>
             <p className="kit-cnpj">CNPJ 13.045.935/0001-36</p>
             <p className="kit-endereco">
               Rua Santa Luzia, 570 · São José · Aracaju/SE · CEP 49015-190

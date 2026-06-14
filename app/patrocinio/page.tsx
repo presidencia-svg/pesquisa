@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { MarcaCdl } from '@/components/marca-cdl'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
 
 import { PatrocinioForm } from './form'
@@ -66,8 +67,15 @@ export default function PatrocinioPage() {
         {/* Hero */}
         <section className="border-b border-border bg-gradient-to-br from-[#0a2a6e] to-[#1e40af] text-white">
           <div className="max-w-3xl mx-auto px-5 py-14 sm:py-20 flex flex-col gap-5">
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-300">
-              Patrocínio institucional
+            <Link
+              href="/"
+              className="inline-block bg-white rounded-md px-4 py-3 self-start hover:opacity-90 transition"
+              aria-label="Voltar para a home da Pesquisa Sergipe 2026"
+            >
+              <MarcaCdl tamanho="md" />
+            </Link>
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-300 pt-2">
+              Patrocínio institucional · Pesquisa Sergipe 2026
             </p>
             <h1 className="text-3xl sm:text-5xl font-bold leading-[1.05]">
               A maior pesquisa política já realizada no Brasil
