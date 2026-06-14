@@ -8,9 +8,9 @@ const initial: InteressePatrocinioState = { ok: false }
 
 export function PatrocinioForm() {
   const [state, action, pending] = useActionState(enviarInteresse, initial)
-  const [cotaSelecionada, setCotaSelecionada] = useState<'ouro' | 'prata'>(
-    'ouro',
-  )
+  const [cotaSelecionada, setCotaSelecionada] = useState<
+    'diamante' | 'ouro' | 'prata'
+  >('ouro')
 
   if (state.ok) {
     return (
@@ -29,7 +29,26 @@ export function PatrocinioForm() {
     <form action={action} className="flex flex-col gap-4">
       <label className="flex flex-col gap-2">
         <span className="text-sm font-medium">Cota de interesse</span>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-2">
+          <label
+            className={`flex flex-col gap-1 rounded-md border-2 p-3 cursor-pointer ${
+              cotaSelecionada === 'diamante'
+                ? 'border-cyan-600 bg-cyan-50'
+                : 'border-border bg-background'
+            }`}
+          >
+            <input
+              type="radio"
+              name="cota"
+              value="diamante"
+              required
+              checked={cotaSelecionada === 'diamante'}
+              onChange={() => setCotaSelecionada('diamante')}
+              className="sr-only"
+            />
+            <span className="font-semibold text-cyan-700">Diamante</span>
+            <span className="text-xs">R$ 30.000</span>
+          </label>
           <label
             className={`flex flex-col gap-1 rounded-md border-2 p-3 cursor-pointer ${
               cotaSelecionada === 'ouro'
@@ -66,7 +85,7 @@ export function PatrocinioForm() {
               className="sr-only"
             />
             <span className="font-semibold text-slate-700">Prata</span>
-            <span className="text-xs">R$ 10.000</span>
+            <span className="text-xs">R$ 8.000</span>
           </label>
         </div>
       </label>

@@ -13,13 +13,13 @@ type Lead = {
   contato_nome: string
   contato_email: string
   contato_telefone: string | null
-  cota: 'ouro' | 'prata'
+  cota: 'diamante' | 'ouro' | 'prata'
   mensagem: string | null
   status: 'novo' | 'em_contato' | 'firmado' | 'recusado'
   criado_em: string
 }
 
-const COTAS_VALOR = { ouro: 15_000, prata: 10_000 } as const
+const COTAS_VALOR = { diamante: 30_000, ouro: 15_000, prata: 8_000 } as const
 
 export default async function PatrociniosPage() {
   await registrarAcessoAdmin('view_patrocinios', {})

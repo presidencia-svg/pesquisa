@@ -6,9 +6,11 @@ import { registrarAcessoAdmin } from '@/lib/admin-audit'
 import { requireAdmin } from '@/lib/admin-auth'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
+export type StatusPatrocinio = 'novo' | 'em_contato' | 'firmado' | 'recusado'
+
 export async function atualizarStatus(
   id: string,
-  novo: 'novo' | 'em_contato' | 'firmado' | 'recusado',
+  novo: StatusPatrocinio,
 ): Promise<{ ok: boolean; message?: string }> {
   await requireAdmin()
 

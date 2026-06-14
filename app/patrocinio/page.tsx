@@ -12,9 +12,27 @@ export const metadata = {
 
 const COTAS = [
   {
+    nivel: 'diamante',
+    titulo: 'Cota Diamante',
+    valor: 30_000,
+    vagas: '1 vaga única — exclusividade de categoria',
+    cor: 'rgb(8, 145, 178)', // cyan
+    beneficios: [
+      'Exclusividade na categoria — nenhum concorrente direto pode patrocinar nesta edição',
+      'Logo em destaque máximo (topo) na página pública /resultados',
+      'Painel dedicado nos créditos de abertura do telejornal da TV Atalaia (3/set/2026)',
+      'Entrevista exclusiva do Presidente da CDL Aracaju para o veículo de comunicação do patrocinador',
+      'Acesso ao snapshot embargado 48h antes da divulgação pública (sob NDA)',
+      'Relatório premium customizado com cortes demográficos × voto (gênero, idade, escolaridade, renda, município, região)',
+      'Reunião privada com Presidente da CDL + estatístico responsável + análise customizada do segmento de interesse do patrocinador',
+      'Direito de uso da marca "Patrocinador Master Pesquisa Sergipe 2026 – CDL Aracaju"',
+    ],
+  },
+  {
     nivel: 'ouro',
     titulo: 'Cota Ouro',
     valor: 15_000,
+    vagas: 'Até 3 vagas',
     cor: 'rgb(202, 138, 4)', // amarelo institucional
     beneficios: [
       'Logo em destaque na página pública /resultados durante e após divulgação',
@@ -28,7 +46,8 @@ const COTAS = [
   {
     nivel: 'prata',
     titulo: 'Cota Prata',
-    valor: 10_000,
+    valor: 8_000,
+    vagas: 'Vagas ilimitadas',
     cor: 'rgb(100, 116, 139)', // slate
     beneficios: [
       'Logo presente na página pública /resultados durante e após divulgação',
@@ -56,18 +75,20 @@ export default function PatrocinioPage() {
               Sua empresa associa a marca a uma pesquisa eleitoral{' '}
               <strong>independente, transparente e registrada</strong> no
               PesqEle/TRE-SE — com divulgação ao vivo no telejornal da TV
-              Atalaia em 3 de setembro de 2026 e cobertura estadual.
+              Atalaia em 3 de setembro de 2026, cobertura estadual e amostra
+              projetada de <strong>mais de 100.000 votantes</strong> nos 75
+              municípios sergipanos.
             </p>
           </div>
         </section>
 
         {/* Cotas */}
-        <section className="max-w-5xl mx-auto px-5 py-10 sm:py-14 w-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section className="max-w-6xl mx-auto px-5 py-10 sm:py-14 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {COTAS.map((cota) => (
               <article
                 key={cota.nivel}
-                className="rounded-lg border-2 p-6 sm:p-8 flex flex-col gap-5 bg-background"
+                className="rounded-lg border-2 p-6 sm:p-7 flex flex-col gap-4 bg-background"
                 style={{ borderColor: cota.cor }}
               >
                 <header className="flex flex-col gap-2">
@@ -77,14 +98,14 @@ export default function PatrocinioPage() {
                   >
                     {cota.titulo}
                   </h2>
-                  <p className="text-4xl font-semibold">
+                  <p className="text-3xl font-semibold">
                     R$ {cota.valor.toLocaleString('pt-BR')}
-                    <span className="text-sm font-normal text-muted-foreground ml-2">
-                      por edição
-                    </span>
+                  </p>
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                    {cota.vagas}
                   </p>
                 </header>
-                <ul className="flex flex-col gap-2 text-sm leading-relaxed">
+                <ul className="flex flex-col gap-2 text-sm leading-relaxed flex-1">
                   {cota.beneficios.map((b) => (
                     <li key={b} className="flex gap-2">
                       <span style={{ color: cota.cor }}>✓</span>

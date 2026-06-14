@@ -25,7 +25,7 @@ const schema = z.object({
     .email({ message: 'E-mail inválido.' })
     .max(200),
   contato_telefone: z.string().trim().max(20).optional(),
-  cota: z.enum(['ouro', 'prata'], {
+  cota: z.enum(['diamante', 'ouro', 'prata'], {
     message: 'Selecione uma cota.',
   }),
   mensagem: z.string().trim().max(2000).optional(),

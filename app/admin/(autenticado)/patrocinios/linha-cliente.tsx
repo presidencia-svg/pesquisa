@@ -11,14 +11,19 @@ type Lead = {
   contato_nome: string
   contato_email: string
   contato_telefone: string | null
-  cota: 'ouro' | 'prata'
+  cota: 'diamante' | 'ouro' | 'prata'
   mensagem: string | null
   status: 'novo' | 'em_contato' | 'firmado' | 'recusado'
   criado_em: string
 }
 
-const ROTULO_COTA = { ouro: 'Ouro · R$ 15k', prata: 'Prata · R$ 10k' } as const
+const ROTULO_COTA = {
+  diamante: 'Diamante · R$ 30k',
+  ouro: 'Ouro · R$ 15k',
+  prata: 'Prata · R$ 8k',
+} as const
 const COR_COTA = {
+  diamante: 'rgb(8, 145, 178)',
   ouro: 'rgb(202, 138, 4)',
   prata: 'rgb(100, 116, 139)',
 } as const
