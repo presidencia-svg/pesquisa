@@ -72,14 +72,78 @@ export default function PatrocinioPage() {
               Apoie a Pesquisa Sergipe 2026
             </h1>
             <p className="text-base text-muted-foreground leading-relaxed max-w-2xl">
-              Sua empresa associa a marca a uma pesquisa eleitoral{' '}
-              <strong>independente, transparente e registrada</strong> no
-              PesqEle/TRE-SE — com divulgação ao vivo no telejornal da TV
-              Atalaia em 3 de setembro de 2026, cobertura estadual e amostra
-              projetada de <strong>mais de 100.000 votantes</strong> nos 75
-              municípios sergipanos.
+              Sua empresa associa a marca à <strong>maior pesquisa eleitoral
+              já produzida em Sergipe</strong>: amostra projetada de{' '}
+              <strong>mais de 200.000 votantes</strong> nos 75 municípios
+              sergipanos — escala 100× superior aos institutos tradicionais —
+              com divulgação ao vivo no telejornal da TV Atalaia em{' '}
+              <strong>3 de setembro de 2026</strong>, registrada no PesqEle/TRE-SE,
+              independente e transparente.
             </p>
           </div>
+        </section>
+
+        {/* Comparação com institutos tradicionais */}
+        <section className="max-w-4xl mx-auto px-5 py-10 sm:py-14 w-full flex flex-col gap-6">
+          <header className="flex flex-col gap-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">
+              Por que esta pesquisa é única
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-semibold leading-tight">
+              200.000 votantes vs. 2.000 dos institutos tradicionais
+            </h2>
+          </header>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/40 border-b border-border">
+                <tr>
+                  <th className="text-left p-3 font-semibold">Instituto</th>
+                  <th className="text-right p-3 font-semibold">Amostra (n)</th>
+                  <th className="text-right p-3 font-semibold">
+                    Margem de erro (IC 95%)
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-border/50">
+                  <td className="p-3">Datafolha (típico estado)</td>
+                  <td className="p-3 text-right tabular-nums">2.000</td>
+                  <td className="p-3 text-right tabular-nums">±2,2 pp</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-3">IBOPE / Quaest (típico estado)</td>
+                  <td className="p-3 text-right tabular-nums">1.500 – 2.500</td>
+                  <td className="p-3 text-right tabular-nums">±2,0 – 2,5 pp</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-3">AtlasIntel / Paraná Pesquisas</td>
+                  <td className="p-3 text-right tabular-nums">1.500 – 2.000</td>
+                  <td className="p-3 text-right tabular-nums">±2,2 – 2,5 pp</td>
+                </tr>
+                <tr
+                  className="border-t-2 border-accent bg-accent/5"
+                  style={{ fontWeight: 600 }}
+                >
+                  <td className="p-3 text-foreground">
+                    Pesquisa Sergipe 2026 — CDL Aracaju
+                  </td>
+                  <td className="p-3 text-right tabular-nums text-accent">
+                    200.000+
+                  </td>
+                  <td className="p-3 text-right tabular-nums text-accent">
+                    ±0,11 pp
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Em pesquisa de intenção de voto, <strong>menor margem de erro</strong>
+            {' '}significa que o número divulgado é mais próximo da realidade.
+            Com 200 mil respondentes, a Pesquisa Sergipe 2026 entrega{' '}
+            <strong>20× mais precisão</strong> que os maiores institutos do país
+            — um diferencial sem precedentes na cobertura jornalística estadual.
+          </p>
         </section>
 
         {/* Cotas */}
