@@ -2,7 +2,11 @@
 
 import { useState, useTransition } from 'react'
 
-import { atualizarExibicaoPublica, atualizarStatus } from './actions'
+import {
+  atualizarExibicaoPublica,
+  atualizarStatus,
+  uploadLogo,
+} from './actions'
 
 type Lead = {
   id: string
@@ -48,7 +52,25 @@ export function LinhaInteressado({ lead }: { lead: Lead }) {
   )
   const [salvandoExib, setSalvandoExib] = useState(false)
   const [exibOk, setExibOk] = useState(false)
+  const [aba, setAba] = useState<'upload' | 'url'>('upload')
+  const [enviando, setEnviando] = useState(false)
+  const [erroUp, setErroUp] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
+
+  async function handleUpload(file: File) {
+    setEnviando(true)
+    setErroUp(null)
+    const fd = new FormData()
+    fd.append('file', file)
+    fd.append('patrocinioId', lead.id)
+    const r = await uploadLogo(fd)
+    setEnviando(false)
+    if (r.ok && r.url) {
+      setLogoUrl(r.url)
+    } else {
+      setErroUp(r.message ?? 'Erro no upload.')
+    }
+  }
 
   function mudarStatus(novo: Lead['status']) {
     startTransition(async () => {
@@ -148,18 +170,101 @@ export function LinhaInteressado({ lead }: { lead: Lead }) {
               <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
                 Exibição pública em /resultados
               </p>
-              <label className="flex flex-col gap-1">
-                <span className="text-xs font-medium">
-                  URL do logo (PNG transparente recomendado)
-                </span>
-                <input
-                  type="url"
-                  value={logoUrl}
-                  onChange={(e) => setLogoUrl(e.target.value)}
-                  placeholder="https://exemplo.com/logo.png"
-                  className="h-9 px-2 rounded-md border border-border bg-background text-xs"
-                />
-              </label>
+              <div className="flex flex-col gap-2">
+                <span className="text-xs font-medium">Logo do patrocinador</span>
+
+                {/* Abas Upload / URL */}
+                <div className="flex gap-1 border-b border-border">
+                  <button
+                    type="button"
+                    onClick={() => setAba('upload')}
+                    className={`h-8 px-3 text-xs font-medium border-b-2 transition ${
+                      aba === 'upload'
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    📁 Importar arquivo
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAba('url')}
+                    className={`h-8 px-3 text-xs font-medium border-b-2 transition ${
+                      aba === 'url'
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    🔗 Colar URL
+                  </button>
+                </div>
+
+                {aba === 'upload' && (
+                  <label className="flex flex-col gap-2 mt-1">
+                    <div className="border-2 border-dashed border-border rounded-md px-4 py-5 text-center bg-background hover:bg-muted/40 transition cursor-pointer">
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                        disabled={enviando}
+                        onChange={(e) => {
+                          const f = e.target.files?.[0]
+                          if (f) handleUpload(f)
+                          e.target.value = ''
+                        }}
+                        className="sr-only"
+                      />
+                      <p className="text-xs font-medium text-foreground">
+                        {enviando
+                          ? 'Enviando…'
+                          : 'Clique para escolher arquivo'}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground mt-1">
+                        PNG, JPG, SVG ou WebP · até 2 MB
+                      </p>
+                    </div>
+                    {erroUp && (
+                      <p className="text-[11px] text-error">{erroUp}</p>
+                    )}
+                  </label>
+                )}
+
+                {aba === 'url' && (
+                  <input
+                    type="url"
+                    value={logoUrl}
+                    onChange={(e) => setLogoUrl(e.target.value)}
+                    placeholder="https://exemplo.com/logo.png"
+                    className="h-9 px-2 rounded-md border border-border bg-background text-xs mt-1"
+                  />
+                )}
+
+                {/* Preview do logo atual */}
+                {logoUrl && (
+                  <div className="border border-border rounded-md p-3 bg-muted/30 flex items-center gap-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={logoUrl}
+                      alt={`Preview ${lead.empresa}`}
+                      className="max-h-12 w-auto"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
+                        Preview
+                      </p>
+                      <p className="text-[10px] text-muted-foreground font-mono truncate">
+                        {logoUrl}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setLogoUrl('')}
+                      className="text-[10px] text-error hover:underline whitespace-nowrap"
+                    >
+                      Remover
+                    </button>
+                  </div>
+                )}
+              </div>
               <label className="flex flex-col gap-1">
                 <span className="text-xs font-medium">
                   URL do site (opcional — logo vira link)
