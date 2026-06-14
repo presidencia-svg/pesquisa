@@ -196,6 +196,28 @@ export default function PatrocinioPage() {
           </div>
         </section>
 
+        {/* Exposição visual */}
+        <section className="border-t border-border">
+          <div className="max-w-3xl mx-auto px-5 py-10 flex flex-col gap-4 items-center text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">
+              Onde sua marca aparece
+            </p>
+            <h2 className="text-2xl font-semibold">
+              Mockups por cota e por tela
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-xl">
+              Veja a localização exata da sua logo em cada tela do fluxo da
+              pesquisa, no telejornal e na página de resultados.
+            </p>
+            <a
+              href="/patrocinio/exposicao"
+              className="inline-flex items-center justify-center h-11 px-5 rounded-md border-2 border-accent text-accent text-sm font-semibold hover:bg-accent hover:text-white transition"
+            >
+              Ver exposição da marca →
+            </a>
+          </div>
+        </section>
+
         {/* Cláusula de independência */}
         <section className="border-y border-border bg-muted/30">
           <div className="max-w-3xl mx-auto px-5 py-10 flex flex-col gap-4">

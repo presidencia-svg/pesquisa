@@ -187,12 +187,20 @@ export default function Home() {
               </div>
             </div>
 
-            <Link
-              href="/patrocinio"
-              className="inline-flex items-center justify-center h-10 px-4 rounded-md bg-cyan-700 text-white text-sm font-semibold hover:bg-cyan-800 transition self-start"
-            >
-              Ver detalhes das cotas →
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Link
+                href="/patrocinio"
+                className="inline-flex items-center justify-center h-10 px-4 rounded-md bg-cyan-700 text-white text-sm font-semibold hover:bg-cyan-800 transition"
+              >
+                Ver detalhes das cotas →
+              </Link>
+              <Link
+                href="/patrocinio/exposicao"
+                className="inline-flex items-center justify-center h-10 px-4 rounded-md border-2 border-cyan-700 text-cyan-700 text-sm font-semibold hover:bg-cyan-50 transition"
+              >
+                Onde aparece a marca
+              </Link>
+            </div>
           </section>
 
           <section className="flex flex-col gap-4 border-l-2 border-accent pl-4 sm:pl-6 py-2">
