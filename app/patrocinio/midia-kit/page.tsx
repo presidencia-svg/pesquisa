@@ -4,7 +4,7 @@ import { BotaoImprimirKit } from './botao-imprimir'
 import './midia-kit.css'
 
 export const metadata = {
-  title: 'Mídia Kit · Patrocínio Pesquisa Sergipe 2026',
+  title: 'Mídia Kit · A maior pesquisa política já realizada no Brasil',
   robots: { index: false, follow: false },
 }
 
@@ -97,15 +97,20 @@ export default async function MidiaKitPage() {
         {/* Hero argumento */}
         <section className="kit-hero">
           <p className="kit-hero-kicker">
-            A maior pesquisa eleitoral já produzida em Sergipe
+            A maior pesquisa política já realizada no Brasil*
           </p>
           <p className="kit-hero-numero">200.000+</p>
           <p className="kit-hero-label">
-            votantes nos 75 municípios sergipanos
+            respondentes com identidade verificada por CPF + WhatsApp
           </p>
           <p className="kit-hero-comp">
-            Escala <strong>100× superior</strong> aos institutos tradicionais
-            do país.
+            <strong>100× maior</strong> que Datafolha, IBOPE ou Quaest —
+            margem de erro <strong>±0,11pp</strong> contra ±2,2pp dos
+            institutos tradicionais.
+          </p>
+          <p className="kit-hero-asterisco">
+            * Por critério de amostra com identidade verificada em pesquisa
+            eleitoral estadual.
           </p>
         </section>
 

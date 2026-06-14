@@ -5,9 +5,10 @@ import { RodapeInstitucional } from '@/components/rodape-institucional'
 import { PatrocinioForm } from './form'
 
 export const metadata = {
-  title: 'Patrocínio institucional · Pesquisa Sergipe 2026',
+  title:
+    'A maior pesquisa política já realizada no Brasil · Patrocínio Sergipe 2026',
   description:
-    'Apoie a Pesquisa Sergipe 2026 da CDL Aracaju com patrocínio institucional. 2 cotas disponíveis (Ouro R$ 15.000 / Prata R$ 10.000). Sem ingerência editorial.',
+    '200.000+ respondentes em pesquisa eleitoral estadual — 100× maior que Datafolha, IBOPE ou Quaest. Patrocínio institucional CDL Aracaju com 3 cotas (Diamante R$ 30k / Ouro R$ 15k / Prata R$ 8k). Sem ingerência editorial.',
 }
 
 const COTAS = [
@@ -63,22 +64,28 @@ export default function PatrocinioPage() {
     <>
       <main className="flex flex-col flex-1 bg-background">
         {/* Hero */}
-        <section className="border-b border-border bg-muted/30">
-          <div className="max-w-3xl mx-auto px-5 py-12 sm:py-16 flex flex-col gap-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">
+        <section className="border-b border-border bg-gradient-to-br from-[#0a2a6e] to-[#1e40af] text-white">
+          <div className="max-w-3xl mx-auto px-5 py-14 sm:py-20 flex flex-col gap-5">
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-300">
               Patrocínio institucional
             </p>
-            <h1 className="text-3xl sm:text-4xl font-semibold leading-tight">
-              Apoie a Pesquisa Sergipe 2026
+            <h1 className="text-3xl sm:text-5xl font-bold leading-[1.05]">
+              A maior pesquisa política já realizada no Brasil
+              <span className="text-cyan-300 text-base align-top ml-1">*</span>
             </h1>
-            <p className="text-base text-muted-foreground leading-relaxed max-w-2xl">
-              Sua empresa associa a marca à <strong>maior pesquisa eleitoral
-              já produzida em Sergipe</strong>: amostra projetada de{' '}
-              <strong>mais de 200.000 votantes</strong> nos 75 municípios
-              sergipanos — escala 100× superior aos institutos tradicionais —
-              com divulgação ao vivo no telejornal da TV Atalaia em{' '}
-              <strong>3 de setembro de 2026</strong>, registrada no PesqEle/TRE-SE,
-              independente e transparente.
+            <p className="text-base sm:text-lg text-white/90 leading-relaxed max-w-2xl">
+              <strong>200.000+ respondentes</strong> nos 75 municípios
+              sergipanos, com identidade verificada por CPF + WhatsApp —{' '}
+              <strong>100× maior</strong> que Datafolha, IBOPE ou Quaest.
+              Divulgação ao vivo no telejornal da TV Atalaia em{' '}
+              <strong>3 de setembro de 2026</strong>, registrada no
+              PesqEle/TRE-SE, independente e transparente.
+            </p>
+            <p className="text-[11px] text-white/60 leading-relaxed max-w-2xl pt-2 border-t border-white/20">
+              <span className="text-cyan-300">*</span> Por critério de amostra
+              com identidade verificada em pesquisa eleitoral estadual. Datafolha,
+              IBOPE, Quaest, AtlasIntel e Paraná Pesquisas operam com amostras
+              de 1.500 a 2.500 respondentes por estado.
             </p>
           </div>
         </section>
