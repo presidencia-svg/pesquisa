@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 
-import { atualizarStatus } from './actions'
+import { atualizarExibicaoPublica, atualizarStatus } from './actions'
 
 type Lead = {
   id: string
@@ -15,6 +15,9 @@ type Lead = {
   mensagem: string | null
   status: 'novo' | 'em_contato' | 'firmado' | 'recusado'
   criado_em: string
+  logo_url?: string | null
+  site_url?: string | null
+  mostrar_publico?: boolean
 }
 
 const ROTULO_COTA = {
@@ -38,6 +41,13 @@ const ROTULO_STATUS = {
 export function LinhaInteressado({ lead }: { lead: Lead }) {
   const [aberto, setAberto] = useState(false)
   const [statusAtual, setStatusAtual] = useState(lead.status)
+  const [logoUrl, setLogoUrl] = useState(lead.logo_url ?? '')
+  const [siteUrl, setSiteUrl] = useState(lead.site_url ?? '')
+  const [mostrarPub, setMostrarPub] = useState(
+    lead.mostrar_publico ?? false,
+  )
+  const [salvandoExib, setSalvandoExib] = useState(false)
+  const [exibOk, setExibOk] = useState(false)
   const [pending, startTransition] = useTransition()
 
   function mudarStatus(novo: Lead['status']) {
@@ -45,6 +55,21 @@ export function LinhaInteressado({ lead }: { lead: Lead }) {
       const r = await atualizarStatus(lead.id, novo)
       if (r.ok) setStatusAtual(novo)
     })
+  }
+
+  async function salvarExibicao() {
+    setSalvandoExib(true)
+    setExibOk(false)
+    const r = await atualizarExibicaoPublica(lead.id, {
+      logo_url: logoUrl.trim() || null,
+      site_url: siteUrl.trim() || null,
+      mostrar_publico: mostrarPub,
+    })
+    setSalvandoExib(false)
+    if (r.ok) {
+      setExibOk(true)
+      setTimeout(() => setExibOk(false), 2500)
+    }
   }
 
   return (
@@ -116,6 +141,66 @@ export function LinhaInteressado({ lead }: { lead: Lead }) {
               ),
             )}
           </div>
+
+          {/* Exibição pública — só relevante quando firmado */}
+          {statusAtual === 'firmado' && (
+            <div className="pt-3 border-t border-dashed border-border flex flex-col gap-3">
+              <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+                Exibição pública em /resultados
+              </p>
+              <label className="flex flex-col gap-1">
+                <span className="text-xs font-medium">
+                  URL do logo (PNG transparente recomendado)
+                </span>
+                <input
+                  type="url"
+                  value={logoUrl}
+                  onChange={(e) => setLogoUrl(e.target.value)}
+                  placeholder="https://exemplo.com/logo.png"
+                  className="h-9 px-2 rounded-md border border-border bg-background text-xs"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-xs font-medium">
+                  URL do site (opcional — logo vira link)
+                </span>
+                <input
+                  type="url"
+                  value={siteUrl}
+                  onChange={(e) => setSiteUrl(e.target.value)}
+                  placeholder="https://exemplo.com.br"
+                  className="h-9 px-2 rounded-md border border-border bg-background text-xs"
+                />
+              </label>
+              <label className="flex items-center gap-2 text-xs">
+                <input
+                  type="checkbox"
+                  checked={mostrarPub}
+                  onChange={(e) => setMostrarPub(e.target.checked)}
+                  className="w-4 h-4"
+                />
+                <span>
+                  Exibir publicamente em <code>/resultados</code> (precisa
+                  logo URL + status firmado)
+                </span>
+              </label>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={salvarExibicao}
+                  disabled={salvandoExib}
+                  className="h-9 px-4 rounded-md bg-primary text-primary-foreground text-xs font-semibold disabled:opacity-50 hover:opacity-90"
+                >
+                  {salvandoExib ? 'Salvando…' : 'Salvar exibição'}
+                </button>
+                {exibOk && (
+                  <span className="text-xs text-emerald-700 font-medium">
+                    ✓ Salvo
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </article>

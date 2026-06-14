@@ -17,6 +17,9 @@ type Lead = {
   mensagem: string | null
   status: 'novo' | 'em_contato' | 'firmado' | 'recusado'
   criado_em: string
+  logo_url: string | null
+  site_url: string | null
+  mostrar_publico: boolean
 }
 
 const COTAS_VALOR = { diamante: 30_000, ouro: 15_000, prata: 8_000 } as const
@@ -28,7 +31,7 @@ export default async function PatrociniosPage() {
   const { data: leads } = await db
     .from('interessados_patrocinio')
     .select(
-      'id, empresa, cnpj, contato_nome, contato_email, contato_telefone, cota, mensagem, status, criado_em',
+      'id, empresa, cnpj, contato_nome, contato_email, contato_telefone, cota, mensagem, status, criado_em, logo_url, site_url, mostrar_publico',
     )
     .order('criado_em', { ascending: false })
     .returns<Lead[]>()

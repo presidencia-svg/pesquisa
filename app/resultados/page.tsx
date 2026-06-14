@@ -80,6 +80,32 @@ export default async function ResultadosPublicosPage() {
     return <AguardandoDivulgacao edicao={edicao} />
   }
 
+  // Patrocinadores firmados — exibidos publicamente quando o admin
+  // marcar mostrar_publico=true em /admin/patrocinios + logo_url
+  // preenchido. Layout do bloco depende da cota (Diamante topo,
+  // Ouro "Apoio institucional", Prata "Apoiadores").
+  const { data: patrocinadores } = await db
+    .from('interessados_patrocinio')
+    .select('id, empresa, cota, logo_url, site_url')
+    .eq('status', 'firmado')
+    .eq('mostrar_publico', true)
+    .not('logo_url', 'is', null)
+    .order('criado_em', { ascending: true })
+    .returns<Array<{
+      id: string
+      empresa: string
+      cota: 'diamante' | 'ouro' | 'prata'
+      logo_url: string | null
+      site_url: string | null
+    }>>()
+
+  const patroPorCota = {
+    diamante:
+      (patrocinadores ?? []).filter((p) => p.cota === 'diamante') ?? [],
+    ouro: (patrocinadores ?? []).filter((p) => p.cota === 'ouro') ?? [],
+    prata: (patrocinadores ?? []).filter((p) => p.cota === 'prata') ?? [],
+  }
+
   // ----- Carrega tudo em paralelo -----
   const [
     { data: candFedEstData },
@@ -620,10 +646,93 @@ export default async function ResultadosPublicosPage() {
         </div>
       </section>
 
+      {/* Diamante — bloco "Apresentada por" abaixo do hero */}
+      {patroPorCota.diamante.length > 0 && (
+        <section className="rs-patro-diamante">
+          <div className="rs-patro-inner">
+            <p className="rs-patro-kicker">Pesquisa apresentada por</p>
+            <div className="rs-patro-logos rs-patro-diamante-logos">
+              {patroPorCota.diamante.map((p) => (
+                <LogoPatro key={p.id} patro={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       <ResultadosDashboard pesquisa={pesquisa} />
+
+      {/* Ouro — apoio institucional */}
+      {patroPorCota.ouro.length > 0 && (
+        <section className="rs-patro-bloco rs-patro-ouro">
+          <div className="rs-patro-inner">
+            <p className="rs-patro-kicker">Apoio institucional</p>
+            <div className="rs-patro-logos rs-patro-ouro-logos">
+              {patroPorCota.ouro.map((p) => (
+                <LogoPatro key={p.id} patro={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Prata — apoiadores */}
+      {patroPorCota.prata.length > 0 && (
+        <section className="rs-patro-bloco rs-patro-prata">
+          <div className="rs-patro-inner">
+            <p className="rs-patro-kicker">Apoiadores</p>
+            <div className="rs-patro-logos rs-patro-prata-logos">
+              {patroPorCota.prata.map((p) => (
+                <LogoPatro key={p.id} patro={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <RodapeInstitucional />
     </>
+  )
+}
+
+/** Logo do patrocinador clicável (se houver site_url) ou estática. */
+function LogoPatro({
+  patro,
+}: {
+  patro: {
+    id: string
+    empresa: string
+    logo_url: string | null
+    site_url: string | null
+  }
+}) {
+  if (!patro.logo_url) return null
+  const img = (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={patro.logo_url}
+      alt={patro.empresa}
+      className="rs-patro-img"
+      loading="lazy"
+    />
+  )
+  if (patro.site_url) {
+    return (
+      <a
+        href={patro.site_url}
+        target="_blank"
+        rel="noopener noreferrer sponsored"
+        title={patro.empresa}
+        className="rs-patro-link"
+      >
+        {img}
+      </a>
+    )
+  }
+  return (
+    <span title={patro.empresa} className="rs-patro-link">
+      {img}
+    </span>
   )
 }
 
