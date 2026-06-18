@@ -242,14 +242,24 @@ export default async function ResultadosPage() {
             <span className="font-medium text-foreground">{edicao.nome}</span>.
           </p>
         </div>
-        <Link
-          href="/admin/resultados/snapshot"
-          target="_blank"
-          rel="noopener"
-          className="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-accent text-white text-sm font-semibold hover:opacity-90 transition self-start sm:self-end whitespace-nowrap"
-        >
-          📥 Snapshot pra TV
-        </Link>
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-end">
+          <Link
+            href="/admin/resultados/cruzamentos"
+            target="_blank"
+            rel="noopener"
+            className="inline-flex items-center gap-2 h-10 px-4 rounded-md border border-accent/40 bg-accent/5 text-accent text-sm font-semibold hover:bg-accent/10 transition whitespace-nowrap"
+          >
+            Cruzamentos demográficos
+          </Link>
+          <Link
+            href="/admin/resultados/snapshot"
+            target="_blank"
+            rel="noopener"
+            className="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-accent text-white text-sm font-semibold hover:opacity-90 transition whitespace-nowrap"
+          >
+            Snapshot pra TV
+          </Link>
+        </div>
       </header>
 
       <div className="rounded-md border border-error/30 bg-error/5 px-4 py-3 text-xs text-error">
