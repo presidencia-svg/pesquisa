@@ -242,6 +242,21 @@ export default async function SnapshotPage() {
     composicao[k].sort((a, b) => b.n - a.n)
   }
 
+  // Patrocinador Diamante — único que aparece no snapshot pra TV
+  // (Ouro e Prata só na página pública /resultados pós-divulgação;
+  // Diamante tem direito a "Pesquisa apresentada por" no telejornal,
+  // por isso a TV precisa saber quem é durante a produção).
+  const { data: diamanteRow } = await db
+    .from('interessados_patrocinio')
+    .select('empresa, logo_url')
+    .eq('status', 'firmado')
+    .eq('mostrar_publico', true)
+    .eq('cota', 'diamante')
+    .not('logo_url', 'is', null)
+    .order('criado_em', { ascending: true })
+    .limit(1)
+    .maybeSingle<{ empresa: string; logo_url: string }>()
+
   // QR code apontando pro endereço público (a TV pode chamar no ar)
   const qrSvg = await QRCode.toString(
     'https://pesquisa.cdlaju.com.br/resultados',
@@ -275,6 +290,26 @@ export default async function SnapshotPage() {
             {edicao.nome} · {edicao.turno ?? 1}º turno
           </p>
         </div>
+
+        {/* Patrocinador Diamante — "Pesquisa apresentada por" */}
+        {diamanteRow && (
+          <div className="snapshot-diamante">
+            <p className="snapshot-diamante-kicker">
+              Pesquisa apresentada por
+            </p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={diamanteRow.logo_url}
+              alt={diamanteRow.empresa}
+              className="snapshot-diamante-logo"
+            />
+            <p className="snapshot-diamante-empresa">{diamanteRow.empresa}</p>
+            <p className="snapshot-diamante-nota">
+              Patrocinador Master da Pesquisa Sergipe 2026 — citar nos
+              créditos de abertura do telejornal, conforme convênio.
+            </p>
+          </div>
+        )}
 
         {/* Carimbo de embargo */}
         <div className="snapshot-embargo">
