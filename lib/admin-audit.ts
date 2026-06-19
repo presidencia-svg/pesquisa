@@ -2,6 +2,7 @@ import 'server-only'
 
 import { headers } from 'next/headers'
 
+import { obterIpCliente } from './ip'
 import { supabaseAdmin } from './supabase/admin'
 
 /**
@@ -26,8 +27,7 @@ export async function registrarAcessoAdmin(
 ): Promise<void> {
   try {
     const h = await headers()
-    const xff = h.get('x-forwarded-for')
-    const ip = xff ? (xff.split(',')[0]?.trim() ?? null) : null
+    const ip = obterIpCliente(h)
     const userAgent = h.get('user-agent') ?? null
 
     const db = supabaseAdmin()

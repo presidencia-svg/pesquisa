@@ -3,6 +3,7 @@
 import { headers } from 'next/headers'
 import { z } from 'zod'
 
+import { obterIpCliente } from '@/lib/ip'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export type InteressePatrocinioState = {
@@ -60,8 +61,7 @@ export async function enviarInteresse(
   }
 
   const h = await headers()
-  const xff = h.get('x-forwarded-for')
-  const ip = xff ? (xff.split(',')[0]?.trim() ?? null) : null
+  const ip = obterIpCliente(h)
   const userAgent = h.get('user-agent') ?? null
 
   const db = supabaseAdmin()

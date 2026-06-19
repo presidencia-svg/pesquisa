@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 
 import { cpfValido, mascararCpf, normalizarCpf } from '@/lib/cpf'
 import { hashCpf } from '@/lib/crypto'
+import { obterIpCliente } from '@/lib/ip'
 import { consultarSpc, type SpcDadosEleitor } from '@/lib/spc'
 import { setPreVoto, type PreVotoDraft } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
@@ -90,8 +91,7 @@ export async function entrarComCpf(
 
   // 0. Anti-bot (Turnstile) — antes de tudo. Em DEV_MODE faz bypass.
   const headersListEarly = await headers()
-  const xffEarly = headersListEarly.get('x-forwarded-for')
-  const ipEarly = xffEarly ? (xffEarly.split(',')[0]?.trim() ?? null) : null
+  const ipEarly = obterIpCliente(headersListEarly)
   const tokenTurnstile = formData.get('cf-turnstile-response')
   const tokenStr = typeof tokenTurnstile === 'string' ? tokenTurnstile : null
   const turnstile = await verifyTurnstile(tokenStr, ipEarly)
@@ -137,8 +137,7 @@ export async function entrarComCpf(
 
   // 2. Rate limit por IP
   const headersList = await headers()
-  const xff = headersList.get('x-forwarded-for')
-  const ip = xff ? (xff.split(',')[0]?.trim() ?? null) : null
+  const ip = obterIpCliente(headersList)
 
   if (ip) {
     const desde = new Date(

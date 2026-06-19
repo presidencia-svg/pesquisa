@@ -6,6 +6,7 @@ import { z } from 'zod'
 
 import { gerarOtp, hashOtp } from '@/lib/crypto'
 import { DEV_MODE } from '@/lib/env'
+import { obterIpCliente } from '@/lib/ip'
 import { enviarOtpWhatsApp, metaWhatsappConfigurada } from '@/lib/meta-whatsapp'
 import { checarRateLimit } from '@/lib/rate-limit'
 import { getPreVoto, setPreVoto } from '@/lib/sessao'
@@ -144,8 +145,7 @@ export async function confirmarDados(
 
   // Captura IP + user_agent dos headers — antifraude + auditoria.
   const h = await headers()
-  const xff = h.get('x-forwarded-for')
-  const ip = xff ? (xff.split(',')[0]?.trim() ?? null) : null
+  const ip = obterIpCliente(h)
   const userAgent = h.get('user-agent') ?? null
 
   // Rate limit: max 5 envios de OTP por IP / 15min. Protege contra

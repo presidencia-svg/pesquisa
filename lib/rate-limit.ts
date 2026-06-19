@@ -12,6 +12,7 @@ import 'server-only'
 
 import { headers } from 'next/headers'
 
+import { obterIpCliente } from './ip'
 import { supabaseAdmin } from './supabase/admin'
 
 export type RateLimitResultado =
@@ -39,8 +40,7 @@ export async function checarRateLimit(
   opts: Opts,
 ): Promise<RateLimitResultado> {
   const h = await headers()
-  const xff = h.get('x-forwarded-for')
-  const ip = xff ? (xff.split(',')[0]?.trim() ?? null) : null
+  const ip = obterIpCliente(h)
 
   if (!ip) {
     return { ok: true, ip: null }
