@@ -146,10 +146,16 @@ function gerarCpfHashSintetico(): string {
   return randomBytes(32).toString('hex')
 }
 
+// Prefixo de run: 2 digitos derivados do timestamp pra garantir que
+// runs separados nao colidam no UNIQUE de whatsapp_e164. Cobre ate
+// 100M eleitores sinteticos por run (8 digitos).
+const RUN_PREFIX = Math.floor(Date.now() / 1000) % 100
+
 function gerarWhatsAppSintetico(i: number): string {
-  // +55 79 9 XXXX XXXX — DDD 79 (SE), nono digito 9, 8 digitos sequenciais
-  const seq = (90000000 + i).toString().padStart(8, '0')
-  return `+55799${seq}`
+  // +55 79 9 + (prefixo_run 2 digitos) + (sequencial 7 digitos)
+  // Total: 8 digitos depois do '9' → numero brasileiro valido em SE
+  const seq = `${RUN_PREFIX.toString().padStart(2, '0')}${i.toString().padStart(6, '0')}`
+  return `+557990${seq}`
 }
 
 function horaCheia(): Date {
@@ -264,6 +270,9 @@ async function main() {
   }> = []
 
   const horaIso = horaCheia().toISOString()
+  const BATCH_STREAM = 500
+  let totalVotos = 0
+  let totalEleitores = 0
 
   for (let i = 0; i < N; i++) {
     const { hash } = gerarToken()
@@ -462,64 +471,54 @@ async function main() {
       }
     }
 
-    if ((i + 1) % 100 === 0) {
-      process.stdout.write(`   ${i + 1}/${N}…\r`)
+    // FLUSH STREAMING: a cada BATCH_STREAM eleitores gerados, INSERT e libera memoria.
+    // Evita acumular 600k votos em memoria pra N grande. Ordem: tokens → votos
+    // → eleitores (votos.token_hash referencia tokens).
+    if ((i + 1) % BATCH_STREAM === 0 || i === N - 1) {
+      const eleitoresNesteLote = tokensInsert.length
+
+      if (tokensInsert.length > 0) {
+        const { error } = await db.from('tokens_emitidos').insert(tokensInsert)
+        if (error) {
+          console.error('\n❌ erro insert tokens:', error.message)
+          process.exit(1)
+        }
+      }
+      if (votosInsert.length > 0) {
+        const { error } = await db.from('votos_pesquisa').insert(votosInsert)
+        if (error) {
+          console.error('\n❌ erro insert votos:', error.message)
+          console.error('   primeiro voto problematico:', votosInsert[0])
+          process.exit(1)
+        }
+        totalVotos += votosInsert.length
+      }
+      if (eleitoresInsert.length > 0) {
+        const { error } = await db.from('eleitores_pesquisa').insert(eleitoresInsert)
+        if (error) {
+          console.error('\n❌ erro insert eleitores:', error.message)
+          console.error('   primeiro eleitor problematico:', eleitoresInsert[0])
+          process.exit(1)
+        }
+      }
+      totalEleitores += eleitoresNesteLote
+
+      // Libera memoria — IMPORTANTE pra N grande (100k+)
+      tokensInsert.length = 0
+      votosInsert.length = 0
+      eleitoresInsert.length = 0
+
+      const pct = (((i + 1) / N) * 100).toFixed(1)
+      console.log(
+        `   ${(i + 1).toLocaleString('pt-BR')}/${N.toLocaleString('pt-BR')} eleitores (${pct}%) — ${totalVotos.toLocaleString('pt-BR')} votos no banco`,
+      )
     }
   }
 
-  console.log('')
-  console.log(
-    `   Inserindo ${tokensInsert.length} tokens + ${votosInsert.length} votos + ${eleitoresInsert.length} eleitores…`,
-  )
-
-  // 5. Insert em batches de 500. Ordem: tokens -> votos -> eleitores.
-  // Tokens primeiro porque votos.token_hash referencia tokens. Eleitores
-  // sao independentes, nao tem FK com tokens.
-  const BATCH = 500
-  for (let i = 0; i < tokensInsert.length; i += BATCH) {
-    const slice = tokensInsert.slice(i, i + BATCH)
-    const { error } = await db.from('tokens_emitidos').insert(slice)
-    if (error) {
-      console.error('   ❌ erro insert tokens:', error.message)
-      process.exit(1)
-    }
-    process.stdout.write(
-      `   tokens: ${Math.min(i + BATCH, tokensInsert.length)}/${tokensInsert.length}\r`,
-    )
-  }
-  console.log('')
-  for (let i = 0; i < votosInsert.length; i += BATCH) {
-    const slice = votosInsert.slice(i, i + BATCH)
-    const { error } = await db.from('votos_pesquisa').insert(slice)
-    if (error) {
-      console.error('   ❌ erro insert votos:', error.message)
-      console.error('      primeiro voto problematico:', slice[0])
-      process.exit(1)
-    }
-    process.stdout.write(
-      `   votos: ${Math.min(i + BATCH, votosInsert.length)}/${votosInsert.length}\r`,
-    )
-  }
-  console.log('')
-  for (let i = 0; i < eleitoresInsert.length; i += BATCH) {
-    const slice = eleitoresInsert.slice(i, i + BATCH)
-    const { error } = await db.from('eleitores_pesquisa').insert(slice)
-    if (error) {
-      console.error('   ❌ erro insert eleitores:', error.message)
-      console.error('      primeiro eleitor problematico:', slice[0])
-      process.exit(1)
-    }
-    process.stdout.write(
-      `   eleitores: ${Math.min(i + BATCH, eleitoresInsert.length)}/${eleitoresInsert.length}\r`,
-    )
-  }
-
-  console.log('')
   console.log('')
   console.log('✅ Simulacao concluida.')
-  console.log(`   ${tokensInsert.length} eleitores sinteticos`)
-  console.log(`   ${votosInsert.length} votos (com demograficos)`)
-  console.log(`   ${eleitoresInsert.length} linhas em eleitores_pesquisa`)
+  console.log(`   ${totalEleitores.toLocaleString('pt-BR')} eleitores sinteticos`)
+  console.log(`   ${totalVotos.toLocaleString('pt-BR')} votos (com demograficos)`)
   console.log(`   Hora dos votos: ${horaIso}`)
   console.log('')
   console.log('Pra limpar depois:')
