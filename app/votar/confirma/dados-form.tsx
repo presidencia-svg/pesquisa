@@ -97,21 +97,18 @@ const formatarWhatsappInput = (raw: string): string => {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
 }
 
-type Sexo = 'M' | 'F'
 type Escolaridade = 'fundamental' | 'medio' | 'superior'
 
 export function DadosForm({
   municipios,
   prefilledMunicipio,
   prefilledWhatsapp,
-  prefilledSexo,
   prefilledEscolaridade,
   algumPrefill,
 }: {
   municipios: Municipio[]
   prefilledMunicipio?: number
   prefilledWhatsapp?: string
-  prefilledSexo?: Sexo
   prefilledEscolaridade?: Escolaridade
   algumPrefill: boolean
 }) {
@@ -164,37 +161,9 @@ export function DadosForm({
         </span>
       </label>
 
-      <fieldset className="flex flex-col gap-2">
-        <legend className="text-sm font-medium text-foreground mb-1">
-          Sexo
-        </legend>
-        <div className="flex gap-3">
-          {[
-            { v: 'M', l: 'Masculino' },
-            { v: 'F', l: 'Feminino' },
-          ].map((o) => (
-            <label
-              key={o.v}
-              className="flex-1 flex items-center justify-center gap-2 h-12 rounded-md border border-border cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary"
-            >
-              <input
-                type="radio"
-                name="sexo"
-                value={o.v}
-                required
-                defaultChecked={prefilledSexo === o.v}
-                className="sr-only"
-              />
-              <span>{o.l}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
-      {/* Faixa etária NÃO é perguntada — vem do cdl_base ou do SPC
-          via consulta do CPF, e é gravada no cdl_base como cache.
-          Se nenhuma fonte determina a idade, o cadastro é rejeitado
-          ainda na tela /votar (não chega aqui). */}
+      {/* Sexo e faixa etária NÃO são perguntados — vêm da Receita Federal
+          (via SPC) no passo anterior e ficam em cache em cdl_base. Tirar
+          essas perguntas reduz fricção e elimina autodeclaração incorreta. */}
 
       <label className="flex flex-col gap-2">
         <span className="text-sm font-medium text-foreground">Escolaridade</span>

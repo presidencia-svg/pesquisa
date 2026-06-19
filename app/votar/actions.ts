@@ -183,7 +183,11 @@ export async function entrarComCpf(
   //    pra acelerar consultas futuras e construir um cache permanente.
   let spcValidado: boolean
   let prefillSpc: SpcDadosEleitor = {}
-  const precisaSpc = !cdl || !cdl.faixa_etaria
+  // Sexo na regra: a partir da Pesquisa Sergipe 2026, tiramos a pergunta
+  // de gênero do formulário e passamos a confiar na Receita Federal (via
+  // SPC). Pra eleitores cujo cdl_base já tem faixa mas não tem sexo
+  // (legado importado do Melhores do Ano), consultamos SPC pra preencher.
+  const precisaSpc = !cdl || !cdl.faixa_etaria || !cdl.sexo
 
   if (!precisaSpc) {
     // cdl_base hit com faixa — confiança total nos dados locais
@@ -283,10 +287,13 @@ export async function entrarComCpf(
       cpf_hash: cpfHash,
       faixa_etaria: prefillSpc.faixaEtaria,
     }
+    // Sexo: SEMPRE atualiza quando SPC retorna (mesmo se cdl row já
+    // existe), pra completar registros legados do Melhores do Ano que
+    // entraram sem sexo. Conflito é impossível: SPC é fonte oficial.
+    if (prefillSpc.sexo) cacheRow.sexo = prefillSpc.sexo
     if (!cdl) {
       cacheRow.origem = 'spc_lookup'
       if (prefillSpc.nomeMascarado) cacheRow.nome_mascarado = prefillSpc.nomeMascarado
-      if (prefillSpc.sexo) cacheRow.sexo = prefillSpc.sexo
       if (prefillSpc.escolaridade) cacheRow.escolaridade = prefillSpc.escolaridade
       if (prefillSpc.municipioIbge) cacheRow.municipio_ibge = prefillSpc.municipioIbge
       if (prefillSpc.whatsappE164) cacheRow.whatsapp_e164 = prefillSpc.whatsappE164

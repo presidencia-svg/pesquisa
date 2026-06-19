@@ -51,8 +51,9 @@ export default async function ConfirmaPage() {
             </h1>
             <p className="text-base text-muted-foreground">
               CPF identificado:{' '}
-              <span className="font-mono">{draft.cpfMascarado}</span>. Agora
-              precisamos do seu município, perfil demográfico (exigência da
+              <span className="font-mono">{draft.cpfMascarado}</span>.
+              Confirmamos sexo e idade direto na Receita Federal — agora só
+              precisamos do seu município, escolaridade, renda (exigência da
               Resolução TSE 23.747/2026 pra ponderar a amostra) e WhatsApp pra
               confirmar o cadastro.
             </p>
@@ -63,7 +64,6 @@ export default async function ConfirmaPage() {
             algumPrefill={Boolean(
               draft.municipioIbge ||
                 draft.whatsappE164 ||
-                draft.sexo ||
                 draft.escolaridade,
             )}
             {...(draft.municipioIbge !== undefined
@@ -71,9 +71,6 @@ export default async function ConfirmaPage() {
               : {})}
             {...(draft.whatsappE164 !== undefined
               ? { prefilledWhatsapp: draft.whatsappE164 }
-              : {})}
-            {...(draft.sexo !== undefined
-              ? { prefilledSexo: draft.sexo }
               : {})}
             {...(draft.escolaridade !== undefined
               ? { prefilledEscolaridade: draft.escolaridade }

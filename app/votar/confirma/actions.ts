@@ -48,7 +48,9 @@ const schema = z.object({
     .number()
     .int()
     .positive({ message: 'Selecione seu município.' }),
-  sexo: z.enum(['M', 'F'], { message: 'Selecione uma opção.' }),
+  // Sexo NÃO está no schema — vem do draft (cdl_base ou SPC), não é
+  // perguntado no formulário. Eleitor que chegou aqui já tem sexo
+  // resolvido em /votar.
   escolaridade: z.enum(['fundamental', 'medio', 'superior'], {
     message: 'Selecione sua escolaridade.',
   }),
@@ -101,12 +103,15 @@ export async function confirmarDados(
 
   const {
     municipio_ibge,
-    sexo,
     escolaridade,
     nivel_economico,
     whatsapp,
     device_fingerprint,
   } = parsed.data
+  // Sexo vem da Sala 1 (cdl_base ou SPC), não do form. Eleitor que chegou
+  // aqui tem sexo resolvido em draft.sexo. Cai como null se SPC não trouxe
+  // — voto vai pros cruzamentos sem corte por gênero, mas continua válido.
+  const sexo: 'M' | 'F' | null = draft.sexo ?? null
   // Checkbox de opt-in vem como "1" ou "on" quando marcado; ausente quando não.
   const optInResultadosWa =
     parsed.data.opt_in_resultados_wa === '1' ||
@@ -408,7 +413,7 @@ export async function confirmarDados(
     ...draft,
     municipioIbge: municipio_ibge,
     whatsappE164,
-    sexo,
+    ...(sexo ? { sexo } : {}),
     escolaridade,
     nivelEconomico: nivel_economico,
   })
