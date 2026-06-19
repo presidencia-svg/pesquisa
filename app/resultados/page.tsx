@@ -1,10 +1,6 @@
 import Link from 'next/link'
 
 import { RodapeInstitucional } from '@/components/rodape-institucional'
-import type {
-  CargoCandidato,
-  CargoZona,
-} from '@/components/resultados-dashboard'
 import {
   carregarResultados,
   formatarData,
@@ -24,70 +20,17 @@ export const metadata = {
 // nas actions de divulgar/retirar invalida na hora.
 export const revalidate = 15
 
-// Ordem e slugs dos cargos no hub. Slug vira /resultados/<slug>.
-// Ordem definida pelo Presidente da CDL: estaduais primeiro (Governador,
-// Senador), depois Presidente, legislativos e a consulta extra.
+// Cargos no hub, em ordem de hierarquia. Slug vira /resultados/<slug>.
+// A página principal NÃO mostra vencedores — só o nome do cargo e o
+// botão pra abrir o detalhamento. Zona de Expansão é tratada à parte
+// (consulta extra), exibida só quando houver resposta.
 const CARGOS = [
-  { key: 'governador', slug: 'governador', label: 'Governador' },
+  { key: 'presidente', slug: 'presidente', label: 'Presidente da República' },
+  { key: 'governador', slug: 'governador', label: 'Governador de Sergipe' },
   { key: 'senador', slug: 'senador', label: 'Senador' },
-  { key: 'presidente', slug: 'presidente', label: 'Presidente' },
   { key: 'federal', slug: 'deputado-federal', label: 'Deputado Federal' },
   { key: 'estadual', slug: 'deputado-estadual', label: 'Deputado Estadual' },
-  { key: 'zona_expansao', slug: 'zona-expansao', label: 'Zona de Expansão' },
 ] as const
-
-type Teaser = {
-  liderNome: string
-  liderSub: string
-  liderPct: number
-  liderCor: string
-  liderFoto: string | null
-  rodape: string
-}
-
-function teaserCandidato(cargo: CargoCandidato): Teaser | null {
-  const lider = cargo.candidatos[0]
-  if (!lider) return null
-  const validos = cargo.candidatos.reduce((s, c) => s + c.votos, 0)
-  const pct = validos > 0 ? (lider.votos / validos) * 100 : 0
-  const rodape = cargo.vagas
-    ? `${cargo.vagas} ${cargo.vagas === 1 ? 'vaga' : 'vagas'} em disputa`
-    : 'Maioria dos votos válidos'
-  return {
-    liderNome: lider.nome,
-    liderSub: lider.partido,
-    liderPct: pct,
-    liderCor: lider.cor,
-    liderFoto: lider.foto,
-    rodape,
-  }
-}
-
-function teaserZona(cargo: CargoZona): Teaser {
-  const total =
-    cargo.aracaju + cargo.sao_cristovao + cargo.branco + cargo.nao_sabe
-  const ajuPct = total > 0 ? (cargo.aracaju / total) * 100 : 0
-  const scPct = total > 0 ? (cargo.sao_cristovao / total) * 100 : 0
-  const ajuLider = ajuPct >= scPct
-  return {
-    liderNome: ajuLider ? 'Aracaju' : 'São Cristóvão',
-    liderSub: 'Aracaju × S. Cristóvão',
-    liderPct: Math.max(ajuPct, scPct),
-    liderCor: ajuLider ? '#1d3a8a' : '#fcc40c',
-    liderFoto: null,
-    rodape: 'Consulta extra',
-  }
-}
-
-function fmtPct(x: number): string {
-  return x.toFixed(1).replace('.', ',')
-}
-
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/)
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-}
 
 export default async function ResultadosHubPage() {
   const r = await carregarResultados()
@@ -138,6 +81,12 @@ export default async function ResultadosHubPage() {
               na urna, sem ver lista de candidatos. Registrada no PesqEle/TRE-SE
               conforme a Lei 9.504/97.
             </p>
+            <div className="rs-hub-destaques">
+              <span>Identidade verificada por CPF + WhatsApp</span>
+              <span>75 municípios de Sergipe</span>
+              <span>Coleta espontânea, estilo urna</span>
+              <span>Registro PesqEle/TRE-SE</span>
+            </div>
           </section>
 
           {/* Ficha técnica */}
@@ -168,33 +117,25 @@ export default async function ResultadosHubPage() {
             </section>
           )}
 
-          {/* Botões por cargo */}
+          {/* Botões por cargo — só o nome, sem mostrar vencedor.
+              O resultado de cada cargo abre em /resultados/[slug]. */}
           <section className="rs-hub-cargos-sec">
-            <p className="rs-hub-cargos-label">Escolha o cargo</p>
+            <p className="rs-hub-cargos-label">
+              Escolha o cargo para ver o resultado
+            </p>
             <div className="rs-hub-cargos">
-              {CARGOS.map(({ key, slug, label }) => {
+              {CARGOS.map(({ key, slug, label }, i) => {
                 const cargo = pesquisa[key]
                 if (!cargo) {
                   return (
                     <div key={key} className="rs-hub-cargo rs-hub-cargo-vazio">
-                      <div className="rs-hub-cargo-head">
+                      <span className="rs-hub-cargo-num">{i + 1}</span>
+                      <span className="rs-hub-cargo-texto">
                         <span className="rs-hub-cargo-nome">{label}</span>
-                      </div>
-                      <p className="rs-hub-cargo-semdados">Sem dados ainda</p>
-                    </div>
-                  )
-                }
-                const teaser =
-                  key === 'zona_expansao'
-                    ? teaserZona(cargo as CargoZona)
-                    : teaserCandidato(cargo as CargoCandidato)
-                if (!teaser) {
-                  return (
-                    <div key={key} className="rs-hub-cargo rs-hub-cargo-vazio">
-                      <div className="rs-hub-cargo-head">
-                        <span className="rs-hub-cargo-nome">{label}</span>
-                      </div>
-                      <p className="rs-hub-cargo-semdados">Sem dados ainda</p>
+                        <span className="rs-hub-cargo-semdados">
+                          Sem dados ainda
+                        </span>
+                      </span>
                     </div>
                   )
                 }
@@ -203,42 +144,35 @@ export default async function ResultadosHubPage() {
                     key={key}
                     href={`/resultados/${slug}`}
                     className="rs-hub-cargo"
-                    style={
-                      {
-                        ['--accent' as string]: teaser.liderCor,
-                      } as React.CSSProperties
-                    }
                   >
-                    <div className="rs-hub-cargo-head">
+                    <span className="rs-hub-cargo-num">{i + 1}</span>
+                    <span className="rs-hub-cargo-texto">
                       <span className="rs-hub-cargo-nome">{label}</span>
-                      <span className="rs-hub-cargo-seta">→</span>
-                    </div>
-                    <div className="rs-hub-cargo-lider">
-                      <span className="rs-hub-cargo-avatar">
-                        {teaser.liderFoto ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={teaser.liderFoto} alt="" />
-                        ) : (
-                          <span>{initials(teaser.liderNome)}</span>
-                        )}
+                      <span className="rs-hub-cargo-cta">
+                        Ver resultado completo
                       </span>
-                      <span className="rs-hub-cargo-lider-text">
-                        <span className="rs-hub-cargo-lider-nome">
-                          {teaser.liderNome}
-                        </span>
-                        <span className="rs-hub-cargo-lider-sub">
-                          {teaser.liderSub}
-                        </span>
-                      </span>
-                      <span className="rs-hub-cargo-pct">
-                        {fmtPct(teaser.liderPct)}
-                        <small>%</small>
-                      </span>
-                    </div>
-                    <p className="rs-hub-cargo-rodape">{teaser.rodape}</p>
+                    </span>
+                    <span className="rs-hub-cargo-seta">→</span>
                   </Link>
                 )
               })}
+
+              {/* Zona de Expansão — consulta extra, só se houver resposta */}
+              {pesquisa.zona_expansao && (
+                <Link
+                  href="/resultados/zona-expansao"
+                  className="rs-hub-cargo rs-hub-cargo-extra"
+                >
+                  <span className="rs-hub-cargo-num">+</span>
+                  <span className="rs-hub-cargo-texto">
+                    <span className="rs-hub-cargo-nome">Zona de Expansão</span>
+                    <span className="rs-hub-cargo-cta">
+                      Consulta extra · Aracaju × S. Cristóvão
+                    </span>
+                  </span>
+                  <span className="rs-hub-cargo-seta">→</span>
+                </Link>
+              )}
             </div>
           </section>
 

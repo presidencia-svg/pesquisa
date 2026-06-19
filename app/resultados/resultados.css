@@ -786,7 +786,26 @@
   opacity: 0.85;
 }
 
-/* ---- Botões por cargo ---- */
+/* ---- Destaques (informações importantes) ---- */
+.rs-hub-destaques {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.rs-hub-destaques span {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  background: rgba(29, 58, 138, 0.07);
+  border: 1px solid rgba(29, 58, 138, 0.15);
+  border-radius: 999px;
+  padding: 5px 12px;
+}
+
+/* ---- Botões por cargo (sem vencedor — só nome + CTA) ---- */
 .rs-hub-cargos-label {
   margin: 0 0 2px;
   font-size: 12px;
@@ -812,8 +831,8 @@
 .rs-hub-cargo {
   --accent: var(--primary);
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  align-items: center;
+  gap: 14px;
   background: #fff;
   border: 1px solid var(--border);
   border-left: 4px solid var(--accent);
@@ -831,107 +850,75 @@
 .rs-hub-cargo:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+  border-color: var(--accent);
 }
 
-.rs-hub-cargo-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.rs-hub-cargo-nome {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--foreground);
-  letter-spacing: -0.01em;
-}
-
-.rs-hub-cargo-seta {
-  font-size: 18px;
-  color: var(--accent);
-  font-weight: 700;
-}
-
-.rs-hub-cargo-lider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.rs-hub-cargo-avatar {
-  flex: 0 0 44px;
-  width: 44px;
-  height: 44px;
+.rs-hub-cargo-num {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  overflow: hidden;
   background: var(--accent);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
 
-.rs-hub-cargo-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.rs-hub-cargo-lider-text {
+.rs-hub-cargo-texto {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
   flex-direction: column;
+  gap: 1px;
 }
 
-.rs-hub-cargo-lider-nome {
-  font-size: 15px;
-  font-weight: 600;
+.rs-hub-cargo-nome {
+  font-size: 17px;
+  font-weight: 700;
   color: var(--foreground);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
 }
 
-.rs-hub-cargo-lider-sub {
+.rs-hub-cargo-cta {
   font-size: 12px;
   color: var(--muted-foreground);
 }
 
-.rs-hub-cargo-pct {
+.rs-hub-cargo-seta {
   flex: 0 0 auto;
-  font-size: 24px;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
+  font-size: 20px;
   color: var(--accent);
-  letter-spacing: -0.02em;
+  font-weight: 700;
 }
 
-.rs-hub-cargo-pct small {
-  font-size: 13px;
-  margin-left: 1px;
+/* Zona de Expansão — consulta extra, acento dourado */
+.rs-hub-cargo-extra {
+  --accent: #b8860b;
 }
 
-.rs-hub-cargo-rodape {
-  margin: 0;
-  font-size: 11px;
-  color: var(--muted-foreground);
-  border-top: 1px dashed var(--border-soft);
-  padding-top: 8px;
+.rs-hub-cargo-extra .rs-hub-cargo-num {
+  background: #fcc40c;
+  color: #3a2e00;
 }
 
+/* Sem dados — card mudo, não clicável */
 .rs-hub-cargo-vazio {
-  border-left-color: var(--border);
+  --accent: var(--border);
   box-shadow: none;
-  opacity: 0.7;
+  opacity: 0.65;
+  cursor: default;
+}
+
+.rs-hub-cargo-vazio .rs-hub-cargo-num {
+  background: var(--muted-foreground);
 }
 
 .rs-hub-cargo-semdados {
-  margin: 0;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--muted-foreground);
   font-style: italic;
 }
