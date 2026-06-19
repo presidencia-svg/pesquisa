@@ -221,23 +221,30 @@ function CedulaUrna({
         </button>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-2 pt-3 border-t border-capsule-foreground/15">
-        <button
-          type="button"
-          onClick={() => enviar('branco')}
-          disabled={pending}
-          className="flex-1 h-12 text-sm font-medium rounded-md border border-capsule-foreground/30 text-capsule-foreground/90 hover:bg-capsule-foreground/10 disabled:opacity-30 transition"
-        >
-          Voto em branco
-        </button>
-        <button
-          type="button"
-          onClick={() => enviar('nao_sabe')}
-          disabled={pending}
-          className="flex-1 h-12 text-sm font-medium rounded-md border border-capsule-foreground/30 text-capsule-foreground/90 hover:bg-capsule-foreground/10 disabled:opacity-30 transition"
-        >
-          Não sei / não quero votar
-        </button>
+      <div className="pt-3 border-t border-capsule-foreground/15 flex flex-col gap-2">
+        <p className="text-xs text-capsule-foreground/60 leading-snug">
+          Não lembra do número? Esta pesquisa é{' '}
+          <strong>espontânea</strong> — não mostramos lista de candidatos.
+          Use os botões abaixo se não souber.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <button
+            type="button"
+            onClick={() => enviar('nao_sabe')}
+            disabled={pending}
+            className="flex-1 h-12 text-sm font-medium rounded-md border-2 border-capsule-foreground/40 bg-capsule-foreground/5 text-capsule-foreground hover:bg-capsule-foreground/15 disabled:opacity-30 transition"
+          >
+            Não lembro o número
+          </button>
+          <button
+            type="button"
+            onClick={() => enviar('branco')}
+            disabled={pending}
+            className="flex-1 h-12 text-sm font-medium rounded-md border border-capsule-foreground/30 text-capsule-foreground/90 hover:bg-capsule-foreground/10 disabled:opacity-30 transition"
+          >
+            Voto em branco
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -307,19 +314,19 @@ function ConsultaForm({ cargo, cfg }: { cargo: Cargo; cfg: CargoConfig }) {
       <div className="flex flex-col sm:flex-row gap-2 pt-3 border-t border-capsule-foreground/15">
         <button
           type="button"
-          onClick={() => enviar('branco')}
-          disabled={pending}
-          className="flex-1 h-12 text-sm font-medium rounded-md border border-capsule-foreground/30 text-capsule-foreground/90 hover:bg-capsule-foreground/10 disabled:opacity-30 transition"
-        >
-          Voto em branco
-        </button>
-        <button
-          type="button"
           onClick={() => enviar('nao_sabe')}
           disabled={pending}
           className="flex-1 h-12 text-sm font-medium rounded-md border border-capsule-foreground/30 text-capsule-foreground/90 hover:bg-capsule-foreground/10 disabled:opacity-30 transition"
         >
           Não sei / Sem opinião
+        </button>
+        <button
+          type="button"
+          onClick={() => enviar('branco')}
+          disabled={pending}
+          className="flex-1 h-12 text-sm font-medium rounded-md border border-capsule-foreground/30 text-capsule-foreground/90 hover:bg-capsule-foreground/10 disabled:opacity-30 transition"
+        >
+          Voto em branco
         </button>
       </div>
     </div>
