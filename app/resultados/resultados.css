@@ -665,3 +665,463 @@
 .rs-mapa-cta-btn:hover {
   opacity: 0.9;
 }
+
+/* ============================================================
+   HUB de resultados (tela única com botões por cargo)
+   ============================================================ */
+
+.rs-hub {
+  background: var(--muted-2, #fafaf9);
+  min-height: calc(100vh - 60px);
+  padding: 28px 20px 64px;
+}
+
+.rs-hub-inner {
+  max-width: 940px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ---- Hero ---- */
+.rs-hub-hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+.rs-hub-kicker {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--primary);
+}
+
+.rs-hub-title {
+  margin: 0;
+  font-size: clamp(30px, 6vw, 46px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+  line-height: 1.05;
+}
+
+.rs-hub-resumo {
+  margin: 6px auto 0;
+  max-width: 680px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+
+.rs-hub-resumo strong {
+  color: var(--foreground);
+}
+
+/* ---- Ficha técnica ---- */
+.rs-hub-ficha {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .rs-hub-ficha {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.rs-hub-ficha .rs-ficha-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---- Diamante ---- */
+.rs-hub-diamante {
+  background: linear-gradient(180deg, #ecfeff 0%, #fff 100%);
+  border: 1px solid #a5f3fc;
+  border-radius: 14px;
+  padding: 16px 20px;
+  text-align: center;
+}
+
+.rs-hub-diamante-kicker {
+  margin: 0 0 10px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: #0e7490;
+}
+
+.rs-hub-diamante-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 28px;
+}
+
+.rs-patro-diamante-img {
+  max-height: 84px;
+  max-width: 220px;
+}
+
+.rs-patro-ouro-img {
+  max-height: 54px;
+  max-width: 150px;
+}
+
+.rs-patro-prata-img {
+  max-height: 38px;
+  max-width: 118px;
+  opacity: 0.85;
+}
+
+/* ---- Botões por cargo ---- */
+.rs-hub-cargos-label {
+  margin: 0 0 2px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted-foreground);
+  text-align: center;
+}
+
+.rs-hub-cargos {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 620px) {
+  .rs-hub-cargos {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.rs-hub-cargo {
+  --accent: var(--primary);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 12px;
+  padding: 16px 18px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.14s ease,
+    border-color 0.14s ease;
+}
+
+.rs-hub-cargo:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.rs-hub-cargo-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rs-hub-cargo-nome {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--foreground);
+  letter-spacing: -0.01em;
+}
+
+.rs-hub-cargo-seta {
+  font-size: 18px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.rs-hub-cargo-lider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rs-hub-cargo-avatar {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.rs-hub-cargo-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.rs-hub-cargo-lider-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.rs-hub-cargo-lider-nome {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rs-hub-cargo-lider-sub {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.rs-hub-cargo-pct {
+  flex: 0 0 auto;
+  font-size: 24px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}
+
+.rs-hub-cargo-pct small {
+  font-size: 13px;
+  margin-left: 1px;
+}
+
+.rs-hub-cargo-rodape {
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  border-top: 1px dashed var(--border-soft);
+  padding-top: 8px;
+}
+
+.rs-hub-cargo-vazio {
+  border-left-color: var(--border);
+  box-shadow: none;
+  opacity: 0.7;
+}
+
+.rs-hub-cargo-semdados {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+/* ---- Ações extras ---- */
+.rs-hub-acoes {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 620px) {
+  .rs-hub-acoes {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.rs-hub-acao {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.14s, box-shadow 0.14s;
+}
+
+.rs-hub-acao:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.rs-hub-acao-mapa {
+  background: linear-gradient(135deg, #0a2a6e 0%, #1d3a8a 100%);
+  border-color: #0a2a6e;
+  color: #fff;
+}
+
+.rs-hub-acao-mapa:hover {
+  border-color: #0a2a6e;
+}
+
+.rs-hub-acao-titulo {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.rs-hub-acao-sub {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+/* ---- Apoio (Ouro/Prata) ---- */
+.rs-hub-apoio {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-top: 1px solid var(--border-soft);
+  padding-top: 20px;
+}
+
+.rs-hub-apoio-bloco {
+  text-align: center;
+}
+
+.rs-hub-apoio-kicker {
+  margin: 0 0 10px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--muted-foreground);
+}
+
+.rs-hub-apoio-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+/* ============================================================
+   TELA de cargo (rota /resultados/[cargo])
+   ============================================================ */
+
+.rs-cargoscreen-top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+
+.rs-cargoscreen-top-inner {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rs-cargoscreen-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.14s, border-color 0.14s;
+}
+
+.rs-cargoscreen-back:hover {
+  background: var(--muted);
+  border-color: var(--primary);
+}
+
+.rs-cargoscreen-edicao {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted-foreground);
+}
+
+.rs-cargoscreen {
+  background: var(--muted-2, #fafaf9);
+  min-height: calc(100vh - 60px);
+  padding: 24px 20px 64px;
+}
+
+.rs-cargoscreen-inner {
+  max-width: 940px;
+  margin: 0 auto;
+}
+
+.rs-cargoscreen-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.rs-cargoscreen-back-foot {
+  background: #fff;
+}
+
+.rs-cargoscreen-mapa {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.rs-cargoscreen-mapa:hover {
+  text-decoration: underline;
+}
+
+.rs-cargoscreen-semdados {
+  max-width: 520px;
+  margin: 80px auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.rs-cargoscreen-semdados h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.rs-cargoscreen-semdados p {
+  margin: 0;
+  color: var(--muted-foreground);
+}

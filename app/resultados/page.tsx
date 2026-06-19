@@ -1,23 +1,16 @@
 import Link from 'next/link'
 
-import {
-  ResultadosDashboard,
-  type Candidato,
-  type CargoCandidato,
-  type CargoZona,
-  type Pesquisa,
-} from '@/components/resultados-dashboard'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
+import type {
+  CargoCandidato,
+  CargoZona,
+} from '@/components/resultados-dashboard'
 import {
-  projetarCadeiras,
-  type PartidoVotos,
-} from '@/lib/projecao'
-import {
-  montaRegionais,
-  type CandidatoLeve,
-  type RegiaoKey,
-} from '@/lib/regional'
-import { supabaseAdmin } from '@/lib/supabase/admin'
+  carregarResultados,
+  formatarData,
+  type EdicaoRow,
+  type PatroPublico,
+} from '@/lib/resultados-data'
 
 import './resultados.css'
 
@@ -27,556 +20,84 @@ export const metadata = {
     'Resultados da Pesquisa Sergipe 2026 realizada pela CDL Aracaju. Registrada no TRE/SE.',
 }
 
-// Cache de 15s — equilibrio entre freshness e capacidade.
-//
-// Projeção de carga (cenario 500k votantes em 36h):
-//   - Pico de leitura /resultados (pos-divulgacao, link viralizando):
-//     10k-100k req/min = 167-1666 req/s
-//   - Sem cache: ~2 req/s (estoura em segundos)
-//   - Cache 60s: 1 miss/min, ~1000+ req/s hot
-//   - Cache 15s: 4 misses/min (=2.8s Lambda/min), ~1000+ req/s hot
-//
-// 15s da' freshness razoavel (resultado atualizado 4x/min) sem
-// comprometer capacidade. Em 36h de pesquisa: 4 misses × 60 × 36 =
-// 8.640 invocacoes do Lambda total — Supabase nem sente.
-//
-// Quando o admin "divulga" / "retira divulgacao", as actions chamam
-// revalidatePath('/resultados') — invalida o cache imediatamente.
+// Cache de 15s — mesmo racional da versão anterior. revalidatePath('/resultados')
+// nas actions de divulgar/retirar invalida na hora.
 export const revalidate = 15
 
-const VAGAS = { federal: 8, estadual: 24 } as const
+// Ordem e slugs dos cargos no hub. Slug vira /resultados/<slug>.
+// Ordem definida pelo Presidente da CDL: estaduais primeiro (Governador,
+// Senador), depois Presidente, legislativos e a consulta extra.
+const CARGOS = [
+  { key: 'governador', slug: 'governador', label: 'Governador' },
+  { key: 'senador', slug: 'senador', label: 'Senador' },
+  { key: 'presidente', slug: 'presidente', label: 'Presidente' },
+  { key: 'federal', slug: 'deputado-federal', label: 'Deputado Federal' },
+  { key: 'estadual', slug: 'deputado-estadual', label: 'Deputado Estadual' },
+  { key: 'zona_expansao', slug: 'zona-expansao', label: 'Zona de Expansão' },
+] as const
 
-const REGRA = {
-  presidente:
-    'Maioria absoluta no 1º turno (>50% dos válidos) elege direto. Caso contrário, 2º turno entre os dois mais votados.',
-  governador:
-    'Maioria absoluta no 1º turno (>50% dos válidos) elege direto. Caso contrário, vai pra 2º turno entre os dois mais votados.',
-  senador:
-    'São 2 vagas em disputa em 2026 (igual a 2018). Eleitor escolhe até 2 candidatos. Os 2 mais votados são eleitos.',
-  federal:
-    'Voto por legenda define quantas cadeiras o partido elege (Quociente Eleitoral, Lei 9.504/97). Os mais votados dentro do partido ocupam as cadeiras conquistadas.',
-  estadual:
-    'Voto por legenda define quantas cadeiras o partido elege (Quociente Eleitoral, Lei 9.504/97). Os mais votados dentro do partido ocupam as cadeiras conquistadas.',
-} as const
-
-type EdicaoRow = {
-  id: string
-  nome: string
-  divulgada_em: string | null
-  divulgacao_prevista: string | null
-  registro_tre: string | null
-  turno: number | null
+type Teaser = {
+  liderNome: string
+  liderSub: string
+  liderPct: number
+  liderCor: string
+  liderFoto: string | null
+  rodape: string
 }
 
-export default async function ResultadosPublicosPage() {
-  const db = supabaseAdmin()
-  const { data: edicao } = await db
-    .from('edicao')
-    .select('id, nome, divulgada_em, divulgacao_prevista, registro_tre, turno')
-    .eq('ativa', true)
-    .maybeSingle<EdicaoRow>()
+function teaserCandidato(cargo: CargoCandidato): Teaser | null {
+  const lider = cargo.candidatos[0]
+  if (!lider) return null
+  const validos = cargo.candidatos.reduce((s, c) => s + c.votos, 0)
+  const pct = validos > 0 ? (lider.votos / validos) * 100 : 0
+  const rodape = cargo.vagas
+    ? `${cargo.vagas} ${cargo.vagas === 1 ? 'vaga' : 'vagas'} em disputa`
+    : 'Maioria dos votos válidos'
+  return {
+    liderNome: lider.nome,
+    liderSub: lider.partido,
+    liderPct: pct,
+    liderCor: lider.cor,
+    liderFoto: lider.foto,
+    rodape,
+  }
+}
 
-  if (!edicao || !edicao.divulgada_em) {
-    return <AguardandoDivulgacao edicao={edicao} />
+function teaserZona(cargo: CargoZona): Teaser {
+  const total =
+    cargo.aracaju + cargo.sao_cristovao + cargo.branco + cargo.nao_sabe
+  const ajuPct = total > 0 ? (cargo.aracaju / total) * 100 : 0
+  const scPct = total > 0 ? (cargo.sao_cristovao / total) * 100 : 0
+  const ajuLider = ajuPct >= scPct
+  return {
+    liderNome: ajuLider ? 'Aracaju' : 'São Cristóvão',
+    liderSub: 'Aracaju × S. Cristóvão',
+    liderPct: Math.max(ajuPct, scPct),
+    liderCor: ajuLider ? '#1d3a8a' : '#fcc40c',
+    liderFoto: null,
+    rodape: 'Consulta extra',
+  }
+}
+
+function fmtPct(x: number): string {
+  return x.toFixed(1).replace('.', ',')
+}
+
+function initials(name: string): string {
+  const parts = name.trim().split(/\s+/)
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+}
+
+export default async function ResultadosHubPage() {
+  const r = await carregarResultados()
+
+  if (r.status === 'aguardando') {
+    return <AguardandoDivulgacao edicao={r.edicao} />
   }
 
-  // Patrocinadores firmados — exibidos publicamente quando o admin
-  // marcar mostrar_publico=true em /admin/patrocinios + logo_url
-  // preenchido. Layout do bloco depende da cota (Diamante topo,
-  // Ouro "Apoio institucional", Prata "Apoiadores").
-  const { data: patrocinadores } = await db
-    .from('interessados_patrocinio')
-    .select('id, empresa, cota, logo_url, site_url')
-    .eq('status', 'firmado')
-    .eq('mostrar_publico', true)
-    .not('logo_url', 'is', null)
-    .order('criado_em', { ascending: true })
-    .returns<Array<{
-      id: string
-      empresa: string
-      cota: 'diamante' | 'ouro' | 'prata'
-      logo_url: string | null
-      site_url: string | null
-    }>>()
-
-  const patroPorCota = {
-    diamante:
-      (patrocinadores ?? []).filter((p) => p.cota === 'diamante') ?? [],
-    ouro: (patrocinadores ?? []).filter((p) => p.cota === 'ouro') ?? [],
-    prata: (patrocinadores ?? []).filter((p) => p.cota === 'prata') ?? [],
-  }
-
-  // ----- Carrega tudo em paralelo -----
-  const [
-    { data: candFedEstData },
-    { data: votosCandidatoFedEst },
-    { data: votosCandidatosTudo },
-    { data: votosLegendaTudo },
-    { data: zonaData },
-    { data: bnsData },
-    { count: eleitoresCount },
-    { data: impedimentosData },
-    { data: candidatosCargoSimples },
-    { data: municipiosRegiaoData },
-    { data: votosRegionaisData },
-  ] = await Promise.all([
-    db
-      .from('candidatos_pesquisa')
-      .select('id, cargo, numero, nome_urna, foto_url, impedimento, partido_id, partidos!inner(sigla, cor_hex)')
-      .eq('edicao_id', edicao.id)
-      .eq('ativo', true)
-      .in('cargo', ['federal', 'estadual']),
-    db
-      .from('v_resultados_candidato')
-      .select('candidato_id, votos')
-      .eq('edicao_id', edicao.id)
-      .in('cargo', ['federal', 'estadual']),
-    db
-      .from('v_resultados_candidato')
-      .select('candidato_id, cargo, numero, nome_urna, foto_url, sigla, cor_hex, votos')
-      .eq('edicao_id', edicao.id)
-      .in('cargo', ['presidente', 'governador', 'senador']),
-    db
-      .from('v_resultados_legenda')
-      .select('partido_id, cargo, numero, sigla, nome, cor_hex, votos')
-      .eq('edicao_id', edicao.id)
-      .in('cargo', ['federal', 'estadual']),
-    db
-      .from('v_resultados_zona')
-      .select('resposta, votos')
-      .eq('edicao_id', edicao.id),
-    db
-      .from('votos_pesquisa')
-      .select('cargo, metodo')
-      .eq('edicao_id', edicao.id)
-      .in('metodo', ['branco', 'nao_sabe']),
-    db
-      .from('eleitores_pesquisa')
-      .select('id', { count: 'exact', head: true })
-      .eq('edicao_id', edicao.id)
-      .eq('wa_validado', true),
-    db
-      .from('candidatos_pesquisa')
-      .select('id, impedimento')
-      .eq('edicao_id', edicao.id)
-      .not('impedimento', 'is', null),
-    db
-      .from('candidatos_pesquisa')
-      .select('id, cargo, numero, nome_urna, foto_url, impedimento, partidos!inner(sigla, cor_hex)')
-      .eq('edicao_id', edicao.id)
-      .eq('ativo', true)
-      .in('cargo', ['presidente', 'governador', 'senador']),
-    db
-      .from('municipios_se')
-      .select('ibge_codigo, regiao'),
-    db
-      .from('votos_pesquisa')
-      .select('candidato_id, municipio_ibge, cargo')
-      .eq('edicao_id', edicao.id)
-      .eq('metodo', 'numero')
-      .in('cargo', ['presidente', 'governador', 'senador'])
-      .not('candidato_id', 'is', null)
-      .not('municipio_ibge', 'is', null),
-  ])
-
-  // ----- Branco / Não sei -----
-  const brancoNaoSei: Record<string, { branco: number; nao_sabe: number }> = {}
-  for (const r of (bnsData ?? []) as Array<{ cargo: string; metodo: string }>) {
-    if (!brancoNaoSei[r.cargo])
-      brancoNaoSei[r.cargo] = { branco: 0, nao_sabe: 0 }
-    if (r.metodo === 'branco') brancoNaoSei[r.cargo].branco++
-    if (r.metodo === 'nao_sabe') brancoNaoSei[r.cargo].nao_sabe++
-  }
-
-  // ----- Impedimentos -----
-  const impedimentos = new Map<string, string>()
-  for (const r of (impedimentosData ?? []) as Array<{
-    id: string
-    impedimento: string | null
-  }>) {
-    if (r.impedimento) impedimentos.set(r.id, r.impedimento)
-  }
-
-  // ----- Mapa município → região + count por região -----
-  const regiaoPorMunicipio = new Map<number, RegiaoKey>()
-  const municipiosPorRegiao = new Map<RegiaoKey, number>()
-  for (const r of (municipiosRegiaoData ?? []) as Array<{
-    ibge_codigo: number
-    regiao: string | null
-  }>) {
-    if (
-      r.regiao === 'grande_aracaju' ||
-      r.regiao === 'leste' ||
-      r.regiao === 'agreste' ||
-      r.regiao === 'centro_sul' ||
-      r.regiao === 'sertao'
-    ) {
-      regiaoPorMunicipio.set(r.ibge_codigo, r.regiao)
-      municipiosPorRegiao.set(
-        r.regiao,
-        (municipiosPorRegiao.get(r.regiao) ?? 0) + 1,
-      )
-    }
-  }
-
-  // ----- Pres/Gov/Sen — monta CargoCandidato -----
-  function montaCargoCandidato(
-    cargoKey: 'presidente' | 'governador' | 'senador',
-  ): CargoCandidato | null {
-    const titulo = {
-      presidente: 'Presidente',
-      governador: 'Governador',
-      senador: 'Senador',
-    }[cargoKey]
-    const votos = (votosCandidatosTudo ?? []).filter(
-      (r: { cargo: string }) => r.cargo === cargoKey,
-    ) as Array<{
-      candidato_id: string
-      numero: number
-      nome_urna: string
-      foto_url: string | null
-      sigla: string | null
-      cor_hex: string | null
-      votos: number
-    }>
-
-    // Mapa de impedimento via candidatosCargoSimples (que tem foto + impedimento)
-    const meta = new Map<
-      string,
-      { foto: string | null; impedimento: string | null; sigla: string; cor: string }
-    >()
-    for (const c of (candidatosCargoSimples ?? []) as Array<{
-      id: string
-      cargo: string
-      foto_url: string | null
-      impedimento: string | null
-      partidos: { sigla: string; cor_hex: string | null } | { sigla: string; cor_hex: string | null }[]
-    }>) {
-      if (c.cargo !== cargoKey) continue
-      const partido = Array.isArray(c.partidos) ? c.partidos[0] : c.partidos
-      meta.set(c.id, {
-        foto: c.foto_url,
-        impedimento: c.impedimento,
-        sigla: partido?.sigla ?? '',
-        cor: partido?.cor_hex ?? '#52525b',
-      })
-    }
-
-    const candidatos: Candidato[] = votos
-      .map((r) => {
-        const m = meta.get(r.candidato_id) ?? {
-          foto: r.foto_url,
-          impedimento: null,
-          sigla: r.sigla ?? '',
-          cor: r.cor_hex ?? '#52525b',
-        }
-        return {
-          id: r.candidato_id,
-          numero: r.numero,
-          nome: r.nome_urna,
-          partido: m.sigla,
-          cor: m.cor,
-          votos: r.votos,
-          foto: r.foto_url ?? m.foto,
-          impedimento: m.impedimento,
-        }
-      })
-      .sort((a, b) => b.votos - a.votos)
-
-    // Projeção de eleitos baseada nos votos atuais (não espera fechar a edição).
-    // Senado é majoritária plurinominal: top 2 por votos = "estariam eleitos".
-    // Presidente/governador: 1 vaga. Se top 1 > 50% dos válidos = 1º turno.
-    // Senão, top 1 e top 2 vão pro 2º turno (CF art. 77 §3º e art. 28).
-    if (cargoKey === 'senador') {
-      for (let i = 0; i < Math.min(2, candidatos.length); i++) {
-        if (candidatos[i].votos > 0) candidatos[i].eleito = true
-      }
-    } else if (candidatos.length > 0 && candidatos[0].votos > 0) {
-      const totalValidos = candidatos.reduce((acc, c) => acc + c.votos, 0)
-      if (candidatos[0].votos / totalValidos > 0.5) {
-        candidatos[0].eleito = true
-      } else {
-        // Ninguém ganhou no 1º turno — top 2 vão pro 2º
-        for (let i = 0; i < Math.min(2, candidatos.length); i++) {
-          if (candidatos[i].votos > 0) candidatos[i].segundoTurno = true
-        }
-      }
-    }
-
-    // Empate técnico: candidatos abaixo do corte cuja margem de erro (IC 95%)
-    // overlap com a margem do candidato na última cadeira. Usa amostra total
-    // do cargo como n. Critério conservador: |pA - pB| <= ME_A + ME_B.
-    if (cargoKey === 'senador' && candidatos.length > 2) {
-      const totalCargo = candidatos.reduce((s, c) => s + c.votos, 0)
-      if (totalCargo > 0) {
-        const cutoff = candidatos[1] // último eleito (posição 2)
-        const pCut = cutoff.votos / totalCargo
-        const meCut = 1.96 * Math.sqrt((pCut * (1 - pCut)) / totalCargo)
-        for (let i = 2; i < candidatos.length; i++) {
-          const cand = candidatos[i]
-          const p = cand.votos / totalCargo
-          const me = 1.96 * Math.sqrt((p * (1 - p)) / totalCargo)
-          if (pCut - p <= meCut + me) {
-            cand.empate = true
-          } else {
-            break // ordenado por votos → ninguém depois pode empatar
-          }
-        }
-      }
-    }
-
-    const bns = brancoNaoSei[cargoKey] ?? { branco: 0, nao_sabe: 0 }
-    if (candidatos.length === 0 && bns.branco === 0 && bns.nao_sabe === 0) {
-      return null
-    }
-
-    // ---- Regional (Leste/Agreste/Sertão) ----
-    const candLeve = new Map<string, CandidatoLeve>()
-    for (const c of candidatos) {
-      candLeve.set(c.id, {
-        id: c.id,
-        nome: c.nome,
-        partido: c.partido,
-        cor: c.cor,
-        foto: c.foto,
-      })
-    }
-    const votosCargo = ((votosRegionaisData ?? []) as Array<{
-      candidato_id: string
-      municipio_ibge: number
-      cargo: string
-    }>)
-      .filter((v) => v.cargo === cargoKey)
-      .map((v) => ({
-        candidato_id: v.candidato_id,
-        municipio_ibge: v.municipio_ibge,
-        votos: 1, // cada linha = 1 voto
-      }))
-    let regionalLeve: ReturnType<typeof montaRegionais> | undefined
-    if (votosCargo.length > 0) {
-      regionalLeve = montaRegionais(
-        votosCargo,
-        regiaoPorMunicipio,
-        municipiosPorRegiao,
-        candLeve,
-      )
-    }
-
-    return {
-      titulo,
-      regra: REGRA[cargoKey],
-      vagas: cargoKey === 'senador' ? 2 : undefined,
-      candidatos,
-      branco: bns.branco,
-      nao_sabe: bns.nao_sabe,
-      regional: regionalLeve?.map((r) => ({
-        regiao: r.regiao,
-        rotulo: r.rotulo,
-        subtitulo: r.subtitulo,
-        municipios: r.municipios,
-        totalVotos: r.totalVotos,
-        liderNome: r.lider?.nome ?? null,
-        liderPartido: r.lider?.partido ?? '',
-        liderCor: r.lider?.cor ?? '#52525b',
-        liderFoto: r.lider?.foto ?? null,
-        liderVotos: r.liderVotos,
-        liderPct: r.liderPct,
-      })),
-    }
-  }
-
-  // ----- Fed/Est — monta CargoCandidato a partir de votos individuais + eleitos via projecao -----
-  function montaCargoLegenda(
-    cargoKey: 'federal' | 'estadual',
-  ): CargoCandidato | null {
-    const votosCandidato = new Map<string, number>()
-    for (const r of (votosCandidatoFedEst ?? []) as Array<{
-      candidato_id: string
-      votos: number
-    }>) {
-      votosCandidato.set(r.candidato_id, r.votos)
-    }
-
-    // Lista candidatos fed/est + metadata
-    const cands = ((candFedEstData ?? []) as Array<{
-      id: string
-      cargo: string
-      numero: number
-      nome_urna: string
-      foto_url: string | null
-      impedimento: string | null
-      partido_id: string
-      partidos: { sigla: string; cor_hex: string | null } | { sigla: string; cor_hex: string | null }[]
-    }>).filter((c) => c.cargo === cargoKey)
-
-    // Calcula projecao TSE pra identificar eleitos
-    const legendasCargo = ((votosLegendaTudo ?? []) as Array<{
-      partido_id: string
-      cargo: string
-      numero: number
-      sigla: string
-      nome: string
-      cor_hex: string | null
-      votos: number
-    }>).filter((l) => l.cargo === cargoKey)
-
-    const partidosInput: PartidoVotos[] = legendasCargo.map((l) => ({
-      partidoId: l.partido_id,
-      numero: l.numero,
-      sigla: l.sigla,
-      nome: l.nome,
-      corHex: l.cor_hex,
-      votosLegenda: l.votos,
-      candidatos: cands
-        .filter((c) => c.partido_id === l.partido_id)
-        .map((c) => ({
-          candidatoId: c.id,
-          numero: c.numero,
-          nomeUrna: c.nome_urna,
-          votos: votosCandidato.get(c.id) ?? 0,
-        })),
-    }))
-    const projecao = projetarCadeiras(partidosInput, VAGAS[cargoKey])
-    const eleitosIds = new Set<string>()
-    for (const p of projecao.partidos) {
-      for (const e of p.eleitosProjetados) eleitosIds.add(e.candidatoId)
-    }
-
-    const candidatos: Candidato[] = cands
-      .map((c) => {
-        const partido = Array.isArray(c.partidos) ? c.partidos[0] : c.partidos
-        return {
-          id: c.id,
-          numero: c.numero,
-          nome: c.nome_urna,
-          partido: partido?.sigla ?? '',
-          cor: partido?.cor_hex ?? '#52525b',
-          votos: votosCandidato.get(c.id) ?? 0,
-          foto: c.foto_url,
-          impedimento: c.impedimento,
-          eleito: eleitosIds.has(c.id),
-        }
-      })
-      .sort((a, b) => b.votos - a.votos)
-
-    // Empate técnico INTRA-PARTIDO: na proporcional, a cadeira do partido vai
-    // pro candidato mais votado dentro do partido. Os imediatos abaixo do
-    // último eleito do mesmo partido podem ultrapassá-lo se a diferença de
-    // votos pessoais estiver dentro da margem de erro (IC 95%, conservador).
-    // Margem inter-partidária (partido na fronteira de ganhar/perder cadeira
-    // via QE+sobras) não é coberta aqui — mais complexa de comunicar.
-    const totalNominal = candidatos.reduce((s, c) => s + c.votos, 0)
-    const cadeirasPorPartido = new Map(
-      projecao.partidos.map((p) => [p.partidoId, p.cadeirasTotal]),
-    )
-
-    // Para cada partido com cadeiras, ordena candidatos por votos pessoais.
-    // Os não-eleitos viram 1º, 2º, 3º suplente do partido — ordem real de
-    // assunção em caso de vacância, conforme Lei 9.504/97 art. 112.
-    // LIMITAÇÃO: schema atual não modela federações partidárias (Lei 14.208/21).
-    // Quando um partido participa de federação, a ordem de suplência é dentro
-    // da federação inteira, não do partido isolado. Documentado em TODO abaixo.
-    for (const p of partidosInput) {
-      const cadeiras = cadeirasPorPartido.get(p.partidoId) ?? 0
-      if (cadeiras === 0) continue // partido sem cadeira não tem suplência
-      const candsPartido = [...p.candidatos].sort((a, b) => b.votos - a.votos)
-      for (let i = cadeiras; i < candsPartido.length; i++) {
-        const found = candidatos.find((x) => x.id === candsPartido[i].candidatoId)
-        if (found) found.suplente = i - cadeiras + 1
-      }
-    }
-
-    // Empate técnico INTRA-PARTIDO: na proporcional, a cadeira do partido vai
-    // pro candidato mais votado dentro do partido. Os imediatos abaixo do
-    // último eleito do mesmo partido podem ultrapassá-lo se a diferença de
-    // votos pessoais estiver dentro da margem de erro (IC 95%, conservador).
-    // Margem inter-partidária (partido na fronteira de ganhar/perder cadeira
-    // via QE+sobras) não é coberta aqui — mais complexa de comunicar.
-    if (totalNominal > 0) {
-      for (const p of partidosInput) {
-        const cadeiras = cadeirasPorPartido.get(p.partidoId) ?? 0
-        if (cadeiras === 0) continue
-        const candsPartido = [...p.candidatos].sort((a, b) => b.votos - a.votos)
-        const ultimoEleito = candsPartido[cadeiras - 1]
-        if (!ultimoEleito || ultimoEleito.votos === 0) continue
-        const pCut = ultimoEleito.votos / totalNominal
-        const meCut = 1.96 * Math.sqrt((pCut * (1 - pCut)) / totalNominal)
-        for (let i = cadeiras; i < candsPartido.length; i++) {
-          const c = candsPartido[i]
-          const pC = c.votos / totalNominal
-          const meC = 1.96 * Math.sqrt((pC * (1 - pC)) / totalNominal)
-          if (pCut - pC <= meCut + meC) {
-            const found = candidatos.find((x) => x.id === c.candidatoId)
-            if (found) found.empate = true
-          } else {
-            break
-          }
-        }
-      }
-    }
-
-    const bns = brancoNaoSei[cargoKey] ?? { branco: 0, nao_sabe: 0 }
-    if (
-      candidatos.every((c) => c.votos === 0) &&
-      bns.branco === 0 &&
-      bns.nao_sabe === 0 &&
-      legendasCargo.length === 0
-    ) {
-      return null
-    }
-    return {
-      titulo: cargoKey === 'federal' ? 'Deputado Federal' : 'Deputado Estadual',
-      regra: REGRA[cargoKey],
-      vagas: VAGAS[cargoKey],
-      candidatos,
-      branco: bns.branco,
-      nao_sabe: bns.nao_sabe,
-    }
-  }
-
-  // ----- Zona de Expansão -----
-  let zonaCargo: CargoZona | null = null
-  {
-    const ajuRow = (zonaData ?? []).find(
-      (r: { resposta: string }) => r.resposta === 'aracaju',
-    ) as { votos: number } | undefined
-    const scRow = (zonaData ?? []).find(
-      (r: { resposta: string }) => r.resposta === 'sao_cristovao',
-    ) as { votos: number } | undefined
-    const aju = ajuRow?.votos ?? 0
-    const sc = scRow?.votos ?? 0
-    const bns = brancoNaoSei['zona_expansao'] ?? { branco: 0, nao_sabe: 0 }
-    if (aju > 0 || sc > 0 || bns.branco > 0 || bns.nao_sabe > 0) {
-      zonaCargo = {
-        titulo: 'Zona de Expansão',
-        aracaju: aju,
-        sao_cristovao: sc,
-        branco: bns.branco,
-        nao_sabe: bns.nao_sabe,
-      }
-    }
-  }
-
-  const n = eleitoresCount ?? 0
-  const margem = calcularMargem(n)
-
-  const pesquisa: Pesquisa = {
-    meta: {
-      n,
-      margem,
-      confianca: '95%',
-      divulgada_em: formatarData(edicao.divulgada_em),
-      registro_tre: edicao.registro_tre ?? '—',
-      edicao: edicao.nome,
-      turno: (edicao.turno === 2 ? 2 : 1) as 1 | 2,
-    },
-    governador: montaCargoCandidato('governador'),
-    senador: montaCargoCandidato('senador'),
-    presidente: montaCargoCandidato('presidente'),
-    federal: montaCargoLegenda('federal'),
-    estadual: montaCargoLegenda('estadual'),
-    zona_expansao: zonaCargo,
-  }
+  const { pesquisa, patroPorCota } = r
+  const { meta } = pesquisa
 
   return (
     <>
@@ -584,127 +105,186 @@ export default async function ResultadosPublicosPage() {
         <div className="rs-header-inner">
           <Link href="/" className="rs-brand">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/cdl-logo.png"
-              alt="CDL Aracaju"
-              className="rs-brand-img"
-            />
+            <img src="/cdl-logo.png" alt="CDL Aracaju" className="rs-brand-img" />
           </Link>
           <span className="rs-header-tag">Pesquisa Sergipe 2026</span>
           <span className="rs-header-spacer" />
           <span
             className="rs-live"
             style={{
-              background: pesquisa.meta.turno === 2 ? '#0a1428' : '#fff',
-              color: pesquisa.meta.turno === 2 ? '#fff' : 'inherit',
-              borderColor:
-                pesquisa.meta.turno === 2 ? '#0a1428' : 'var(--border)',
+              background: meta.turno === 2 ? '#0a1428' : '#fff',
+              color: meta.turno === 2 ? '#fff' : 'inherit',
+              borderColor: meta.turno === 2 ? '#0a1428' : 'var(--border)',
             }}
           >
-            {pesquisa.meta.turno}º TURNO · {pesquisa.meta.edicao}
+            {meta.turno}º TURNO · {meta.edicao}
           </span>
         </div>
       </header>
 
-      <section className="rs-hero">
-        <div className="rs-hero-inner">
-          <div className="rs-hero-text">
-            <p className="rs-hero-kicker">
-              Pesquisa Sergipe 2026 · {pesquisa.meta.turno}º Turno ·{' '}
-              {pesquisa.meta.edicao}
+      <main className="rs-hub">
+        <div className="rs-hub-inner">
+          {/* Título + resumo */}
+          <section className="rs-hub-hero">
+            <p className="rs-hub-kicker">
+              Pesquisa de intenção de voto · {meta.turno}º turno
             </p>
-            <h1 className="rs-hero-title">Eleições em Sergipe</h1>
-            <p className="rs-hero-sub">
-              Intenção de voto para o{' '}
-              <strong>{pesquisa.meta.turno}º turno</strong> em 75
-              municípios. Identidade verificada por CPF + WhatsApp.
-              Registrada no PesqEle/TRE conforme Lei 9.504/97.
+            <h1 className="rs-hub-title">Eleições Sergipe 2026</h1>
+            <p className="rs-hub-resumo">
+              A maior pesquisa eleitoral já realizada em Sergipe ouviu{' '}
+              <strong>{meta.n.toLocaleString('pt-BR')} eleitores</strong> com
+              identidade verificada por CPF e WhatsApp nos 75 municípios do
+              estado. Metodologia espontânea — o eleitor digita o número como
+              na urna, sem ver lista de candidatos. Registrada no PesqEle/TRE-SE
+              conforme a Lei 9.504/97.
             </p>
-          </div>
-          <div className="rs-ficha">
+          </section>
+
+          {/* Ficha técnica */}
+          <section className="rs-hub-ficha">
             <FichaCard
-              rotulo="Amostra (n)"
-              valor={pesquisa.meta.n.toLocaleString('pt-BR')}
-              sub="CPF + WhatsApp verificados"
+              rotulo="Amostra"
+              valor={meta.n.toLocaleString('pt-BR')}
+              sub="CPF + WhatsApp"
             />
-            <FichaCard
-              rotulo="Margem"
-              valor={pesquisa.meta.margem}
-              sub="Erro amostral"
-            />
-            <FichaCard
-              rotulo="Confiança"
-              valor={pesquisa.meta.confianca}
-              sub="Intervalo"
-            />
+            <FichaCard rotulo="Margem" valor={meta.margem} sub="Erro amostral" />
+            <FichaCard rotulo="Confiança" valor={meta.confianca} sub="Intervalo" />
             <FichaCard
               rotulo="Divulgada"
-              valor={pesquisa.meta.divulgada_em}
-              sub={`TRE: ${pesquisa.meta.registro_tre}`}
+              valor={meta.divulgada_em}
+              sub={`TRE: ${meta.registro_tre}`}
             />
-          </div>
+          </section>
+
+          {/* Patrocinador Diamante — apresentada por */}
+          {patroPorCota.diamante.length > 0 && (
+            <section className="rs-hub-diamante">
+              <p className="rs-hub-diamante-kicker">Pesquisa apresentada por</p>
+              <div className="rs-hub-diamante-logos">
+                {patroPorCota.diamante.map((p) => (
+                  <LogoPatro key={p.id} patro={p} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Botões por cargo */}
+          <section className="rs-hub-cargos-sec">
+            <p className="rs-hub-cargos-label">Escolha o cargo</p>
+            <div className="rs-hub-cargos">
+              {CARGOS.map(({ key, slug, label }) => {
+                const cargo = pesquisa[key]
+                if (!cargo) {
+                  return (
+                    <div key={key} className="rs-hub-cargo rs-hub-cargo-vazio">
+                      <div className="rs-hub-cargo-head">
+                        <span className="rs-hub-cargo-nome">{label}</span>
+                      </div>
+                      <p className="rs-hub-cargo-semdados">Sem dados ainda</p>
+                    </div>
+                  )
+                }
+                const teaser =
+                  key === 'zona_expansao'
+                    ? teaserZona(cargo as CargoZona)
+                    : teaserCandidato(cargo as CargoCandidato)
+                if (!teaser) {
+                  return (
+                    <div key={key} className="rs-hub-cargo rs-hub-cargo-vazio">
+                      <div className="rs-hub-cargo-head">
+                        <span className="rs-hub-cargo-nome">{label}</span>
+                      </div>
+                      <p className="rs-hub-cargo-semdados">Sem dados ainda</p>
+                    </div>
+                  )
+                }
+                return (
+                  <Link
+                    key={key}
+                    href={`/resultados/${slug}`}
+                    className="rs-hub-cargo"
+                    style={
+                      {
+                        ['--accent' as string]: teaser.liderCor,
+                      } as React.CSSProperties
+                    }
+                  >
+                    <div className="rs-hub-cargo-head">
+                      <span className="rs-hub-cargo-nome">{label}</span>
+                      <span className="rs-hub-cargo-seta">→</span>
+                    </div>
+                    <div className="rs-hub-cargo-lider">
+                      <span className="rs-hub-cargo-avatar">
+                        {teaser.liderFoto ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={teaser.liderFoto} alt="" />
+                        ) : (
+                          <span>{initials(teaser.liderNome)}</span>
+                        )}
+                      </span>
+                      <span className="rs-hub-cargo-lider-text">
+                        <span className="rs-hub-cargo-lider-nome">
+                          {teaser.liderNome}
+                        </span>
+                        <span className="rs-hub-cargo-lider-sub">
+                          {teaser.liderSub}
+                        </span>
+                      </span>
+                      <span className="rs-hub-cargo-pct">
+                        {fmtPct(teaser.liderPct)}
+                        <small>%</small>
+                      </span>
+                    </div>
+                    <p className="rs-hub-cargo-rodape">{teaser.rodape}</p>
+                  </Link>
+                )
+              })}
+            </div>
+          </section>
+
+          {/* Ações extras */}
+          <section className="rs-hub-acoes">
+            <Link href="/resultados/mapa" className="rs-hub-acao rs-hub-acao-mapa">
+              <span className="rs-hub-acao-titulo">Mapa por cidade</span>
+              <span className="rs-hub-acao-sub">
+                Quem ganhou em cada um dos 75 municípios →
+              </span>
+            </Link>
+            <Link href="/transparencia" className="rs-hub-acao">
+              <span className="rs-hub-acao-titulo">Metodologia</span>
+              <span className="rs-hub-acao-sub">
+                Como a pesquisa foi feita e auditada →
+              </span>
+            </Link>
+          </section>
+
+          {/* Ouro + Prata — apoio */}
+          {(patroPorCota.ouro.length > 0 || patroPorCota.prata.length > 0) && (
+            <section className="rs-hub-apoio">
+              {patroPorCota.ouro.length > 0 && (
+                <div className="rs-hub-apoio-bloco">
+                  <p className="rs-hub-apoio-kicker">Apoio institucional</p>
+                  <div className="rs-hub-apoio-logos">
+                    {patroPorCota.ouro.map((p) => (
+                      <LogoPatro key={p.id} patro={p} cota="ouro" />
+                    ))}
+                  </div>
+                </div>
+              )}
+              {patroPorCota.prata.length > 0 && (
+                <div className="rs-hub-apoio-bloco">
+                  <p className="rs-hub-apoio-kicker">Apoiadores</p>
+                  <div className="rs-hub-apoio-logos">
+                    {patroPorCota.prata.map((p) => (
+                      <LogoPatro key={p.id} patro={p} cota="prata" />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
         </div>
-      </section>
-
-      {/* Diamante — bloco "Apresentada por" abaixo do hero */}
-      {patroPorCota.diamante.length > 0 && (
-        <section className="rs-patro-diamante">
-          <div className="rs-patro-inner">
-            <p className="rs-patro-kicker">Pesquisa apresentada por</p>
-            <div className="rs-patro-logos rs-patro-diamante-logos">
-              {patroPorCota.diamante.map((p) => (
-                <LogoPatro key={p.id} patro={p} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      <ResultadosDashboard pesquisa={pesquisa} />
-
-      <section className="rs-mapa-cta">
-        <div className="rs-mapa-cta-inner">
-          <div>
-            <p className="rs-mapa-cta-kicker">Mapa por cidade</p>
-            <h2>Quem ganhou em cada município</h2>
-            <p className="rs-mapa-cta-sub">
-              Mapa choropleth de Sergipe com vencedor por cidade, ranking
-              por região e top 5 cidades de cada candidato.
-            </p>
-          </div>
-          <Link href="/resultados/mapa" className="rs-mapa-cta-btn">
-            Ver mapa de Sergipe →
-          </Link>
-        </div>
-      </section>
-
-      {/* Ouro — apoio institucional */}
-      {patroPorCota.ouro.length > 0 && (
-        <section className="rs-patro-bloco rs-patro-ouro">
-          <div className="rs-patro-inner">
-            <p className="rs-patro-kicker">Apoio institucional</p>
-            <div className="rs-patro-logos rs-patro-ouro-logos">
-              {patroPorCota.ouro.map((p) => (
-                <LogoPatro key={p.id} patro={p} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Prata — apoiadores */}
-      {patroPorCota.prata.length > 0 && (
-        <section className="rs-patro-bloco rs-patro-prata">
-          <div className="rs-patro-inner">
-            <p className="rs-patro-kicker">Apoiadores</p>
-            <div className="rs-patro-logos rs-patro-prata-logos">
-              {patroPorCota.prata.map((p) => (
-                <LogoPatro key={p.id} patro={p} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      </main>
 
       <RodapeInstitucional />
     </>
@@ -714,23 +294,21 @@ export default async function ResultadosPublicosPage() {
 /** Logo do patrocinador clicável (se houver site_url) ou estática. */
 function LogoPatro({
   patro,
+  cota,
 }: {
-  patro: {
-    id: string
-    empresa: string
-    logo_url: string | null
-    site_url: string | null
-  }
+  patro: PatroPublico
+  cota?: 'ouro' | 'prata'
 }) {
   if (!patro.logo_url) return null
+  const cls =
+    cota === 'ouro'
+      ? 'rs-patro-img rs-patro-ouro-img'
+      : cota === 'prata'
+        ? 'rs-patro-img rs-patro-prata-img'
+        : 'rs-patro-img rs-patro-diamante-img'
   const img = (
     // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={patro.logo_url}
-      alt={patro.empresa}
-      className="rs-patro-img"
-      loading="lazy"
-    />
+    <img src={patro.logo_url} alt={patro.empresa} className={cls} loading="lazy" />
   )
   if (patro.site_url) {
     return (
@@ -789,13 +367,12 @@ function AguardandoDivulgacao({ edicao }: { edicao: EdicaoRow | null }) {
                 <strong className="text-foreground">
                   {formatarData(prevista)}
                 </strong>
-                , após registro no PesqEle do TRE/SE conforme Resolução
-                TSE 23.747/2026.
+                , após registro no PesqEle do TRE/SE conforme Resolução TSE
+                23.747/2026.
               </p>
             ) : (
               <p className="text-base text-muted-foreground leading-relaxed">
-                A pesquisa Sergipe 2026 da CDL Aracaju ainda não foi
-                divulgada.
+                A pesquisa Sergipe 2026 da CDL Aracaju ainda não foi divulgada.
               </p>
             )}
           </div>
@@ -819,33 +396,4 @@ function AguardandoDivulgacao({ edicao }: { edicao: EdicaoRow | null }) {
       <RodapeInstitucional />
     </>
   )
-}
-
-function formatarData(iso: string | null): string {
-  if (!iso) return '—'
-  return new Date(iso).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  })
-}
-
-/**
- * Margem de erro (IC 95%) usando o pior caso p=0.5: 1.96 * sqrt(0.25/n).
- *
- * Mostra o número real sempre que houver ao menos 1 respondente — o "—"
- * só aparece quando a edição ainda não recebeu nada (n=0). Com n pequeno
- * o número fica grande (ex.: n=13 → ±27pp), o que é honesto: a margem
- * cresce quando a amostra é pouca, e o painel deixa isso explícito em
- * vez de esconder atrás de um placeholder enigmático.
- *
- * Para uso estatístico rigoroso com proporções, a normalidade só vale
- * com n*p ≥ 10 e n*(1-p) ≥ 10. Para a divulgação ao público, usar a
- * fórmula mesmo com n menor é prática comum (TSE, IBOPE, Datafolha)
- * e é melhor que ocultar o número.
- */
-function calcularMargem(n: number): string {
-  if (n <= 0) return '±—'
-  const margem = (1.96 * Math.sqrt(0.25 / n) * 100).toFixed(1)
-  return `±${margem}pp`
 }

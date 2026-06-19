@@ -496,7 +496,7 @@ function ZonaCard({
 }
 
 // ---------- Detail ----------
-function Detalhe({
+export function Detalhe({
   cargo,
   onClose,
 }: {
@@ -902,7 +902,7 @@ function MetodoNota({ texto }: { texto: string }) {
   )
 }
 
-function DetalheZona({
+export function DetalheZona({
   cargo,
   onClose,
 }: {
