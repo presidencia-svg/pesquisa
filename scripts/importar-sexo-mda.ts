@@ -263,15 +263,14 @@ async function main() {
         // quando o cdl_base já tem a linha mas sem sexo/faixa. PostgREST
         // upsert default faz INSERT...ON CONFLICT DO UPDATE — exatamente
         // o que queremos. Os campos não enviados ficam intocados.
-        const { error: errUp, count } = await pesquisa
+        const { error: errUp } = await pesquisa
           .from('cdl_base')
           .upsert(chunk, { onConflict: 'cpf_hash' })
-          .select('cpf_hash', { count: 'exact', head: true })
         if (errUp) {
           console.error(`❌ Erro upsert lote:`, errUp)
           stats.erros++
         } else {
-          stats.atualizados += count ?? chunk.length
+          stats.atualizados += chunk.length
         }
       }
     } else if (dryRun) {

@@ -1,0 +1,378 @@
+/* Mapa público — mesma identidade visual do /resultados (rs-*). */
+
+.mp {
+  max-width: 1280px;
+  margin: 24px auto;
+  padding: 16px 20px 60px;
+  color: #111;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.mp-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.mp-header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mp-brand {
+  display: inline-block;
+}
+
+.mp-brand-img {
+  height: 36px;
+  width: auto;
+  display: block;
+}
+
+.mp-header-tag {
+  font-size: 13px;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+.mp-titulo {
+  margin: 16px 0 20px;
+}
+
+.mp-titulo h1 {
+  margin: 0 0 6px;
+  font-size: 24px;
+  color: #0a2a6e;
+  font-weight: 700;
+}
+
+.mp-titulo p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.mp-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.mp-tab {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #4b5563;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.mp-tab:hover {
+  border-color: #0a2a6e;
+  color: #0a2a6e;
+}
+
+.mp-tab-ativa,
+.mp-tab-ativa:hover {
+  background: #0a2a6e;
+  border-color: #0a2a6e;
+  color: #fff;
+}
+
+.mp-vazio {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  padding: 14px 18px;
+}
+
+.mp-vazio p {
+  margin: 0;
+  font-size: 13px;
+  color: #78350f;
+  line-height: 1.55;
+}
+
+.mp-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 32px;
+  margin-bottom: 36px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .mp-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mp-mapa-wrap {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.mp-svg {
+  display: block;
+  margin: 0 auto 16px;
+  max-width: 100%;
+}
+
+.mp-legenda {
+  list-style: none;
+  margin: 0;
+  padding: 12px 0 0;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mp-legenda li {
+  display: grid;
+  grid-template-columns: 16px 36px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.mp-legenda-quad {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.mp-legenda-num {
+  font-family: 'Menlo', 'Courier New', monospace;
+  font-size: 11px;
+  color: #fff;
+  background: #4b5563;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.mp-legenda-nome {
+  color: #111;
+  font-weight: 600;
+}
+
+.mp-legenda-qtd {
+  color: #6b7280;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Top cidades */
+
+.mp-top h2,
+.mp-ranking h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: #0a2a6e;
+  font-weight: 700;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.mp-top-bloco {
+  margin-bottom: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px 14px;
+  background: #fff;
+}
+
+.mp-top-bloco header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.mp-top-pin {
+  display: inline-block;
+  width: 30px;
+  text-align: center;
+  font-family: 'Menlo', 'Courier New', monospace;
+  font-size: 11px;
+  color: #fff;
+  padding: 3px 0;
+  border-radius: 3px;
+  font-weight: 700;
+}
+
+.mp-top-nome {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+}
+
+.mp-top-bloco ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 12px;
+}
+
+.mp-top-bloco li {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  gap: 6px;
+  font-size: 12px;
+  color: #4b5563;
+  align-items: baseline;
+}
+
+.mp-top-pos {
+  color: #9ca3af;
+  font-variant-numeric: tabular-nums;
+}
+
+.mp-top-cidade {
+  color: #111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mp-top-pct {
+  font-variant-numeric: tabular-nums;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+/* Ranking */
+
+.mp-ranking-regiao {
+  margin-bottom: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.mp-ranking-regiao summary {
+  cursor: pointer;
+  padding: 10px 14px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #f9fafb;
+  border-radius: 6px 6px 0 0;
+  list-style: none;
+}
+
+.mp-ranking-regiao summary::-webkit-details-marker {
+  display: none;
+}
+
+.mp-ranking-regiao summary::before {
+  content: '▶ ';
+  display: inline-block;
+  margin-right: 6px;
+  transition: transform 0.15s;
+}
+
+.mp-ranking-regiao[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.mp-ranking table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.mp-ranking thead th {
+  background: #f3f4f6;
+  text-align: left;
+  padding: 7px 10px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #4b5563;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.mp-th-n,
+.mp-th-pct {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.mp-ranking tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.mp-ranking tbody tr:last-child {
+  border-bottom: none;
+}
+
+.mp-ranking tbody td {
+  padding: 7px 10px;
+  vertical-align: middle;
+}
+
+.mp-td-n,
+.mp-td-pct {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.mp-td-n {
+  color: #6b7280;
+}
+
+.mp-td-pct {
+  font-weight: 600;
+}
+
+.mp-td-num {
+  display: inline-block;
+  font-family: 'Menlo', 'Courier New', monospace;
+  font-size: 10px;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-right: 6px;
+  font-weight: 700;
+}
+
+.mp-td-partido {
+  color: #6b7280;
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+.mp-nota {
+  margin-top: 32px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.mp-nota a {
+  color: #0a2a6e;
+  font-weight: 600;
+}

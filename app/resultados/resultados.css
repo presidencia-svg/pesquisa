@@ -596,3 +596,72 @@
     gap: 24px;
   }
 }
+
+/* ====== CTA mapa por cidade ====== */
+
+.rs-mapa-cta {
+  background: linear-gradient(135deg, #0a2a6e 0%, #1d3a8a 100%);
+  color: #fff;
+  margin: 32px 0;
+}
+
+.rs-mapa-cta-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+@media (min-width: 700px) {
+  .rs-mapa-cta-inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+  }
+}
+
+.rs-mapa-cta-kicker {
+  margin: 0 0 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #93c5fd;
+  font-weight: 700;
+}
+
+.rs-mapa-cta h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.rs-mapa-cta-sub {
+  margin: 0;
+  font-size: 14px;
+  color: #cbd5e1;
+  max-width: 540px;
+  line-height: 1.5;
+}
+
+.rs-mapa-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 24px;
+  border-radius: 6px;
+  background: #fff;
+  color: #0a2a6e;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+
+.rs-mapa-cta-btn:hover {
+  opacity: 0.9;
+}

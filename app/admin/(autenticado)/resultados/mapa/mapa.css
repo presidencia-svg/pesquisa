@@ -1,0 +1,377 @@
+.mapa {
+  max-width: 1280px;
+  margin: 24px auto;
+  padding: 24px 32px 80px;
+  background: #fff;
+  color: #111;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.mapa-msg {
+  max-width: 600px;
+  margin: 80px auto;
+  padding: 32px;
+  text-align: center;
+}
+
+/* ====== Header ====== */
+
+.mapa-header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-bottom: 2px solid #0a2a6e;
+  padding-bottom: 16px;
+  margin-bottom: 28px;
+}
+
+.mapa-header h1 {
+  margin: 0 0 4px;
+  font-size: 24px;
+  color: #0a2a6e;
+  font-weight: 700;
+}
+
+.mapa-edicao {
+  margin: 0;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.mapa-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.mapa-tab {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.mapa-tab:hover {
+  border-color: #0a2a6e;
+  color: #0a2a6e;
+}
+
+.mapa-tab-ativa,
+.mapa-tab-ativa:hover {
+  background: #0a2a6e;
+  border-color: #0a2a6e;
+  color: #fff;
+}
+
+/* ====== Análise rápida ====== */
+
+.mapa-analise {
+  background: #ecfeff;
+  border: 1px solid #67e8f9;
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+}
+
+.mapa-analise-titulo {
+  margin: 0 0 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #0e7490;
+  font-weight: 700;
+}
+
+.mapa-analise ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  color: #155e75;
+  line-height: 1.55;
+}
+
+.mapa-analise li {
+  margin: 3px 0;
+}
+
+/* ====== Aviso vazio ====== */
+
+.mapa-vazio {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  padding: 16px 20px;
+}
+
+.mapa-vazio p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #78350f;
+  line-height: 1.55;
+}
+
+.mapa-vazio p:last-child {
+  margin-bottom: 0;
+}
+
+/* ====== Grid mapa + top cidades ====== */
+
+.mapa-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 36px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .mapa-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mapa-grid-mapa {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.mapa-svg {
+  display: block;
+  margin: 0 auto 16px;
+  max-width: 100%;
+}
+
+.mapa-grid-side {
+  min-width: 0;
+}
+
+/* ====== Legenda ====== */
+
+.mapa-legenda {
+  list-style: none;
+  margin: 0;
+  padding: 12px 0 0;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mapa-legenda li {
+  display: grid;
+  grid-template-columns: 16px 36px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.mapa-legenda-quad {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.mapa-legenda-num {
+  font-family: 'Menlo', 'Courier New', monospace;
+  font-size: 11px;
+  color: #fff;
+  background: #4b5563;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.mapa-legenda-nome {
+  color: #111;
+  font-weight: 600;
+}
+
+.mapa-legenda-qtd {
+  color: #6b7280;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ====== Top cidades por candidato ====== */
+
+.mapa-top h2,
+.mapa-ranking h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: #0a2a6e;
+  font-weight: 700;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.mapa-top-bloco {
+  margin-bottom: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px 14px;
+  background: #fff;
+}
+
+.mapa-top-bloco header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.mapa-top-pin {
+  display: inline-block;
+  width: 28px;
+  text-align: center;
+  font-family: 'Menlo', 'Courier New', monospace;
+  font-size: 11px;
+  color: #fff;
+  padding: 3px 0;
+  border-radius: 3px;
+  font-weight: 700;
+}
+
+.mapa-top-nome {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+}
+
+.mapa-top-bloco ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 12px;
+}
+
+.mapa-top-bloco li {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  gap: 6px;
+  font-size: 12px;
+  color: #4b5563;
+  align-items: baseline;
+}
+
+.mapa-top-pos {
+  color: #9ca3af;
+  font-variant-numeric: tabular-nums;
+}
+
+.mapa-top-cidade {
+  color: #111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mapa-top-pct {
+  font-variant-numeric: tabular-nums;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+/* ====== Ranking por município ====== */
+
+.mapa-ranking-hint {
+  margin: 0 0 18px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.mapa-ranking-regiao {
+  margin-bottom: 28px;
+  page-break-inside: avoid;
+}
+
+.mapa-ranking-regiao h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mapa-ranking table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mapa-ranking thead th {
+  background: #f9fafb;
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #4b5563;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.mapa-th-n,
+.mapa-th-pct {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.mapa-ranking tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.mapa-ranking tbody tr:last-child {
+  border-bottom: none;
+}
+
+.mapa-ranking tbody td {
+  padding: 8px 10px;
+  vertical-align: middle;
+}
+
+.mapa-td-n,
+.mapa-td-pct {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.mapa-td-n {
+  color: #6b7280;
+}
+
+.mapa-td-pct {
+  font-weight: 600;
+}
+
+.mapa-td-num {
+  display: inline-block;
+  font-family: 'Menlo', 'Courier New', monospace;
+  font-size: 10px;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-right: 6px;
+  font-weight: 700;
+}
+
+.mapa-td-partido {
+  color: #6b7280;
+  font-size: 11px;
+  margin-left: 4px;
+}

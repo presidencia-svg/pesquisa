@@ -662,6 +662,22 @@ export default async function ResultadosPublicosPage() {
 
       <ResultadosDashboard pesquisa={pesquisa} />
 
+      <section className="rs-mapa-cta">
+        <div className="rs-mapa-cta-inner">
+          <div>
+            <p className="rs-mapa-cta-kicker">Mapa por cidade</p>
+            <h2>Quem ganhou em cada município</h2>
+            <p className="rs-mapa-cta-sub">
+              Mapa choropleth de Sergipe com vencedor por cidade, ranking
+              por região e top 5 cidades de cada candidato.
+            </p>
+          </div>
+          <Link href="/resultados/mapa" className="rs-mapa-cta-btn">
+            Ver mapa de Sergipe →
+          </Link>
+        </div>
+      </section>
+
       {/* Ouro — apoio institucional */}
       {patroPorCota.ouro.length > 0 && (
         <section className="rs-patro-bloco rs-patro-ouro">
