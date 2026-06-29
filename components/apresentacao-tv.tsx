@@ -389,14 +389,14 @@ const CSS = `
 .apres-root *{box-sizing:border-box;}
 @keyframes apresPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.8);}}
 .apres-stage{flex:none;width:1920px;height:1080px;transform-origin:center center;position:relative;display:flex;background:radial-gradient(140% 100% at 15% 0%,#14245e 0%,#0a1741 45%,#06112f 100%);color:#eaf0ff;font-family:'Public Sans',sans-serif;overflow:hidden;}
-.apres-content{flex:1;min-width:0;display:flex;flex-direction:column;padding:48px 56px 40px;}
+.apres-content{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;padding:48px 56px 40px;}
 .apres-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
 .apres-head-brand{display:flex;align-items:center;gap:14px;}
 .apres-mono{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#3d6fe5,#274bb8);display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:900;font-size:18px;color:#fff;}
 .apres-brandtxt{font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;letter-spacing:.22em;color:#aebce6;}
 .apres-live{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);padding:9px 16px;border-radius:100px;font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;letter-spacing:.16em;color:#eaf0ff;}
 .apres-dot{width:9px;height:9px;border-radius:50%;background:#ff5b5b;animation:apresPulse 1.4s ease-in-out infinite;}
-.apres-fill{flex:1;display:flex;flex-direction:column;}
+.apres-fill{flex:1;min-height:0;display:flex;flex-direction:column;}
 .apres-spacer{flex:1;}
 .apres-kicker{font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;letter-spacing:.26em;color:#6f8fe0;margin-bottom:10px;}
 .apres-h1{font-family:'Archivo',sans-serif;font-weight:900;font-size:84px;line-height:.96;letter-spacing:-.02em;margin:0;color:#fff;}
