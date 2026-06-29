@@ -344,12 +344,18 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
               <>
                 <div className="apres-rail-label">APOIO</div>
                 <div className="apres-tier-logos apres-tier-logos-apoio">
-                  {data.apoio.map((s) => (
-                    <div key={s.empresa} className="apres-tier-card apres-tier-prata">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={s.logoUrl} alt={s.empresa} />
-                    </div>
-                  ))}
+                  {data.apoio.map((s) => {
+                    const largo = /valor|igu/i.test(s.empresa)
+                    return (
+                      <div
+                        key={s.empresa}
+                        className={`apres-tier-card apres-tier-prata${largo ? ' apres-tier-largo' : ''}`}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={s.logoUrl} alt={s.empresa} />
+                      </div>
+                    )
+                  })}
                 </div>
               </>
             )}
@@ -458,6 +464,7 @@ const CSS = `
 .apres-tier-card{background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .apres-tier-ouro{height:92px;flex:1 1 100%;width:100%;padding:12px 16px;}
 .apres-tier-largo img{max-width:150px;}
+.apres-tier-prata.apres-tier-largo img{max-width:96px;}
 .apres-tier-prata{height:48px;flex:1 1 calc(33.33% - 6px);min-width:calc(33.33% - 6px);padding:7px;}
 .apres-tier-card img{max-width:100%;max-height:100%;object-fit:contain;display:block;}
 .apres-tier-logos-apoio .apres-tier-prata{opacity:.95;}
