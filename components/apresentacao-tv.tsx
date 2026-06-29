@@ -321,12 +321,20 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
               <>
                 <div className="apres-rail-label">PATROCÍNIO</div>
                 <div className="apres-tier-logos">
-                  {data.patrocinio.map((s) => (
-                    <div key={s.empresa} className="apres-tier-card apres-tier-ouro">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={s.logoUrl} alt={s.empresa} />
-                    </div>
-                  ))}
+                  {data.patrocinio.map((s) => {
+                    // Logos muito largos (ex: Valor) ganham cap de largura
+                    // pra ficarem na mesma largura visual dos mais "quadrados".
+                    const largo = /valor/i.test(s.empresa)
+                    return (
+                      <div
+                        key={s.empresa}
+                        className={`apres-tier-card apres-tier-ouro${largo ? ' apres-tier-largo' : ''}`}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={s.logoUrl} alt={s.empresa} />
+                      </div>
+                    )
+                  })}
                 </div>
               </>
             )}
@@ -448,6 +456,7 @@ const CSS = `
 .apres-tier-logos{margin-top:10px;display:flex;flex-wrap:wrap;gap:9px;}
 .apres-tier-card{background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .apres-tier-ouro{height:92px;flex:1 1 100%;width:100%;padding:12px 16px;}
+.apres-tier-largo img{max-width:150px;}
 .apres-tier-prata{height:48px;flex:1 1 calc(33.33% - 6px);min-width:calc(33.33% - 6px);padding:7px;}
 .apres-tier-card img{max-width:100%;max-height:100%;object-fit:contain;display:block;}
 .apres-tier-logos-apoio .apres-tier-prata{opacity:.95;}
