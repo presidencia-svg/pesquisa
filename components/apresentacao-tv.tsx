@@ -438,25 +438,25 @@ const CSS = `
 .apres-destaque-t{font-size:19px;color:#fff;margin-top:3px;}
 .apres-footnote{font-size:13px;color:#6f80ac;margin-top:12px;}
 /* rail */
-.apres-rail{flex:none;width:460px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border-left:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;}
+.apres-rail{flex:none;width:372px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border-left:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;}
 .apres-rail-accent{height:6px;background:linear-gradient(90deg,#f4b62c,#ffd877);}
-.apres-rail-inner{padding:34px 38px 30px;display:flex;flex-direction:column;height:100%;}
-.apres-rail-label{font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;letter-spacing:.22em;color:#7f93c7;margin-top:24px;}
-.apres-rail-label-of{margin-top:0;color:#f4b62c;font-size:14px;letter-spacing:.24em;}
-.apres-of-card{margin-top:14px;background:#fff;border-radius:16px;padding:24px 22px;box-shadow:0 12px 30px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;gap:18px;height:170px;}
-.apres-of-logo{max-width:100%;max-height:120px;object-fit:contain;display:block;}
-.apres-tier-logos{margin-top:12px;display:flex;flex-wrap:wrap;gap:10px;}
-.apres-tier-card{background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.apres-tier-ouro{height:138px;flex:1 1 100%;width:100%;padding:16px 22px;}
-.apres-tier-prata{height:54px;flex:1 1 calc(33.33% - 7px);min-width:calc(33.33% - 7px);padding:8px;}
+.apres-rail-inner{padding:28px 30px 24px;display:flex;flex-direction:column;height:100%;}
+.apres-rail-label{font-family:'Archivo',sans-serif;font-weight:800;font-size:12px;letter-spacing:.2em;color:#7f93c7;margin-top:18px;}
+.apres-rail-label-of{margin-top:0;color:#f4b62c;font-size:13px;letter-spacing:.24em;}
+.apres-of-card{margin-top:12px;background:#fff;border-radius:14px;padding:18px 18px;box-shadow:0 10px 26px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;gap:14px;height:128px;}
+.apres-of-logo{max-width:100%;max-height:88px;object-fit:contain;display:block;}
+.apres-tier-logos{margin-top:10px;display:flex;flex-wrap:wrap;gap:9px;}
+.apres-tier-card{background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.apres-tier-ouro{height:92px;flex:1 1 100%;width:100%;padding:12px 16px;}
+.apres-tier-prata{height:48px;flex:1 1 calc(33.33% - 6px);min-width:calc(33.33% - 6px);padding:7px;}
 .apres-tier-card img{max-width:100%;max-height:100%;object-fit:contain;display:block;}
 .apres-tier-logos-apoio .apres-tier-prata{opacity:.95;}
-.apres-assinatura-label{font-family:'Archivo',sans-serif;font-weight:700;font-size:12px;letter-spacing:.2em;color:#7f93c7;margin-bottom:12px;}
-.apres-assinatura{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.apres-assina-card{border-radius:10px;height:84px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.apres-assina-cdl{background:#fff;padding:12px 14px;}
-.apres-assina-tv{background:#fff;padding:8px 12px;}
+.apres-assinatura-label{font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;letter-spacing:.2em;color:#7f93c7;margin-bottom:10px;}
+.apres-assinatura{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.apres-assina-card{border-radius:9px;height:64px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.apres-assina-cdl{background:#fff;padding:9px 11px;}
+.apres-assina-tv{background:#fff;padding:6px 10px;}
 .apres-assina-card img{max-width:100%;max-height:100%;object-fit:contain;display:block;}
-.apres-pesqele{margin-top:16px;font-size:12.5px;color:#7f8fbb;line-height:1.5;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px;}
+.apres-pesqele{margin-top:12px;font-size:11.5px;color:#7f8fbb;line-height:1.45;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:10px 12px;}
 .apres-pesqele b{color:#aebce6;}
 `
