@@ -427,7 +427,7 @@ const CSS = `
 .apres-of-logo{max-width:100%;max-height:120px;object-fit:contain;display:block;}
 .apres-tier-logos{margin-top:12px;display:flex;flex-wrap:wrap;gap:10px;}
 .apres-tier-card{background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.apres-tier-ouro{height:74px;flex:1 1 calc(50% - 5px);min-width:calc(50% - 5px);padding:10px 12px;}
+.apres-tier-ouro{height:138px;flex:1 1 100%;width:100%;padding:16px 22px;}
 .apres-tier-prata{height:54px;flex:1 1 calc(33.33% - 7px);min-width:calc(33.33% - 7px);padding:8px;}
 .apres-tier-card img{max-width:100%;max-height:100%;object-fit:contain;display:block;}
 .apres-tier-logos-apoio .apres-tier-prata{opacity:.95;}
