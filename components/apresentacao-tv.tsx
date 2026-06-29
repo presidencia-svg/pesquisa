@@ -322,9 +322,10 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
                 <div className="apres-rail-label">PATROCÍNIO</div>
                 <div className="apres-tier-logos">
                   {data.patrocinio.map((s) => {
-                    // Logos muito largos (ex: Valor) ganham cap de largura
-                    // pra ficarem na mesma largura visual dos mais "quadrados".
-                    const largo = /valor/i.test(s.empresa)
+                    // Logos muito largos (ex: Valor, Iguá) ganham cap de
+                    // largura pra ficarem na mesma largura visual dos mais
+                    // "quadrados" (Celi, Maratá).
+                    const largo = /valor|igu/i.test(s.empresa)
                     return (
                       <div
                         key={s.empresa}
