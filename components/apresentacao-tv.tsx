@@ -435,7 +435,7 @@ const CSS = `
 .apres-assinatura{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .apres-assina-card{border-radius:10px;height:84px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .apres-assina-cdl{background:#fff;padding:12px 14px;}
-.apres-assina-tv{background:#1130b5;padding:0;}
+.apres-assina-tv{background:#fff;padding:8px 12px;}
 .apres-assina-card img{max-width:100%;max-height:100%;object-fit:contain;display:block;}
 .apres-pesqele{margin-top:16px;font-size:12.5px;color:#7f8fbb;line-height:1.5;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px;}
 .apres-pesqele b{color:#aebce6;}
