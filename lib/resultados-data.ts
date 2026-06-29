@@ -15,7 +15,6 @@ import type {
   Candidato,
   CargoCandidato,
   CargoZona,
-  LegendaPartido,
   Pesquisa,
 } from '@/components/resultados-dashboard'
 import { projetarCadeiras, type PartidoVotos } from '@/lib/projecao'
@@ -499,27 +498,11 @@ export async function carregarResultados(
     ) {
       return null
     }
-    // Ranking por partido (legenda) — habilita o modo "por federação".
-    const legendas: LegendaPartido[] = projecao.partidos
-      .map((p) => ({
-        partidoId: p.partidoId,
-        numero: p.numero,
-        sigla: p.sigla,
-        nome: p.nome,
-        cor: p.corHex ?? '#52525b',
-        votos: p.votos,
-        pct: p.pctValidos,
-        cadeiras: p.cadeirasTotal,
-      }))
-      .filter((l) => l.votos > 0)
-      .sort((a, b) => b.votos - a.votos)
-
     return {
       titulo: cargoKey === 'federal' ? 'Deputado Federal' : 'Deputado Estadual',
       regra: REGRA[cargoKey],
       vagas: VAGAS[cargoKey],
       candidatos,
-      legendas,
       branco: bns.branco,
       nao_sabe: bns.nao_sabe,
     }

@@ -17,7 +17,6 @@ import {
   type ApresSponsor,
 } from '@/components/apresentacao-tv'
 import { registrarAcessoAdmin } from '@/lib/admin-audit'
-import { agruparEmFederacoes } from '@/lib/federacoes'
 import {
   carregarResultados,
   type PatroPublico,
@@ -53,125 +52,46 @@ function curiosidade(cands: ApresRow[], marginPP: number): string {
   return `Empate técnico no topo — ${a.name} e ${b.name} separados por apenas ${f(diff)} pontos.`
 }
 
-/** Entrada genérica de uma barra antes de virar ApresRow. */
-type Entrada = { name: string; num?: string; party?: string; votos: number; color: string }
-
-/** Monta as ApresRow: top N + "Outros" + Brancos + Indecisos. */
-function montaRows(
-  entradas: Entrada[],
-  topN: number,
-  total: number,
-  branco: number,
-  naoSabe: number,
-): ApresRow[] {
-  const ord = [...entradas].sort((a, b) => b.votos - a.votos)
-  const top = ord.slice(0, topN)
-  const restoVotos = ord.slice(topN).reduce((s, e) => s + e.votos, 0)
-  const rows: ApresRow[] = top.map((e) => ({
-    name: e.name,
-    num: e.num,
-    party: e.party || undefined,
-    pct: total > 0 ? (e.votos / total) * 100 : 0,
-    color: e.color || '#2F6FE0',
-  }))
-  if (restoVotos > 0) {
-    rows.push({ name: 'Outros', pct: (restoVotos / total) * 100, other: true })
-  }
-  if (branco > 0) {
-    rows.push({ name: 'Brancos / Nulos', pct: (branco / total) * 100, other: true })
-  }
-  if (naoSabe > 0) {
-    rows.push({ name: 'Indecisos', pct: (naoSabe / total) * 100, other: true })
-  }
-  return rows
-}
-
 function montaCargo(
   meta: { key: string; num: string; label: string; sub: string; top: number },
   cargo: CargoCandidato,
   marginPP: number,
 ): ApresCargo | null {
-  // ----- Deputado: por partido (legenda) com alternância pra federação -----
-  if (cargo.legendas && cargo.legendas.length > 0) {
-    const totalLeg =
-      cargo.legendas.reduce((s, l) => s + l.votos, 0) + cargo.branco + cargo.nao_sabe
-    if (totalLeg === 0) return null
-
-    // Por partido
-    const rows = montaRows(
-      cargo.legendas.map((l) => ({
-        name: l.sigla,
-        num: String(l.numero),
-        votos: l.votos,
-        color: l.cor,
-      })),
-      meta.top,
-      totalLeg,
-      cargo.branco,
-      cargo.nao_sabe,
-    )
-
-    // Por federação 2026
-    const grupos = agruparEmFederacoes(
-      cargo.legendas.map((l) => ({
-        sigla: l.sigla,
-        nome: l.nome,
-        cor: l.cor,
-        votos: l.votos,
-        cadeiras: l.cadeiras,
-      })),
-    )
-    const rowsFederacao = montaRows(
-      grupos.map((g) => ({
-        name: g.label,
-        party: g.isFederacao ? g.membros.join(' + ') : undefined,
-        votos: g.votos,
-        color: g.cor,
-      })),
-      meta.top,
-      totalLeg,
-      cargo.branco,
-      cargo.nao_sabe,
-    )
-
-    return {
-      id: meta.key,
-      num: meta.num,
-      label: meta.label,
-      subtitle: meta.sub,
-      curiosity: curiosidade(rows.filter((r) => !r.other), marginPP),
-      curiosityFederacao: curiosidade(rowsFederacao.filter((r) => !r.other), marginPP),
-      rows,
-      rowsFederacao,
-    }
-  }
-
-  // ----- Pres/Gov/Sen: por candidato -----
   const validos = cargo.candidatos.reduce((s, c) => s + c.votos, 0)
   const total = validos + cargo.branco + cargo.nao_sabe
   if (total === 0) return null
 
-  const candRows = montaRows(
-    cargo.candidatos.map((c) => ({
-      name: c.nome,
-      num: String(c.numero),
-      party: c.partido || undefined,
-      votos: c.votos,
-      color: c.cor || '#2F6FE0',
-    })),
-    meta.top,
-    total,
-    cargo.branco,
-    cargo.nao_sabe,
-  )
+  const ordenados = [...cargo.candidatos].sort((a, b) => b.votos - a.votos)
+  const topN = ordenados.slice(0, meta.top)
+  const resto = ordenados.slice(meta.top)
+  const restoVotos = resto.reduce((s, c) => s + c.votos, 0)
+
+  const candRows: ApresRow[] = topN.map((c) => ({
+    name: c.nome,
+    party: c.partido || undefined,
+    num: String(c.numero),
+    pct: total > 0 ? (c.votos / total) * 100 : 0,
+    color: c.cor || '#2F6FE0',
+  }))
+
+  const rows: ApresRow[] = [...candRows]
+  if (restoVotos > 0) {
+    rows.push({ name: 'Outros', pct: (restoVotos / total) * 100, other: true })
+  }
+  if (cargo.branco > 0) {
+    rows.push({ name: 'Brancos / Nulos', pct: (cargo.branco / total) * 100, other: true })
+  }
+  if (cargo.nao_sabe > 0) {
+    rows.push({ name: 'Indecisos', pct: (cargo.nao_sabe / total) * 100, other: true })
+  }
 
   return {
     id: meta.key,
     num: meta.num,
     label: meta.label,
     subtitle: meta.sub,
-    curiosity: curiosidade(candRows.filter((r) => !r.other), marginPP),
-    rows: candRows,
+    curiosity: curiosidade(candRows, marginPP),
+    rows,
   }
 }
 
