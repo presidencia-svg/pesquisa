@@ -37,7 +37,6 @@ const COTAS = [
     cor: 'rgb(202, 138, 4)', // amarelo institucional
     beneficios: [
       'Logo em destaque na página pública /resultados durante e após divulgação',
-      'Menção institucional no telejornal da TV Atalaia (3 de setembro de 2026) como "apoio institucional"',
       'Relatório premium com cortes demográficos × voto (gênero, idade, escolaridade, renda, município)',
       'Direito de uso da marca "Patrocinador Pesquisa Sergipe 2026 – CDL Aracaju" em comunicação institucional',
       'Reunião de apresentação dos resultados com o Presidente da CDL e o estatístico responsável',

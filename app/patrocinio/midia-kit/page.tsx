@@ -35,7 +35,6 @@ const COTAS = [
     cor: '#ca8a04',
     beneficios: [
       'Logo em destaque na página /resultados',
-      'Menção institucional no telejornal da TV Atalaia (3/set/2026)',
       'Relatório premium com cortes demográficos × voto',
       'Reunião de apresentação com Presidente CDL e estatístico',
       'Marca "Patrocinador Pesquisa Sergipe 2026"',
