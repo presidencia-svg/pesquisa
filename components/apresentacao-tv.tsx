@@ -33,6 +33,10 @@ export type ApresCargo = {
   curiosity: string
   extra?: boolean
   rows: ApresRow[]
+  /** Só deputado: barras agrupadas nas federações de 2026 (modo alternativo) */
+  rowsFederacao?: ApresRow[]
+  /** Curiosidade específica do modo federação */
+  curiosityFederacao?: string
 }
 
 export type ApresSponsor = { empresa: string; logoUrl: string }
@@ -70,6 +74,8 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
   const [view, setView] = useState<string>('hub')
   const [grown, setGrown] = useState(true)
   const [scale, setScale] = useState(1)
+  // Deputado: alterna entre barras por partido (false) e por federação (true)
+  const [modoFed, setModoFed] = useState(false)
   const tRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Escala o palco 1920×1080 pra caber na viewport (modo TV/kiosk)
@@ -95,6 +101,7 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
   const openCargo = (id: string) => {
     if (tRef.current) clearTimeout(tRef.current)
     setView(id)
+    setModoFed(false) // sempre abre no modo "por votos"
     setGrown(false)
     tRef.current = setTimeout(() => setGrown(true), 60)
   }
@@ -103,16 +110,35 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
     setView('hub')
     setGrown(true)
   }
+  // Anima as barras de novo ao trocar de modo (votos ↔ federação)
+  const trocaModo = (fed: boolean) => {
+    if (fed === modoFed) return
+    if (tRef.current) clearTimeout(tRef.current)
+    setModoFed(fed)
+    setGrown(false)
+    tRef.current = setTimeout(() => setGrown(true), 60)
+  }
+
+  // deputado tem o modo federação disponível?
+  const podeFed = !!(cur && cur.rowsFederacao && cur.rowsFederacao.length > 0)
+  const usandoFed = podeFed && modoFed
+  // linhas ativas conforme o modo
+  const linhas = useMemo(
+    () => (usandoFed ? cur!.rowsFederacao! : cur?.rows ?? []),
+    [cur, usandoFed],
+  )
+  const curiosityAtual =
+    usandoFed && cur?.curiosityFederacao ? cur.curiosityFederacao : cur?.curiosity ?? ''
 
   // barras do cargo aberto
   const bars = useMemo(() => {
     if (!cur) return []
-    const cands = cur.rows.filter((r) => !r.other)
+    const cands = linhas.filter((r) => !r.other)
     const maxPct = Math.max(...cands.map((r) => r.pct), 1)
     const topPct = cands.length ? Math.max(...cands.map((r) => r.pct)) : 0
     let leaderFound = false
     let ci = 0 // posição entre candidatos (pra cor verde→amarelo)
-    return cur.rows.map((r) => {
+    return linhas.map((r) => {
       const isLeader =
         !r.other && !cur.extra && !leaderFound && r.pct === topPct
       if (isLeader) leaderFound = true
@@ -134,7 +160,7 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
         isLeader,
       }
     })
-  }, [cur, grown])
+  }, [cur, linhas, grown])
 
   return (
     <div className="apres-root">
@@ -251,6 +277,24 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
                     {cur.subtitle} · Amostra {data.amostra} · Margem {data.margem}
                   </div>
                 </div>
+                {podeFed && (
+                  <div className="apres-toggle">
+                    <button
+                      type="button"
+                      className={!modoFed ? 'apres-toggle-on' : ''}
+                      onClick={() => trocaModo(false)}
+                    >
+                      Por partido
+                    </button>
+                    <button
+                      type="button"
+                      className={modoFed ? 'apres-toggle-on' : ''}
+                      onClick={() => trocaModo(true)}
+                    >
+                      Por federação
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="apres-bars">
@@ -282,12 +326,12 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
                 ))}
               </div>
 
-              {cur.curiosity && (
+              {curiosityAtual && (
                 <div className="apres-destaque">
                   <div className="apres-destaque-ic">!</div>
                   <div>
                     <div className="apres-destaque-l">DESTAQUE DA DISPUTA</div>
-                    <div className="apres-destaque-t">{cur.curiosity}</div>
+                    <div className="apres-destaque-t">{curiosityAtual}</div>
                   </div>
                 </div>
               )}
@@ -435,6 +479,10 @@ const CSS = `
 .apres-result-num{flex:none;width:58px;height:58px;border-radius:14px;background:linear-gradient(135deg,#3d6fe5,#274bb8);display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:900;font-size:26px;color:#fff;}
 .apres-result-h1{font-family:'Archivo',sans-serif;font-weight:900;font-size:54px;line-height:1;letter-spacing:-.01em;margin:0;color:#fff;}
 .apres-result-sub{font-size:17px;color:#9fb0d8;margin-top:6px;}
+.apres-toggle{margin-left:auto;display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:100px;padding:4px;gap:4px;}
+.apres-toggle button{font-family:'Archivo',sans-serif;font-weight:800;font-size:15px;letter-spacing:.04em;color:#9fb0d8;background:transparent;border:none;padding:9px 20px;border-radius:100px;cursor:pointer;transition:all .15s;}
+.apres-toggle button:hover{color:#eaf0ff;}
+.apres-toggle .apres-toggle-on{background:linear-gradient(135deg,#1aa34e,#0f7a37);color:#fff;box-shadow:0 4px 14px rgba(15,122,55,.4);}
 .apres-bars{margin-top:26px;display:flex;flex-direction:column;gap:16px;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:14px;}
 .apres-bars::-webkit-scrollbar{width:10px;}
 .apres-bars::-webkit-scrollbar-track{background:rgba(255,255,255,.05);border-radius:5px;}

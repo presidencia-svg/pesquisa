@@ -62,11 +62,28 @@ export type RegiaoResultadoLeve = {
   liderPct: number
 }
 
+/** Voto agregado por partido (legenda), só para cargos proporcionais (fed/est). */
+export type LegendaPartido = {
+  partidoId: string
+  numero: number
+  sigla: string
+  nome: string
+  cor: string
+  /** Votos de legenda (define cadeiras via Quociente Eleitoral) */
+  votos: number
+  /** % sobre o total de votos válidos do cargo */
+  pct: number
+  /** Cadeiras projetadas para o partido (D'Hondt) */
+  cadeiras: number
+}
+
 export type CargoCandidato = {
   titulo: string
   vagas?: number
   regra: string
   candidatos: Candidato[]
+  /** Só fed/est: ranking por partido (legenda). Habilita o modo "por federação". */
+  legendas?: LegendaPartido[]
   branco: number
   nao_sabe: number
   regional?: RegiaoResultadoLeve[]
