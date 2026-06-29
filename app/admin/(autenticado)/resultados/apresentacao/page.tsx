@@ -72,6 +72,7 @@ function montaCargo(
     num: String(c.numero),
     pct: total > 0 ? (c.votos / total) * 100 : 0,
     color: c.cor || '#2F6FE0',
+    eleito: c.eleito,
   }))
 
   const rows: ApresRow[] = [...candRows]
@@ -85,6 +86,24 @@ function montaCargo(
     rows.push({ name: 'Indecisos', pct: (cargo.nao_sabe / total) * 100, other: true })
   }
 
+  // Deputado: lista dos candidatos ELEITOS pela projeção (D'Hondt). Como
+  // a vaga vem do quociente do partido, o eleito nem sempre é o mais votado
+  // — por isso vale uma visão separada de "quem leva a cadeira".
+  const ehDeputado = meta.key === 'federal' || meta.key === 'estadual'
+  let rowsEleitos: ApresRow[] | undefined
+  if (ehDeputado) {
+    rowsEleitos = ordenados
+      .filter((c) => c.eleito)
+      .map((c) => ({
+        name: c.nome,
+        party: c.partido || undefined,
+        num: String(c.numero),
+        pct: total > 0 ? (c.votos / total) * 100 : 0,
+        color: c.cor || '#2F6FE0',
+        eleito: true,
+      }))
+  }
+
   return {
     id: meta.key,
     num: meta.num,
@@ -92,6 +111,7 @@ function montaCargo(
     subtitle: meta.sub,
     curiosity: curiosidade(candRows, marginPP),
     rows,
+    rowsEleitos,
   }
 }
 
