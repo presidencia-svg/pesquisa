@@ -1,6 +1,8 @@
 import Link from 'next/link'
 
+import { ToggleAbas } from '@/components/toggle-abas'
 import { registrarAcessoAdmin } from '@/lib/admin-audit'
+import { agruparEmFederacoes } from '@/lib/federacoes'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export const metadata = { title: 'Resultados · Admin' }
@@ -343,14 +345,28 @@ export default async function ResultadosPage() {
       ))}
 
       {cargosLegenda.map((cargo) => (
-        <SecaoLegendas
+        <ToggleAbas
           key={cargo}
-          cargo={cargo}
-          titulo={ROTULO_CARGO[cargo]}
-          linhas={porLegenda[cargo] ?? []}
-          candidatosPorPartido={candidatosPorPartido}
-          branco={brancoNaoSei[cargo]?.branco ?? 0}
-          naoSabe={brancoNaoSei[cargo]?.nao_sabe ?? 0}
+          labelA="Por partido"
+          labelB="Por federação"
+          slotA={
+            <SecaoLegendas
+              cargo={cargo}
+              titulo={ROTULO_CARGO[cargo]}
+              linhas={porLegenda[cargo] ?? []}
+              candidatosPorPartido={candidatosPorPartido}
+              branco={brancoNaoSei[cargo]?.branco ?? 0}
+              naoSabe={brancoNaoSei[cargo]?.nao_sabe ?? 0}
+            />
+          }
+          slotB={
+            <SecaoLegendaFederacao
+              titulo={ROTULO_CARGO[cargo]}
+              linhas={porLegenda[cargo] ?? []}
+              branco={brancoNaoSei[cargo]?.branco ?? 0}
+              naoSabe={brancoNaoSei[cargo]?.nao_sabe ?? 0}
+            />
+          }
         />
       ))}
 
@@ -543,6 +559,109 @@ function SecaoLegendas({
               )}
               {naoSabe > 0 && (
                 <LinhaSimples rotulo="Não sabe / não quis responder" votos={naoSabe} total={total} />
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </section>
+  )
+}
+
+function SecaoLegendaFederacao({
+  titulo,
+  linhas,
+  branco,
+  naoSabe,
+}: {
+  titulo: string
+  linhas: LegendaLinha[]
+  branco: number
+  naoSabe: number
+}) {
+  const totalNum = linhas.reduce((acc, l) => acc + l.votos, 0)
+  const total = totalNum + branco + naoSabe
+  const grupos = agruparEmFederacoes(
+    linhas.map((l) => ({
+      sigla: l.sigla,
+      nome: l.nome,
+      cor: l.cor_hex ?? '#52525b',
+      votos: l.votos,
+    })),
+  )
+  const tituloFed = titulo.replace('por legenda', 'por federação')
+  return (
+    <section className="flex flex-col gap-2">
+      <h2 className="text-sm font-semibold uppercase tracking-wide">
+        {tituloFed}{' '}
+        <span className="text-muted-foreground tabular-nums">
+          ({total.toLocaleString('pt-BR')})
+        </span>
+      </h2>
+      <p className="text-xs text-muted-foreground italic">
+        Partidos agrupados nas federações partidárias de 2026 (Lei 14.208/2021).
+        A federação atua como um único partido na distribuição de cadeiras.
+      </p>
+      {total === 0 ? (
+        <p className="text-xs text-muted-foreground italic px-3 py-2">
+          Nenhum voto ainda neste cargo.
+        </p>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {grupos.map((g, i) => {
+            const pct = total === 0 ? 0 : (g.votos / total) * 100
+            return (
+              <div
+                key={g.id}
+                className="rounded-md border border-border bg-background px-4 py-3 flex items-center gap-4"
+              >
+                <div
+                  className="w-10 h-10 rounded-md flex items-center justify-center text-xs font-bold text-white tabular-nums flex-none"
+                  style={{ background: g.cor }}
+                >
+                  {i + 1}º
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <p className="text-sm font-semibold truncate">
+                      {g.label}
+                      {g.isFederacao && (
+                        <span className="ml-2 text-[10px] font-medium uppercase tracking-wide text-emerald-600">
+                          federação
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-sm font-semibold tabular-nums whitespace-nowrap">
+                      {g.votos.toLocaleString('pt-BR')}{' '}
+                      <span className="text-xs text-muted-foreground font-normal">
+                        ({pct.toFixed(1)}%)
+                      </span>
+                    </p>
+                  </div>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {g.isFederacao ? g.membros.join(' + ') : g.nomeCompleto}
+                  </p>
+                  <div className="mt-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{ width: `${pct}%`, background: g.cor }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+          {(branco > 0 || naoSabe > 0) && (
+            <div className="flex flex-col gap-1 mt-1 pt-2 border-t border-dashed border-border">
+              {branco > 0 && (
+                <LinhaSimples rotulo="Voto em branco" votos={branco} total={total} />
+              )}
+              {naoSabe > 0 && (
+                <LinhaSimples
+                  rotulo="Não sabe / não quis responder"
+                  votos={naoSabe}
+                  total={total}
+                />
               )}
             </div>
           )}
