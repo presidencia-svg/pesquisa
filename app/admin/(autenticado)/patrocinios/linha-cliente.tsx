@@ -28,8 +28,8 @@ type Lead = {
 
 const ROTULO_COTA = {
   diamante: 'Diamante · R$ 100k',
-  ouro: 'Ouro · R$ 30k',
-  prata: 'Prata · R$ 15k',
+  ouro: 'Ouro · R$ 50k',
+  prata: 'Prata · R$ 25k',
 } as const
 const COR_COTA = {
   diamante: 'rgb(8, 145, 178)',

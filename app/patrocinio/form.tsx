@@ -66,7 +66,7 @@ export function PatrocinioForm() {
               className="sr-only"
             />
             <span className="font-semibold text-amber-700">Ouro</span>
-            <span className="text-xs">R$ 30.000</span>
+            <span className="text-xs">R$ 50.000</span>
           </label>
           <label
             className={`flex flex-col gap-1 rounded-md border-2 p-3 cursor-pointer ${
@@ -85,7 +85,7 @@ export function PatrocinioForm() {
               className="sr-only"
             />
             <span className="font-semibold text-slate-700">Prata</span>
-            <span className="text-xs">R$ 15.000</span>
+            <span className="text-xs">R$ 25.000</span>
           </label>
         </div>
       </label>
