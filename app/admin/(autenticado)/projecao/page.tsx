@@ -16,6 +16,24 @@ const ROTULO = { federal: 'Deputado Federal', estadual: 'Deputado Estadual' } as
 
 type SearchParams = { ponderado?: string }
 
+/**
+ * Lê todas as linhas de uma view paginando — o PostgREST corta em 1.000 linhas
+ * por padrão (max-rows). Sem isto, a projeção rodava sobre 1.000 votos só.
+ */
+async function lerTudo<T>(
+  fazerQuery: (de: number, ate: number) => PromiseLike<{ data: T[] | null }>,
+): Promise<T[]> {
+  const PAGINA = 1000
+  const out: T[] = []
+  for (let de = 0; ; de += PAGINA) {
+    const { data } = await fazerQuery(de, de + PAGINA - 1)
+    if (!data || data.length === 0) break
+    out.push(...data)
+    if (data.length < PAGINA) break
+  }
+  return out
+}
+
 export default async function ProjecaoPage({
   searchParams,
 }: {
@@ -60,24 +78,18 @@ export default async function ProjecaoPage({
     }))
 
   // Respostas por municipio = distinct token_hash com voto valido naquele municipio
-  // (sem filtrar por cargo — peso amostral e' do respondente, nao do voto especifico)
+  // (sem filtrar por cargo — peso amostral e' do respondente, nao do voto especifico).
+  // View agregada — antes o fetch cru truncava em 1.000 respostas.
   const { data: respostasRows } = await db
-    .from('votos_pesquisa')
-    .select('token_hash, municipio_ibge')
+    .from('v_respostas_municipio')
+    .select('municipio_ibge, respostas')
     .eq('edicao_id', edicao.id)
-    .not('municipio_ibge', 'is', null)
-  const tokensPorMunicipio = new Map<number, Set<string>>()
-  for (const r of (respostasRows ?? []) as Array<{
-    token_hash: string
-    municipio_ibge: number
-  }>) {
-    const set = tokensPorMunicipio.get(r.municipio_ibge) ?? new Set<string>()
-    set.add(r.token_hash)
-    tokensPorMunicipio.set(r.municipio_ibge, set)
-  }
   const respostasPorMunicipio = new Map<number, number>()
-  for (const [ibge, set] of tokensPorMunicipio) {
-    respostasPorMunicipio.set(ibge, set.size)
+  for (const r of (respostasRows ?? []) as Array<{
+    municipio_ibge: number
+    respostas: number
+  }>) {
+    respostasPorMunicipio.set(r.municipio_ibge, r.respostas)
   }
 
   const pesos = calcularPesos(municipiosNorm, respostasPorMunicipio)
@@ -92,53 +104,57 @@ export default async function ProjecaoPage({
   // -------- Projecao por cargo --------
   const projecoes: Record<string, Projecao> = {}
   for (const cargo of cargos) {
-    // Votos por (partido, municipio)
-    const { data: legendaRows } = await db
-      .from('votos_pesquisa')
-      .select('partido_id, municipio_ibge')
-      .eq('edicao_id', edicao.id)
-      .eq('cargo', cargo)
-      .eq('metodo', 'numero')
-      .not('partido_id', 'is', null)
-    const votosPartidoBruto = new Map<string, number>()
-    const votosPartidoPond = new Map<string, number>()
-    for (const r of (legendaRows ?? []) as Array<{
+    // Votos por (partido, municipio) — view agregada, paginada (todos os votos)
+    const legendaRows = await lerTudo<{
       partido_id: string
       municipio_ibge: number | null
-    }>) {
+      votos: number
+    }>((de, ate) =>
+      db
+        .from('v_proj_partido_mun')
+        .select('partido_id, municipio_ibge, votos')
+        .eq('edicao_id', edicao.id)
+        .eq('cargo', cargo)
+        .range(de, ate),
+    )
+    const votosPartidoBruto = new Map<string, number>()
+    const votosPartidoPond = new Map<string, number>()
+    for (const r of legendaRows) {
       votosPartidoBruto.set(
         r.partido_id,
-        (votosPartidoBruto.get(r.partido_id) ?? 0) + 1,
+        (votosPartidoBruto.get(r.partido_id) ?? 0) + r.votos,
       )
       votosPartidoPond.set(
         r.partido_id,
         (votosPartidoPond.get(r.partido_id) ?? 0) +
-          ponderar(1, r.municipio_ibge),
+          ponderar(r.votos, r.municipio_ibge),
       )
     }
 
-    // Votos por (candidato, municipio)
-    const { data: candRows } = await db
-      .from('votos_pesquisa')
-      .select('candidato_id, municipio_ibge')
-      .eq('edicao_id', edicao.id)
-      .eq('cargo', cargo)
-      .eq('metodo', 'numero')
-      .not('candidato_id', 'is', null)
-    const votosCandidatoBruto = new Map<string, number>()
-    const votosCandidatoPond = new Map<string, number>()
-    for (const r of (candRows ?? []) as Array<{
+    // Votos por (candidato, municipio) — view agregada, paginada
+    const candRows = await lerTudo<{
       candidato_id: string
       municipio_ibge: number | null
-    }>) {
+      votos: number
+    }>((de, ate) =>
+      db
+        .from('v_proj_candidato_mun')
+        .select('candidato_id, municipio_ibge, votos')
+        .eq('edicao_id', edicao.id)
+        .eq('cargo', cargo)
+        .range(de, ate),
+    )
+    const votosCandidatoBruto = new Map<string, number>()
+    const votosCandidatoPond = new Map<string, number>()
+    for (const r of candRows) {
       votosCandidatoBruto.set(
         r.candidato_id,
-        (votosCandidatoBruto.get(r.candidato_id) ?? 0) + 1,
+        (votosCandidatoBruto.get(r.candidato_id) ?? 0) + r.votos,
       )
       votosCandidatoPond.set(
         r.candidato_id,
         (votosCandidatoPond.get(r.candidato_id) ?? 0) +
-          ponderar(1, r.municipio_ibge),
+          ponderar(r.votos, r.municipio_ibge),
       )
     }
 
