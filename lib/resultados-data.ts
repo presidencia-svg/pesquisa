@@ -86,7 +86,9 @@ export function calcularMargem(n: number): string {
   return `±${margem}pp`
 }
 
-export async function carregarResultados(): Promise<ResultadosCarregados> {
+export async function carregarResultados(
+  opts?: { ignorarDivulgacao?: boolean },
+): Promise<ResultadosCarregados> {
   const db = supabaseAdmin()
   const { data: edicao } = await db
     .from('edicao')
@@ -94,7 +96,10 @@ export async function carregarResultados(): Promise<ResultadosCarregados> {
     .eq('ativa', true)
     .maybeSingle<EdicaoRow>()
 
-  if (!edicao || !edicao.divulgada_em) {
+  // Público gateia em divulgada_em. Ferramentas internas (apresentação na
+  // TV, snapshot embargado) passam ignorarDivulgacao=true pra ensaiar /
+  // operar com os dados antes da divulgação pública.
+  if (!edicao || (!edicao.divulgada_em && !opts?.ignorarDivulgacao)) {
     return { status: 'aguardando', edicao: edicao ?? null }
   }
 
