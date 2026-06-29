@@ -13,7 +13,7 @@ const COTAS = [
   {
     nivel: 'diamante',
     titulo: 'DIAMANTE',
-    valor: 60_000,
+    valor: 100_000,
     vagas: '1 vaga única · exclusividade de categoria',
     cor: '#0891b2',
     beneficios: [

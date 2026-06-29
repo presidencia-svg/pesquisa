@@ -9,14 +9,14 @@ export const metadata = {
   title:
     'A maior pesquisa política já realizada no Brasil · Patrocínio Sergipe 2026',
   description:
-    '200.000+ respondentes em pesquisa eleitoral estadual — 100× maior que Datafolha, IBOPE ou Quaest. Patrocínio institucional CDL Aracaju com 3 cotas (Diamante R$ 60k / Ouro R$ 30k / Prata R$ 15k). Sem ingerência editorial.',
+    '200.000+ respondentes em pesquisa eleitoral estadual — 100× maior que Datafolha, IBOPE ou Quaest. Patrocínio institucional CDL Aracaju com 3 cotas (Diamante R$ 100k / Ouro R$ 30k / Prata R$ 15k). Sem ingerência editorial.',
 }
 
 const COTAS = [
   {
     nivel: 'diamante',
     titulo: 'Cota Diamante',
-    valor: 60_000,
+    valor: 100_000,
     vagas: '1 vaga única — exclusividade de categoria',
     cor: 'rgb(8, 145, 178)', // cyan
     beneficios: [

@@ -47,7 +47,7 @@ export function PatrocinioForm() {
               className="sr-only"
             />
             <span className="font-semibold text-cyan-700">Diamante</span>
-            <span className="text-xs">R$ 60.000</span>
+            <span className="text-xs">R$ 100.000</span>
           </label>
           <label
             className={`flex flex-col gap-1 rounded-md border-2 p-3 cursor-pointer ${
