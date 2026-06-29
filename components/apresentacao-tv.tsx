@@ -282,7 +282,6 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
                 ))}
               </div>
 
-              <div className="apres-spacer" />
               {cur.curiosity && (
                 <div className="apres-destaque">
                   <div className="apres-destaque-ic">!</div>
@@ -436,7 +435,11 @@ const CSS = `
 .apres-result-num{flex:none;width:58px;height:58px;border-radius:14px;background:linear-gradient(135deg,#3d6fe5,#274bb8);display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:900;font-size:26px;color:#fff;}
 .apres-result-h1{font-family:'Archivo',sans-serif;font-weight:900;font-size:54px;line-height:1;letter-spacing:-.01em;margin:0;color:#fff;}
 .apres-result-sub{font-size:17px;color:#9fb0d8;margin-top:6px;}
-.apres-bars{margin-top:30px;display:flex;flex-direction:column;gap:18px;}
+.apres-bars{margin-top:26px;display:flex;flex-direction:column;gap:16px;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:14px;}
+.apres-bars::-webkit-scrollbar{width:10px;}
+.apres-bars::-webkit-scrollbar-track{background:rgba(255,255,255,.05);border-radius:5px;}
+.apres-bars::-webkit-scrollbar-thumb{background:rgba(244,182,44,.45);border-radius:5px;}
+.apres-bars::-webkit-scrollbar-thumb:hover{background:rgba(244,182,44,.7);}
 .apres-bar{display:flex;flex-direction:column;gap:9px;}
 .apres-bar-top{display:flex;align-items:center;justify-content:space-between;}
 .apres-bar-name{display:flex;align-items:center;gap:12px;min-width:0;}
