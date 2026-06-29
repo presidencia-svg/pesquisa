@@ -43,9 +43,9 @@ export default function ExposicaoPage() {
             <span className="text-xs uppercase tracking-widest text-muted-foreground">
               Legenda:
             </span>
-            <LegendaItem cor={COR.diamante} label="Diamante R$ 30k" />
-            <LegendaItem cor={COR.ouro} label="Ouro R$ 15k" />
-            <LegendaItem cor={COR.prata} label="Prata R$ 8k" />
+            <LegendaItem cor={COR.diamante} label="Diamante R$ 60k" />
+            <LegendaItem cor={COR.ouro} label="Ouro R$ 30k" />
+            <LegendaItem cor={COR.prata} label="Prata R$ 15k" />
           </div>
         </section>
 

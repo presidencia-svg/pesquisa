@@ -13,7 +13,7 @@ const COTAS = [
   {
     nivel: 'diamante',
     titulo: 'DIAMANTE',
-    valor: 30_000,
+    valor: 60_000,
     vagas: '1 vaga única · exclusividade de categoria',
     cor: '#0891b2',
     beneficios: [
@@ -30,7 +30,7 @@ const COTAS = [
   {
     nivel: 'ouro',
     titulo: 'OURO',
-    valor: 15_000,
+    valor: 30_000,
     vagas: 'até 3 vagas',
     cor: '#ca8a04',
     beneficios: [
@@ -43,7 +43,7 @@ const COTAS = [
   {
     nivel: 'prata',
     titulo: 'PRATA',
-    valor: 8_000,
+    valor: 15_000,
     vagas: 'vagas ilimitadas',
     cor: '#64748b',
     beneficios: [
