@@ -22,7 +22,7 @@ type Lead = {
   mostrar_publico: boolean
 }
 
-const COTAS_VALOR = { diamante: 100_000, ouro: 50_000, prata: 25_000 } as const
+const COTAS_VALOR = { diamante: 100_000, ouro: 80_000, prata: 30_000 } as const
 
 export default async function PatrociniosPage() {
   await registrarAcessoAdmin('view_patrocinios', {})

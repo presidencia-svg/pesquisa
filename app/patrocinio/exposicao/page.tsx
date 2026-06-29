@@ -44,8 +44,8 @@ export default function ExposicaoPage() {
               Legenda:
             </span>
             <LegendaItem cor={COR.diamante} label="Diamante R$ 100k" />
-            <LegendaItem cor={COR.ouro} label="Ouro R$ 50k" />
-            <LegendaItem cor={COR.prata} label="Prata R$ 25k" />
+            <LegendaItem cor={COR.ouro} label="Ouro R$ 80k" />
+            <LegendaItem cor={COR.prata} label="Prata R$ 30k" />
           </div>
         </section>
 
