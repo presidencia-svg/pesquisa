@@ -54,6 +54,18 @@ function fmt(x: number): string {
   return x.toFixed(1).replace('.', ',')
 }
 
+// Paleta verde → amarelo (cara CDL Pesquisas / bandeira). Por posição:
+// 1º colocado = verde mais forte, descendo até o amarelo.
+const VERDE_AMARELO = [
+  '#0f7a37',
+  '#1aa34e',
+  '#4fae3f',
+  '#86c232',
+  '#c2cf2a',
+  '#eab308',
+  '#f4b62c',
+]
+
 export function ApresentacaoTV({ data }: { data: ApresData }) {
   const [view, setView] = useState<string>('hub')
   const [grown, setGrown] = useState(true)
@@ -99,15 +111,23 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
     const maxPct = Math.max(...cands.map((r) => r.pct), 1)
     const topPct = cands.length ? Math.max(...cands.map((r) => r.pct)) : 0
     let leaderFound = false
+    let ci = 0 // posição entre candidatos (pra cor verde→amarelo)
     return cur.rows.map((r) => {
       const isLeader =
         !r.other && !cur.extra && !leaderFound && r.pct === topPct
       if (isLeader) leaderFound = true
+      let color: string
+      if (r.other) {
+        color = '#56688f' // brancos/nulos/indecisos = cinza neutro
+      } else {
+        color = VERDE_AMARELO[ci % VERDE_AMARELO.length]
+        ci++
+      }
       return {
         name: r.name,
         party: r.party ?? '',
         num: r.num ?? '',
-        color: r.other ? '#56688f' : (r.color ?? '#2F6FE0'),
+        color,
         nameColor: r.other ? '#9fb0d8' : '#ffffff',
         displayPct: fmt(r.pct),
         width: grown ? `${(r.pct / maxPct) * 100}%` : '0%',
