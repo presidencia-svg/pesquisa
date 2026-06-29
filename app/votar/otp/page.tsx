@@ -7,7 +7,7 @@ import { getPreVoto, getVotoToken } from '@/lib/sessao'
 import { OtpForm } from './otp-form'
 
 export const metadata = {
-  title: 'Confirmar código · Pesquisa Sergipe 2026',
+  title: 'Confirmar código · Pesquisa Eleitoral Sergipe 2026',
 }
 
 export default async function OtpPage() {

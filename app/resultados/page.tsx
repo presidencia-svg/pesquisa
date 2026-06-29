@@ -11,9 +11,9 @@ import {
 import './resultados.css'
 
 export const metadata = {
-  title: 'Resultados · Pesquisa Sergipe 2026',
+  title: 'Resultados · Pesquisa Eleitoral Sergipe 2026',
   description:
-    'Resultados da Pesquisa Sergipe 2026 realizada pela CDL Aracaju. Registrada no TRE/SE.',
+    'Resultados da Pesquisa Eleitoral Sergipe 2026 realizada pela CDL Aracaju. Registrada no TRE/SE.',
 }
 
 // Cache de 15s — mesmo racional da versão anterior. revalidatePath('/resultados')
@@ -50,7 +50,7 @@ export default async function ResultadosHubPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/cdl-logo.png" alt="CDL Aracaju" className="rs-brand-img" />
           </Link>
-          <span className="rs-header-tag">Pesquisa Sergipe 2026</span>
+          <span className="rs-header-tag">Pesquisa Eleitoral Sergipe 2026</span>
           <span className="rs-header-spacer" />
           <span
             className="rs-live"
@@ -297,7 +297,7 @@ function AguardandoDivulgacao({ edicao }: { edicao: EdicaoRow | null }) {
             </h1>
             {prevista ? (
               <p className="text-base text-muted-foreground leading-relaxed">
-                A pesquisa Sergipe 2026 da CDL Aracaju será divulgada em{' '}
+                A Pesquisa Eleitoral Sergipe 2026 da CDL Aracaju será divulgada em{' '}
                 <strong className="text-foreground">
                   {formatarData(prevista)}
                 </strong>
@@ -306,7 +306,7 @@ function AguardandoDivulgacao({ edicao }: { edicao: EdicaoRow | null }) {
               </p>
             ) : (
               <p className="text-base text-muted-foreground leading-relaxed">
-                A pesquisa Sergipe 2026 da CDL Aracaju ainda não foi divulgada.
+                A Pesquisa Eleitoral Sergipe 2026 da CDL Aracaju ainda não foi divulgada.
               </p>
             )}
           </div>

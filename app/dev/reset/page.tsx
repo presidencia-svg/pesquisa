@@ -6,7 +6,7 @@ import { DEV_MODE } from '@/lib/env'
 import { resetarTudo } from './actions'
 
 export const metadata = {
-  title: 'Reset (dev) · Pesquisa Sergipe 2026',
+  title: 'Reset (dev) · Pesquisa Eleitoral Sergipe 2026',
   robots: { index: false, follow: false },
 }
 

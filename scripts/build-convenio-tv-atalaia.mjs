@@ -2,7 +2,7 @@
 /**
  * Gera docs/convenio-tv-atalaia.docx — convênio jornalístico entre
  * CDL Aracaju e Televisão Atalaia Ltda para divulgação conjunta
- * da Pesquisa Sergipe 2026.
+ * da Pesquisa Eleitoral Sergipe 2026.
  *
  * Conforme Lei 9.504/1997, Resolução TSE 23.747/2026 e LGPD.
  *
@@ -90,7 +90,7 @@ const inciso = (numeral, texto) =>
 const children = [
   // ─── Título ────────────────────────────────────────────────────────────
   h1('CONVÊNIO DE COOPERAÇÃO JORNALÍSTICA'),
-  center('Divulgação Conjunta — Pesquisa Sergipe 2026', { kicker: true }),
+  center('Divulgação Conjunta — Pesquisa Eleitoral Sergipe 2026', { kicker: true }),
   ...blank(2),
 
   // ─── Qualificação das partes ───────────────────────────────────────────
@@ -124,13 +124,13 @@ const children = [
   h2('CONSIDERANDOS'),
 
   considerando(
-    'que a CDL Aracaju conduz a Pesquisa Sergipe 2026, pesquisa de intenção de voto para as Eleições 2026 no Estado de Sergipe, abrangendo os cargos de Presidente da República, Governador, Senador, Deputado Federal e Deputado Estadual, com metodologia estatística publicada em https://pesquisa.cdlaju.com.br/transparencia e registro no sistema PesqEle do Tribunal Regional Eleitoral de Sergipe (TRE/SE), nos termos da Lei nº 9.504/1997 e da Resolução TSE nº 23.747/2026;',
+    'que a CDL Aracaju conduz a Pesquisa Eleitoral Sergipe 2026, pesquisa de intenção de voto para as Eleições 2026 no Estado de Sergipe, abrangendo os cargos de Presidente da República, Governador, Senador, Deputado Federal e Deputado Estadual, com metodologia estatística publicada em https://pesquisa.cdlaju.com.br/transparencia e registro no sistema PesqEle do Tribunal Regional Eleitoral de Sergipe (TRE/SE), nos termos da Lei nº 9.504/1997 e da Resolução TSE nº 23.747/2026;',
   ),
   considerando(
     'que a TV Atalaia é emissora de televisão aberta de alcance estadual, com programação jornalística diária reconhecida pela sociedade sergipana, sendo veículo idôneo para a divulgação responsável de pesquisas eleitorais ao público em geral;',
   ),
   considerando(
-    'o interesse público da divulgação ampla, transparente e jornalisticamente contextualizada dos resultados da Pesquisa Sergipe 2026, em conformidade com o direito à informação assegurado pelo art. 5º, XIV, da Constituição Federal;',
+    'o interesse público da divulgação ampla, transparente e jornalisticamente contextualizada dos resultados da Pesquisa Eleitoral Sergipe 2026, em conformidade com o direito à informação assegurado pelo art. 5º, XIV, da Constituição Federal;',
   ),
   considerando(
     'que a divulgação de pesquisas eleitorais deve observar estritamente a Resolução TSE nº 23.747/2026, sob pena de aplicação das sanções previstas no art. 33 da Lei nº 9.504/1997;',
@@ -152,7 +152,7 @@ const children = [
     txt(
       'O presente convênio tem por objeto a cooperação entre CDL Aracaju e TV Atalaia para a divulgação ao vivo, em telejornal de alcance estadual da TV Atalaia, exibido no dia 3 de setembro de 2026, dos resultados da ',
     ),
-    txt('1ª (primeira) edição da Pesquisa Sergipe 2026 referente ao 1º turno', { bold: true }),
+    txt('1ª (primeira) edição da Pesquisa Eleitoral Sergipe 2026 referente ao 1º turno', { bold: true }),
     txt(' das Eleições 2026, com coleta de campo realizada nos dias '),
     txt('1 e 2 de setembro de 2026', { bold: true }),
     txt('.'),
@@ -179,7 +179,7 @@ const children = [
   para([txt('A CDL Aracaju se compromete a:')]),
   inciso('I', 'concluir o registro da pesquisa no sistema PesqEle do TRE/SE antes de qualquer divulgação, com pelo menos 5 (cinco) dias úteis de antecedência em relação à data prevista da divulgação conjunta, conforme exigência do art. 2º da Resolução TSE nº 23.747/2026;'),
   inciso('II', 'disponibilizar à TV Atalaia, em ambiente seguro e com embargo jornalístico, os resultados consolidados (números, percentuais, margem de erro, composição da amostra final por município, gênero, faixa etária, grau de instrução e nível econômico, e recortes regionais) com antecedência mínima de 4 (quatro) horas em relação ao horário do telejornal de 3 de setembro de 2026, exclusivamente para fins de preparação editorial. A entrega será feita em formato PDF assinado digitalmente pelo Presidente da CDL Aracaju, contendo carimbo de embargo;'),
-  inciso('III', 'não divulgar publicamente, por qualquer meio (site institucional, redes sociais, releases à imprensa, entrevistas), os resultados da Pesquisa Sergipe 2026 antes do encerramento do telejornal da TV Atalaia que primeiro os divulgar — vigência do embargo;'),
+  inciso('III', 'não divulgar publicamente, por qualquer meio (site institucional, redes sociais, releases à imprensa, entrevistas), os resultados da Pesquisa Eleitoral Sergipe 2026 antes do encerramento do telejornal da TV Atalaia que primeiro os divulgar — vigência do embargo;'),
   inciso('IV', 'garantir a presença do Presidente da CDL Aracaju (ou suplente) no estúdio da TV Atalaia, na data e horário acordados, para participar da divulgação ao vivo e responder a esclarecimentos sobre a metodologia;'),
   inciso('V', 'imediatamente após o anúncio dos resultados no telejornal da TV Atalaia, disponibilizar a íntegra dos números no portal https://pesquisa.cdlaju.com.br/resultados, em conformidade com o princípio da transparência (Resolução TSE 23.747/2026, art. 5º), encerrando-se nesse momento o embargo de que trata o inciso III;'),
   inciso('VI', 'fornecer à TV Atalaia a metodologia, ficha técnica, estatístico responsável (com CONRE), nome do contratante, valor, período de coleta e demais informações exigidas pelo art. 33 da Lei 9.504/1997, para inclusão na reportagem;'),
@@ -188,7 +188,7 @@ const children = [
   // ─── Cláusula 3ª — Obrigações da TV Atalaia ───────────────────────────
   h2('Cláusula 3ª — Obrigações da TV Atalaia'),
   para([txt('A TV Atalaia se compromete a:')]),
-  inciso('I', 'veicular a 1ª (primeira) edição da Pesquisa Sergipe 2026 referente ao 1º turno em telejornal de horário nobre, com cobertura estadual, na data de 3 de setembro de 2026, observado o cronograma da Cláusula 1ª;'),
+  inciso('I', 'veicular a 1ª (primeira) edição da Pesquisa Eleitoral Sergipe 2026 referente ao 1º turno em telejornal de horário nobre, com cobertura estadual, na data de 3 de setembro de 2026, observado o cronograma da Cláusula 1ª;'),
   inciso('II', 'realizar a divulgação ao vivo, com transmissão simultânea para todo o Estado de Sergipe via sinal aberto e plataformas digitais da emissora;'),
   inciso('III', 'conceder espaço editorial para participação do Presidente da CDL Aracaju (Elison Vieira Santos do Bomfim) ou, na sua impossibilidade, de seu suplente formalmente designado, com tempo de fala adequado para apresentação dos números e esclarecimento metodológico;'),
   inciso('IV', 'apresentar os resultados com fidelidade aos números fornecidos pela CDL Aracaju, sem manipulação editorial que altere ordem de classificação, percentuais ou contexto metodológico — admitindo-se livre análise jornalística, comentários e contraponto;'),
@@ -199,7 +199,7 @@ const children = [
   // ─── Cláusula 4ª — Conformidade legal ──────────────────────────────────
   h2('Cláusula 4ª — Conformidade legal'),
   para([txt('As partes declaram e reconhecem que:')]),
-  inciso('I', 'a divulgação da Pesquisa Sergipe 2026 está integralmente submetida à Lei nº 9.504/1997, à Resolução TSE nº 23.747/2026 e demais normas da Justiça Eleitoral;'),
+  inciso('I', 'a divulgação da Pesquisa Eleitoral Sergipe 2026 está integralmente submetida à Lei nº 9.504/1997, à Resolução TSE nº 23.747/2026 e demais normas da Justiça Eleitoral;'),
   inciso('II', 'os dados pessoais dos respondentes da pesquisa não são objeto deste convênio — a TV Atalaia recebe apenas resultados agregados e anonimizados, conforme metodologia da CDL Aracaju, em pleno respeito à Lei Geral de Proteção de Dados (Lei nº 13.709/2018);'),
   inciso('III', 'é vedado às partes utilizar a pesquisa ou sua divulgação como propaganda eleitoral, em favor ou desfavor de qualquer candidato, partido, federação ou coligação;'),
   inciso('IV', 'eventuais impugnações ou questionamentos quanto à pesquisa serão tratados pela CDL Aracaju, na qualidade de contratante e responsável institucional, junto ao TRE/SE.'),
@@ -208,7 +208,7 @@ const children = [
   h2('Cláusula 5ª — Independência operacional e contratação de colaboradores'),
   para([
     txt(
-      'A contratação, gestão, remuneração e supervisão de todos os colaboradores envolvidos na confecção da Pesquisa Sergipe 2026 — incluindo, sem limitação, entrevistadores, supervisores de campo, estatístico responsável, equipe de tecnologia, desenvolvedores de software, encarregado pelo tratamento de dados (DPO) e prestadores de serviço técnico — é de ',
+      'A contratação, gestão, remuneração e supervisão de todos os colaboradores envolvidos na confecção da Pesquisa Eleitoral Sergipe 2026 — incluindo, sem limitação, entrevistadores, supervisores de campo, estatístico responsável, equipe de tecnologia, desenvolvedores de software, encarregado pelo tratamento de dados (DPO) e prestadores de serviço técnico — é de ',
     ),
     txt('responsabilidade exclusiva da CDL Aracaju', { bold: true }),
     txt(', sem qualquer participação, indicação, aprovação ou ingerência da TV Atalaia.'),
@@ -234,9 +234,9 @@ const children = [
 
   // ─── Cláusula 7ª — Marca e propriedade intelectual ─────────────────────
   h2('Cláusula 7ª — Marca, imagem e propriedade intelectual'),
-  inciso('I', 'a TV Atalaia poderá utilizar, na reportagem e em peças jornalísticas correlatas, a marca e o nome institucional da CDL Aracaju, exclusivamente no contexto da divulgação da Pesquisa Sergipe 2026 e sem caráter publicitário;'),
+  inciso('I', 'a TV Atalaia poderá utilizar, na reportagem e em peças jornalísticas correlatas, a marca e o nome institucional da CDL Aracaju, exclusivamente no contexto da divulgação da Pesquisa Eleitoral Sergipe 2026 e sem caráter publicitário;'),
   inciso('II', 'a CDL Aracaju poderá mencionar a TV Atalaia em comunicados institucionais relativos à divulgação, identificando-a como veículo parceiro do convênio;'),
-  inciso('III', 'a metodologia, base de dados, código-fonte do sistema de coleta e identidade visual da Pesquisa Sergipe 2026 permanecem de titularidade exclusiva da CDL Aracaju;'),
+  inciso('III', 'a metodologia, base de dados, código-fonte do sistema de coleta e identidade visual da Pesquisa Eleitoral Sergipe 2026 permanecem de titularidade exclusiva da CDL Aracaju;'),
   inciso('IV', 'a reportagem e produção audiovisual elaboradas pela TV Atalaia são de titularidade exclusiva da emissora, respeitados os direitos morais dos jornalistas envolvidos.'),
 
   // ─── Cláusula 8ª — Natureza não comercial ──────────────────────────────
@@ -255,7 +255,7 @@ const children = [
     ),
     txt('exclusivamente', { bold: true }),
     txt(
-      ' a 1ª (primeira) edição da Pesquisa Sergipe 2026 referente ao 1º turno das Eleições 2026, com ',
+      ' a 1ª (primeira) edição da Pesquisa Eleitoral Sergipe 2026 referente ao 1º turno das Eleições 2026, com ',
     ),
     txt('coleta de campo nos dias 1 e 2 de setembro de 2026', { bold: true }),
     txt(' e '),

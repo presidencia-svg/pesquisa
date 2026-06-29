@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Obrigado · Pesquisa Sergipe 2026',
+  title: 'Obrigado · Pesquisa Eleitoral Sergipe 2026',
   robots: { index: false, follow: false },
 }
 

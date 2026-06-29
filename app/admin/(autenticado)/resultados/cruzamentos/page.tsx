@@ -199,7 +199,7 @@ export default async function CruzamentosPage() {
             Pode ser porque ainda não há 30 respondentes em nenhum perfil
             demográfico × candidato — o filtro <code>HAVING count(*) ≥ 30</code>{' '}
             da <code>v_resultados_demografico</code> esconde tudo até esse
-            patamar. Quando a Pesquisa Sergipe 2026 real for ao ar (1 e 2
+            patamar. Quando a Pesquisa Eleitoral Sergipe 2026 real for ao ar (1 e 2
             de setembro), com ~200 mil respondentes, cada uma das ~60
             células (3 cargos × 5 dimensões × ~4 valores) terá milhares de
             respondentes.

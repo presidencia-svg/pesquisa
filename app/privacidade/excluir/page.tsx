@@ -6,7 +6,7 @@ import { RodapeInstitucional } from '@/components/rodape-institucional'
 import { ExcluirForm } from './form'
 
 export const metadata = {
-  title: 'Exclusão de dados (LGPD Art. 18 VI) · Pesquisa Sergipe 2026',
+  title: 'Exclusão de dados (LGPD Art. 18 VI) · Pesquisa Eleitoral Sergipe 2026',
   description:
     'Solicite a exclusão dos seus dados pessoais nesta pesquisa, conforme Art. 18 VI da Lei 13.709/2018.',
 }

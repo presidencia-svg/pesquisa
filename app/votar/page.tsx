@@ -8,7 +8,7 @@ import { getPreVoto, getVotoToken } from '@/lib/sessao'
 import { CpfForm } from './cpf-form'
 
 export const metadata = {
-  title: 'Identifique-se · Pesquisa Sergipe 2026',
+  title: 'Identifique-se · Pesquisa Eleitoral Sergipe 2026',
 }
 
 export default async function VotarPage() {

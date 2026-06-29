@@ -170,7 +170,7 @@ const children = [
   h2('Art. 2º — Canal de comunicação'),
   para([
     txt(
-      'Ficam disponibilizados, como canais de comunicação oficiais da Encarregada, os seguintes meios, que serão amplamente divulgados nos sítios institucionais, na política de privacidade da Pesquisa Sergipe 2026 e em demais documentos:',
+      'Ficam disponibilizados, como canais de comunicação oficiais da Encarregada, os seguintes meios, que serão amplamente divulgados nos sítios institucionais, na política de privacidade da Pesquisa Eleitoral Sergipe 2026 e em demais documentos:',
     ),
   ]),
   para([
@@ -230,7 +230,7 @@ const children = [
   para([txt('Esta deliberação deverá ser:')]),
   para([txt('I — registrada nos arquivos formais da CDL Aracaju;')]),
   para([txt('II — comunicada à ANPD, se e quando exigido pela autoridade;')]),
-  para([txt('III — divulgada na política de privacidade pública da Pesquisa Sergipe 2026, em conformidade com o princípio da transparência (art. 6º VI da LGPD);')]),
+  para([txt('III — divulgada na política de privacidade pública da Pesquisa Eleitoral Sergipe 2026, em conformidade com o princípio da transparência (art. 6º VI da LGPD);')]),
   para([txt('IV — anexada ao Relatório de Impacto à Proteção de Dados Pessoais (RIPD) e demais documentos de governança.')]),
   ...blank(1),
 

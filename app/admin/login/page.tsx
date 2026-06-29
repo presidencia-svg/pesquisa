@@ -8,7 +8,7 @@ import { SERVER_ENV } from '@/lib/env'
 import { LoginForm } from './login-form'
 
 export const metadata = {
-  title: 'Admin · Pesquisa Sergipe 2026',
+  title: 'Admin · Pesquisa Eleitoral Sergipe 2026',
   robots: { index: false, follow: false },
 }
 

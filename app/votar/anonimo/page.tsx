@@ -5,7 +5,7 @@ import { getVotoToken } from '@/lib/sessao'
 import { AnonimoClient } from './anonimo-client'
 
 export const metadata = {
-  title: 'Sessão anônima · Pesquisa Sergipe 2026',
+  title: 'Sessão anônima · Pesquisa Eleitoral Sergipe 2026',
 }
 
 /**

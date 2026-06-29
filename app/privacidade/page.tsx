@@ -4,7 +4,7 @@ import { MarcaCdl } from '@/components/marca-cdl'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
 
 export const metadata = {
-  title: 'Política de Privacidade · Pesquisa Sergipe 2026',
+  title: 'Política de Privacidade · Pesquisa Eleitoral Sergipe 2026',
   description:
     'Como a CDL Aracaju trata seus dados pessoais nesta pesquisa eleitoral, em conformidade com a Lei 13.709/2018 (LGPD).',
 }
@@ -43,7 +43,7 @@ export default function PrivacidadePage() {
             </p>
             <p className="leading-relaxed">
               Esta política descreve como tratamos seus dados pessoais
-              durante a <strong>Pesquisa Sergipe 2026</strong> — pesquisa
+              durante a <strong>Pesquisa Eleitoral Sergipe 2026</strong> — pesquisa
               de intenção de voto registrada no TRE/SE conforme Resolução
               TSE 23.747/2026.
             </p>

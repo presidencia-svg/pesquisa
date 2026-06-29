@@ -24,7 +24,7 @@ const COTAS = [
       'Relatório premium customizado com cortes demográficos × voto',
       'Reunião privada com Presidente + estatístico responsável',
       'Análise customizada do segmento de interesse do patrocinador',
-      'Marca "Patrocinador Master Pesquisa Sergipe 2026"',
+      'Marca "Patrocinador Master Pesquisa Eleitoral Sergipe 2026"',
     ],
   },
   {
@@ -37,7 +37,7 @@ const COTAS = [
       'Logo em destaque na página /resultados',
       'Relatório premium com cortes demográficos × voto',
       'Reunião de apresentação com Presidente CDL e estatístico',
-      'Marca "Patrocinador Pesquisa Sergipe 2026"',
+      'Marca "Patrocinador Pesquisa Eleitoral Sergipe 2026"',
     ],
   },
   {
@@ -50,7 +50,7 @@ const COTAS = [
       'Logo presente na página /resultados',
       'Relatório premium com cortes demográficos × voto',
       'Reunião de apresentação dos resultados',
-      'Marca "Apoiador Pesquisa Sergipe 2026"',
+      'Marca "Apoiador Pesquisa Eleitoral Sergipe 2026"',
     ],
   },
 ] as const
@@ -96,7 +96,7 @@ export default async function MidiaKitPage() {
 
         <div className="kit-titulo-wrap">
           <p className="kit-kicker">Cotas de patrocínio institucional</p>
-          <h2 className="kit-titulo">Pesquisa Sergipe 2026</h2>
+          <h2 className="kit-titulo">Pesquisa Eleitoral Sergipe 2026</h2>
           <p className="kit-edicao">
             1ª edição · 1º turno das Eleições 2026
           </p>
@@ -150,7 +150,7 @@ export default async function MidiaKitPage() {
                 <td className="td-num">±2,2 – 2,5 pp</td>
               </tr>
               <tr className="kit-tr-destaque">
-                <td>Pesquisa Sergipe 2026 — CDL Aracaju</td>
+                <td>Pesquisa Eleitoral Sergipe 2026 — CDL Aracaju</td>
                 <td className="td-num">200.000+</td>
                 <td className="td-num">±0,11 pp</td>
               </tr>
@@ -159,7 +159,7 @@ export default async function MidiaKitPage() {
           <p className="kit-pequeno">
             Menor margem de erro significa que o número divulgado é mais
             próximo da realidade. Com 200 mil respondentes, a Pesquisa
-            Sergipe 2026 entrega <strong>20× mais precisão</strong>.
+            Eleitoral Sergipe 2026 entrega <strong>20× mais precisão</strong>.
           </p>
         </section>
 
@@ -340,7 +340,7 @@ export default async function MidiaKitPage() {
 
         <footer className="kit-footer">
           <p>
-            <strong>Pesquisa Sergipe 2026</strong> · Câmara de Dirigentes
+            <strong>Pesquisa Eleitoral Sergipe 2026</strong> · Câmara de Dirigentes
             Lojistas de Aracaju · CNPJ 13.045.935/0001-36
           </p>
           <p>

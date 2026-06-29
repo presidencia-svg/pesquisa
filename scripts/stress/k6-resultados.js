@@ -16,7 +16,7 @@
  *   - 99% das requisições retornam 2xx
  *   - throughput sustentado > 100 req/s
  *
- * Cenário esperado em produção (Pesquisa Sergipe 2026):
+ * Cenário esperado em produção (Pesquisa Eleitoral Sergipe 2026):
  *   500.000 votantes em 36 horas = ~4 req/s média
  *   Pico horário (lei de Erlang aplicada): 50-150 req/s
  *   Esta carga (200 VUs ≈ 200-300 req/s) cobre 2x o pico previsto.
@@ -85,7 +85,7 @@ export function handleSummary(data) {
 
   const stdout = `
 ╔══════════════════════════════════════════════════════════════╗
-║  Stress Test — Pesquisa Sergipe 2026                         ║
+║  Stress Test — Pesquisa Eleitoral Sergipe 2026                         ║
 ╠══════════════════════════════════════════════════════════════╣
   Total requisições:    ${reqs.toFixed(0)}
   Duração total:        ${dur.toFixed(1)}s

@@ -18,7 +18,7 @@ export function RodapeInstitucional() {
           <MarcaCdl tamanho="sm" />
           <div className="flex flex-col gap-0.5 sm:items-end leading-tight text-muted-foreground">
             <p className="text-[10px] uppercase tracking-[0.2em]">
-              Pesquisa Sergipe 2026
+              Pesquisa Eleitoral Sergipe 2026
             </p>
             <p className="text-[10px]">Registro TRE/SE pendente</p>
           </div>

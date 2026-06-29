@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * Testa todos os caminhos de bloqueio de CPF da Pesquisa Sergipe 2026
+ * Testa todos os caminhos de bloqueio de CPF da Pesquisa Eleitoral Sergipe 2026
  * sem precisar fazer chamada real ao SPC.
  *
  * Cobre:
@@ -126,7 +126,7 @@ async function main() {
 
   console.log()
   console.log(
-    `${COR.bold}Testando bloqueios de CPF — Pesquisa Sergipe 2026${COR.reset}`,
+    `${COR.bold}Testando bloqueios de CPF — Pesquisa Eleitoral Sergipe 2026${COR.reset}`,
   )
   console.log(
     `${COR.dim}SPC_MOCK ativo: nenhuma chamada externa será feita.${COR.reset}`,

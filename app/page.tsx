@@ -17,7 +17,7 @@ export default function Home() {
 
             <div className="flex flex-col gap-3 pt-4 border-t border-border">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">
-                Pesquisa de intenção de voto
+                Pesquisa Eleitoral · Intenção de voto
               </p>
               <h1 className="text-3xl sm:text-5xl font-semibold leading-[1.05] tracking-tight text-foreground">
                 Sergipe 2026

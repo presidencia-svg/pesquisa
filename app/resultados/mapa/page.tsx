@@ -14,7 +14,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 import './mapa-publico.css'
 
 export const metadata = {
-  title: 'Mapa por cidade · Pesquisa Sergipe 2026',
+  title: 'Mapa por cidade · Pesquisa Eleitoral Sergipe 2026',
 }
 export const dynamic = 'force-dynamic'
 
@@ -167,7 +167,7 @@ export default async function MapaPublicoPage({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/cdl-logo.png" alt="CDL Aracaju" className="mp-brand-img" />
           </Link>
-          <span className="mp-header-tag">Pesquisa Sergipe 2026 · Mapa por cidade</span>
+          <span className="mp-header-tag">Pesquisa Eleitoral Sergipe 2026 · Mapa por cidade</span>
         </div>
       </header>
 

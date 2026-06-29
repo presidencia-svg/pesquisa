@@ -8,7 +8,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 import { DadosForm } from './dados-form'
 
 export const metadata = {
-  title: 'Seus dados · Pesquisa Sergipe 2026',
+  title: 'Seus dados · Pesquisa Eleitoral Sergipe 2026',
 }
 
 export default async function ConfirmaPage() {

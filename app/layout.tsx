@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Pesquisa Sergipe 2026',
+  title: 'Pesquisa Eleitoral Sergipe 2026',
   description:
     'Pesquisa de intenção de voto para Sergipe 2026. Realizada pela CDL Aracaju, com identidade verificada e voto desvinculado do eleitor.',
   applicationName: 'Pesquisa SE 2026',

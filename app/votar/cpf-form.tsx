@@ -228,7 +228,7 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
           >
             <p>
               <strong>Modo anônimo detectado.</strong> O cadastro na
-              Pesquisa Sergipe 2026 não é permitido em navegação privativa
+              Pesquisa Eleitoral Sergipe 2026 não é permitido em navegação privativa
               ou janela anônima — medida antifraude para evitar voto
               múltiplo no mesmo dispositivo.
             </p>

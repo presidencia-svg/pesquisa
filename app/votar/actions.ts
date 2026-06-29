@@ -182,7 +182,7 @@ export async function entrarComCpf(
   //    pra acelerar consultas futuras e construir um cache permanente.
   let spcValidado: boolean
   let prefillSpc: SpcDadosEleitor = {}
-  // Sexo na regra: a partir da Pesquisa Sergipe 2026, tiramos a pergunta
+  // Sexo na regra: a partir da Pesquisa Eleitoral Sergipe 2026, tiramos a pergunta
   // de gênero do formulário e passamos a confiar na Receita Federal (via
   // SPC). Pra eleitores cujo cdl_base já tem faixa mas não tem sexo
   // (legado importado do Melhores do Ano), consultamos SPC pra preencher.
@@ -231,7 +231,7 @@ export async function entrarComCpf(
             ok: false,
             code: 'idade_minima',
             message:
-              'A Pesquisa Sergipe 2026 é uma pesquisa de intenção de voto e só pode ser respondida por eleitores com idade mínima de 16 anos (Constituição Federal, art. 14, §1º). Volte quando completar a idade mínima.',
+              'A Pesquisa Eleitoral Sergipe 2026 é uma pesquisa de intenção de voto e só pode ser respondida por eleitores com idade mínima de 16 anos (Constituição Federal, art. 14, §1º). Volte quando completar a idade mínima.',
           }
         case 'idade_indeterminada':
           return {

@@ -42,9 +42,9 @@ export async function generateMetadata({
 }) {
   const { cargo } = await params
   const rotulo = ROTULO[cargo as Slug]
-  if (!rotulo) return { title: 'Resultados · Pesquisa Sergipe 2026' }
+  if (!rotulo) return { title: 'Resultados · Pesquisa Eleitoral Sergipe 2026' }
   return {
-    title: `${rotulo} · Resultados Pesquisa Sergipe 2026`,
+    title: `${rotulo} · Resultados Pesquisa Eleitoral Sergipe 2026`,
     robots: { index: false, follow: true },
   }
 }

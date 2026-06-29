@@ -5,9 +5,9 @@ import { MarcaCdl } from '@/components/marca-cdl'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
 
 export const metadata = {
-  title: 'Transparência · Pesquisa Sergipe 2026',
+  title: 'Transparência · Pesquisa Eleitoral Sergipe 2026',
   description:
-    'Como a Pesquisa Sergipe 2026 funciona: arquitetura de anonimato, plano amostral, base legal, anti-fraude e como auditar.',
+    'Como a Pesquisa Eleitoral Sergipe 2026 funciona: arquitetura de anonimato, plano amostral, base legal, anti-fraude e como auditar.',
 }
 
 const secoes = [
@@ -47,13 +47,13 @@ export default function TransparenciaPage() {
             {/* Hero */}
             <div className="flex flex-col gap-4">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">
-                Pesquisa Sergipe 2026
+                Pesquisa Eleitoral Sergipe 2026
               </p>
               <h1 className="text-4xl sm:text-5xl font-semibold leading-[1.05] tracking-tight">
                 Transparência total
               </h1>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Pra a Pesquisa Sergipe 2026 merecer crédito, ela precisa caber
+                Pra a Pesquisa Eleitoral Sergipe 2026 merecer crédito, ela precisa caber
                 no escrutínio. Esta página cobre tudo: arquitetura de
                 anonimato, plano amostral, base legal, anti-fraude e como
                 você mesmo pode auditar.

@@ -557,7 +557,7 @@ export const calcularIdade = (dataNascimento: Date): number => {
 
 /**
  * Idade mínima para alistamento eleitoral conforme CF/88 art. 14, §1º, II.
- * Como a Pesquisa Sergipe 2026 é de intenção de voto, restringimos a
+ * Como a Pesquisa Eleitoral Sergipe 2026 é de intenção de voto, restringimos a
  * participação apenas a quem está em idade de votar.
  */
 export const IDADE_MINIMA_VOTAR = 16

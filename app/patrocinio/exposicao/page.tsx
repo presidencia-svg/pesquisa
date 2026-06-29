@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
 
 export const metadata = {
-  title: 'Exposição dos patrocinadores · Pesquisa Sergipe 2026',
+  title: 'Exposição dos patrocinadores · Pesquisa Eleitoral Sergipe 2026',
   description:
     'Veja onde a logomarca do seu patrocínio aparece em cada tela do fluxo da pesquisa, no telejornal e na página pública de resultados.',
 }
@@ -222,7 +222,7 @@ function MockupVotar() {
     <CardMockup titulo="Cadastro do eleitor — CPF" rota="/votar">
       <div className="rounded-md border border-border bg-background p-3 flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
-          <div className="text-xs font-bold">Pesquisa Sergipe 2026</div>
+          <div className="text-xs font-bold">Pesquisa Eleitoral Sergipe 2026</div>
           <Slot
             cor={COR.diamante}
             label="Diamante"

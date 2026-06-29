@@ -26,7 +26,7 @@ const COTAS = [
       'Entrevista exclusiva do Presidente da CDL Aracaju para o veículo de comunicação do patrocinador',
       'Relatório premium customizado com cortes demográficos × voto (gênero, idade, escolaridade, renda, município, região)',
       'Reunião privada com Presidente da CDL + estatístico responsável + análise customizada do segmento de interesse do patrocinador',
-      'Direito de uso da marca "Patrocinador Master Pesquisa Sergipe 2026 – CDL Aracaju"',
+      'Direito de uso da marca "Patrocinador Master Pesquisa Eleitoral Sergipe 2026 – CDL Aracaju"',
     ],
   },
   {
@@ -38,7 +38,7 @@ const COTAS = [
     beneficios: [
       'Logo em destaque na página pública /resultados durante e após divulgação',
       'Relatório premium com cortes demográficos × voto (gênero, idade, escolaridade, renda, município)',
-      'Direito de uso da marca "Patrocinador Pesquisa Sergipe 2026 – CDL Aracaju" em comunicação institucional',
+      'Direito de uso da marca "Patrocinador Pesquisa Eleitoral Sergipe 2026 – CDL Aracaju" em comunicação institucional',
       'Reunião de apresentação dos resultados com o Presidente da CDL e o estatístico responsável',
     ],
   },
@@ -51,7 +51,7 @@ const COTAS = [
     beneficios: [
       'Logo presente na página pública /resultados durante e após divulgação',
       'Relatório premium com cortes demográficos × voto (gênero, idade, escolaridade, renda, município)',
-      'Direito de uso da marca "Apoiador Pesquisa Sergipe 2026 – CDL Aracaju" em comunicação institucional',
+      'Direito de uso da marca "Apoiador Pesquisa Eleitoral Sergipe 2026 – CDL Aracaju" em comunicação institucional',
       'Reunião de apresentação dos resultados',
     ],
   },
@@ -67,12 +67,12 @@ export default function PatrocinioPage() {
             <Link
               href="/"
               className="inline-block bg-white rounded-md px-4 py-3 self-start hover:opacity-90 transition"
-              aria-label="Voltar para a home da Pesquisa Sergipe 2026"
+              aria-label="Voltar para a home da Pesquisa Eleitoral Sergipe 2026"
             >
               <MarcaCdl tamanho="md" />
             </Link>
             <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-300 pt-2">
-              Patrocínio institucional · Pesquisa Sergipe 2026
+              Patrocínio institucional · Pesquisa Eleitoral Sergipe 2026
             </p>
             <h1 className="text-3xl sm:text-5xl font-bold leading-[1.05]">
               A maior pesquisa política já realizada no Brasil
@@ -137,7 +137,7 @@ export default function PatrocinioPage() {
                   style={{ fontWeight: 600 }}
                 >
                   <td className="p-3 text-foreground">
-                    Pesquisa Sergipe 2026 — CDL Aracaju
+                    Pesquisa Eleitoral Sergipe 2026 — CDL Aracaju
                   </td>
                   <td className="p-3 text-right tabular-nums text-accent">
                     200.000+
@@ -152,7 +152,7 @@ export default function PatrocinioPage() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             Em pesquisa de intenção de voto, <strong>menor margem de erro</strong>
             {' '}significa que o número divulgado é mais próximo da realidade.
-            Com 200 mil respondentes, a Pesquisa Sergipe 2026 entrega{' '}
+            Com 200 mil respondentes, a Pesquisa Eleitoral Sergipe 2026 entrega{' '}
             <strong>20× mais precisão</strong> que os maiores institutos do país
             — um diferencial sem precedentes na cobertura jornalística estadual.
           </p>

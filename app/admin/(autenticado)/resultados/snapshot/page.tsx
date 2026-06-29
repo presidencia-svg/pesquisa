@@ -285,7 +285,7 @@ export default async function SnapshotPage() {
 
         <div className="snapshot-titulo-wrap">
           <p className="snapshot-kicker">Snapshot embargado</p>
-          <h2 className="snapshot-titulo">Pesquisa Sergipe 2026</h2>
+          <h2 className="snapshot-titulo">Pesquisa Eleitoral Sergipe 2026</h2>
           <p className="snapshot-edicao">
             {edicao.nome} · {edicao.turno ?? 1}º turno
           </p>
@@ -305,7 +305,7 @@ export default async function SnapshotPage() {
             />
             <p className="snapshot-diamante-empresa">{diamanteRow.empresa}</p>
             <p className="snapshot-diamante-nota">
-              Patrocinador Master da Pesquisa Sergipe 2026 — citar nos
+              Patrocinador Master da Pesquisa Eleitoral Sergipe 2026 — citar nos
               créditos de abertura do telejornal, conforme convênio.
             </p>
           </div>
@@ -414,7 +414,7 @@ export default async function SnapshotPage() {
         {/* Rodapé */}
         <footer className="snapshot-footer">
           <p>
-            <strong>Pesquisa Sergipe 2026</strong> · realização CDL Aracaju ·
+            <strong>Pesquisa Eleitoral Sergipe 2026</strong> · realização CDL Aracaju ·
             metodologia em pesquisa.cdlaju.com.br/transparencia
           </p>
           <p>

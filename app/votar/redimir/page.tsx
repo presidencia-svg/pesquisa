@@ -6,7 +6,7 @@ import { setVotoToken } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export const metadata = {
-  title: 'Redimir token · Pesquisa Sergipe 2026',
+  title: 'Redimir token · Pesquisa Eleitoral Sergipe 2026',
   robots: { index: false, follow: false },
 }
 
