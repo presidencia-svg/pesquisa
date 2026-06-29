@@ -1,15 +1,17 @@
 import Image from 'next/image'
 
 /**
- * Marca CDL Aracaju.
+ * Marca do produto — CDL Pesquisas.
  *
- * Renderiza o logo PNG oficial do projeto (`/public/cdl-logo.png`). O
- * arquivo veio dos projetos irmaos da CDL (compre-daqui / cupompro), o
- * mesmo que e usado neles — garantindo identidade visual coerente entre
- * os produtos da casa.
+ * Renderiza `/public/cdl-pesquisas-logo.png` — mesmo símbolo e "CDL" do
+ * logo institucional da CDL Aracaju, com "Aracaju" trocado por
+ * "Pesquisas" (verde #008141 itálico), conforme o design importado do
+ * Claude Design ("Logo CDL Pesquisas"). É a marca do produto de pesquisa
+ * eleitoral, usada em todo o site.
  *
- * Usar em telas FORA da capsula. Dentro da capsula a marca e omitida
- * intencionalmente pra preservar o foco no ato de votar.
+ * O logo institucional original continua em `/public/cdl-logo.png` caso
+ * precise voltar. Usar em telas FORA da cápsula — dentro dela a marca é
+ * omitida pra preservar o foco no ato de votar.
  */
 export function MarcaCdl({
   tamanho = 'md',
@@ -32,8 +34,8 @@ export function MarcaCdl({
       }`}
     >
       <Image
-        src="/cdl-logo.png"
-        alt="CDL Aracaju — Câmara de Dirigentes Lojistas"
+        src="/cdl-pesquisas-logo.png"
+        alt="CDL Pesquisas — Câmara de Dirigentes Lojistas de Aracaju"
         width={dimensoes.width}
         height={dimensoes.height}
         priority={tamanho === 'lg'}

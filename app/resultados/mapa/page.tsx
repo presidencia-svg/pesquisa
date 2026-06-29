@@ -165,7 +165,7 @@ export default async function MapaPublicoPage({
         <div className="mp-header-inner">
           <Link href="/" className="mp-brand">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/cdl-logo.png" alt="CDL Aracaju" className="mp-brand-img" />
+            <img src="/cdl-pesquisas-logo.png" alt="CDL Pesquisas" className="mp-brand-img" />
           </Link>
           <span className="mp-header-tag">Pesquisa Eleitoral Sergipe 2026 · Mapa por cidade</span>
         </div>

@@ -73,8 +73,8 @@ export default async function MidiaKitPage() {
         <header className="kit-header">
           <div className="kit-brand">
             <Image
-              src="/cdl-logo.png"
-              alt="CDL Aracaju"
+              src="/cdl-pesquisas-logo.png"
+              alt="CDL Pesquisas"
               width={180}
               height={88}
               className="kit-logo"

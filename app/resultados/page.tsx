@@ -48,7 +48,7 @@ export default async function ResultadosHubPage() {
         <div className="rs-header-inner">
           <Link href="/" className="rs-brand">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/cdl-logo.png" alt="CDL Aracaju" className="rs-brand-img" />
+            <img src="/cdl-pesquisas-logo.png" alt="CDL Pesquisas" className="rs-brand-img" />
           </Link>
           <span className="rs-header-tag">Pesquisa Eleitoral Sergipe 2026</span>
           <span className="rs-header-spacer" />
