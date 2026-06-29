@@ -19,6 +19,8 @@ import { BiografiaModal } from './biografia-modal'
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 
+import { agruparEmFederacoes } from '@/lib/federacoes'
+
 // ---------- Types ----------
 export type CargoId =
   | 'governador'
@@ -204,6 +206,55 @@ function Avatar({
   )
 }
 
+// ---------- Lista por partido / federação (só deputado) ----------
+const PALETA_LEG = [
+  '#0f7a37', '#1aa34e', '#4fae3f', '#86c232', '#c2cf2a', '#eab308', '#f4b62c', '#56688f',
+]
+
+type GrupoVis = {
+  id: string
+  label: string
+  sub?: string
+  votos: number
+  cadeiras: number
+}
+
+function ListaGrupos({ grupos, total }: { grupos: GrupoVis[]; total: number }) {
+  const max = Math.max(...grupos.map((g) => g.votos), 1)
+  return (
+    <div className="rs-list">
+      {grupos.map((g, i) => {
+        const p = pct(g.votos, total)
+        const cor = PALETA_LEG[Math.min(i, PALETA_LEG.length - 1)]
+        return (
+          <div key={g.id} className="rs-leg-row">
+            <div className="rs-leg-pos">{i + 1}º</div>
+            <div className="rs-leg-main">
+              <div className="rs-leg-top">
+                <span className="rs-leg-label">{g.label}</span>
+                {g.sub && <span className="rs-leg-sub">{g.sub}</span>}
+                {g.cadeiras > 0 && (
+                  <span className="rs-leg-cad">
+                    {g.cadeiras} cadeira{g.cadeiras > 1 ? 's' : ''}
+                  </span>
+                )}
+                <span className="rs-leg-pct">{fmtPct(p)}</span>
+              </div>
+              <div className="rs-leg-track">
+                <div
+                  className="rs-leg-fill"
+                  style={{ width: `${(g.votos / max) * 100}%`, background: cor }}
+                />
+              </div>
+              <div className="rs-leg-votos">{fmt(g.votos)} votos de legenda</div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 // ---------- Detail ----------
 export function Detalhe({
   cargo,
@@ -235,6 +286,42 @@ export function Detalhe({
     null,
   )
 
+  // ----- Deputado: modo de visualização (partido / federação / candidatos) -----
+  const hasLeg = !!(cargo.legendas && cargo.legendas.length > 0)
+  const [modo, setModo] = useState<'partido' | 'federacao' | 'candidatos'>('partido')
+  const legendaTotal =
+    (cargo.legendas?.reduce((s, l) => s + l.votos, 0) ?? 0) + t.branco + t.nao_sabe
+  const partidoGrupos: GrupoVis[] = useMemo(
+    () =>
+      (cargo.legendas ?? []).map((l) => ({
+        id: l.partidoId,
+        label: l.sigla,
+        sub: l.nome,
+        votos: l.votos,
+        cadeiras: l.cadeiras,
+      })),
+    [cargo.legendas],
+  )
+  const fedGrupos: GrupoVis[] = useMemo(
+    () =>
+      agruparEmFederacoes(
+        (cargo.legendas ?? []).map((l) => ({
+          sigla: l.sigla,
+          nome: l.nome,
+          cor: l.cor,
+          votos: l.votos,
+          cadeiras: l.cadeiras,
+        })),
+      ).map((g) => ({
+        id: g.id,
+        label: g.label,
+        sub: g.isFederacao ? g.membros.join(' + ') : g.nomeCompleto,
+        votos: g.votos,
+        cadeiras: g.cadeiras,
+      })),
+    [cargo.legendas],
+  )
+
   return (
     <article className="rs-detail">
       <div className="rs-detail-head">
@@ -261,40 +348,68 @@ export function Detalhe({
         />
       )}
 
-      {cargo.vagas ? (
-        <div className="rs-filtros">
-          {(['todos', 'eleitos', 'empate'] as const).map((k) => {
-            const qtdEleitos = ordered.filter((c) => c.eleito).length
-            const qtdEmpate = ordered.filter((c) => c.empate).length
-            return (
-              <button
-                key={k}
-                type="button"
-                className={`rs-filtro ${filtro === k ? 'is-active' : ''}`}
-                onClick={() => setFiltro(k)}
-              >
-                {k === 'todos' && `Todos (${ordered.length})`}
-                {k === 'eleitos' && `Estariam eleitos (${qtdEleitos})`}
-                {k === 'empate' && `Empate técnico (${qtdEmpate})`}
-              </button>
-            )
-          })}
+      {hasLeg && (
+        <div className="rs-filtros rs-filtros-modo">
+          {([
+            ['partido', 'Por partido'],
+            ['federacao', 'Por federação'],
+            ['candidatos', 'Candidatos'],
+          ] as const).map(([k, rotulo]) => (
+            <button
+              key={k}
+              type="button"
+              className={`rs-filtro ${modo === k ? 'is-active' : ''}`}
+              onClick={() => setModo(k)}
+            >
+              {rotulo}
+            </button>
+          ))}
         </div>
-      ) : null}
+      )}
 
-      <div className="rs-list">
-        {filtrados.map((c) => (
-          <LinhaCandidato
-            key={c.id}
-            c={c}
-            posicao={ordered.indexOf(c) + 1}
-            totalVal={t.total}
-            vagas={cargo.vagas}
-            totalLista={ordered.length}
-            onAbrirBio={() => setBioOpen({ nome: c.nome, partido: c.partido })}
-          />
-        ))}
-      </div>
+      {hasLeg && modo !== 'candidatos' ? (
+        <ListaGrupos
+          grupos={modo === 'federacao' ? fedGrupos : partidoGrupos}
+          total={legendaTotal}
+        />
+      ) : (
+        <>
+          {cargo.vagas ? (
+            <div className="rs-filtros">
+              {(['todos', 'eleitos', 'empate'] as const).map((k) => {
+                const qtdEleitos = ordered.filter((c) => c.eleito).length
+                const qtdEmpate = ordered.filter((c) => c.empate).length
+                return (
+                  <button
+                    key={k}
+                    type="button"
+                    className={`rs-filtro ${filtro === k ? 'is-active' : ''}`}
+                    onClick={() => setFiltro(k)}
+                  >
+                    {k === 'todos' && `Todos (${ordered.length})`}
+                    {k === 'eleitos' && `Estariam eleitos (${qtdEleitos})`}
+                    {k === 'empate' && `Empate técnico (${qtdEmpate})`}
+                  </button>
+                )
+              })}
+            </div>
+          ) : null}
+
+          <div className="rs-list">
+            {filtrados.map((c) => (
+              <LinhaCandidato
+                key={c.id}
+                c={c}
+                posicao={ordered.indexOf(c) + 1}
+                totalVal={t.total}
+                vagas={cargo.vagas}
+                totalLista={ordered.length}
+                onAbrirBio={() => setBioOpen({ nome: c.nome, partido: c.partido })}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
       {bioOpen && (
         <BiografiaModal
