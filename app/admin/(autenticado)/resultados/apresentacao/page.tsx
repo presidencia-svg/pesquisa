@@ -62,8 +62,22 @@ function montaCargo(
   if (total === 0) return null
 
   const ordenados = [...cargo.candidatos].sort((a, b) => b.votos - a.votos)
-  const topN = ordenados.slice(0, meta.top)
-  const resto = ordenados.slice(meta.top)
+
+  // Deputado: "Mais votados" precisa ir pelo menos até o ÚLTIMO ELEITO —
+  // como a vaga vem do quociente do partido, um eleito pode estar bem
+  // abaixo do 5º no voto nominal. Estende o corte até incluí-lo.
+  const ehDeputado = meta.key === 'federal' || meta.key === 'estadual'
+  let corte = meta.top
+  if (ehDeputado) {
+    let idxUltimoEleito = -1
+    ordenados.forEach((c, i) => {
+      if (c.eleito) idxUltimoEleito = i
+    })
+    corte = Math.max(meta.top, idxUltimoEleito + 1)
+  }
+
+  const topN = ordenados.slice(0, corte)
+  const resto = ordenados.slice(corte)
   const restoVotos = resto.reduce((s, c) => s + c.votos, 0)
 
   const candRows: ApresRow[] = topN.map((c) => ({
@@ -86,10 +100,8 @@ function montaCargo(
     rows.push({ name: 'Indecisos', pct: (cargo.nao_sabe / total) * 100, other: true })
   }
 
-  // Deputado: lista dos candidatos ELEITOS pela projeção (D'Hondt). Como
-  // a vaga vem do quociente do partido, o eleito nem sempre é o mais votado
-  // — por isso vale uma visão separada de "quem leva a cadeira".
-  const ehDeputado = meta.key === 'federal' || meta.key === 'estadual'
+  // Deputado: lista dos candidatos ELEITOS pela projeção (D'Hondt), pra
+  // a visão separada "quem leva a cadeira".
   let rowsEleitos: ApresRow[] | undefined
   if (ehDeputado) {
     rowsEleitos = ordenados
