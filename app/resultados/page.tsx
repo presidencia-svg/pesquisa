@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
 import {
   carregarResultados,
+  CONTRATANTE_CNPJ,
   formatarData,
   type EdicaoRow,
   type PatroPublico,
@@ -102,6 +103,11 @@ export default async function ResultadosHubPage() {
               rotulo="Divulgada"
               valor={meta.divulgada_em}
               sub={`TRE: ${meta.registro_tre}`}
+            />
+            <FichaCard
+              rotulo="Contratante"
+              valor={meta.contratante}
+              sub={`CNPJ ${CONTRATANTE_CNPJ}`}
             />
           </section>
 

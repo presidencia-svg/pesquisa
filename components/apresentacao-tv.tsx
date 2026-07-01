@@ -70,6 +70,8 @@ export type ApresData = {
   oferecimento: ApresSponsor[]
   patrocinio: ApresSponsor[]
   apoio: ApresSponsor[]
+  /** Quem contratou (Lei 9.504/97 art. 33 — obrigatório na divulgação) */
+  contratante: string
   mapas?: {
     presidente: ApresMapa | null
     governador: ApresMapa | null
@@ -541,7 +543,8 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
               </div>
             </div>
             <div className="apres-pesqele">
-              Registrada no <b>PesqEle/TRE-SE</b> · Lei 9.504/97.
+              Contratante: <b>{data.contratante}</b> · Registrada no{' '}
+              <b>PesqEle/TRE-SE</b> · Lei 9.504/97.
             </div>
           </div>
         </div>

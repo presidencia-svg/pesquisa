@@ -27,6 +27,10 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 
 const VAGAS = { federal: 8, estadual: 24 } as const
 
+/** Contratante da pesquisa (Lei 9.504/97 art. 33 — obrigatório na divulgação). */
+export const CONTRATANTE = 'CDL Aracaju'
+export const CONTRATANTE_CNPJ = '13.045.935/0001-36'
+
 const REGRA = {
   presidente:
     'Maioria absoluta no 1º turno (>50% dos válidos) elege direto. Caso contrário, 2º turno entre os dois mais votados.',
@@ -543,6 +547,7 @@ export async function carregarResultados(
       registro_tre: edicao.registro_tre ?? '—',
       edicao: edicao.nome,
       turno: (edicao.turno === 2 ? 2 : 1) as 1 | 2,
+      contratante: CONTRATANTE,
     },
     governador: montaCargoCandidato('governador'),
     senador: montaCargoCandidato('senador'),

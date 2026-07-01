@@ -21,7 +21,12 @@ import type {
   CargoZona,
   Pesquisa,
 } from '@/components/resultados-dashboard'
-import type { PatroPorCota, PatroPublico } from '@/lib/resultados-data'
+import {
+  CONTRATANTE,
+  CONTRATANTE_CNPJ,
+  type PatroPorCota,
+  type PatroPublico,
+} from '@/lib/resultados-data'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 const CARGOS = [
@@ -279,6 +284,7 @@ export async function construirApresData(
     oferecimento: sponsors(patroPorCota.diamante),
     patrocinio: sponsors(patroPorCota.ouro),
     apoio: sponsors(patroPorCota.prata),
+    contratante: `${CONTRATANTE} · CNPJ ${CONTRATANTE_CNPJ}`,
     mapas,
   }
 }

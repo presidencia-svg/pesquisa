@@ -88,6 +88,8 @@ export type Meta = {
   registro_tre: string
   edicao: string
   turno: 1 | 2
+  /** Quem contratou a pesquisa — exigido na divulgação (Lei 9.504/97 art. 33) */
+  contratante: string
 }
 
 export type Pesquisa = {

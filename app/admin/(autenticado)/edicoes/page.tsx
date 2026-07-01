@@ -13,6 +13,8 @@ type Edicao = {
   fim: string
   ativa: boolean
   registro_tre: string | null
+  numero_conre_responsavel: string | null
+  data_registro_pesqele: string | null
   divulgada_em: string | null
   divulgacao_prevista: string | null
   turno: number
@@ -105,6 +107,8 @@ export default async function EdicoesPage() {
                 edicaoId={e.id}
                 divulgadaEm={e.divulgada_em}
                 registroTre={e.registro_tre}
+                conreResponsavel={e.numero_conre_responsavel}
+                dataRegistroPesqele={e.data_registro_pesqele}
                 divulgacaoPrevista={e.divulgacao_prevista}
                 turno={e.turno ?? 1}
               />

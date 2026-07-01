@@ -12,7 +12,7 @@
 
 | Item | Valor |
 |---|---|
-| **Contratante** | Câmara de Dirigentes Lojistas de Aracaju (CDL Aracaju) — CNPJ 13.030.717/0001-09 |
+| **Contratante** | Câmara de Dirigentes Lojistas de Aracaju (CDL Aracaju) — CNPJ 13.045.935/0001-36 |
 | **Executor** | CDL Aracaju (execução direta, sem terceirização) |
 | **Estatístico responsável** | *a definir antes do registro — CONRE ativo, com declaração assinada digitalmente conforme Art. 2º, IX da Resolução 23.747/2026* |
 | **Custo total** | *a declarar* |

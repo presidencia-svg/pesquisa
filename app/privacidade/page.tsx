@@ -114,9 +114,14 @@ export default function PrivacidadePage() {
               navegador e é destruído ao fim da votação.
             </p>
             <p className="leading-relaxed">
-              O servidor <strong>não consegue ligar seus votos à sua
-              identidade</strong> — nem com acesso direto ao banco.
-              Auditoria técnica disponível em{' '}
+              Não existe chave (chave estrangeira, CPF, IP ou nome) ligando
+              um voto a uma pessoa — a reidentificação é inviável por meios
+              comuns. Os votos guardam apenas atributos demográficos (sexo,
+              faixa etária, escolaridade, município) usados na ponderação
+              amostral; por isso são tratados como{' '}
+              <strong>pseudonimizados</strong> (não anônimos em sentido
+              absoluto) e permanecem protegidos pela LGPD. Auditoria técnica
+              em{' '}
               <Link href="/transparencia" className="text-primary hover:underline">
                 /transparencia
               </Link>
@@ -178,8 +183,16 @@ export default function PrivacidadePage() {
 
           <section className="flex flex-col gap-4">
             <h2 className="text-xl font-semibold border-l-2 border-accent pl-4">
-              4. Base legal (Art. 7 LGPD)
+              4. Base legal (Arts. 7 e 11 LGPD)
             </h2>
+            <p className="leading-relaxed rounded-md border border-accent/30 bg-accent/5 px-4 py-3 text-sm">
+              A <strong>intenção de voto é dado pessoal sensível</strong>{' '}
+              (Art. 5º, II — opinião política) e, por isso, seu tratamento
+              observa o <strong>regime específico do Art. 11 da LGPD</strong>,
+              apoiado em consentimento específico e destacado para esta
+              finalidade. As bases do Art. 7 abaixo cobrem os demais dados
+              (identidade e variáveis demográficas usadas na ponderação).
+            </p>
             <ul className="list-disc pl-6 leading-relaxed flex flex-col gap-2">
               <li>
                 <strong>Consentimento</strong> (Art. 7, I) — você marca
@@ -291,7 +304,8 @@ export default function PrivacidadePage() {
             <ul className="list-disc pl-6 leading-relaxed flex flex-col gap-2">
               <li>
                 <strong>Votos (Sala 2)</strong> — indefinido, em forma
-                permanentemente anônima (sem ligação com identidade).
+                pseudonimizada (sem chave direta para a identidade; conserva
+                atributos demográficos para ponderação).
               </li>
               <li>
                 <strong>Identidade (Sala 1)</strong> — até{' '}

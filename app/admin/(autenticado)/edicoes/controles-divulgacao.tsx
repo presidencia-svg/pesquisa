@@ -16,6 +16,8 @@ type Props = {
   edicaoId: string
   divulgadaEm: string | null
   registroTre: string | null
+  conreResponsavel: string | null
+  dataRegistroPesqele: string | null
   divulgacaoPrevista: string | null
   turno: number
 }
@@ -30,6 +32,8 @@ export function ControlesDivulgacao({
   edicaoId,
   divulgadaEm,
   registroTre,
+  conreResponsavel,
+  dataRegistroPesqele,
   divulgacaoPrevista,
   turno,
 }: Props) {
@@ -164,6 +168,28 @@ export function ControlesDivulgacao({
             name="registro_tre"
             defaultValue={registroTre ?? ''}
             placeholder="SE-XXXXX/2026"
+            className="h-9 px-3 rounded-md border border-border bg-background text-sm"
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+            Nº CONRE do estatístico responsável (obrigatório p/ divulgar)
+          </span>
+          <input
+            name="numero_conre_responsavel"
+            defaultValue={conreResponsavel ?? ''}
+            placeholder="ex.: 9-01234"
+            className="h-9 px-3 rounded-md border border-border bg-background text-sm"
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+            Data do registro no PesqEle (divulgação só ≥5 dias depois)
+          </span>
+          <input
+            name="data_registro_pesqele"
+            type="date"
+            defaultValue={dataRegistroPesqele ?? ''}
             className="h-9 px-3 rounded-md border border-border bg-background text-sm"
           />
         </label>

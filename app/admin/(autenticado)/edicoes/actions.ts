@@ -95,19 +95,51 @@ export async function divulgarEdicao(formData: FormData): Promise<EdicaoState> {
   const db = supabaseAdmin()
   const { data: ed } = await db
     .from('edicao')
-    .select('id, registro_tre, divulgada_em')
+    .select(
+      'id, registro_tre, divulgada_em, numero_conre_responsavel, data_registro_pesqele',
+    )
     .eq('id', id)
     .maybeSingle()
   if (!ed) return { ok: false, message: 'Edição não encontrada.' }
-  if (!ed.registro_tre || ed.registro_tre.trim().length === 0) {
+  if (ed.divulgada_em) {
+    return { ok: false, message: 'Edição já está divulgada.' }
+  }
+
+  // --- Gate de compliance (Lei 9.504/97 art. 33 + Res. TSE 23.747/2026) ---
+  // Formato do nº de registro PesqEle: UF/BR + dígitos + /ano (ex.: SE-06661/2026).
+  const registro = (ed.registro_tre ?? '').trim()
+  if (!/^[A-Za-z]{2}[-\s]?\d{1,6}\/\d{4}$/.test(registro)) {
     return {
       ok: false,
       message:
-        'Preencha o nº de registro TRE/SE antes de divulgar (exigência da Res. 23.747/2026).',
+        'Nº de registro PesqEle inválido. Use o formato UF-NNNNN/AAAA (ex.: SE-06661/2026) antes de divulgar.',
     }
   }
-  if (ed.divulgada_em) {
-    return { ok: false, message: 'Edição já está divulgada.' }
+  if (
+    !ed.numero_conre_responsavel ||
+    ed.numero_conre_responsavel.trim().length === 0
+  ) {
+    return {
+      ok: false,
+      message:
+        'Informe o nº CONRE do estatístico responsável (Res. 23.747/2026 art. 2º IX) antes de divulgar.',
+    }
+  }
+  if (!ed.data_registro_pesqele) {
+    return {
+      ok: false,
+      message: 'Informe a data do registro no PesqEle antes de divulgar.',
+    }
+  }
+  // Registro deve ter sido feito com pelo menos 5 dias de antecedência.
+  const dataRegistro = new Date(ed.data_registro_pesqele + 'T00:00:00Z')
+  const cincoDias = 5 * 24 * 60 * 60 * 1000
+  if (Date.now() - dataRegistro.getTime() < cincoDias) {
+    return {
+      ok: false,
+      message:
+        'A divulgação só é liberada 5 dias após o registro no PesqEle (Lei 9.504/97 art. 33). Aguarde o prazo.',
+    }
   }
 
   const divulgadaEm = new Date().toISOString()
@@ -178,9 +210,13 @@ export async function salvarMetadadosDivulgacao(
   if (!id) return { ok: false, message: 'ID inválido.' }
   const registro = String(formData.get('registro_tre') ?? '').trim()
   const previstaRaw = String(formData.get('divulgacao_prevista') ?? '').trim()
+  const conre = String(formData.get('numero_conre_responsavel') ?? '').trim()
+  const dataRegistroRaw = String(formData.get('data_registro_pesqele') ?? '').trim()
 
   const update: Record<string, string | null> = {}
   update.registro_tre = registro.length > 0 ? registro : null
+  update.numero_conre_responsavel = conre.length > 0 ? conre : null
+  update.data_registro_pesqele = dataRegistroRaw.length > 0 ? dataRegistroRaw : null
 
   if (previstaRaw.length > 0) {
     const dt = new Date(previstaRaw)

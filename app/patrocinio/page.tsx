@@ -329,9 +329,10 @@ export default function PatrocinioPage() {
         <section className="max-w-3xl mx-auto px-5 py-10 w-full flex flex-col gap-4">
           <h2 className="text-xl font-semibold">Quem NÃO pode patrocinar</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
-            Em conformidade com a <strong>Lei 9.504/97, art. 33, § 2º</strong>,
-            é vedada qualquer transferência de recursos para a pesquisa
-            originária de:
+            Como política de <em>due diligence</em> eleitoral — para afastar
+            recurso de fonte vedada (Lei 9.504/97, arts. 24 e 81) e conduta
+            vedada a agente público (art. 73) —, não aceitamos recursos
+            originários de:
           </p>
           <ul className="list-disc pl-6 text-sm leading-relaxed text-muted-foreground flex flex-col gap-1">
             <li>Candidatas e candidatos a cargo eletivo, suas coligações ou federações;</li>
