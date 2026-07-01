@@ -76,6 +76,9 @@ function montaCargo(
       if (c.eleito) idxUltimoEleito = i
     })
     corte = Math.max(meta.top, idxUltimoEleito + 1)
+  } else if (meta.key === 'senador') {
+    // Senador (2 vagas, campo grande): mostra TODOS os candidatos.
+    corte = ordenados.length
   }
 
   const topN = ordenados.slice(0, corte)
