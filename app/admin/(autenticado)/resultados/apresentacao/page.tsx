@@ -13,6 +13,7 @@ import {
   ApresentacaoTV,
   type ApresCargo,
   type ApresData,
+  type ApresMapa,
   type ApresRow,
   type ApresSponsor,
 } from '@/components/apresentacao-tv'
@@ -21,6 +22,7 @@ import {
   carregarResultados,
   type PatroPublico,
 } from '@/lib/resultados-data'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import type {
   CargoCandidato,
   CargoZona,
@@ -155,6 +157,83 @@ function sponsors(arr: PatroPublico[]): ApresSponsor[] {
     .map((p) => ({ empresa: p.empresa, logoUrl: p.logo_url as string }))
 }
 
+// Paleta de fallback pro mapa (quando o partido não tem cor).
+const PALETA_MAPA = [
+  '#dc2626', '#0a2a6e', '#16a34a', '#ca8a04', '#7c3aed',
+  '#0891b2', '#db2777', '#65a30d', '#ea580c', '#0d9488',
+]
+
+/** Monta o mapa "quem venceu por cidade" de um cargo (só o líder por município). */
+async function montaMapa(
+  db: ReturnType<typeof supabaseAdmin>,
+  edicaoId: string,
+  cargo: 'presidente' | 'governador' | 'senador',
+): Promise<ApresMapa | null> {
+  const { data } = await db
+    .from('v_vencedor_municipio')
+    .select(
+      'municipio_ibge, municipio_nome, total_municipio, candidato_id, numero, nome_urna, partido_sigla, partido_cor, pct',
+    )
+    .eq('edicao_id', edicaoId)
+    .eq('cargo', cargo)
+    .eq('posicao', 1)
+  const arr = (data ?? []) as Array<{
+    municipio_ibge: number
+    municipio_nome: string
+    total_municipio: number
+    candidato_id: string
+    numero: number
+    nome_urna: string
+    partido_sigla: string | null
+    partido_cor: string | null
+    pct: number
+  }>
+  if (arr.length === 0) return null
+
+  const corPorCand = new Map<string, string>()
+  let i = 0
+  for (const l of arr) {
+    if (!corPorCand.has(l.candidato_id)) {
+      corPorCand.set(l.candidato_id, l.partido_cor ?? PALETA_MAPA[i % PALETA_MAPA.length])
+      i++
+    }
+  }
+
+  const municipios = arr.map((l) => ({
+    ibge: l.municipio_ibge,
+    cor: corPorCand.get(l.candidato_id) as string,
+    label: `${l.municipio_nome}: ${l.nome_urna} (${l.numero}) — ${l.pct.toFixed(1).replace('.', ',')}%`,
+  }))
+
+  const stat = new Map<
+    string,
+    { nome: string; numero: number; sigla: string | null; cor: string; cidades: number }
+  >()
+  for (const l of arr) {
+    const s = stat.get(l.candidato_id) ?? {
+      nome: l.nome_urna,
+      numero: l.numero,
+      sigla: l.partido_sigla,
+      cor: corPorCand.get(l.candidato_id) as string,
+      cidades: 0,
+    }
+    s.cidades++
+    stat.set(l.candidato_id, s)
+  }
+  const legenda = [...stat.values()].sort((a, b) => b.cidades - a.cidades)
+  const lider = legenda[0]
+
+  return {
+    municipios,
+    legenda,
+    comDados: arr.length,
+    semDados: 75 - arr.length,
+    analise: lider
+      ? `${lider.nome}${lider.sigla ? ' (' + lider.sigla + ')' : ''} venceu em ${lider.cidades} das ${arr.length} cidades com amostra suficiente (N≥30).`
+      : '',
+  }
+}
+
 export default async function ApresentacaoPage() {
   const r = await carregarResultados({ ignorarDivulgacao: true })
 
@@ -176,6 +255,18 @@ export default async function ApresentacaoPage() {
   const { pesquisa, patroPorCota } = r
   const { meta } = pesquisa
   const marginPP = meta.n > 0 ? 1.96 * Math.sqrt(0.25 / meta.n) * 100 : 0
+
+  // Mapa "quem venceu por cidade" — Presidente / Governador / Senador
+  const db = supabaseAdmin()
+  const { data: ed } = await db
+    .from('edicao').select('id').eq('ativa', true).maybeSingle<{ id: string }>()
+  const mapas = ed
+    ? {
+        presidente: await montaMapa(db, ed.id, 'presidente'),
+        governador: await montaMapa(db, ed.id, 'governador'),
+        senador: await montaMapa(db, ed.id, 'senador'),
+      }
+    : { presidente: null, governador: null, senador: null }
 
   const cargos: ApresCargo[] = []
   for (const c of CARGOS) {
@@ -206,6 +297,7 @@ export default async function ApresentacaoPage() {
     oferecimento: sponsors(patroPorCota.diamante),
     patrocinio: sponsors(patroPorCota.ouro),
     apoio: sponsors(patroPorCota.prata),
+    mapas,
   }
 
   return <ApresentacaoTV data={data} />

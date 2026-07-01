@@ -16,6 +16,8 @@
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
 
+import { MapaSergipe, type PinturaMunicipio } from './mapa-sergipe'
+
 export type ApresRow = {
   name: string
   party?: string
@@ -41,6 +43,22 @@ export type ApresCargo = {
 
 export type ApresSponsor = { empresa: string; logoUrl: string }
 
+export type ApresMapaMunicipio = { ibge: number; cor: string; label: string }
+export type ApresMapaLegenda = {
+  nome: string
+  numero: number
+  sigla: string | null
+  cor: string
+  cidades: number
+}
+export type ApresMapa = {
+  municipios: ApresMapaMunicipio[]
+  legenda: ApresMapaLegenda[]
+  comDados: number
+  semDados: number
+  analise: string
+}
+
 export type ApresData = {
   edicaoLabel: string
   turno: number
@@ -52,6 +70,11 @@ export type ApresData = {
   oferecimento: ApresSponsor[]
   patrocinio: ApresSponsor[]
   apoio: ApresSponsor[]
+  mapas?: {
+    presidente: ApresMapa | null
+    governador: ApresMapa | null
+    senador: ApresMapa | null
+  }
 }
 
 function fmt(x: number): string {
@@ -76,6 +99,8 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
   const [scale, setScale] = useState(1)
   // Deputado: false = mais votados (intenção) · true = eleitos (projeção)
   const [modoEleitos, setModoEleitos] = useState(false)
+  // Mapa por cidade: cargo exibido
+  const [mapaCargo, setMapaCargo] = useState<'presidente' | 'governador' | 'senador'>('governador')
   const tRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Escala o palco 1920×1080 pra caber na viewport (modo TV/kiosk)
@@ -110,6 +135,26 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
     setView('hub')
     setGrown(true)
   }
+  const openMapa = () => {
+    if (tRef.current) clearTimeout(tRef.current)
+    setMapaCargo('governador')
+    setView('mapa')
+    setGrown(true)
+  }
+
+  // Mapa por cidade do cargo selecionado + tem algum mapa disponível?
+  const temMapa = !!(
+    data.mapas &&
+    (data.mapas.presidente || data.mapas.governador || data.mapas.senador)
+  )
+  const mapaAtual = data.mapas?.[mapaCargo] ?? null
+  const pinturaMapa = useMemo(() => {
+    const m = new Map<number, PinturaMunicipio>()
+    for (const mu of mapaAtual?.municipios ?? []) {
+      m.set(mu.ibge, { cor: mu.cor, label: mu.label })
+    }
+    return m
+  }, [mapaAtual])
   // Reanima as barras ao alternar mais votados ↔ eleitos
   const trocaModo = (eleitos: boolean) => {
     if (eleitos === modoEleitos) return
@@ -247,7 +292,11 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
 
               <div className="apres-spacer" />
               <div className="apres-bottomcards">
-                <div className="apres-card-mapa">
+                <div
+                  className="apres-card-mapa"
+                  onClick={temMapa ? openMapa : undefined}
+                  style={{ cursor: temMapa ? 'pointer' : 'default' }}
+                >
                   <div className="apres-card-t">Mapa por cidade</div>
                   <div className="apres-card-s">
                     Quem ganhou em cada um dos 75 municípios →
@@ -260,6 +309,76 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
                   </div>
                 </div>
               </div>
+            </div>
+          ) : view === 'mapa' ? (
+            <div className="apres-fill" style={{ marginTop: 14 }}>
+              <button type="button" className="apres-back" onClick={back}>
+                ← VOLTAR AOS CARGOS
+              </button>
+              <div className="apres-resulthead">
+                <div className="apres-result-num apres-mapa-pin">◎</div>
+                <div>
+                  <h1 className="apres-result-h1">Mapa por cidade</h1>
+                  <div className="apres-result-sub">
+                    Quem venceu em cada município · amostra por cidade N≥30
+                  </div>
+                </div>
+                <div className="apres-toggle">
+                  {(['presidente', 'governador', 'senador'] as const).map((cg) => (
+                    <button
+                      key={cg}
+                      type="button"
+                      disabled={!data.mapas?.[cg]}
+                      className={mapaCargo === cg ? 'apres-toggle-on' : ''}
+                      onClick={() => setMapaCargo(cg)}
+                    >
+                      {cg === 'presidente' ? 'Presidente' : cg === 'governador' ? 'Governador' : 'Senador'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {mapaAtual ? (
+                <div className="apres-mapa-wrap">
+                  <div className="apres-mapa-svg">
+                    <MapaSergipe pintura={pinturaMapa} />
+                  </div>
+                  <div className="apres-mapa-legenda">
+                    {mapaAtual.legenda.map((l) => (
+                      <div key={l.numero} className="apres-mapa-leg-row">
+                        <span className="apres-mapa-leg-cor" style={{ background: l.cor }} />
+                        <span className="apres-mapa-leg-nome">
+                          {l.nome}
+                          {l.sigla ? <span className="apres-mapa-leg-sigla"> {l.sigla}</span> : null}
+                        </span>
+                        <span className="apres-mapa-leg-cid">
+                          {l.cidades} cidade{l.cidades > 1 ? 's' : ''}
+                        </span>
+                      </div>
+                    ))}
+                    {mapaAtual.semDados > 0 && (
+                      <div className="apres-mapa-semdados">
+                        {mapaAtual.semDados} cidade{mapaAtual.semDados > 1 ? 's' : ''} sem amostra
+                        suficiente (cinza)
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="apres-mapa-vazio">
+                  Sem amostra suficiente por cidade neste cargo ainda.
+                </div>
+              )}
+
+              {mapaAtual?.analise && (
+                <div className="apres-destaque">
+                  <div className="apres-destaque-ic">!</div>
+                  <div>
+                    <div className="apres-destaque-l">DESTAQUE</div>
+                    <div className="apres-destaque-t">{mapaAtual.analise}</div>
+                  </div>
+                </div>
+              )}
             </div>
           ) : cur ? (
             <div className="apres-fill" style={{ marginTop: 14 }}>
@@ -477,6 +596,20 @@ const CSS = `
 .apres-card-t{font-family:'Archivo',sans-serif;font-weight:700;font-size:20px;color:#fff;}
 .apres-card-s{font-size:14.5px;color:#bcd0ff;margin-top:2px;}
 .apres-card-met .apres-card-s{color:#9fb0d8;}
+.apres-card-mapa:hover{filter:brightness(1.12);}
+/* ----- Mapa por cidade ----- */
+.apres-mapa-pin{font-size:30px;line-height:1;}
+.apres-mapa-wrap{display:flex;gap:34px;flex:1 1 auto;min-height:0;margin-top:22px;}
+.apres-mapa-svg{flex:1 1 56%;display:flex;align-items:center;justify-content:center;min-width:0;}
+.apres-mapa-svg svg{width:100%;height:auto;max-height:640px;}
+.apres-mapa-legenda{flex:1 1 44%;display:flex;flex-direction:column;gap:12px;overflow-y:auto;padding-right:8px;}
+.apres-mapa-leg-row{display:flex;align-items:center;gap:14px;}
+.apres-mapa-leg-cor{width:22px;height:22px;border-radius:6px;flex:none;box-shadow:0 0 0 1px rgba(255,255,255,.15);}
+.apres-mapa-leg-nome{flex:1;min-width:0;font-family:'Archivo',sans-serif;font-weight:800;font-size:20px;color:#eaf0ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.apres-mapa-leg-sigla{color:#9fb0d8;font-weight:600;font-size:16px;}
+.apres-mapa-leg-cid{flex:none;font-weight:800;font-size:18px;color:#86c232;}
+.apres-mapa-semdados{margin-top:8px;font-size:14px;color:#7f8fbb;}
+.apres-mapa-vazio{flex:1;display:flex;align-items:center;justify-content:center;color:#9fb0d8;font-size:20px;}
 .apres-back{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;font-family:'Archivo',sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;color:#9fb0d8;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);padding:8px 16px;border-radius:100px;cursor:pointer;}
 .apres-back:hover{color:#fff;background:rgba(255,255,255,.12);}
 .apres-resulthead{display:flex;align-items:flex-end;gap:18px;margin-top:18px;}
