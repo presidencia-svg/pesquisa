@@ -96,11 +96,12 @@ export function ControlesDivulgacao({
         <span className="text-[11px] text-muted-foreground">
           Aracaju × São Cristóvão ·{' '}
           {consultaZonaAtiva ? (
-            <span className="text-accent font-medium">ativa</span>
+            <span className="text-accent font-medium">coletando</span>
           ) : (
-            <span className="text-error font-medium">desligada</span>
+            <span className="text-error font-medium">coleta desligada</span>
           )}{' '}
-          — aparece só pra eleitores de Aracaju/São Cristóvão
+          — pergunta só pra eleitores de Aracaju/São Cristóvão. Desligar
+          para de coletar; votos já dados continuam nos resultados.
         </span>
       </div>
       <button

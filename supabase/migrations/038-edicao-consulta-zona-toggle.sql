@@ -11,4 +11,4 @@ alter table public.edicao
   add column if not exists consulta_zona_ativa boolean not null default true;
 
 comment on column public.edicao.consulta_zona_ativa is
-  'Se true, a cédula de consulta Zona de Expansão (Aracaju × São Cristóvão) é apresentada a eleitores de Aracaju/São Cristóvão e conta nos resultados. Se false, é omitida do fluxo de votação e da divulgação.';
+  'Controla só a COLETA da consulta Zona de Expansão (Aracaju × São Cristóvão). Se true, a cédula é apresentada a eleitores de Aracaju/São Cristóvão. Se false, a coleta para (a cédula some do fluxo). A divulgação segue os votos: respostas já dadas continuam aparecendo nos resultados/TV mesmo com o flag desligado.';
