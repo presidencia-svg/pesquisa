@@ -113,10 +113,14 @@ export const isCargo = (raw: string): raw is Cargo =>
  * Decide o proximo cargo (ou null = fim) baseado no cargo atual e no
  * municipio do eleitor. zona_expansao so aparece pra Aracaju + Sao
  * Cristovao; outros pulam direto pra /obrigado.
+ *
+ * `zonaAtiva` reflete o flag `edicao.consulta_zona_ativa` — quando o
+ * admin desliga a consulta, ela some do fluxo mesmo pra Aracaju/SC.
  */
 export const proximoCargoConsiderandoMunicipio = (
   cargoAtual: Cargo,
   municipioIbge: number | null,
+  zonaAtiva = true,
 ): Cargo | null => {
   // Sequencia normal pra todos os cargos exceto estadual
   const cfg = CARGO_CONFIG[cargoAtual]
@@ -126,6 +130,7 @@ export const proximoCargoConsiderandoMunicipio = (
   if (cargoAtual === 'estadual') {
     const z = CARGO_CONFIG.zona_expansao
     if (
+      zonaAtiva &&
       municipioIbge &&
       z.municipiosAplicaveis?.includes(municipioIbge)
     ) {

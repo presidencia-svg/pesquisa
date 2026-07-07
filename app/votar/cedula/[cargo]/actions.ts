@@ -95,6 +95,18 @@ export async function submeterVoto(
   }
   const edicaoId = tokenReg.edicao_id
 
+  // Flag de admin: consulta Zona de Expansão pode estar desligada nesta
+  // edicao. Se estiver, nao roteia pra ela e recusa voto direto nela.
+  const { data: edFlag } = await db
+    .from('edicao')
+    .select('consulta_zona_ativa')
+    .eq('id', edicaoId)
+    .maybeSingle()
+  const zonaAtiva = edFlag?.consulta_zona_ativa ?? true
+  if (cargo === 'zona_expansao' && !zonaAtiva) {
+    return { ok: false, message: 'Esta consulta não está disponível nesta edição.' }
+  }
+
   // 2. Conta votos ja emitidos por este token neste cargo
   const { count: votosFeitos } = await db
     .from('votos_pesquisa')
@@ -103,7 +115,7 @@ export async function submeterVoto(
     .eq('cargo', cargo)
 
   if ((votosFeitos ?? 0) >= cfg.vagas) {
-    return proximoCargoOuObrigado(cargo, municipioIbge)
+    return proximoCargoOuObrigado(cargo, municipioIbge, zonaAtiva)
   }
 
   // 3. Resolve candidato_id / partido_id / resposta conforme tipo
@@ -250,7 +262,7 @@ export async function submeterVoto(
         codigo: errVoto.code,
         // não logamos token_hash nem candidato pra preservar anonimato
       })
-      return proximoCargoOuObrigado(cargo, municipioIbge)
+      return proximoCargoOuObrigado(cargo, municipioIbge, zonaAtiva)
     }
     console.error('[voto] erro insert:', errVoto)
     return {
@@ -264,7 +276,7 @@ export async function submeterVoto(
   // 5. Verifica se completou todas as vagas deste cargo. Se sim, avanca.
   const novoTotal = (votosFeitos ?? 0) + 1
   if (novoTotal >= cfg.vagas) {
-    const proximo = proximoCargoConsiderandoMunicipio(cargo, municipioIbge)
+    const proximo = proximoCargoConsiderandoMunicipio(cargo, municipioIbge, zonaAtiva)
     if (!proximo) {
       // Fim do fluxo. Marca token como usado e ENCERRA A CAPSULA.
       await db
@@ -273,7 +285,7 @@ export async function submeterVoto(
         .eq('token_hash', tokenHash)
       await clearVotoToken()
     }
-    return proximoCargoOuObrigado(cargo, municipioIbge)
+    return proximoCargoOuObrigado(cargo, municipioIbge, zonaAtiva)
   }
 
   // Senador com 1 voto feito ainda: fica na mesma cedula pro 2o voto.
@@ -283,8 +295,9 @@ export async function submeterVoto(
 const proximoCargoOuObrigado = (
   atual: Cargo,
   municipioIbge: number | null,
+  zonaAtiva: boolean,
 ): never => {
-  const proximo = proximoCargoConsiderandoMunicipio(atual, municipioIbge)
+  const proximo = proximoCargoConsiderandoMunicipio(atual, municipioIbge, zonaAtiva)
   if (proximo) {
     redirect(`/votar/cedula/${proximo}`)
   } else {

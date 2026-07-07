@@ -180,6 +180,26 @@ export async function atualizarTurno(formData: FormData): Promise<void> {
 }
 
 /**
+ * Liga/desliga a consulta "Zona de Expansão" (Aracaju × São Cristóvão)
+ * nesta edicao. Quando desligada, a cedula some do fluxo de votacao
+ * (mesmo pra eleitores de Aracaju/SC) e do bloco de resultados.
+ */
+export async function alternarConsultaZona(formData: FormData): Promise<void> {
+  const id = String(formData.get('id') ?? '')
+  const ativa = String(formData.get('ativa') ?? '') === 'true'
+  if (!id) return
+  const db = supabaseAdmin()
+  await db.from('edicao').update({ consulta_zona_ativa: ativa }).eq('id', id)
+  await registrarAcessoAdmin(
+    'alternar_consulta_zona',
+    { edicao_id: id, consulta_zona_ativa: ativa },
+    `edicao:${id}`,
+  )
+  revalidatePath('/admin/edicoes')
+  revalidatePath('/resultados')
+}
+
+/**
  * Tira a divulgacao publica (volta /resultados pra o estado de
  * "aguarde"). Util pra corrigir erro ou desfazer durante o piloto.
  */

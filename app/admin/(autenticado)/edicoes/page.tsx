@@ -18,6 +18,7 @@ type Edicao = {
   divulgada_em: string | null
   divulgacao_prevista: string | null
   turno: number
+  consulta_zona_ativa: boolean | null
   criado_em: string
 }
 
@@ -111,6 +112,7 @@ export default async function EdicoesPage() {
                 dataRegistroPesqele={e.data_registro_pesqele}
                 divulgacaoPrevista={e.divulgacao_prevista}
                 turno={e.turno ?? 1}
+                consultaZonaAtiva={e.consulta_zona_ativa ?? true}
               />
             </div>
           ))

@@ -3,6 +3,7 @@
 import { useActionState, useState } from 'react'
 
 import {
+  alternarConsultaZona,
   atualizarTurno,
   divulgarEdicao,
   retirarDivulgacao,
@@ -20,6 +21,7 @@ type Props = {
   dataRegistroPesqele: string | null
   divulgacaoPrevista: string | null
   turno: number
+  consultaZonaAtiva: boolean
 }
 
 /**
@@ -36,6 +38,7 @@ export function ControlesDivulgacao({
   dataRegistroPesqele,
   divulgacaoPrevista,
   turno,
+  consultaZonaAtiva,
 }: Props) {
   const [editando, setEditando] = useState(false)
   const [estadoMeta, salvarMeta, salvandoMeta] = useActionState(
@@ -78,10 +81,52 @@ export function ControlesDivulgacao({
     </form>
   )
 
+  // Liga/desliga a consulta Zona de Expansão (Aracaju × São Cristóvão).
+  const blocoZona = (
+    <form
+      action={alternarConsultaZona}
+      className="flex items-center justify-between gap-3 pt-3 mt-2 border-t border-dashed border-border"
+    >
+      <input type="hidden" name="id" value={edicaoId} />
+      <input type="hidden" name="ativa" value={consultaZonaAtiva ? 'false' : 'true'} />
+      <div className="flex flex-col gap-0.5">
+        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+          Consulta Zona de Expansão
+        </span>
+        <span className="text-[11px] text-muted-foreground">
+          Aracaju × São Cristóvão ·{' '}
+          {consultaZonaAtiva ? (
+            <span className="text-accent font-medium">ativa</span>
+          ) : (
+            <span className="text-error font-medium">desligada</span>
+          )}{' '}
+          — aparece só pra eleitores de Aracaju/São Cristóvão
+        </span>
+      </div>
+      <button
+        type="submit"
+        className={`h-8 px-3 rounded-md border text-[11px] transition whitespace-nowrap ${
+          consultaZonaAtiva
+            ? 'border-error/40 text-error hover:bg-error/5'
+            : 'border-accent/40 text-accent hover:bg-accent/5'
+        }`}
+      >
+        {consultaZonaAtiva ? 'Desligar' : 'Ativar'}
+      </button>
+    </form>
+  )
+
+  const blocosConfig = (
+    <>
+      {blocoTurno}
+      {blocoZona}
+    </>
+  )
+
   if (!editando && !divulgada) {
     return (
       <>
-        {blocoTurno}
+        {blocosConfig}
         <div className="flex flex-col gap-2 mt-2 pt-3 border-t border-dashed border-border">
           <div className="flex items-center justify-between gap-3">
             <p className="text-xs text-muted-foreground">
@@ -115,7 +160,7 @@ export function ControlesDivulgacao({
   if (divulgada && !editando) {
     return (
       <>
-        {blocoTurno}
+        {blocosConfig}
         <div className="flex flex-col gap-2 mt-2 pt-3 border-t border-dashed border-border">
           <div className="flex items-center justify-between gap-3">
             <p className="text-xs">
@@ -156,7 +201,7 @@ export function ControlesDivulgacao({
   // Modo editando — formulario de metadados + acao divulgar
   return (
     <>
-      {blocoTurno}
+      {blocosConfig}
       <div className="flex flex-col gap-3 mt-2 pt-3 border-t border-dashed border-border">
       <form action={salvarMeta} className="flex flex-col gap-3">
         <input type="hidden" name="id" value={edicaoId} />

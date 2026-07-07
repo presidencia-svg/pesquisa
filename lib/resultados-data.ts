@@ -51,6 +51,7 @@ export type EdicaoRow = {
   divulgacao_prevista: string | null
   registro_tre: string | null
   turno: number | null
+  consulta_zona_ativa: boolean | null
 }
 
 export type PatroPorCota = {
@@ -96,7 +97,7 @@ export async function carregarResultados(
   const db = supabaseAdmin()
   const { data: edicao } = await db
     .from('edicao')
-    .select('id, nome, divulgada_em, divulgacao_prevista, registro_tre, turno')
+    .select('id, nome, divulgada_em, divulgacao_prevista, registro_tre, turno, consulta_zona_ativa')
     .eq('ativa', true)
     .maybeSingle<EdicaoRow>()
 
@@ -524,7 +525,10 @@ export async function carregarResultados(
     const aju = ajuRow?.votos ?? 0
     const sc = scRow?.votos ?? 0
     const bns = brancoNaoSei['zona_expansao'] ?? { branco: 0, nao_sabe: 0 }
-    if (aju > 0 || sc > 0 || bns.branco > 0 || bns.nao_sabe > 0) {
+    // Admin pode ter desligado a consulta — nesse caso some dos resultados
+    // (e da apresentação TV, que consome a mesma Pesquisa).
+    const zonaAtiva = edicao.consulta_zona_ativa !== false
+    if (zonaAtiva && (aju > 0 || sc > 0 || bns.branco > 0 || bns.nao_sabe > 0)) {
       zonaCargo = {
         titulo: 'Zona de Expansão',
         aracaju: aju,

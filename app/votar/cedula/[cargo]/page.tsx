@@ -54,6 +54,19 @@ export default async function CedulaPage({ params }: PageProps) {
     .maybeSingle()
   if (!tokenReg) redirect('/votar')
 
+  // Flag de admin: a consulta Zona de Expansão pode estar desligada
+  // nesta edicao. Se estiver, ela nao aparece nem pra Aracaju/SC.
+  const { data: edFlag } = await db
+    .from('edicao')
+    .select('consulta_zona_ativa')
+    .eq('id', tokenReg.edicao_id)
+    .maybeSingle()
+  const zonaAtiva = edFlag?.consulta_zona_ativa ?? true
+
+  // Acesso direto a /votar/cedula/zona_expansao com a consulta desligada:
+  // encerra o fluxo.
+  if (cargo === 'zona_expansao' && !zonaAtiva) redirect('/votar/obrigado')
+
   const { count: votosJaFeitos } = await db
     .from('votos_pesquisa')
     .select('id', { count: 'exact', head: true })
@@ -62,7 +75,7 @@ export default async function CedulaPage({ params }: PageProps) {
 
   // Se ja completou todas as vagas, pula pro proximo (considerando municipio)
   if ((votosJaFeitos ?? 0) >= cfg.vagas) {
-    const proximo = proximoCargoConsiderandoMunicipio(cargo, municipioIbge)
+    const proximo = proximoCargoConsiderandoMunicipio(cargo, municipioIbge, zonaAtiva)
     if (proximo) redirect(`/votar/cedula/${proximo}`)
     redirect('/votar/obrigado')
   }
@@ -151,8 +164,9 @@ export default async function CedulaPage({ params }: PageProps) {
   const vagaInicial = (votosJaFeitos ?? 0) + 1
   const patrocinadores = await carregarPatrocinadores()
 
-  // Cabecalho diferencia ordem maxima por municipio
+  // Cabecalho diferencia ordem maxima por municipio (e pelo flag da consulta)
   const totalCedulas =
+    zonaAtiva &&
     municipioIbge &&
     CARGO_CONFIG.zona_expansao.municipiosAplicaveis?.includes(municipioIbge)
       ? 6
