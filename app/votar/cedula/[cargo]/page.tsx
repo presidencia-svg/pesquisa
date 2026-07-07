@@ -7,7 +7,9 @@ import {
   proximoCargoConsiderandoMunicipio,
   type Cargo,
 } from '@/lib/cargos'
+import { FaixaPatrocinadores } from '@/components/faixa-patrocinadores'
 import { hashTokenVoto } from '@/lib/crypto'
+import { carregarPatrocinadores } from '@/lib/patrocinadores'
 import { getVotoData } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
@@ -147,6 +149,7 @@ export default async function CedulaPage({ params }: PageProps) {
   // tipo === 'consulta' usa cfg.opcoesConsulta diretamente — sem precisar de DB
 
   const vagaInicial = (votosJaFeitos ?? 0) + 1
+  const patrocinadores = await carregarPatrocinadores()
 
   // Cabecalho diferencia ordem maxima por municipio
   const totalCedulas =
@@ -196,6 +199,8 @@ export default async function CedulaPage({ params }: PageProps) {
               Voltar pra cápsula
             </Link>
           </p>
+
+          <FaixaPatrocinadores patrocinadores={patrocinadores} tema="escuro" />
         </div>
       </section>
     </main>

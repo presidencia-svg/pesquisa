@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
+import { FaixaPatrocinadores } from '@/components/faixa-patrocinadores'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
 import { PUBLIC_ENV } from '@/lib/env'
+import { carregarPatrocinadores } from '@/lib/patrocinadores'
 import { getPreVoto, getVotoToken } from '@/lib/sessao'
 
 import { CpfForm } from './cpf-form'
@@ -19,6 +21,8 @@ export default async function VotarPage() {
   // Se ja existe rascunho de cadastro, pula direto pro proximo passo.
   const draft = await getPreVoto()
   if (draft) redirect('/votar/confirma')
+
+  const patrocinadores = await carregarPatrocinadores()
 
   return (
     <>
@@ -69,6 +73,8 @@ export default async function VotarPage() {
               </p>
             </div>
           </details>
+
+          <FaixaPatrocinadores patrocinadores={patrocinadores} tema="claro" />
         </div>
       </section>
     </main>

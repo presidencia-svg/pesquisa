@@ -1,5 +1,9 @@
 import Link from 'next/link'
 
+import { CompartilharPesquisa } from '@/components/compartilhar-pesquisa'
+import { FaixaPatrocinadores } from '@/components/faixa-patrocinadores'
+import { carregarPatrocinadores } from '@/lib/patrocinadores'
+
 export const metadata = {
   title: 'Obrigado · Pesquisa Eleitoral Sergipe 2026',
   robots: { index: false, follow: false },
@@ -15,10 +19,11 @@ export const metadata = {
  * exige.
  */
 export default async function ObrigadoPage() {
+  const patrocinadores = await carregarPatrocinadores()
   return (
     <main className="flex flex-col flex-1 bg-capsule text-capsule-foreground">
-      <section className="flex-1 flex flex-col items-center justify-center px-6 py-16">
-        <div className="max-w-xl w-full flex flex-col items-center gap-8 text-center">
+      <section className="flex-1 flex flex-col items-center justify-center px-6 py-14">
+        <div className="max-w-xl w-full flex flex-col items-center gap-7 text-center">
           <CheckIcon />
 
           <div className="flex flex-col gap-3">
@@ -31,22 +36,24 @@ export default async function ObrigadoPage() {
           </div>
 
           <p className="text-lg leading-relaxed text-capsule-foreground/90">
-            Seu voto foi registrado em todas as cédulas. A cápsula foi
-            encerrada e o cookie do seu navegador foi destruído agora.
+            Seu voto foi registrado em todas as cédulas, de forma anônima.
           </p>
 
-          <div className="w-full rounded-md border border-capsule-foreground/20 bg-capsule-foreground/5 px-4 py-3 text-sm text-capsule-foreground/80 text-left">
-            <p>
-              <strong className="text-capsule-foreground">
-                Resumo da arquitetura:
-              </strong>{' '}
-              os votos que você emitiu estão em{' '}
-              <code className="font-mono">votos_pesquisa</code>, ligados
-              apenas ao hash do token aleatório que você acabou de descartar.
-              Seu CPF está em outra tabela, sem nenhum ponteiro pra lá. Os
-              resultados serão divulgados após o registro junto ao TRE/SE.
+          {/* Compartilhe — cresce a amostra (representatividade, sem viés) */}
+          <CompartilharPesquisa />
+
+          <details className="w-full text-sm text-capsule-foreground/70 text-left">
+            <summary className="cursor-pointer hover:text-capsule-foreground">
+              Como seu voto ficou anônimo
+            </summary>
+            <p className="pt-2 leading-relaxed">
+              Os votos que você emitiu estão em{' '}
+              <code className="font-mono">votos_pesquisa</code>, ligados apenas
+              ao hash do token aleatório que você acabou de descartar. Seu CPF
+              está em outra tabela, sem nenhum ponteiro pra lá. Os resultados
+              serão divulgados após o registro junto ao TRE/SE.
             </p>
-          </div>
+          </details>
 
           <Link
             href="/"
@@ -54,6 +61,8 @@ export default async function ObrigadoPage() {
           >
             Voltar para o início
           </Link>
+
+          <FaixaPatrocinadores patrocinadores={patrocinadores} tema="escuro" />
         </div>
       </section>
     </main>
