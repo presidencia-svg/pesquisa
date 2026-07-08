@@ -12,45 +12,50 @@ export const metadata = {
 const COTAS = [
   {
     nivel: 'diamante',
-    titulo: 'DIAMANTE',
+    titulo: 'OFERECIMENTO',
+    tier: 'cota Diamante',
     valor: 100_000,
     vagas: '1 vaga única · exclusividade de categoria',
     cor: '#0891b2',
     beneficios: [
       'Exclusividade na categoria (nenhum concorrente patrocina)',
+      'Maior destaque na faixa de patrocínio em toda a jornada do votante — entrada, cada cédula da cabine e encerramento',
       'Logo em destaque máximo no topo da página /resultados',
       'Painel dedicado nos créditos de abertura do telejornal TV Atalaia',
       'Entrevista exclusiva do Presidente da CDL para veículo do patrocinador',
       'Relatório premium customizado com cortes demográficos × voto',
       'Reunião privada com Presidente + estatístico responsável',
-      'Análise customizada do segmento de interesse do patrocinador',
-      'Marca "Patrocinador Master Pesquisa Eleitoral Sergipe 2026"',
+      'Selo "Oferecimento — Pesquisa Eleitoral Sergipe 2026"',
     ],
   },
   {
     nivel: 'ouro',
-    titulo: 'OURO',
+    titulo: 'PATROCÍNIO',
+    tier: 'cota Ouro',
     valor: 70_000,
     vagas: 'até 3 vagas',
     cor: '#ca8a04',
     beneficios: [
+      'Logo na faixa de patrocínio em toda a jornada do votante — entrada, cabine e encerramento',
       'Logo em destaque na página /resultados',
       'Relatório premium com cortes demográficos × voto',
       'Reunião de apresentação com Presidente CDL e estatístico',
-      'Marca "Patrocinador Pesquisa Eleitoral Sergipe 2026"',
+      'Selo "Patrocínio — Pesquisa Eleitoral Sergipe 2026"',
     ],
   },
   {
     nivel: 'prata',
-    titulo: 'PRATA',
+    titulo: 'APOIO',
+    tier: 'cota Prata',
     valor: 30_000,
     vagas: 'vagas ilimitadas',
     cor: '#64748b',
     beneficios: [
+      'Logo na faixa de patrocínio da jornada do votante (entrada, cabine e encerramento)',
       'Logo presente na página /resultados',
       'Relatório premium com cortes demográficos × voto',
       'Reunião de apresentação dos resultados',
-      'Marca "Apoiador Pesquisa Eleitoral Sergipe 2026"',
+      'Selo "Apoio — Pesquisa Eleitoral Sergipe 2026"',
     ],
   },
 ] as const
@@ -197,9 +202,57 @@ export default async function MidiaKitPage() {
         </section>
 
         {/* ========================================================
-            PÁGINA 2 — Cotas
+            PÁGINA 2 — Onde a marca aparece + Cotas
             ======================================================== */}
         <div className="kit-quebra-pagina" />
+
+        {/* Exposição na jornada do votante */}
+        <section className="kit-secao">
+          <h3>Onde sua marca aparece</h3>
+          <p className="kit-pequeno">
+            Diferente de um anúncio visto uma vez, aqui a marca acompanha o
+            eleitor em <strong>todas as telas</strong> da participação — da
+            identificação ao encerramento. São <strong>5 a 6 telas por
+            votante</strong>, multiplicadas por 200 mil+ respondentes.
+          </p>
+          <table className="kit-tabela-crono">
+            <tbody>
+              <tr>
+                <td className="kit-crono-data">Entrada</td>
+                <td>
+                  Tela de identificação do eleitor — faixa de patrocinadores
+                  no rodapé
+                </td>
+              </tr>
+              <tr>
+                <td className="kit-crono-data">Cabine</td>
+                <td>
+                  Cada cédula preenchida (Presidente, Governador, Senador,
+                  Deputados…) — faixa presente em todas
+                </td>
+              </tr>
+              <tr>
+                <td className="kit-crono-data">Encerramento</td>
+                <td>
+                  Tela de agradecimento + convite de compartilhamento que leva
+                  a pesquisa (e a marca) adiante, de forma orgânica
+                </td>
+              </tr>
+              <tr>
+                <td className="kit-crono-data">Resultados</td>
+                <td>
+                  Página pública pesquisa.cdlaju.com.br/resultados e
+                  apresentação ao vivo no telejornal TV Atalaia
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p className="kit-pequeno">
+            A prominência do logo (tamanho e posição) segue a cota. Veja a
+            demonstração completa, tela a tela, em{' '}
+            <strong>pesquisa.cdlaju.com.br/patrocinio/jornada</strong>.
+          </p>
+        </section>
 
         <section className="kit-secao">
           <h3>Cotas de patrocínio</h3>
@@ -212,6 +265,17 @@ export default async function MidiaKitPage() {
               >
                 <header className="kit-cota-header">
                   <h4 style={{ color: cota.cor }}>{cota.titulo}</h4>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: '9px',
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                      opacity: 0.55,
+                    }}
+                  >
+                    {cota.tier}
+                  </p>
                   <p className="kit-cota-valor">
                     R$ {cota.valor.toLocaleString('pt-BR')}
                   </p>
@@ -250,7 +314,7 @@ export default async function MidiaKitPage() {
             <tbody>
               <tr>
                 <td>
-                  <strong style={{ color: '#0891b2' }}>Diamante</strong>
+                  <strong style={{ color: '#0891b2' }}>Oferecimento</strong>
                 </td>
                 <td className="td-num">220×90 px</td>
                 <td className="td-num">180×70 px</td>
@@ -258,7 +322,7 @@ export default async function MidiaKitPage() {
               </tr>
               <tr>
                 <td>
-                  <strong style={{ color: '#ca8a04' }}>Ouro</strong>
+                  <strong style={{ color: '#ca8a04' }}>Patrocínio</strong>
                 </td>
                 <td className="td-num">160×60 px</td>
                 <td className="td-num">130×48 px</td>
@@ -266,7 +330,7 @@ export default async function MidiaKitPage() {
               </tr>
               <tr>
                 <td>
-                  <strong style={{ color: '#64748b' }}>Prata</strong>
+                  <strong style={{ color: '#64748b' }}>Apoio</strong>
                 </td>
                 <td className="td-num">120×40 px</td>
                 <td className="td-num">100×32 px</td>
@@ -277,7 +341,9 @@ export default async function MidiaKitPage() {
           <p className="kit-pequeno">
             Aceitos: PNG, JPG, SVG ou WebP até 2 MB. Encaixe automático com
             object-fit:contain — qualquer proporção cabe preservando aspect
-            ratio.
+            ratio. O mesmo arquivo é usado na faixa de patrocínio da jornada
+            do votante (fundo claro na entrada, fundo escuro na cabine e no
+            encerramento).
           </p>
         </section>
 
@@ -299,7 +365,10 @@ export default async function MidiaKitPage() {
         <section className="kit-secao">
           <h3>Quem NÃO pode patrocinar</h3>
           <p className="kit-pequeno">
-            Vedações conforme <strong>Lei 9.504/1997, art. 33, §2º</strong>:
+            Como política de <em>due diligence</em> eleitoral — para afastar
+            recurso de fonte vedada (<strong>Lei 9.504/97, arts. 24 e 81</strong>)
+            e conduta vedada a agente público (<strong>art. 73</strong>) —, não
+            aceitamos recursos originários de:
           </p>
           <ul className="kit-vedacoes">
             <li>Candidatas e candidatos, suas coligações ou federações</li>
