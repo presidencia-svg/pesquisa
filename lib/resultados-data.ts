@@ -51,6 +51,7 @@ export type EdicaoRow = {
   divulgacao_prevista: string | null
   registro_tre: string | null
   turno: number | null
+  consulta_zona_ativa: boolean | null
 }
 
 export type PatroPorCota = {
@@ -96,7 +97,7 @@ export async function carregarResultados(
   const db = supabaseAdmin()
   const { data: edicao } = await db
     .from('edicao')
-    .select('id, nome, divulgada_em, divulgacao_prevista, registro_tre, turno')
+    .select('id, nome, divulgada_em, divulgacao_prevista, registro_tre, turno, consulta_zona_ativa')
     .eq('ativa', true)
     .maybeSingle<EdicaoRow>()
 
@@ -524,11 +525,11 @@ export async function carregarResultados(
     const aju = ajuRow?.votos ?? 0
     const sc = scRow?.votos ?? 0
     const bns = brancoNaoSei['zona_expansao'] ?? { branco: 0, nao_sabe: 0 }
-    // O flag consulta_zona_ativa controla só a COLETA (fluxo de votação).
-    // A divulgação segue os votos: se já houve resposta, o bloco aparece
-    // mesmo que o admin depois desligue a consulta — não some da TV nem
-    // de /resultados o que já foi apurado.
-    if (aju > 0 || sc > 0 || bns.branco > 0 || bns.nao_sabe > 0) {
+    // Flag do admin: com a consulta desligada, o bloco some da TV e de
+    // /resultados. Os votos NÃO são apagados — ficam em votos_pesquisa e
+    // voltam a aparecer se o admin religar a consulta.
+    const zonaAtiva = edicao.consulta_zona_ativa !== false
+    if (zonaAtiva && (aju > 0 || sc > 0 || bns.branco > 0 || bns.nao_sabe > 0)) {
       zonaCargo = {
         titulo: 'Zona de Expansão',
         aracaju: aju,

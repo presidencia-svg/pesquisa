@@ -101,7 +101,8 @@ export function ControlesDivulgacao({
             <span className="text-error font-medium">coleta desligada</span>
           )}{' '}
           — pergunta só pra eleitores de Aracaju/São Cristóvão. Desligar
-          para de coletar; votos já dados continuam nos resultados.
+          para de coletar e oculta o bloco na TV/resultados; os votos ficam
+          guardados e voltam se você religar.
         </span>
       </div>
       <button
