@@ -114,6 +114,18 @@ const nextConfig: NextConfig = {
   // Remove o header `X-Powered-By: Next.js` — não dá info útil ao
   // browser e ajuda fingerprinting de versão.
   poweredByHeader: false,
+  async redirects() {
+    return [
+      // /patrocinio/exposicao foi aposentada (wireframes antigos que não
+      // batiam com a implementação real). A /patrocinio/jornada faz o
+      // mesmo papel, fiel às telas de verdade. 308 preserva links antigos.
+      {
+        source: '/patrocinio/exposicao',
+        destination: '/patrocinio/jornada',
+        permanent: true,
+      },
+    ]
+  },
   async headers() {
     return [
       {

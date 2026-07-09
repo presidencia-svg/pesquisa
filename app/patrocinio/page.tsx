@@ -276,17 +276,17 @@ export default function PatrocinioPage() {
               Onde sua marca aparece
             </p>
             <h2 className="text-2xl font-semibold">
-              Mockups por cota e por tela
+              Sua marca em cada etapa da jornada
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xl">
-              Veja a localização exata da sua logo em cada tela do fluxo da
-              pesquisa, no telejornal e na página de resultados.
+              Veja onde a sua logo aparece — da entrada à cabine de votação e
+              ao encerramento — na demonstração completa, tela a tela.
             </p>
             <a
-              href="/patrocinio/exposicao"
+              href="/patrocinio/jornada"
               className="inline-flex items-center justify-center h-11 px-5 rounded-md border-2 border-accent text-accent text-sm font-semibold hover:bg-accent hover:text-white transition"
             >
-              Ver exposição da marca →
+              Ver a jornada da marca →
             </a>
           </div>
         </section>
