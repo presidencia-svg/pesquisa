@@ -127,6 +127,7 @@ function montaCargo(
     curiosity: curiosidade(candRows, marginPP),
     rows,
     rowsEleitos,
+    vagas: cargo.vagas,
   }
 }
 

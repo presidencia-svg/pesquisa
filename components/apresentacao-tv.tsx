@@ -39,6 +39,13 @@ export type ApresCargo = {
   rows: ApresRow[]
   /** Só deputado: candidatos que estariam eleitos (projeção D'Hondt) */
   rowsEleitos?: ApresRow[]
+  /**
+   * Total de cadeiras em disputa no cargo (federal 8, estadual 24). Serve
+   * pra denunciar quando rowsEleitos vem incompleto — um partido pode
+   * conquistar mais cadeiras do que tem candidatos cadastrados, e a lista
+   * sairia menor que as vagas sem avisar ninguém.
+   */
+  vagas?: number
 }
 
 export type ApresSponsor = { empresa: string; logoUrl: string }
@@ -394,7 +401,11 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
                   <h1 className="apres-result-h1">{cur.label}</h1>
                   <div className="apres-result-sub">
                     {usandoEleitos
-                      ? 'Projeção de quem leva a cadeira (quociente eleitoral)'
+                      ? `Projeção de quem leva a cadeira (quociente eleitoral)${
+                          cur.vagas
+                            ? ` · ${cur.rowsEleitos!.length} de ${cur.vagas} cadeiras`
+                            : ''
+                        }`
                       : cur.subtitle}{' '}
                     · Amostra {data.amostra} · Margem {data.margem}
                   </div>
@@ -450,6 +461,27 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
                   </div>
                 ))}
               </div>
+
+              {/* Cadeiras projetadas sem nome pra mostrar: o partido levou
+                  mais cadeiras do que tem candidatos cadastrados. Sem este
+                  aviso, quem assiste conclui que o estado elege menos
+                  deputados do que realmente elege. */}
+              {usandoEleitos &&
+                cur.vagas != null &&
+                cur.rowsEleitos!.length < cur.vagas && (
+                  <div className="apres-alerta">
+                    <div className="apres-alerta-ic">!</div>
+                    <div>
+                      <div className="apres-alerta-l">CADEIRAS SEM NOME</div>
+                      <div className="apres-alerta-t">
+                        {cur.vagas - cur.rowsEleitos!.length} das {cur.vagas}{' '}
+                        cadeiras não têm candidato a exibir — o partido
+                        conquistou mais cadeiras do que possui candidatos
+                        cadastrados nesta edição.
+                      </div>
+                    </div>
+                  </div>
+                )}
 
               {cur.curiosity && (
                 <div className="apres-destaque">
@@ -643,6 +675,12 @@ const CSS = `
 .apres-destaque-ic{flex:none;width:38px;height:38px;border-radius:50%;background:#f4b62c;display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:900;font-size:22px;color:#3a2a00;}
 .apres-destaque-l{font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;letter-spacing:.16em;color:#f4b62c;}
 .apres-destaque-t{font-size:19px;color:#fff;margin-top:3px;}
+/* Alerta de cadeira sem candidato — vermelho, distinto do destaque
+   dourado, pra não ser lido como "curiosidade" no ar. */
+.apres-alerta{display:flex;align-items:center;gap:16px;background:rgba(232,84,84,.12);border:1px solid rgba(232,84,84,.35);border-radius:14px;padding:18px 24px;margin-top:24px;}
+.apres-alerta-ic{flex:none;width:38px;height:38px;border-radius:50%;background:#e85454;display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:900;font-size:22px;color:#fff;}
+.apres-alerta-l{font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;letter-spacing:.16em;color:#ff8a8a;}
+.apres-alerta-t{font-size:19px;color:#fff;margin-top:3px;}
 .apres-footnote{font-size:13px;color:#6f80ac;margin-top:12px;}
 /* rail */
 .apres-rail{flex:none;width:372px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border-left:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;}
