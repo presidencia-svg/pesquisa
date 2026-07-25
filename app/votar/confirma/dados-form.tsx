@@ -138,8 +138,15 @@ export function DadosForm({
         </p>
       ) : null}
 
+      {/* Município = domicílio ELEITORAL, não residência. O prefill vem do
+          endereço do cadastro oficial, que diverge pra quem mudou de cidade
+          sem transferir o título. Por isso o rótulo pergunta em vez de
+          afirmar: quem só confirma sem ler erraria a variável que mais pesa
+          na ponderação geográfica. */}
       <label className="flex flex-col gap-2">
-        <span className="text-sm font-medium text-foreground">Município</span>
+        <span className="text-sm font-medium text-foreground">
+          Em qual cidade você vota?
+        </span>
         <select
           name="municipio_ibge"
           required
@@ -157,7 +164,9 @@ export function DadosForm({
           ))}
         </select>
         <span className="text-xs text-muted-foreground">
-          Onde você está cadastrado pra votar.
+          {prefilledMunicipio
+            ? 'Confira: é a cidade do seu título de eleitor, que pode ser diferente de onde você mora hoje.'
+            : 'A cidade do seu título de eleitor — pode ser diferente de onde você mora hoje.'}
         </span>
       </label>
 
