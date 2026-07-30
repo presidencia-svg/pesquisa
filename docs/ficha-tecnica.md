@@ -24,7 +24,7 @@
 | Item | Valor |
 |---|---|
 | **População-alvo** | Eleitores oficiais do TSE residentes em Sergipe |
-| **Total estimado** | ~1,45 milhão (referência: estatística TSE 2024, atualizar com 2026 antes do registro) |
+| **Total estimado** | 1.731.960 eleitores aptos (estatística TSE; conferir contra o eleitorado congelado de 2026 antes do registro) |
 | **Abrangência** | 75 municípios de Sergipe (estadual) |
 
 ## Amostra
@@ -54,6 +54,10 @@
 > | 5.000  | ±1,39 pp       |
 > | 10.000 | ±0,98 pp       |
 > | 20.000 | ±0,69 pp       |
+> | 44.545 | ±0,46 pp       |
+> | 50.000 | ±0,44 pp       |
+> | 100.000| ±0,31 pp       |
+> | 200.000| ±0,22 pp       |
 
 ## Coleta
 

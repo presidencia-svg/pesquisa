@@ -112,18 +112,20 @@ export default async function MidiaKitPage() {
           <p className="kit-hero-kicker">
             A maior pesquisa política já realizada no Brasil*
           </p>
-          <p className="kit-hero-numero">200.000+</p>
+          <p className="kit-hero-numero">200.000</p>
           <p className="kit-hero-label">
-            respondentes com identidade verificada por CPF + WhatsApp
+            respondentes com identidade verificada por CPF + WhatsApp — meta de
+            campo, partindo de 44.545 CPFs já validados
           </p>
           <p className="kit-hero-comp">
             <strong>100× maior</strong> que Datafolha, IBOPE ou Quaest —
-            margem de erro <strong>±0,11pp</strong> contra ±2,2pp dos
+            margem de erro <strong>±0,22pp</strong> contra ±2,2pp dos
             institutos tradicionais.
           </p>
           <p className="kit-hero-asterisco">
             * Por critério de amostra com identidade verificada em pesquisa
-            eleitoral estadual.
+            eleitoral estadual. Margem de erro calculada por 1,96 × √(0,25/n),
+            IC 95%.
           </p>
         </section>
 
@@ -154,17 +156,24 @@ export default async function MidiaKitPage() {
                 <td className="td-num">1.500 – 2.000</td>
                 <td className="td-num">±2,2 – 2,5 pp</td>
               </tr>
+              <tr>
+                <td>Pesquisa Sergipe 2026 — base já validada</td>
+                <td className="td-num">44.545</td>
+                <td className="td-num">±0,46 pp</td>
+              </tr>
               <tr className="kit-tr-destaque">
-                <td>Pesquisa Eleitoral Sergipe 2026 — CDL Aracaju</td>
-                <td className="td-num">200.000+</td>
-                <td className="td-num">±0,11 pp</td>
+                <td>Pesquisa Sergipe 2026 — meta de campo</td>
+                <td className="td-num">200.000</td>
+                <td className="td-num">±0,22 pp</td>
               </tr>
             </tbody>
           </table>
           <p className="kit-pequeno">
             Menor margem de erro significa que o número divulgado é mais
-            próximo da realidade. Com 200 mil respondentes, a Pesquisa
-            Eleitoral Sergipe 2026 entrega <strong>20× mais precisão</strong>.
+            próximo da realidade. Já com a base validada de 44.545 CPFs a
+            precisão é <strong>5× maior</strong> que a de um instituto
+            tradicional; atingida a meta de 200 mil respondentes, chega a{' '}
+            <strong>10× maior</strong>.
           </p>
         </section>
 

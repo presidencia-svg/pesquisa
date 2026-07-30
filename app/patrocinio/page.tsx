@@ -9,7 +9,7 @@ export const metadata = {
   title:
     'A maior pesquisa política já realizada no Brasil · Patrocínio Sergipe 2026',
   description:
-    '200.000+ respondentes em pesquisa eleitoral estadual — 100× maior que Datafolha, IBOPE ou Quaest. Patrocínio institucional CDL Aracaju com 3 cotas (Diamante R$ 100k / Ouro R$ 70k / Prata R$ 30k). Sem ingerência editorial.',
+    'Meta de 200.000 respondentes em pesquisa eleitoral estadual — 100× maior que Datafolha, IBOPE ou Quaest. Patrocínio institucional CDL Aracaju com 3 cotas (Diamante R$ 100k / Ouro R$ 70k / Prata R$ 30k). Sem ingerência editorial.',
 }
 
 const COTAS = [
@@ -79,7 +79,7 @@ export default function PatrocinioPage() {
               <span className="text-cyan-300 text-base align-top ml-1">*</span>
             </h1>
             <p className="text-base sm:text-lg text-white/90 leading-relaxed max-w-2xl">
-              <strong>200.000+ respondentes</strong> nos 75 municípios
+              Meta de <strong>200.000 respondentes</strong> nos 75 municípios
               sergipanos, com identidade verificada por CPF + WhatsApp —{' '}
               <strong>100× maior</strong> que Datafolha, IBOPE ou Quaest.
               Divulgação ao vivo no telejornal da TV Atalaia em{' '}
@@ -140,10 +140,10 @@ export default function PatrocinioPage() {
                     Pesquisa Eleitoral Sergipe 2026 — CDL Aracaju
                   </td>
                   <td className="p-3 text-right tabular-nums text-accent">
-                    200.000+
+                    200.000
                   </td>
                   <td className="p-3 text-right tabular-nums text-accent">
-                    ±0,11 pp
+                    ±0,22 pp
                   </td>
                 </tr>
               </tbody>
@@ -152,9 +152,10 @@ export default function PatrocinioPage() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             Em pesquisa de intenção de voto, <strong>menor margem de erro</strong>
             {' '}significa que o número divulgado é mais próximo da realidade.
-            Com 200 mil respondentes, a Pesquisa Eleitoral Sergipe 2026 entrega{' '}
-            <strong>20× mais precisão</strong> que os maiores institutos do país
-            — um diferencial sem precedentes na cobertura jornalística estadual.
+            Atingida a meta de 200 mil respondentes, a Pesquisa Eleitoral
+            Sergipe 2026 entrega <strong>10× mais precisão</strong> que os
+            maiores institutos do país — e, já com a base de 44.545 CPFs
+            validados, 5× mais precisão.
           </p>
         </section>
 

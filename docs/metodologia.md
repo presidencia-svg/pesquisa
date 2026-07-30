@@ -51,7 +51,7 @@ A pesquisa coleta CPF e dados demográficos sob a base legal "execução de pesq
 Eleitorado oficial de Sergipe segundo o TSE (último corte disponível antes da pesquisa). O cadastro de referência será o `cdn.tse.jus.br/estatistica/sead/odsele/perfil_eleitorado/perfil_eleitorado_2024.zip`, com possibilidade de atualização caso o TSE publique recorte 2026 a tempo.
 
 > **Números do eleitorado de Sergipe (referência preliminar, eleições 2024 — atualizar com recorte 2026 antes do registro):**
-> - Total: ~1,45 milhão de eleitores
+> - Total: 1.731.960 eleitores aptos (estatística TSE)
 > - Sexo: aproximadamente 47% masculino, 53% feminino
 > - Faixa etária maior: 25-34 anos (~373 mil eleitores)
 > - Aracaju concentra ~400 mil (≈ 28% do estado)

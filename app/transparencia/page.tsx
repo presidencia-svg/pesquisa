@@ -101,7 +101,7 @@ export default function TransparenciaPage() {
               <div className="grid sm:grid-cols-2 gap-3">
                 <LinhaFicha titulo="Contratante" valor="CDL Aracaju" />
                 <LinhaFicha titulo="Executor" valor="CDL Aracaju (execução direta)" />
-                <LinhaFicha titulo="Universo" valor="~1,45 milhão de eleitores TSE em SE" />
+                <LinhaFicha titulo="Universo" valor="1.731.960 eleitores aptos em SE (TSE)" />
                 <LinhaFicha titulo="Abrangência" valor="75 municípios de Sergipe" />
                 <LinhaFicha
                   titulo="Forma de coleta"
