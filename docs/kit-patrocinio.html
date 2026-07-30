@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Pesquisa Eleitoral Sergipe 2026 — Cotas de Patrocínio</title>
+<style>
+  @page { size: A4 landscape; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root{
+    --navy:#0A1A38;
+    --navy-2:#0D2247;
+    --navy-3:#122b57;
+    --gold:#C9A227;
+    --gold-l:#E3C766;
+    --gold-d:#8f7318;
+    --cream:#F6F2E8;
+    --ink:#1a1a1a;
+    --mute:#8fa0c4;
+  }
+
+  body{
+    font-family:"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
+    color:#fff; background:var(--navy);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .pg{
+    width:297mm; height:210mm; position:relative; overflow:hidden;
+    page-break-after:always; background:var(--navy);
+    display:flex; flex-direction:column;
+  }
+  .pg:last-child{ page-break-after:auto; }
+  .pg.cream{ background:var(--cream); color:var(--ink); }
+
+  /* ---------- tipografia ---------- */
+  .disp{ font-family:"Didot","Bodoni 72","Playfair Display",Georgia,"Times New Roman",serif; font-weight:400; letter-spacing:.01em; }
+  .kicker{ font-size:9.5pt; letter-spacing:.34em; text-transform:uppercase; color:var(--gold); font-weight:600; }
+  .kicker.dark{ color:var(--gold-d); }
+  h1.t{ font-size:40pt; line-height:1.06; }
+  h2.t{ font-size:30pt; line-height:1.1; }
+  p.lead{ font-size:12.5pt; line-height:1.65; color:#d6dff0; }
+  .pg.cream p.lead{ color:#3d4а5c; color:#3d4557; }
+  .sm{ font-size:9.5pt; line-height:1.55; color:var(--mute); }
+  .pg.cream .sm{ color:#6b7280; }
+
+  /* ---------- estrutura ---------- */
+  /* justify-content:center equilibra a mancha na vertical — sem isso o
+     conteúdo encosta no topo e sobra um vazio grande acima do rodapé. */
+  .body{ flex:1; padding:16mm 20mm 22mm; display:flex; flex-direction:column; justify-content:center; }
+  .rule{ width:54px; height:2.5px; background:var(--gold); margin:9mm 0 7mm; }
+  .rule.sm{ margin:5mm 0 5mm; }
+
+  .foot{
+    position:absolute; left:20mm; right:20mm; bottom:8mm;
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:7.5pt; letter-spacing:.18em; text-transform:uppercase;
+    color:rgba(255,255,255,.34); border-top:1px solid rgba(201,162,39,.25); padding-top:3mm;
+  }
+  .pg.cream .foot{ color:rgba(0,0,0,.38); border-top-color:rgba(143,115,24,.3); }
+
+  /* ---------- capa ---------- */
+  .cover{ justify-content:center; align-items:flex-start; padding:0 26mm; position:relative; }
+  .cover-frame{ position:absolute; inset:9mm; border:1px solid rgba(201,162,39,.34); pointer-events:none; }
+  .cover-frame::before,.cover-frame::after{
+    content:''; position:absolute; width:16px; height:16px; border:2px solid var(--gold);
+  }
+  .cover-frame::before{ top:-1px; left:-1px; border-right:0; border-bottom:0; }
+  .cover-frame::after{ bottom:-1px; right:-1px; border-left:0; border-top:0; }
+  .glow{
+    position:absolute; width:520px; height:520px; border-radius:50%;
+    background:radial-gradient(circle, rgba(201,162,39,.16) 0%, rgba(201,162,39,0) 68%);
+    right:-90px; top:-140px;
+  }
+  .glow.b{ left:-160px; bottom:-220px; right:auto; top:auto; width:600px; height:600px;
+    background:radial-gradient(circle, rgba(47,111,224,.20) 0%, rgba(47,111,224,0) 68%); }
+
+  /* ---------- números ---------- */
+  .bignum{ font-size:96pt; line-height:.92; color:var(--gold); }
+  .bignum.sm2{ font-size:52pt; }
+  .statrow{ display:flex; gap:14mm; margin-top:8mm; }
+  .stat{ flex:1; border-top:1px solid rgba(201,162,39,.4); padding-top:4mm; }
+  .stat .n{ font-size:30pt; color:#fff; line-height:1; }
+  .pg.cream .stat .n{ color:var(--navy); }
+  .stat .l{ font-size:8.5pt; letter-spacing:.16em; text-transform:uppercase; color:var(--mute); margin-top:2.5mm; }
+  .pg.cream .stat .l{ color:#6b7280; }
+
+  /* ---------- tabela ---------- */
+  table{ width:100%; border-collapse:collapse; }
+  th,td{ padding:3.6mm 4mm; text-align:left; font-size:10.5pt; }
+  thead th{
+    font-size:8pt; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--gold); border-bottom:1px solid rgba(201,162,39,.45); font-weight:600;
+  }
+  tbody td{ border-bottom:1px solid rgba(255,255,255,.09); color:#dde4f2; }
+  .pg.cream tbody td{ border-bottom-color:rgba(0,0,0,.09); color:#333; }
+  .pg.cream thead th{ color:var(--gold-d); border-bottom-color:rgba(143,115,24,.45); }
+  tr.hl td{ background:rgba(201,162,39,.13); color:#fff; font-weight:600; border-bottom-color:rgba(201,162,39,.4); }
+  .pg.cream tr.hl td{ background:rgba(201,162,39,.18); color:var(--navy); }
+  td.num{ text-align:right; font-variant-numeric:tabular-nums; }
+
+  /* ---------- cards de cota ---------- */
+  .cotas{ display:flex; gap:7mm; margin-top:6mm; flex:1; }
+  .cota{
+    flex:1; border:1px solid rgba(255,255,255,.14); border-radius:3mm;
+    padding:7mm 6mm; display:flex; flex-direction:column; background:rgba(255,255,255,.03);
+  }
+  .cota.top{ border-color:var(--gold); background:linear-gradient(170deg, rgba(201,162,39,.16), rgba(201,162,39,.03)); }
+  .cota .tag{ font-size:7.5pt; letter-spacing:.22em; text-transform:uppercase; color:var(--mute); }
+  .cota.top .tag{ color:var(--gold-l); }
+  .cota .nome{ font-size:21pt; margin-top:2mm; color:#fff; }
+  .cota.top .nome{ color:var(--gold); }
+  .cota .preco{ font-size:15pt; color:#fff; margin-top:4mm; letter-spacing:.02em; }
+  .cota .vagas{ font-size:8pt; letter-spacing:.1em; text-transform:uppercase; color:var(--mute); margin-top:1.5mm; }
+  .cota ul{ list-style:none; margin-top:5mm; }
+  .cota li{ font-size:9.3pt; line-height:1.5; color:#d3dcee; padding-left:6mm; position:relative; margin-bottom:2.6mm; }
+  .cota li::before{ content:'—'; position:absolute; left:0; color:var(--gold); }
+  .cota.top li{ color:#e8eefc; }
+
+  /* ---------- jornada ---------- */
+  .jornada{ display:flex; gap:5mm; margin-top:6mm; }
+  .etapa{ flex:1; border-top:2px solid var(--gold); padding-top:4mm; }
+  .etapa .n{ font-size:8pt; letter-spacing:.2em; color:var(--gold); }
+  .etapa .h{ font-size:12.5pt; margin:2mm 0 2.5mm; color:#fff; }
+  .etapa p{ font-size:9pt; line-height:1.5; color:var(--mute); }
+
+  /* ---------- matriz ---------- */
+  .chk{ color:var(--gold); font-size:12pt; }
+  .no{ color:rgba(255,255,255,.2); font-size:12pt; }
+  .pg.cream .no{ color:rgba(0,0,0,.18); }
+
+  /* sem flex:1 — deixa o .body centralizar o bloco em vez de esticá-lo */
+  .two{ display:flex; gap:14mm; align-items:center; }
+  .two.topo{ align-items:flex-start; }
+
+  /* matriz de cotas: linhas compactas pra caber acima do rodapé */
+  table.matriz th, table.matriz td{ padding:2.5mm 4mm; font-size:9.8pt; }
+  .half{ flex:1; }
+  .logo-cdl{ height:15mm; width:auto; }
+  .selo{ display:inline-block; border:1px solid var(--gold); color:var(--gold);
+    font-size:7.5pt; letter-spacing:.2em; text-transform:uppercase; padding:2mm 4mm; border-radius:1mm; }
+</style>
+</head>
+<body>
+
+<!-- ============ 1. CAPA ============ -->
+<section class="pg cover">
+  <div class="glow"></div><div class="glow b"></div>
+  <div class="cover-frame"></div>
+  <div style="position:relative;z-index:2">
+    <img src="../public/cdl-pesquisas-logo.png" class="logo-cdl" alt="CDL Pesquisas"
+         style="background:#fff;padding:3mm 4mm;border-radius:1.5mm">
+    <div class="kicker" style="margin-top:14mm">Cotas de Patrocínio · Eleições 2026</div>
+    <h1 class="t disp" style="margin-top:6mm;max-width:170mm">
+      A maior pesquisa eleitoral<br>já realizada em <span style="color:var(--gold)">Sergipe</span>
+    </h1>
+    <div class="rule"></div>
+    <p class="lead" style="max-width:150mm">
+      Uma pesquisa de intenção de voto com identidade verificada por CPF,
+      apurada em tempo real e divulgada ao vivo no telejornal da TV Atalaia.
+      Sua marca no centro do assunto que move o estado.
+    </p>
+    <div style="margin-top:12mm" class="selo">1º Turno · Setembro de 2026</div>
+  </div>
+  <div class="foot">
+    <span>Câmara de Dirigentes Lojistas de Aracaju</span>
+    <span>pesquisa.cdlaju.com.br</span>
+  </div>
+</section>
+
+<!-- ============ 2. O MOMENTO ============ -->
+<section class="pg">
+  <div class="body">
+    <div class="kicker">O momento</div>
+    <h2 class="t disp" style="margin-top:5mm;max-width:190mm">
+      Em setembro, Sergipe só vai falar<br>sobre uma coisa.
+    </h2>
+    <div class="rule"></div>
+    <div class="two">
+      <div class="half">
+        <p class="lead">
+          Eleição para <strong style="color:#fff">Presidente, Governador, dois Senadores
+          e as bancadas federal e estadual</strong>. É o ciclo mais disputado da década em
+          Sergipe — e o de maior atenção do eleitor.
+        </p>
+        <p class="lead" style="margin-top:5mm">
+          Nesse momento, um número confiável vira notícia. Ele é citado no rádio,
+          reproduzido nos grupos, debatido na mesa do bar e cobrado dos candidatos.
+          <strong style="color:#fff">A marca que assina esse número entra na conversa junto.</strong>
+        </p>
+      </div>
+      <div class="half">
+        <div class="statrow" style="flex-direction:column;gap:0;margin-top:0">
+          <div class="stat" style="border-top:0;padding-top:0">
+            <div class="n disp">1.731.960</div>
+            <div class="l">Eleitores aptos em Sergipe</div>
+          </div>
+          <div class="stat" style="margin-top:7mm">
+            <div class="n disp">75</div>
+            <div class="l">Municípios cobertos</div>
+          </div>
+          <div class="stat" style="margin-top:7mm">
+            <div class="n disp">6</div>
+            <div class="l">Cargos pesquisados por eleitor</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Pesquisa Eleitoral Sergipe 2026</span><span>02</span></div>
+</section>
+
+<!-- ============ 3. O NÚMERO ============ -->
+<section class="pg cream">
+  <div class="body">
+    <div class="kicker dark">A diferença</div>
+    <h2 class="t disp" style="margin-top:5mm;color:var(--navy)">Uma amostra fora de escala.</h2>
+    <div class="rule"></div>
+    <div class="two" style="align-items:center">
+      <div class="half">
+        <div class="bignum disp" style="color:var(--gold-d)">44.545</div>
+        <p style="font-size:11pt;letter-spacing:.14em;text-transform:uppercase;color:#6b7280;margin-top:3mm">
+          CPFs já validados na base
+        </p>
+        <p class="lead" style="margin-top:6mm;color:#3d4557">
+          Este é o <strong>ponto de partida</strong>, não a meta. A coleta é digital e
+          gratuita para o respondente: sem entrevistador, o custo por resposta é
+          praticamente zero. O limite deixa de ser orçamento e passa a ser adesão —
+          por isso a meta de campo é de <strong>200 mil respondentes</strong>.
+        </p>
+      </div>
+      <div class="half">
+        <table>
+          <thead><tr><th>Amostra</th><th class="num">Margem de erro</th><th class="num">vs. instituto</th></tr></thead>
+          <tbody>
+            <tr><td>2.000 <span style="opacity:.6">(Datafolha típico)</span></td><td class="num">±2,19 pp</td><td class="num">—</td></tr>
+            <tr><td>50.000</td><td class="num">±0,44 pp</td><td class="num">5× mais preciso</td></tr>
+            <tr><td>100.000</td><td class="num">±0,31 pp</td><td class="num">7× mais preciso</td></tr>
+            <tr class="hl"><td>200.000 <span style="font-weight:400">(meta)</span></td><td class="num">±0,22 pp</td><td class="num">10× mais preciso</td></tr>
+          </tbody>
+        </table>
+        <p class="sm" style="margin-top:4mm">
+          Intervalo de confiança de 95%. Margem calculada por 1,96 × √(0,25/n).
+          Quanto menor a margem, mais perto o número divulgado está da realidade.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Pesquisa Eleitoral Sergipe 2026</span><span>03</span></div>
+</section>
+
+<!-- ============ 4. POR QUE CONFIAR ============ -->
+<section class="pg">
+  <div class="body">
+    <div class="kicker">Segurança</div>
+    <h2 class="t disp" style="margin-top:5mm">Cada resposta tem dono —<br>e ninguém sabe quem é.</h2>
+    <div class="rule"></div>
+    <p class="lead" style="max-width:200mm">
+      O ponto fraco de toda enquete digital é não saber quem respondeu. Aqui, quatro
+      camadas resolvem isso <em>antes</em> do voto — e uma arquitetura de duas salas
+      garante que, depois dele, ninguém consiga ligar o voto à pessoa.
+    </p>
+    <div class="jornada" style="margin-top:9mm">
+      <div class="etapa">
+        <div class="n">01</div><div class="h disp">CPF real</div>
+        <p>Validado contra base própria de 44.545 CPFs ou consulta em tempo real ao SPC Brasil. Sem CPF válido, não entra.</p>
+      </div>
+      <div class="etapa">
+        <div class="n">02</div><div class="h disp">Posse do CPF</div>
+        <p>Código de 6 dígitos enviado ao WhatsApp vinculado ao titular. Impede uso de CPF de terceiros.</p>
+      </div>
+      <div class="etapa">
+        <div class="n">03</div><div class="h disp">Antifraude</div>
+        <p>Verificação anti-robô, limite por IP, teto de dispositivos e voto único por CPF garantido no banco.</p>
+      </div>
+      <div class="etapa">
+        <div class="n">04</div><div class="h disp">Anonimato</div>
+        <p>Identidade e voto ficam em estruturas sem qualquer chave de ligação. Nem o operador consegue reunir os dois.</p>
+      </div>
+    </div>
+    <p class="sm" style="margin-top:9mm;max-width:200mm">
+      Código-fonte aberto para auditoria · Registro no PesqEle da Justiça Eleitoral ·
+      Conformidade com a Lei 9.504/97, a Resolução TSE 23.600/2019 e a LGPD
+    </p>
+  </div>
+  <div class="foot"><span>Pesquisa Eleitoral Sergipe 2026</span><span>04</span></div>
+</section>
+
+<!-- ============ 5. ESPONTÂNEA ============ -->
+<section class="pg">
+  <div class="body">
+    <div class="kicker">Metodologia</div>
+    <h2 class="t disp" style="margin-top:5mm">Do jeito que vai ser na urna.</h2>
+    <div class="rule"></div>
+    <div class="two">
+      <div class="half">
+        <p class="lead">
+          A pesquisa é <strong style="color:#fff">exclusivamente espontânea</strong>.
+          O eleitor digita o número do candidato, como fará na urna. Nenhuma lista de
+          nomes é mostrada antes — só depois, para ele confirmar o que digitou.
+        </p>
+        <p class="lead" style="margin-top:5mm">
+          Pesquisa estimulada mostra uma lista e pergunta em quem você votaria. Isso
+          infla quem é conhecido e esconde quem o eleitor de fato lembra na hora.
+          <strong style="color:#fff">Aqui, o resultado é a memória real do eleitor</strong> —
+          o mesmo esforço que ele fará na cabine.
+        </p>
+      </div>
+      <div class="half">
+        <table>
+          <thead><tr><th>Item</th><th>Instituto tradicional</th><th>Sergipe 2026</th></tr></thead>
+          <tbody>
+            <tr><td>Tipo</td><td style="opacity:.7">Geralmente estimulada</td><td style="color:var(--gold-l)">Espontânea pura</td></tr>
+            <tr><td>Entrevistador</td><td style="opacity:.7">Sim (pode enviesar)</td><td style="color:var(--gold-l)">Nenhum</td></tr>
+            <tr><td>Identidade</td><td style="opacity:.7">Declarada</td><td style="color:var(--gold-l)">Verificada por CPF</td></tr>
+            <tr><td>Anonimato</td><td style="opacity:.7">Promessa operacional</td><td style="color:var(--gold-l)">Garantia técnica</td></tr>
+            <tr><td>Auditoria</td><td style="opacity:.7">Material arquivado</td><td style="color:var(--gold-l)">Código aberto</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Pesquisa Eleitoral Sergipe 2026</span><span>05</span></div>
+</section>
+
+<!-- ============ 6. ONDE A MARCA APARECE ============ -->
+<section class="pg cream">
+  <div class="body">
+    <div class="kicker dark">Exposição</div>
+    <h2 class="t disp" style="margin-top:5mm;color:var(--navy)">Sua marca em cada etapa<br>da jornada do eleitor.</h2>
+    <div class="rule"></div>
+    <p class="lead" style="max-width:200mm;color:#3d4557">
+      Diferente de um anúncio visto uma vez, aqui a marca acompanha o eleitor da
+      identificação ao encerramento — <strong>5 a 6 telas por pessoa</strong>,
+      multiplicadas por cada respondente.
+    </p>
+    <div class="jornada" style="margin-top:8mm">
+      <div class="etapa" style="border-top-color:var(--gold-d)">
+        <div class="n" style="color:var(--gold-d)">ETAPA 01</div>
+        <div class="h disp" style="color:var(--navy)">Entrada</div>
+        <p style="color:#6b7280">Tela de identificação. Primeira impressão, com a faixa de patrocinadores no rodapé.</p>
+      </div>
+      <div class="etapa" style="border-top-color:var(--gold-d)">
+        <div class="n" style="color:var(--gold-d)">ETAPA 02</div>
+        <div class="h disp" style="color:var(--navy)">Cabine</div>
+        <p style="color:#6b7280">Cada cédula preenchida — Presidente, Governador, Senador, Deputados. A faixa está em todas.</p>
+      </div>
+      <div class="etapa" style="border-top-color:var(--gold-d)">
+        <div class="n" style="color:var(--gold-d)">ETAPA 03</div>
+        <div class="h disp" style="color:var(--navy)">Encerramento</div>
+        <p style="color:#6b7280">Agradecimento e convite de compartilhamento, que leva a pesquisa — e a marca — adiante.</p>
+      </div>
+      <div class="etapa" style="border-top-color:var(--gold-d)">
+        <div class="n" style="color:var(--gold-d)">ETAPA 04</div>
+        <div class="h disp" style="color:var(--navy)">Divulgação</div>
+        <p style="color:#6b7280">Página pública de resultados e apresentação ao vivo no telejornal da TV Atalaia.</p>
+      </div>
+    </div>
+    <p class="sm" style="margin-top:8mm">
+      Demonstração completa, tela a tela: <strong>pesquisa.cdlaju.com.br/patrocinio/jornada</strong>
+    </p>
+  </div>
+  <div class="foot"><span>Pesquisa Eleitoral Sergipe 2026</span><span>06</span></div>
+</section>
+
+<!-- ============ 7. COTA DIAMANTE ============ -->
+<section class="pg">
+  <div class="body">
+    <div class="kicker">Cota principal · vaga única</div>
+    <h2 class="t disp" style="margin-top:5mm;color:var(--gold)">Oferecimento</h2>
+    <div class="rule"></div>
+    <div class="two topo">
+      <div class="half">
+        <p class="lead">
+          A assinatura da pesquisa. Uma única empresa, com
+          <strong style="color:#fff">exclusividade na sua categoria</strong> — nenhum
+          concorrente patrocina em nenhum nível.
+        </p>
+        <div style="margin-top:8mm;border-left:2px solid var(--gold);padding-left:6mm">
+          <div class="disp" style="font-size:34pt;color:#fff">R$ 100.000</div>
+          <div class="l" style="font-size:8.5pt;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin-top:2mm">
+            Vaga única · exclusividade de categoria
+          </div>
+        </div>
+        <p class="sm" style="margin-top:8mm">
+          É a cota que transforma patrocínio em posicionamento: a marca deixa de estar
+          <em>na</em> pesquisa e passa a ser reconhecida como quem a
+          <em>viabilizou</em>.
+        </p>
+      </div>
+      <div class="half">
+        <ul style="list-style:none">
+          <li style="font-size:10.5pt;line-height:1.5;color:#e8eefc;padding-left:7mm;position:relative;margin-bottom:4mm">
+            <span style="position:absolute;left:0;color:var(--gold)">◆</span>
+            <strong>Assinatura no telejornal</strong> — painel dedicado nos créditos de abertura da TV Atalaia
+          </li>
+          <li style="font-size:10.5pt;line-height:1.5;color:#e8eefc;padding-left:7mm;position:relative;margin-bottom:4mm">
+            <span style="position:absolute;left:0;color:var(--gold)">◆</span>
+            <strong>Maior destaque na jornada</strong> — logo em posição principal em todas as telas do eleitor
+          </li>
+          <li style="font-size:10.5pt;line-height:1.5;color:#e8eefc;padding-left:7mm;position:relative;margin-bottom:4mm">
+            <span style="position:absolute;left:0;color:var(--gold)">◆</span>
+            <strong>Topo da página de resultados</strong> — o destino de todo o tráfego pós-divulgação
+          </li>
+          <li style="font-size:10.5pt;line-height:1.5;color:#e8eefc;padding-left:7mm;position:relative;margin-bottom:4mm">
+            <span style="position:absolute;left:0;color:var(--gold)">◆</span>
+            <strong>Entrevista exclusiva</strong> do Presidente da CDL para o veículo do patrocinador
+          </li>
+          <li style="font-size:10.5pt;line-height:1.5;color:#e8eefc;padding-left:7mm;position:relative;margin-bottom:4mm">
+            <span style="position:absolute;left:0;color:var(--gold)">◆</span>
+            <strong>Relatório premium customizado</strong> com cortes demográficos e análise do seu segmento
+          </li>
+          <li style="font-size:10.5pt;line-height:1.5;color:#e8eefc;padding-left:7mm;position:relative;margin-bottom:4mm">
+            <span style="position:absolute;left:0;color:var(--gold)">◆</span>
+            <strong>Reunião privada</strong> com o Presidente da CDL e o estatístico responsável
+          </li>
+          <li style="font-size:10.5pt;line-height:1.5;color:#e8eefc;padding-left:7mm;position:relative">
+            <span style="position:absolute;left:0;color:var(--gold)">◆</span>
+            <strong>Selo "Oferecimento"</strong> — Pesquisa Eleitoral Sergipe 2026
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Pesquisa Eleitoral Sergipe 2026</span><span>07</span></div>
+</section>
+
+<!-- ============ 8. PATROCÍNIO E APOIO ============ -->
+<section class="pg">
+  <div class="body">
+    <div class="kicker">Demais cotas</div>
+    <h2 class="t disp" style="margin-top:5mm">Patrocínio e Apoio</h2>
+    <div class="rule sm"></div>
+    <div class="cotas">
+      <div class="cota top" style="max-width:none">
+        <div class="tag">Cota Ouro · até 3 vagas</div>
+        <div class="nome disp">Patrocínio</div>
+        <div class="preco disp">R$ 70.000</div>
+        <div class="vagas">Três cotas disponíveis</div>
+        <ul>
+          <li>Logo na faixa de patrocínio em <strong>toda a jornada</strong> do eleitor — entrada, cabine e encerramento</li>
+          <li>Logo em destaque na página pública de resultados</li>
+          <li>Menção textual durante a reportagem da TV Atalaia</li>
+          <li>Relatório premium com cortes demográficos × voto</li>
+          <li>Reunião de apresentação com o Presidente da CDL e o estatístico</li>
+          <li>Selo “Patrocínio — Pesquisa Eleitoral Sergipe 2026”</li>
+        </ul>
+      </div>
+      <div class="cota">
+        <div class="tag">Cota Prata · vagas abertas</div>
+        <div class="nome disp">Apoio</div>
+        <div class="preco disp">R$ 30.000</div>
+        <div class="vagas">Sem limite de cotas</div>
+        <ul>
+          <li>Logo na faixa de patrocínio da jornada do eleitor</li>
+          <li>Logo presente na página pública de resultados</li>
+          <li>Relatório premium com cortes demográficos × voto</li>
+          <li>Reunião de apresentação dos resultados</li>
+          <li>Selo “Apoio — Pesquisa Eleitoral Sergipe 2026”</li>
+        </ul>
+      </div>
+      <div class="cota" style="background:transparent;border-style:dashed;border-color:rgba(201,162,39,.4)">
+        <div class="tag" style="color:var(--gold-l)">Especificação técnica</div>
+        <div class="nome disp" style="font-size:15pt;color:#fff">Envio do logo</div>
+        <ul style="margin-top:6mm">
+          <li>Oferecimento — 220 × 90 px</li>
+          <li>Patrocínio — 160 × 60 px</li>
+          <li>Apoio — 120 × 40 px</li>
+          <li>PNG, JPG, SVG ou WebP até 2 MB</li>
+          <li>Preferencialmente PNG com fundo transparente</li>
+          <li>O mesmo arquivo serve às telas de fundo claro e escuro</li>
+        </ul>
+        <p class="sm" style="margin-top:auto">
+          Encaixe automático preservando proporção — qualquer formato cabe.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Pesquisa Eleitoral Sergipe 2026</span><span>08</span></div>
+</section>
+
+<!-- ============ 9. MATRIZ ============ -->
+<section class="pg cream">
+  <div class="body">
+    <div class="kicker dark">Comparativo</div>
+    <h2 class="t disp" style="margin-top:5mm;color:var(--navy)">O que cada cota entrega</h2>
+    <div class="rule"></div>
+    <table class="matriz">
+      <thead>
+        <tr>
+          <th style="width:44%">Entrega</th>
+          <th style="text-align:center">Oferecimento<br><span style="font-weight:400;letter-spacing:0;text-transform:none">R$ 100 mil</span></th>
+          <th style="text-align:center">Patrocínio<br><span style="font-weight:400;letter-spacing:0;text-transform:none">R$ 70 mil</span></th>
+          <th style="text-align:center">Apoio<br><span style="font-weight:400;letter-spacing:0;text-transform:none">R$ 30 mil</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Logo na jornada do eleitor (todas as telas)</td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="chk">●</span></td></tr>
+        <tr><td>Logo na página pública de resultados</td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="chk">●</span></td></tr>
+        <tr><td>Relatório premium com cortes demográficos</td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="chk">●</span></td></tr>
+        <tr><td>Reunião de apresentação dos resultados</td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="chk">●</span></td></tr>
+        <tr><td>Menção na reportagem da TV Atalaia</td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="no">—</span></td></tr>
+        <tr><td>Reunião com o estatístico responsável</td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="no">—</span></td></tr>
+        <tr class="hl"><td>Painel dedicado nos créditos de abertura da TV</td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="no">—</span></td><td style="text-align:center"><span class="no">—</span></td></tr>
+        <tr class="hl"><td>Exclusividade de categoria</td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="no">—</span></td><td style="text-align:center"><span class="no">—</span></td></tr>
+        <tr class="hl"><td>Entrevista exclusiva do Presidente da CDL</td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="no">—</span></td><td style="text-align:center"><span class="no">—</span></td></tr>
+        <tr class="hl"><td>Análise customizada do seu segmento</td><td style="text-align:center"><span class="chk">●</span></td><td style="text-align:center"><span class="no">—</span></td><td style="text-align:center"><span class="no">—</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="foot"><span>Pesquisa Eleitoral Sergipe 2026</span><span>09</span></div>
+</section>
+
+<!-- ============ 10. CRONOGRAMA + CONFORMIDADE ============ -->
+<section class="pg">
+  <div class="body">
+    <div class="kicker">Execução</div>
+    <h2 class="t disp" style="margin-top:5mm">Cronograma e conformidade</h2>
+    <div class="rule"></div>
+    <div class="two">
+      <div class="half">
+        <table>
+          <thead><tr><th>Quando</th><th>O quê</th></tr></thead>
+          <tbody>
+            <tr><td style="color:var(--gold-l);white-space:nowrap">Até 5 dias antes</td><td>Registro da pesquisa no PesqEle da Justiça Eleitoral</td></tr>
+            <tr><td style="color:var(--gold-l);white-space:nowrap">Setembro</td><td>Coleta de campo — online, nos 75 municípios</td></tr>
+            <tr><td style="color:var(--gold-l);white-space:nowrap">Véspera</td><td>Números entregues ao patrocinador Oferecimento, sob sigilo</td></tr>
+            <tr class="hl"><td style="white-space:nowrap">Dia da divulgação</td><td>Apresentação ao vivo no telejornal da TV Atalaia</td></tr>
+            <tr><td style="color:var(--gold-l);white-space:nowrap">Em seguida</td><td>Publicação no portal público de resultados</td></tr>
+            <tr><td style="color:var(--gold-l);white-space:nowrap">Até 3 dias úteis</td><td>Relatório complementar aos patrocinadores</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="half">
+        <div style="border:1px solid rgba(201,162,39,.35);border-radius:2mm;padding:6mm">
+          <div class="kicker" style="font-size:8pt">Independência editorial</div>
+          <p class="sm" style="color:#c9d4e8;margin-top:3mm;font-size:9.5pt">
+            O patrocínio é <strong style="color:#fff">estritamente institucional e não
+            eleitoral</strong>. Não confere ao patrocinador qualquer ingerência sobre
+            metodologia, contratação da equipe, resultados divulgados ou edição da
+            reportagem. A relação de patrocinadores é informada à Justiça Eleitoral no
+            registro e divulgada publicamente.
+          </p>
+        </div>
+        <div style="border:1px solid rgba(255,255,255,.14);border-radius:2mm;padding:6mm;margin-top:5mm">
+          <div class="kicker" style="font-size:8pt;color:#fff">Quem não pode patrocinar</div>
+          <p class="sm" style="margin-top:3mm;font-size:9.5pt">
+            Por política de <em>due diligence</em> eleitoral, não aceitamos recursos de
+            candidatos, partidos e seus diretórios, pessoas filiadas com candidatura
+            ativa, empresas controladas por candidato ou partido, e órgãos da
+            administração pública. Toda proposta passa por verificação prévia.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Pesquisa Eleitoral Sergipe 2026</span><span>10</span></div>
+</section>
+
+<!-- ============ 11. CONTATO ============ -->
+<section class="pg cover">
+  <div class="glow"></div><div class="glow b"></div>
+  <div class="cover-frame"></div>
+  <div style="position:relative;z-index:2;width:100%">
+    <div class="kicker">Próximo passo</div>
+    <h1 class="t disp" style="margin-top:6mm;font-size:34pt;max-width:180mm">
+      Reserve a sua cota antes<br>que a categoria seja fechada.
+    </h1>
+    <div class="rule"></div>
+    <p class="lead" style="max-width:150mm">
+      A cota Oferecimento é única e a exclusividade é por categoria — o primeiro a
+      formalizar bloqueia o segmento inteiro. Retornamos em até dois dias úteis com o
+      contrato de patrocínio para análise jurídica.
+    </p>
+    <div class="two" style="margin-top:12mm;flex:none">
+      <div class="half">
+        <div class="kicker" style="font-size:8pt;color:#fff">Comercial</div>
+        <p style="font-size:13pt;margin-top:3mm;color:var(--gold-l)">presidencia@cdlaju.com.br</p>
+        <p style="font-size:13pt;color:var(--gold-l)">(79) 3212-7700</p>
+        <p class="sm" style="margin-top:4mm">pesquisa.cdlaju.com.br/patrocinio</p>
+      </div>
+      <div class="half">
+        <div class="kicker" style="font-size:8pt;color:#fff">Realização</div>
+        <p style="font-size:11pt;margin-top:3mm;color:#dde4f2">
+          Câmara de Dirigentes Lojistas de Aracaju<br>
+          <span class="sm">CNPJ 13.045.935/0001-36</span><br>
+          <span class="sm">Rua Santa Luzia, 570 · São José · Aracaju/SE</span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="foot">
+    <span>Transmissão TV Atalaia</span>
+    <span>Pesquisa registrada no PesqEle · Lei 9.504/97</span>
+  </div>
+</section>
+
+</body>
+</html>
