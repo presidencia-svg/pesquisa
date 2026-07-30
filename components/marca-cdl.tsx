@@ -9,9 +9,8 @@ import Image from 'next/image'
  * Claude Design ("Logo CDL Pesquisas"). É a marca do produto de pesquisa
  * eleitoral, usada em todo o site.
  *
- * O logo institucional original continua em `/public/cdl-logo.png` caso
- * precise voltar. Usar em telas FORA da cápsula — dentro dela a marca é
- * omitida pra preservar o foco no ato de votar.
+ * Usar em telas FORA da cápsula — dentro dela a marca é omitida pra
+ * preservar o foco no ato de votar.
  */
 export function MarcaCdl({
   tamanho = 'md',

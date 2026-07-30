@@ -43,3 +43,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .claude/
+
+# macOS AppleDouble (criados ao copiar pra exFAT/SSD)
+._*
+.DS_Store
