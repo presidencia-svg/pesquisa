@@ -1,0 +1,13 @@
+Pesquisa quantitativa de intenção de voto realizada integralmente pela internet, por autopreenchimento no dispositivo do próprio respondente, sem entrevistadores, na plataforma pesquisa.cdlaju.com.br, desenvolvida e operada diretamente pela contratante (CDL Aracaju), sem terceirização.
+
+Modo de resposta ESPONTÂNEO, no formato da urna eletrônica: o respondente digita o número do candidato e o sistema exibe nome, foto e partido apenas para confirmação antes do registro. Nenhuma lista de candidatos é exibida previamente, eliminando o viés de menu característico de pesquisas estimuladas.
+
+Cargos pesquisados: Governador, Senador (duas indicações), Deputado Federal e Deputado Estadual.
+
+Para Deputado Federal (4 dígitos) e Deputado Estadual (5 dígitos), a resposta segue o padrão da urna: computada por legenda (dois primeiros dígitos) para fins de distribuição proporcional e por candidato para ordenação interna. Em todas as cédulas o respondente pode registrar voto em branco ou "não sabe / não quis responder".
+
+Identificação do respondente em duas etapas: (1) validação do CPF como pessoa física real, contra base própria de 44.545 CPFs previamente validados da contratante ou consulta em tempo real ao SPC Brasil; (2) confirmação de posse do CPF por código de 6 dígitos (OTP) enviado ao WhatsApp vinculado. Uma única participação por CPF por edição.
+
+Anonimato por arquitetura ("duas salas"): a identificação (hash irreversível do CPF) e os votos são armazenados em estruturas sem qualquer chave de ligação; o voto é gravado sob token aleatório descartado ao fim da sessão, com data/hora truncada para hora cheia. Não é possível, nem ao operador do sistema, vincular um voto a um CPF.
+
+Auditabilidade: código-fonte publicado em repositório aberto (github.com/presidencia-svg/pesquisa), banco de dados auditável e apuração por consultas agregadas reproduzíveis. Cruzamentos demográficos publicados somente com no mínimo 30 respondentes por célula (k-anonimato).

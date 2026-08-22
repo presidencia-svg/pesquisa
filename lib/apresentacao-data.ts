@@ -27,7 +27,14 @@ import {
   type PatroPorCota,
   type PatroPublico,
 } from '@/lib/resultados-data'
+import { CARGO_CONFIG, type Cargo } from '@/lib/cargos'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+
+/** Número como digitado na urna — preserva zeros à esquerda ("01", "010"). */
+function numUrna(cargo: string, numero: number): string {
+  const digitos = CARGO_CONFIG[cargo as Cargo]?.digitos
+  return digitos ? String(numero).padStart(digitos, '0') : String(numero)
+}
 
 const CARGOS = [
   { key: 'presidente', num: '1', label: 'Presidente da República', sub: 'Voto espontâneo · 1º turno', top: 4 },
@@ -86,7 +93,7 @@ function montaCargo(
   const candRows: ApresRow[] = topN.map((c) => ({
     name: c.nome,
     party: c.partido || undefined,
-    num: String(c.numero),
+    num: numUrna(meta.key, c.numero),
     pct: total > 0 ? (c.votos / total) * 100 : 0,
     color: c.cor || '#2F6FE0',
     eleito: c.eleito,
@@ -112,7 +119,7 @@ function montaCargo(
       .map((c) => ({
         name: c.nome,
         party: c.partido || undefined,
-        num: String(c.numero),
+        num: numUrna(meta.key, c.numero),
         pct: total > 0 ? (c.votos / total) * 100 : 0,
         color: c.cor || '#2F6FE0',
         eleito: true,

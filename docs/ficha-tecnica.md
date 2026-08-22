@@ -14,10 +14,10 @@
 |---|---|
 | **Contratante** | Câmara de Dirigentes Lojistas de Aracaju (CDL Aracaju) — CNPJ 13.045.935/0001-36 |
 | **Executor** | CDL Aracaju (execução direta, sem terceirização) |
-| **Estatístico responsável** | *a definir antes do registro — CONRE ativo, com declaração assinada digitalmente conforme Art. 2º, IX da Resolução 23.747/2026* |
+| **Estatístico responsável** | Danilio Silva Santos — CONRE nº 8223 (contratado; declaração assinada digitalmente em 22/08/2026 nos dois registros, conforme Art. 2º, IX da Resolução 23.747/2026) |
 | **Custo total** | *a declarar* |
 | **Origem dos recursos** | Recursos próprios da CDL Aracaju (associação civil sem fins lucrativos) |
-| **Nº de registro TRE/SE** | *a obter via PesqEle ≥ 5 dias antes da divulgação* |
+| **Nº de registro** | **SE-09441/2026** (TRE-SE — Governador, Senador, Dep. Federal, Dep. Estadual) e **BR-04041/2026** (TSE — Presidente), ambos registrados no PesqEle em 22/08/2026. Divulgação liberada a partir de 27/08/2026. |
 
 ## Universo
 
@@ -64,7 +64,7 @@
 | Item | Valor |
 |---|---|
 | **Forma** | Pesquisa **online com identidade verificada** (autopreenchimento via web/app, com validação prévia de CPF e confirmação por OTP de WhatsApp) |
-| **Período de coleta principal** | *a definir — setembro/2026* |
+| **Período de coleta principal** | 01/09/2026 a 03/09/2026 (conforme declarado no PesqEle) |
 | **Plataforma** | `pesquisa.cdlaju.com.br` (Next.js + Supabase, hospedado na Vercel — código aberto em `github.com/presidencia-svg/pesquisa`) |
 | **Idioma** | Português brasileiro |
 

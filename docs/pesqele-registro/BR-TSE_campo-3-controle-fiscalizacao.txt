@@ -1,0 +1,15 @@
+A coleta é 100% digital e sem entrevistadores: o "trabalho de campo" é executado pela própria plataforma, com controles automáticos, registrados e auditáveis:
+
+1. Validação de identidade: CPF verificado (dígitos verificadores e existência como pessoa física) contra base própria de 44.545 CPFs previamente validados ou consulta em tempo real ao SPC Brasil; confirmação de posse por código OTP de 6 dígitos enviado ao WhatsApp vinculado ao CPF.
+
+2. Unicidade: uma participação por CPF por edição, garantida por hash irreversível (HMAC-SHA256) do CPF — o CPF nunca é armazenado em claro — e por restrições de unicidade e gatilhos no banco de dados que rejeitam duplicidade mesmo sob tentativa de burla (reenvio simultâneo, repetição de cédula).
+
+3. Antifraude e antiautomação: verificação anti-robô (Cloudflare Turnstile), limite de requisições por endereço IP, máximo de 2 CPFs por dispositivo, bloqueio de cadastro em navegação anônima e cotas de participação por município.
+
+4. Integridade e trilha de auditoria: ações administrativas registradas em log de auditoria; registros de coleta imutáveis; painel interno de acompanhamento em tempo real (evolução do total de respostas, distribuição geográfica e demográfica), monitorado pela equipe técnica e pelo estatístico responsável para detecção de anomalias (picos atípicos, concentração por IP ou dispositivo).
+
+5. Conferência da apuração: totalizações obtidas por consultas agregadas reproduzíveis diretamente do banco de dados; qualquer recontagem é determinística. O código-fonte da plataforma é publicado em repositório aberto (github.com/presidencia-svg/pesquisa), permitindo auditoria externa da lógica de coleta e de apuração.
+
+6. Segurança: comunicação exclusivamente sob HTTPS; testes de intrusão internos periódicos e varredura automatizada de vulnerabilidades integrada ao processo de publicação de código.
+
+O sistema interno descrito, incluindo banco de dados e registros de auditoria, fica à disposição da Justiça Eleitoral para verificação, nos termos da legislação aplicável.
