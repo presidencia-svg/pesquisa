@@ -14,7 +14,7 @@ import './resultados.css'
 export const metadata = {
   title: 'Resultados · Pesquisa Eleitoral Sergipe 2026',
   description:
-    'Resultados da Pesquisa Eleitoral Sergipe 2026 realizada pela CDL Aracaju. Registrada no TRE/SE.',
+    'Resultados da Pesquisa Eleitoral Sergipe 2026 realizada pela CDL Aracaju.',
 }
 
 // Cache de 15s — mesmo racional da versão anterior. revalidatePath('/resultados')
@@ -42,9 +42,28 @@ export default async function ResultadosHubPage() {
 
   const { pesquisa, patroPorCota } = r
   const { meta } = pesquisa
+  // Edição sem nº de registro no TRE = demonstração (dados ilustrativos).
+  // Não pode se apresentar como pesquisa registrada.
+  const ehDemo = !meta.registro_tre
 
   return (
     <>
+      {ehDemo && (
+        <div
+          style={{
+            background: '#b45309',
+            color: '#fff',
+            textAlign: 'center',
+            padding: '8px 16px',
+            fontSize: 13,
+            fontWeight: 600,
+            letterSpacing: '0.02em',
+          }}
+        >
+          DEMONSTRAÇÃO · dados ilustrativos, sem valor de pesquisa registrada no
+          TRE
+        </div>
+      )}
       <header className="rs-header">
         <div className="rs-header-inner">
           <Link href="/" className="rs-brand">
@@ -79,14 +98,14 @@ export default async function ResultadosHubPage() {
               <strong>{meta.n.toLocaleString('pt-BR')} eleitores</strong> com
               identidade verificada por CPF e WhatsApp nos 75 municípios do
               estado. Metodologia espontânea — o eleitor digita o número como
-              na urna, sem ver lista de candidatos. Registrada no PesqEle/TRE-SE
-              conforme a Lei 9.504/97.
+              na urna, sem ver lista de candidatos.
+              {!ehDemo && ' Registrada no PesqEle/TRE-SE conforme a Lei 9.504/97.'}
             </p>
             <div className="rs-hub-destaques">
               <span>Identidade verificada por CPF + WhatsApp</span>
               <span>75 municípios de Sergipe</span>
               <span>Coleta espontânea, estilo urna</span>
-              <span>Registro PesqEle/TRE-SE</span>
+              {!ehDemo && <span>Registro PesqEle/TRE-SE</span>}
             </div>
           </section>
 
@@ -102,7 +121,7 @@ export default async function ResultadosHubPage() {
             <FichaCard
               rotulo="Divulgada"
               valor={meta.divulgada_em}
-              sub={`TRE: ${meta.registro_tre}`}
+              sub={ehDemo ? 'Demonstração' : `TRE: ${meta.registro_tre}`}
             />
             <FichaCard
               rotulo="Contratante"

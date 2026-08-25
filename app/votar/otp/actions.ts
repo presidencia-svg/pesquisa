@@ -177,11 +177,18 @@ export async function validarOtp(
   //     (migration 020) garantem que mesmo numa race condition entre
   //     dois eleitores validando ao mesmo tempo, só um vai conseguir.
   //     O outro recebe constraint violation (Postgres 23505).
-  const { error: errEleitor } = await db
+  //     TRAVA DE TOKEN ÚNICO POR CPF (compare-and-swap atômico):
+  //     o UPDATE só afeta a linha se token_emitido ainda for false. Assim
+  //     um CPF gera NO MÁXIMO um token por edição — mesmo que o atacante
+  //     rode o laço reenviarOtp -> validarOtp várias vezes (o índice UNIQUE
+  //     por token não pega esse caso porque cada token é distinto).
+  const { data: claimed, error: errEleitor } = await db
     .from('eleitores_pesquisa')
-    .update({ wa_validado: true })
+    .update({ wa_validado: true, token_emitido: true })
     .eq('edicao_id', draft.edicaoId)
     .eq('cpf_hash', draft.cpfHash)
+    .eq('token_emitido', false)
+    .select('id')
   if (errEleitor) {
     console.error('[otp] erro marcando eleitor wa_validado:', errEleitor)
     if (errEleitor.code === '23505') {
@@ -202,6 +209,15 @@ export async function validarOtp(
       }
     }
     return { ok: false, message: 'Erro de sistema. Tente novamente.' }
+  }
+  if (!claimed || claimed.length === 0) {
+    // token_emitido já era true: este CPF já atravessou a ponte nesta
+    // edição. Aborta antes de gerar um segundo token (anti vote-stuffing).
+    return {
+      ok: false,
+      message:
+        'Este CPF já participou desta edição. Cada CPF vota uma única vez.',
+    }
   }
 
   // 3c. Gera token de voto. Hash entra em tokens_emitidos SEM nenhuma
@@ -256,6 +272,47 @@ export async function reenviarOtp(): Promise<OtpState> {
   }
 
   const db = supabaseAdmin()
+
+  // Se este CPF já emitiu token (já votou/atravessou a ponte), não reenvia.
+  const { data: jaEleitor } = await db
+    .from('eleitores_pesquisa')
+    .select('token_emitido')
+    .eq('edicao_id', draft.edicaoId)
+    .eq('cpf_hash', draft.cpfHash)
+    .maybeSingle()
+  if (jaEleitor?.token_emitido) {
+    return {
+      ok: false,
+      message: 'Este CPF já participou desta edição.',
+    }
+  }
+
+  // Rate limit por IP: no máx 3 reenvios / 15 min. Sem isso, o reenvio
+  // dispara mensagem paga na Meta a cada chamada — OTP-bombing na vítima,
+  // queima de cota e risco de ban do número (derruba TODA a coleta).
+  const rlIp = await checarRateLimit({
+    acao: 'otp_reenviar',
+    max: 3,
+    janelaMin: 15,
+  })
+  if (!rlIp.ok) {
+    return { ok: false, message: rlIp.message }
+  }
+
+  // Teto por CPF (independe do IP): no máx 3 códigos / 15 min pra este CPF.
+  const desde15 = new Date(Date.now() - 15 * 60_000).toISOString()
+  const { count: enviadosRecentes } = await db
+    .from('whatsapp_codigos')
+    .select('id', { count: 'exact', head: true })
+    .eq('edicao_id', draft.edicaoId)
+    .eq('cpf_hash', draft.cpfHash)
+    .gte('criado_em', desde15)
+  if ((enviadosRecentes ?? 0) >= 3) {
+    return {
+      ok: false,
+      message: 'Muitos reenvios. Aguarde alguns minutos e tente de novo.',
+    }
+  }
 
   // Invalida codigos pendentes anteriores.
   await db

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { requireAdmin } from '@/lib/admin-auth'
 import { registrarAcessoAdmin } from '@/lib/admin-audit'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
@@ -19,6 +20,7 @@ export async function criarEdicao(
   _prev: EdicaoState,
   formData: FormData,
 ): Promise<EdicaoState> {
+  await requireAdmin()
   const parsed = novaEdicaoSchema.safeParse({
     nome: formData.get('nome'),
     inicio: formData.get('inicio'),
@@ -60,6 +62,7 @@ export async function criarEdicao(
 }
 
 export async function ativarEdicao(formData: FormData): Promise<void> {
+  await requireAdmin()
   const id = String(formData.get('id') ?? '')
   if (!id) return
   const db = supabaseAdmin()
@@ -74,6 +77,7 @@ export async function ativarEdicao(formData: FormData): Promise<void> {
 }
 
 export async function desativarEdicao(formData: FormData): Promise<void> {
+  await requireAdmin()
   const id = String(formData.get('id') ?? '')
   if (!id) return
   const db = supabaseAdmin()
@@ -89,6 +93,7 @@ export async function desativarEdicao(formData: FormData): Promise<void> {
  * da divulgacao).
  */
 export async function divulgarEdicao(formData: FormData): Promise<EdicaoState> {
+  await requireAdmin()
   const id = String(formData.get('id') ?? '')
   if (!id) return { ok: false, message: 'ID invalido.' }
 
@@ -168,6 +173,7 @@ export async function divulgarEdicao(formData: FormData): Promise<EdicaoState> {
  * /resultados publico e no header.
  */
 export async function atualizarTurno(formData: FormData): Promise<void> {
+  await requireAdmin()
   const id = String(formData.get('id') ?? '')
   const turnoRaw = String(formData.get('turno') ?? '1')
   const turno = turnoRaw === '2' ? 2 : 1
@@ -185,6 +191,7 @@ export async function atualizarTurno(formData: FormData): Promise<void> {
  * (mesmo pra eleitores de Aracaju/SC) e do bloco de resultados.
  */
 export async function alternarConsultaZona(formData: FormData): Promise<void> {
+  await requireAdmin()
   const id = String(formData.get('id') ?? '')
   const ativa = String(formData.get('ativa') ?? '') === 'true'
   if (!id) return
@@ -204,6 +211,7 @@ export async function alternarConsultaZona(formData: FormData): Promise<void> {
  * "aguarde"). Util pra corrigir erro ou desfazer durante o piloto.
  */
 export async function retirarDivulgacao(formData: FormData): Promise<void> {
+  await requireAdmin()
   const id = String(formData.get('id') ?? '')
   if (!id) return
   const db = supabaseAdmin()
@@ -226,6 +234,7 @@ export async function salvarMetadadosDivulgacao(
   _prev: EdicaoState,
   formData: FormData,
 ): Promise<EdicaoState> {
+  await requireAdmin()
   const id = String(formData.get('id') ?? '')
   if (!id) return { ok: false, message: 'ID inválido.' }
   const registro = String(formData.get('registro_tre') ?? '').trim()

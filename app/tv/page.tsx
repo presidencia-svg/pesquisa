@@ -50,5 +50,32 @@ export default async function TvPage() {
   }
 
   const data = await construirApresData(r.pesquisa, r.patroPorCota)
-  return <ApresentacaoTV data={data} />
+  // Edição sem registro no TRE = demonstração: faixa fixa no topo do telão.
+  const ehDemo = !r.pesquisa.meta.registro_tre
+  return (
+    <>
+      {ehDemo && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 9999,
+            background: '#b45309',
+            color: '#fff',
+            textAlign: 'center',
+            padding: '6px 16px',
+            fontSize: 15,
+            fontWeight: 700,
+            letterSpacing: '0.03em',
+            fontFamily: 'system-ui, -apple-system, sans-serif',
+          }}
+        >
+          DEMONSTRAÇÃO · dados ilustrativos, sem valor de pesquisa registrada
+        </div>
+      )}
+      <ApresentacaoTV data={data} />
+    </>
+  )
 }

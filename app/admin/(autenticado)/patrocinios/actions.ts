@@ -35,12 +35,31 @@ export async function atualizarStatus(
   return { ok: true }
 }
 
-const MIMES_OK = new Set([
-  'image/png',
-  'image/jpeg',
-  'image/svg+xml',
-  'image/webp',
-])
+// SVG fora do allowlist de propósito: SVG é HTML executável e o bucket é
+// público — um <script> dentro do logo viraria stored XSS servido do
+// domínio de storage. Só formatos raster.
+const MIMES_OK = new Set(['image/png', 'image/jpeg', 'image/webp'])
+
+// Assinaturas (magic bytes) — não confiar no file.type enviado pelo cliente.
+function tipoRealValido(buf: Buffer, mime: string): boolean {
+  if (mime === 'image/png') {
+    return buf.length > 8 && buf.subarray(0, 8).toString('hex') === '89504e470d0a1a0a'
+  }
+  if (mime === 'image/jpeg') {
+    return buf.length > 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff
+  }
+  if (mime === 'image/webp') {
+    return (
+      buf.length > 12 &&
+      buf.subarray(0, 4).toString('ascii') === 'RIFF' &&
+      buf.subarray(8, 12).toString('ascii') === 'WEBP'
+    )
+  }
+  return false
+}
+
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 const MAX_BYTES = 2 * 1024 * 1024 // 2 MB
 
@@ -59,6 +78,9 @@ export async function uploadLogo(
   if (!(file instanceof File) || !patrocinioId) {
     return { ok: false, message: 'Arquivo ou ID ausente.' }
   }
+  if (!UUID_RE.test(patrocinioId)) {
+    return { ok: false, message: 'ID de patrocínio inválido.' }
+  }
   if (file.size === 0) {
     return { ok: false, message: 'Arquivo vazio.' }
   }
@@ -71,24 +93,26 @@ export async function uploadLogo(
   if (!MIMES_OK.has(file.type)) {
     return {
       ok: false,
-      message: `Tipo não suportado: ${file.type || 'desconhecido'}. Use PNG, JPG, SVG ou WebP.`,
+      message: `Tipo não suportado: ${file.type || 'desconhecido'}. Use PNG, JPG ou WebP.`,
+    }
+  }
+
+  const db = supabaseAdmin()
+  const buffer = Buffer.from(await file.arrayBuffer())
+
+  // Valida o conteúdo real (magic bytes), não o file.type do cliente.
+  if (!tipoRealValido(buffer, file.type)) {
+    return {
+      ok: false,
+      message: 'O conteúdo do arquivo não corresponde a uma imagem PNG, JPG ou WebP válida.',
     }
   }
 
   // Nome único: patrocinioId/timestamp.ext (evita colisão se admin
   // trocar o logo várias vezes)
   const ext =
-    file.type === 'image/png'
-      ? 'png'
-      : file.type === 'image/jpeg'
-        ? 'jpg'
-        : file.type === 'image/svg+xml'
-          ? 'svg'
-          : 'webp'
+    file.type === 'image/png' ? 'png' : file.type === 'image/jpeg' ? 'jpg' : 'webp'
   const path = `${patrocinioId}/${Date.now()}.${ext}`
-
-  const db = supabaseAdmin()
-  const buffer = Buffer.from(await file.arrayBuffer())
   const { error } = await db.storage
     .from('patrocinadores')
     .upload(path, buffer, {

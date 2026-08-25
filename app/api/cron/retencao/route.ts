@@ -28,6 +28,7 @@
 import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 
+import { bearerValido } from '@/lib/cron-auth'
 import { SERVER_ENV } from '@/lib/env'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
@@ -56,7 +57,7 @@ export async function GET() {
       { status: 500 },
     )
   }
-  if (auth !== `Bearer ${segredo}`) {
+  if (!bearerValido(auth, segredo)) {
     return NextResponse.json({ erro: 'unauthorized' }, { status: 401 })
   }
 

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { requireAdmin } from '@/lib/admin-auth'
 import { registrarAcessoAdmin } from '@/lib/admin-audit'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
@@ -29,6 +30,7 @@ export async function criarCandidato(
   _prev: CandidatoState,
   formData: FormData,
 ): Promise<CandidatoState> {
+  await requireAdmin()
   const parsed = schema.safeParse({
     cargo: formData.get('cargo'),
     numero: formData.get('numero'),
@@ -87,6 +89,7 @@ export async function criarCandidato(
 }
 
 export async function alternarAtivo(formData: FormData): Promise<void> {
+  await requireAdmin()
   const id = String(formData.get('id') ?? '')
   const ativarRaw = String(formData.get('ativo') ?? '')
   if (!id) return
@@ -109,6 +112,7 @@ export async function alternarAtivo(formData: FormData): Promise<void> {
  * tooltip com o texto na pagina publica /resultados.
  */
 export async function salvarImpedimento(formData: FormData): Promise<void> {
+  await requireAdmin()
   const id = String(formData.get('id') ?? '')
   if (!id) return
   const raw = String(formData.get('impedimento') ?? '').trim()

@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation'
 
+import { requireAdmin } from '@/lib/admin-auth'
 import { DEV_MODE } from '@/lib/env'
 import { clearPreVoto, clearVotoToken } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
@@ -21,6 +22,9 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
  * Limpa cookies pre_voto e voto da sessao atual.
  */
 export async function resetarTudo(): Promise<void> {
+  // Defesa em profundidade: além do DEV_MODE, exige sessão admin válida.
+  // Se DEV_MODE vazar pra produção, o wipe ainda não roda sem login.
+  await requireAdmin()
   if (!DEV_MODE) {
     throw new Error('Reset disponivel apenas em DEV_MODE.')
   }

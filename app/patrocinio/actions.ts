@@ -4,6 +4,7 @@ import { headers } from 'next/headers'
 import { z } from 'zod'
 
 import { obterIpCliente } from '@/lib/ip'
+import { checarRateLimit } from '@/lib/rate-limit'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export type InteressePatrocinioState = {
@@ -58,6 +59,17 @@ export async function enviarInteresse(
       message: firstMsg ?? 'Dados inválidos.',
       ...(firstField ? { field: firstField } : {}),
     }
+  }
+
+  // Rate limit: formulário público que escreve via service-role. Sem isso,
+  // fica aberto a flood/PII automatizado. 5 envios / 60 min por IP.
+  const rl = await checarRateLimit({
+    acao: 'patrocinio_interesse',
+    max: 5,
+    janelaMin: 60,
+  })
+  if (!rl.ok) {
+    return { ok: false, message: rl.message }
   }
 
   const h = await headers()
