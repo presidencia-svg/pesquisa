@@ -61,6 +61,7 @@ export default async function ConfirmaPage() {
 
           <DadosForm
             municipios={municipios ?? []}
+            exigirTitulo={draft.faixaEtaria === '16-17'}
             algumPrefill={Boolean(
               draft.municipioIbge ||
                 draft.whatsappE164 ||

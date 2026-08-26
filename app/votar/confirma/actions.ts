@@ -11,6 +11,7 @@ import { enviarOtpWhatsApp, metaWhatsappConfigurada } from '@/lib/meta-whatsapp'
 import { checarRateLimit } from '@/lib/rate-limit'
 import { getPreVoto, setPreVoto } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { validarTituloEleitor } from '@/lib/titulo-eleitor'
 
 export type ConfirmaState = {
   ok: boolean
@@ -62,6 +63,9 @@ const schema = z.object({
     message: 'Selecione sua renda familiar.',
   }),
   whatsapp: z.string().min(11, { message: 'Informe seu número com DDD.' }),
+  // Título de eleitor — exigido SÓ para 16-17 (voto facultativo). Validado
+  // no corpo da action conforme a faixa; o número NÃO é armazenado.
+  titulo_eleitor: z.string().trim().max(20).optional(),
   device_fingerprint: z
     .string()
     .regex(/^[a-f0-9]{64}$/, { message: 'Fingerprint inválido.' })
@@ -133,6 +137,31 @@ export async function confirmarDados(
     }
   }
   const faixa_etaria: FaixaEtaria = draft.faixaEtaria
+
+  // Elegibilidade dos 16-17: o voto é FACULTATIVO (CF art. 14, §1º, II, c) e
+  // só é eleitor quem já tirou o título. Exige e valida o nº do título
+  // (formato + dígitos verificadores + UF). O número é validado e
+  // DESCARTADO — não guardamos título (dado sensível, minimização LGPD).
+  // Aos 18+ o alistamento é obrigatório e universal: não pedimos título.
+  if (faixa_etaria === '16-17') {
+    const titulo = String(parsed.data.titulo_eleitor ?? '').trim()
+    if (!titulo) {
+      return {
+        ok: false,
+        field: 'titulo_eleitor',
+        message:
+          'Aos 16 e 17 anos o voto é facultativo — informe o número do seu título de eleitor para participar.',
+      }
+    }
+    const v = validarTituloEleitor(titulo)
+    if (!v.ok) {
+      return {
+        ok: false,
+        field: 'titulo_eleitor',
+        message: `Título de eleitor inválido: ${v.motivo} Confira os 12 dígitos (sem a zona/seção).`,
+      }
+    }
+  }
 
   const whatsappE164 = normalizarWhatsapp(whatsapp)
   if (!whatsappE164) {

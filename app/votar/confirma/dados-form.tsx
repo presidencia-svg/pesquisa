@@ -105,12 +105,15 @@ export function DadosForm({
   prefilledWhatsapp,
   prefilledEscolaridade,
   algumPrefill,
+  exigirTitulo = false,
 }: {
   municipios: Municipio[]
   prefilledMunicipio?: number
   prefilledWhatsapp?: string
   prefilledEscolaridade?: Escolaridade
   algumPrefill: boolean
+  /** true quando o eleitor tem 16-17: voto facultativo, exige título. */
+  exigirTitulo?: boolean
 }) {
   const [state, formAction, pending] = useActionState(
     confirmarDados,
@@ -122,6 +125,7 @@ export function DadosForm({
       : '',
   )
   const [deviceFingerprint, setDeviceFingerprint] = useState('')
+  const [titulo, setTitulo] = useState('')
 
   useEffect(() => {
     gerarDeviceFingerprint().then((fp) => {
@@ -169,6 +173,39 @@ export function DadosForm({
             : 'A cidade do seu título de eleitor — pode ser diferente de onde você mora hoje.'}
         </span>
       </label>
+
+      {/* Título de eleitor — só para 16-17 (voto facultativo, CF art. 14
+          §1º II c). Aos 18+ o alistamento é obrigatório e não pedimos.
+          O número é validado no servidor e NÃO é armazenado. */}
+      {exigirTitulo ? (
+        <label className="flex flex-col gap-2">
+          <span className="text-sm font-medium text-foreground">
+            Número do título de eleitor
+          </span>
+          <input
+            type="text"
+            name="titulo_eleitor"
+            inputMode="numeric"
+            autoComplete="off"
+            required
+            value={titulo}
+            onChange={(e) => {
+              const d = e.target.value.replace(/\D/g, '').slice(0, 12)
+              const grupos = d.match(/.{1,4}/g)
+              setTitulo(grupos ? grupos.join(' ') : d)
+            }}
+            placeholder="0000 0000 0000"
+            aria-invalid={state.field === 'titulo_eleitor'}
+            className="h-12 px-3 rounded-md border border-border bg-background font-mono tracking-wide focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          <span className="text-xs text-muted-foreground">
+            Aos 16 e 17 anos o voto é facultativo — só participa quem já tem
+            título. Digite os 12 números do título (sem a zona/seção). Ele é
+            usado só para conferir sua elegibilidade e <strong>não é
+            guardado</strong>.
+          </span>
+        </label>
+      ) : null}
 
       {/* Sexo e faixa etária NÃO são perguntados — vêm da Receita Federal
           (via SPC) no passo anterior e ficam em cache em cdl_base. Tirar
