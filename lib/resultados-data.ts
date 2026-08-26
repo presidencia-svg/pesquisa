@@ -108,21 +108,13 @@ export async function carregarResultados(
     return { status: 'aguardando', edicao: edicao ?? null }
   }
 
-  // Patrocinadores firmados — exibidos publicamente quando mostrar_publico=true
-  const { data: patrocinadores } = await db
-    .from('interessados_patrocinio')
-    .select('id, empresa, cota, logo_url, site_url')
-    .eq('status', 'firmado')
-    .eq('mostrar_publico', true)
-    .not('logo_url', 'is', null)
-    .order('criado_em', { ascending: true })
-    .returns<PatroPublico[]>()
-
-  const patroPorCota: PatroPorCota = {
-    diamante: (patrocinadores ?? []).filter((p) => p.cota === 'diamante'),
-    ouro: (patrocinadores ?? []).filter((p) => p.cota === 'ouro'),
-    prata: (patrocinadores ?? []).filter((p) => p.cota === 'prata'),
-  }
+  // Patrocinadores REMOVIDOS da exibição pública da pesquisa (decisão 25/08):
+  // a divulgação da pesquisa (/resultados, /resultados/[cargo], /tv) não exibe
+  // logos de patrocinador. A página de vendas /patrocinio segue independente.
+  // Para reexibir no futuro, restaurar a query em interessados_patrocinio
+  // (status='firmado', mostrar_publico=true, logo_url não nulo) e distribuir
+  // por cota como antes.
+  const patroPorCota: PatroPorCota = { diamante: [], ouro: [], prata: [] }
 
   // ----- Carrega tudo em paralelo -----
   const [
