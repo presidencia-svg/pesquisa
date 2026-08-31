@@ -13,10 +13,28 @@ import { carregarPatrocinadores } from '@/lib/patrocinadores'
 import { getVotoData } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
-import { CedulaForm, type Opcao } from './cedula-form'
+import { CedulaForm, type Companheiro, type Opcao } from './cedula-form'
 
 export const metadata = {
   robots: { index: false, follow: false },
+}
+
+// Normaliza o jsonb `companheiros` (vice/suplentes) do banco pro tipo do
+// componente. Ignora entradas malformadas — nunca quebra a cédula.
+function mapCompanheiros(raw: unknown): Companheiro[] | undefined {
+  if (!Array.isArray(raw)) return undefined
+  const lista = raw
+    .filter(
+      (c): c is Record<string, unknown> =>
+        !!c && typeof c === 'object' && typeof (c as { nome?: unknown }).nome === 'string',
+    )
+    .map((c) => ({
+      rotulo: typeof c.rotulo === 'string' ? c.rotulo : 'Vice',
+      nome: c.nome as string,
+      partido: typeof c.partido === 'string' ? c.partido : null,
+      fotoUrl: typeof c.foto_url === 'string' ? c.foto_url : null,
+    }))
+  return lista.length ? lista : undefined
 }
 
 type PageProps = {
@@ -89,6 +107,7 @@ export default async function CedulaPage({ params }: PageProps) {
         numero,
         nome_urna,
         foto_url,
+        companheiros,
         partidos!inner ( sigla, cor_hex )
       `)
       .eq('edicao_id', tokenReg.edicao_id)
@@ -104,6 +123,7 @@ export default async function CedulaPage({ params }: PageProps) {
           partidoSigla: p.sigla,
           fotoUrl: (c.foto_url as string | null) ?? null,
           corHex: p.cor_hex ?? null,
+          companheiros: mapCompanheiros(c.companheiros),
         }
       }) ?? []
   } else if (cfg.tipo === 'legenda') {

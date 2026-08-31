@@ -6,12 +6,22 @@ import { type Cargo, type CargoConfig } from '@/lib/cargos'
 
 import { submeterVoto, type VotoState } from './actions'
 
+export type Companheiro = {
+  rotulo: string // "Vice", "1º Suplente", "2º Suplente"
+  nome: string
+  partido: string | null
+  fotoUrl: string | null
+}
+
 export type Opcao = {
   numero: number
   nome: string // nome_urna (candidato) ou sigla (legenda)
   partidoSigla: string
   fotoUrl: string | null
   corHex: string | null
+  // Chapa — só majoritário. Como na urna: vice (presidente/governador)
+  // ou 1º/2º suplentes (senador), com foto e nome.
+  companheiros?: Companheiro[]
 }
 
 export function CedulaForm({
@@ -141,22 +151,54 @@ function CedulaUrna({
         </div>
 
         {completo && opcaoSelecionada ? (
-          <div className="mt-2 bg-capsule-foreground/5 border border-capsule-foreground/20 rounded-md p-4 flex items-center gap-4">
-            <FotoOuInicial
-              key={opcaoSelecionada.fotoUrl ?? opcaoSelecionada.numero}
-              opcao={opcaoSelecionada}
-            />
-            <div className="flex-1 flex flex-col gap-0.5 text-left">
-              <p className="text-xs uppercase tracking-wider text-capsule-foreground/60">
-                {cfg.tipo === 'candidato' ? 'Candidato' : 'Legenda'}
-              </p>
-              <p className="text-lg font-semibold text-capsule-foreground">
-                {opcaoSelecionada.nome}
-              </p>
-              <p className="text-sm text-capsule-foreground/80">
-                {opcaoSelecionada.partidoSigla}
-              </p>
+          <div className="mt-2 bg-capsule-foreground/5 border border-capsule-foreground/20 rounded-md p-4 flex flex-col gap-3">
+            <div className="flex items-center gap-4">
+              <FotoOuInicial
+                key={opcaoSelecionada.fotoUrl ?? opcaoSelecionada.numero}
+                opcao={opcaoSelecionada}
+              />
+              <div className="flex-1 flex flex-col gap-0.5 text-left">
+                <p className="text-xs uppercase tracking-wider text-capsule-foreground/60">
+                  {cfg.tipo === 'candidato'
+                    ? opcaoSelecionada.companheiros?.length
+                      ? 'Titular'
+                      : 'Candidato'
+                    : 'Legenda'}
+                </p>
+                <p className="text-lg font-semibold text-capsule-foreground">
+                  {opcaoSelecionada.nome}
+                </p>
+                <p className="text-sm text-capsule-foreground/80">
+                  {opcaoSelecionada.partidoSigla}
+                </p>
+              </div>
             </div>
+            {opcaoSelecionada.companheiros?.map((comp, i) => (
+              <div
+                key={`${comp.rotulo}-${i}`}
+                className="flex items-center gap-4 pt-3 border-t border-capsule-foreground/15"
+              >
+                <FotoAvatar
+                  fotoUrl={comp.fotoUrl}
+                  nome={comp.nome}
+                  corHex={opcaoSelecionada.corHex}
+                  tamanho="vice"
+                />
+                <div className="flex-1 flex flex-col gap-0.5 text-left">
+                  <p className="text-xs uppercase tracking-wider text-capsule-foreground/60">
+                    {comp.rotulo}
+                  </p>
+                  <p className="text-base font-medium text-capsule-foreground">
+                    {comp.nome}
+                  </p>
+                  {comp.partido ? (
+                    <p className="text-sm text-capsule-foreground/70">
+                      {comp.partido}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            ))}
           </div>
         ) : completo ? (
           <div className="mt-2 bg-error/10 border border-error/30 rounded-md p-4 text-sm text-capsule-foreground">
@@ -336,28 +378,49 @@ function ConsultaForm({ cargo, cfg }: { cargo: Cargo; cfg: CargoConfig }) {
 // ─── Foto / placeholder ────────────────────────────────────────────────────
 
 function FotoOuInicial({ opcao }: { opcao: Opcao }) {
+  return (
+    <FotoAvatar
+      fotoUrl={opcao.fotoUrl}
+      nome={opcao.nome}
+      corHex={opcao.corHex}
+      tamanho="titular"
+    />
+  )
+}
+
+// Avatar reutilizável (titular e vice). Cai nas iniciais se a foto falhar.
+function FotoAvatar({
+  fotoUrl,
+  nome,
+  corHex,
+  tamanho,
+}: {
+  fotoUrl: string | null | undefined
+  nome: string
+  corHex: string | null | undefined
+  tamanho: 'titular' | 'vice'
+}) {
   const [erroFoto, setErroFoto] = useState(false)
 
-  const iniciais = (opcao.nome.match(/\b[A-Z]/g) ?? ['?'])
-    .slice(0, 2)
-    .join('')
-  const cor = opcao.corHex ?? '#52525b'
+  const iniciais = (nome.match(/\b[A-Z]/g) ?? ['?']).slice(0, 2).join('')
+  const cor = corHex ?? '#52525b'
+  const dim = tamanho === 'titular' ? 'w-16 h-16 text-xl' : 'w-12 h-12 text-base'
 
-  if (opcao.fotoUrl && !erroFoto) {
+  if (fotoUrl && !erroFoto) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={opcao.fotoUrl}
+        src={fotoUrl}
         alt=""
         onError={() => setErroFoto(true)}
-        className="w-16 h-16 rounded-md object-cover bg-capsule-foreground/10"
+        className={`${dim} rounded-md object-cover bg-capsule-foreground/10`}
       />
     )
   }
 
   return (
     <div
-      className="w-16 h-16 rounded-md flex items-center justify-center text-xl font-bold text-white"
+      className={`${dim} rounded-md flex items-center justify-center font-bold text-white`}
       style={{ background: cor }}
       aria-hidden="true"
     >
