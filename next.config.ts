@@ -43,7 +43,13 @@ const securityHeaders = [
       'display-capture=()',
       'encrypted-media=()',
       'fullscreen=(self)',
-      'geolocation=()',
+      // geolocation=(self): o PRÓPRIO site precisa do GPS no plano B do
+      // gate de localização (quando o IP não confirma Sergipe). Sem o
+      // (self), o Chrome bloqueia navigator.geolocation com "disabled by
+      // permissions policy" — o Safari ignora, por isso passava no iOS.
+      // iframes de terceiros seguem sem geolocation (e X-Frame-Options
+      // DENY já impede embed).
+      'geolocation=(self)',
       'gyroscope=()',
       'keyboard-map=()',
       'magnetometer=()',
@@ -115,7 +121,25 @@ const nextConfig: NextConfig = {
   // browser e ajuda fingerprinting de versão.
   poweredByHeader: false,
   async redirects() {
+    // Hostnames que redirecionam pro canônico pesquisa.cdlaju.com.br.
+    // Cobre erro de digitação comum: www e o plural "pesquisas" (marca
+    // "CDL Pesquisas"). Só disparam se o host bater; exige que o domínio
+    // esteja apontado pra este projeto na Vercel (DNS + domínio no
+    // projeto). 308 preserva método e é cacheável.
+    const hostsAlternativos = [
+      'www.pesquisa.cdlaju.com.br',
+      'pesquisas.cdlaju.com.br',
+      'www.pesquisas.cdlaju.com.br',
+    ]
+    const redirectsDeHost = hostsAlternativos.map((host) => ({
+      source: '/:path*',
+      has: [{ type: 'host' as const, value: host }],
+      destination: 'https://pesquisa.cdlaju.com.br/:path*',
+      permanent: true,
+    }))
+
     return [
+      ...redirectsDeHost,
       // /patrocinio/exposicao foi aposentada (wireframes antigos que não
       // batiam com a implementação real). A /patrocinio/jornada faz o
       // mesmo papel, fiel às telas de verdade. 308 preserva links antigos.
