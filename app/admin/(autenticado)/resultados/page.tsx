@@ -265,7 +265,7 @@ export default async function ResultadosPage() {
             rel="noopener"
             className="inline-flex items-center gap-2 h-10 px-4 rounded-md border border-accent/40 bg-accent/5 text-accent text-sm font-semibold hover:bg-accent/10 transition whitespace-nowrap"
           >
-            Snapshot pra TV
+            Snapshot pra TV Atalaia
           </Link>
           <Link
             href="/admin/resultados/apresentacao"
@@ -273,7 +273,7 @@ export default async function ResultadosPage() {
             rel="noopener"
             className="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-accent text-white text-sm font-semibold hover:opacity-90 transition whitespace-nowrap"
           >
-            Apresentação TV (ao vivo)
+            Apresentação TV Atalaia (ao vivo)
           </Link>
         </div>
       </header>

@@ -362,7 +362,7 @@ export default function TransparenciaPage() {
                   <li>
                     <strong>Página de resultados com trava de divulgação.</strong>{' '}
                     Antes da CDL Aracaju marcar a edição como divulgada
-                    (após o telejornal parceiro, conforme convênio com a
+                    (após o telejornal da TV Atalaia, conforme convênio com a
                     emissora), a página exibe apenas &quot;Aguardando
                     divulgação&quot;. Os números não saem do servidor.
                   </li>

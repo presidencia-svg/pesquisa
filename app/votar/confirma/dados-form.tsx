@@ -299,7 +299,7 @@ export function DadosForm({
         <span className="leading-relaxed">
           <strong>Quero receber os resultados em primeira mão</strong> no meu
           WhatsApp, logo que a CDL Aracaju divulgar a pesquisa no telejornal
-          parceiro. Envio único por edição, sem campanha ou propaganda. Posso
+          da TV Atalaia. Envio único por edição, sem campanha ou propaganda. Posso
           cancelar a qualquer momento solicitando exclusão dos meus dados.
         </span>
       </label>
