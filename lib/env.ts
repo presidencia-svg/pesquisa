@@ -115,14 +115,16 @@ export const SERVER_ENV = {
    * codigoProduto usado na API nova. Recomendados pra fluxo de
    * cadastro eleitor (precisa apenas de nome + data nascimento +
    * situação CPF):
-   *   11  CONFIRME PF        — mais barato, traz CPF básico + status RF
-   *   222 CONFIRME PF RF     — com receita federal explícita
-   *   320 CONSULTA COMPLETA  — mais cara, todos os insumos
-   *   479 CONSULTA CPF SPC   — padrão consulta cadastral
-   * Default '11' (CONFIRME PF) — suficiente pro nosso caso.
+   *   11   CONFIRME PF        — traz CPF básico + status RF
+   *   222  CONFIRME PF RF     — com receita federal explícita
+   *   320  CONSULTA COMPLETA  — mais cara, todos os insumos
+   *   479  CONSULTA CPF SPC   — padrão consulta cadastral
+   *   1182 produto do contrato CDL Aracaju (usado na produção)
+   * Default '1182' — produto contratado pela CDL. Sobrescrevível por
+   * SPC_CODIGO_PRODUTO_NOVO se o contrato mudar.
    */
   get SPC_CODIGO_PRODUTO_NOVO() {
-    return optional('SPC_CODIGO_PRODUTO_NOVO', '11')
+    return optional('SPC_CODIGO_PRODUTO_NOVO', '1182')
   },
   get SPC_MOCK() {
     return process.env.SPC_MOCK === 'true'
