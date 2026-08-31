@@ -129,6 +129,10 @@ async function resolverPartido(
 async function main() {
   const gravar = process.argv.includes('--gravar')
   const desativarAusentes = process.argv.includes('--desativar-ausentes')
+  // --edicao <uuid>: importa numa edicao ESPECIFICA (ativa ou nao), pra
+  // preparar a edicao real sem desligar a demo. Sem o flag, usa a ativa.
+  const idxEd = process.argv.indexOf('--edicao')
+  const edicaoIdArg = idxEd >= 0 ? process.argv[idxEd + 1] : undefined
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -137,15 +141,18 @@ async function main() {
   }
   const db = createClient(url, key, { auth: { persistSession: false } })
 
-  const { data: edicao, error: erroEdicao } = await db
-    .from('edicao')
-    .select('id, nome')
-    .eq('ativa', true)
-    .maybeSingle()
+  const seletor = db.from('edicao').select('id, nome')
+  const { data: edicao, error: erroEdicao } = edicaoIdArg
+    ? await seletor.eq('id', edicaoIdArg).maybeSingle()
+    : await seletor.eq('ativa', true).maybeSingle()
   if (erroEdicao || !edicao) {
-    throw new Error('Sem edição ativa. Crie uma edição em /admin primeiro.')
+    throw new Error(
+      edicaoIdArg
+        ? `Edição ${edicaoIdArg} não encontrada.`
+        : 'Sem edição ativa. Crie uma edição em /admin primeiro.',
+    )
   }
-  console.log(`Edição ativa: ${edicao.nome} (${edicao.id})`)
+  console.log(`Edição alvo: ${edicao.nome} (${edicao.id})`)
   console.log(gravar ? 'Modo: GRAVAR' : 'Modo: dry-run (use --gravar pra aplicar)')
 
   const { data: partidos } = await db.from('partidos').select('id, numero')

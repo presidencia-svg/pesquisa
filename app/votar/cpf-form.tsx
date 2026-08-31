@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Script from 'next/script'
-import { useActionState, useCallback, useEffect, useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 
 import { entrarComCpf, type VotarFormState } from './actions'
 
@@ -81,7 +81,16 @@ const formatarCpfInput = (raw: string): string => {
 
 const initialState: VotarFormState = { ok: true }
 
-export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
+export function CpfForm({
+  turnstileSiteKey,
+  lat,
+  lng,
+}: {
+  turnstileSiteKey?: string
+  /** Coordenadas já confirmadas em Sergipe pelo gate de localização. */
+  lat?: number
+  lng?: number
+}) {
   const [state, formAction, pending] = useActionState(entrarComCpf, initialState)
   const [cpfDisplay, setCpfDisplay] = useState('')
   const [consentido, setConsentido] = useState(false)
@@ -96,38 +105,6 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
   useEffect(() => {
     detectarNavegadorAnonimo().then(setNavegadorAnonimo)
   }, [])
-
-  // Fator de localização (bloqueio rígido): o eleitor deve estar em Sergipe.
-  // Pede a posição do GPS; o servidor valida contra os limites do estado.
-  // 'pedindo' = aguardando permissão/posição; 'ok' = temos coordenada;
-  // 'negado' = permissão negada ou GPS indisponível → bloqueia.
-  const [geo, setGeo] = useState<{
-    status: 'pedindo' | 'ok' | 'negado'
-    lat?: number
-    lng?: number
-  }>({ status: 'pedindo' })
-
-  const pedirLocalizacao = useCallback(() => {
-    setGeo({ status: 'pedindo' })
-    if (typeof navigator === 'undefined' || !navigator.geolocation) {
-      setGeo({ status: 'negado' })
-      return
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) =>
-        setGeo({
-          status: 'ok',
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        }),
-      () => setGeo({ status: 'negado' }),
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 },
-    )
-  }, [])
-
-  useEffect(() => {
-    pedirLocalizacao()
-  }, [pedirLocalizacao])
 
   const showTurnstile =
     typeof turnstileSiteKey === 'string' && turnstileSiteKey.length > 0
@@ -256,16 +233,8 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
 
         {/* Coordenadas do GPS pro gate de localização (validadas e
             descartadas no servidor). Vazias enquanto não houver posição. */}
-        <input
-          type="hidden"
-          name="geo_lat"
-          value={geo.status === 'ok' && geo.lat != null ? String(geo.lat) : ''}
-        />
-        <input
-          type="hidden"
-          name="geo_lng"
-          value={geo.status === 'ok' && geo.lng != null ? String(geo.lng) : ''}
-        />
+        <input type="hidden" name="geo_lat" value={lat != null ? String(lat) : ''} />
+        <input type="hidden" name="geo_lng" value={lng != null ? String(lng) : ''} />
 
 
         {bloqueadoPorAnonimato ? (

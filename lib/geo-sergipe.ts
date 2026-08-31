@@ -7,10 +7,8 @@
  * (não excluir eleitor real perto da divisa/litoral). A coordenada é
  * validada e descartada: nada de localização é armazenado (LGPD).
  *
- * Pure. Server-only por convenção de uso.
+ * Pure — usada no client (feedback instantâneo) e no servidor (autoritativa).
  */
-import 'server-only'
-
 const LIMITES = { latMin: -11.62, latMax: -9.46, lngMin: -38.3, lngMax: -36.34 }
 
 export function dentroDeSergipe(lat: unknown, lng: unknown): boolean {

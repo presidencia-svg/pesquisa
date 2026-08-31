@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation'
 
 import { cpfValido, mascararCpf, normalizarCpf } from '@/lib/cpf'
 import { hashCpf } from '@/lib/crypto'
+import { DEV_MODE } from '@/lib/env'
+import { dentroDeSergipe } from '@/lib/geo-sergipe'
 import { obterIpCliente } from '@/lib/ip'
 import { consultarSpc, type SpcDadosEleitor } from '@/lib/spc'
 import { setPreVoto, type PreVotoDraft } from '@/lib/sessao'
@@ -31,6 +33,7 @@ export type VotarErroCode =
   | 'cpf_falecido'
   | 'navegador_anonimo'
   | 'localizacao'
+  | 'ainda_nao_abriu'
   | 'servico_indisponivel'
   | 'rate_limit'
   | 'sistema'
@@ -105,16 +108,31 @@ export async function entrarComCpf(
     }
   }
 
-  // 0b. Fator de localização (bloqueio rígido) DESATIVADO temporariamente
-  //     — estava barrando acesso (GPS em desktop/indoor). Reativar antes
-  //     da coleta real 01-03/09 com tratamento pra quem nega o GPS.
+  // 0b. Fator de localização: o eleitor deve estar em Sergipe. O client já
+  //     confirma pelo gate visual (card grande); aqui revalidamos as
+  //     coordenadas (autoritativo). A coordenada é validada e DESCARTADA
+  //     (LGPD). Em DEV_MODE faz bypass.
+  if (!DEV_MODE) {
+    const latRaw = formData.get('geo_lat')
+    const lngRaw = formData.get('geo_lng')
+    const lat = typeof latRaw === 'string' && latRaw ? Number(latRaw) : NaN
+    const lng = typeof lngRaw === 'string' && lngRaw ? Number(lngRaw) : NaN
+    if (!dentroDeSergipe(lat, lng)) {
+      return {
+        ok: false,
+        code: 'localizacao',
+        message:
+          'Não foi possível confirmar sua localização em Sergipe. Ative a localização do aparelho e tente novamente.',
+      }
+    }
+  }
 
   const db = supabaseAdmin()
 
   // 1. Edicao ativa
   const { data: edicao, error: errEdicao } = await db
     .from('edicao')
-    .select('id, fim')
+    .select('id, inicio, fim')
     .eq('ativa', true)
     .maybeSingle()
   if (errEdicao) {
@@ -137,6 +155,14 @@ export async function entrarComCpf(
       ok: false,
       code: 'sistema',
       message: 'Esta edição da pesquisa já foi encerrada.',
+    }
+  }
+  // Janela de coleta: não permite votar antes do início declarado.
+  if (new Date(edicao.inicio) > new Date()) {
+    return {
+      ok: false,
+      code: 'ainda_nao_abriu',
+      message: 'A votação ainda não começou. Ela abre em 01/09.',
     }
   }
 
