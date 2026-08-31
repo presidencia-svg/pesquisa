@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 import { alternarAtivo } from './actions'
+import { AvatarCandidato } from './avatar-candidato'
 import { EditarImpedimento } from './editar-impedimento'
 import { NovoCandidatoForm } from './novo-candidato-form'
 
@@ -113,12 +114,11 @@ export default async function CandidatosPage() {
                   }`}
                 >
                   <div className="flex items-center gap-4">
-                    <div
-                      className="w-12 h-12 rounded-md flex items-center justify-center text-xs font-bold text-white tabular-nums flex-none"
-                      style={{ background: c.partidos?.cor_hex ?? '#52525b' }}
-                    >
-                      {c.numero}
-                    </div>
+                    <AvatarCandidato
+                      fotoUrl={c.foto_url}
+                      numero={c.numero}
+                      corHex={c.partidos?.cor_hex ?? null}
+                    />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold truncate flex items-center gap-2">
                         {c.nome_urna}
