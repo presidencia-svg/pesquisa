@@ -16,7 +16,11 @@ export const metadata = {
 // Sempre dinâmica — a janela de votação depende do relógio.
 export const dynamic = 'force-dynamic'
 
-export default async function VotarPage() {
+export default async function VotarPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [k: string]: string | string[] | undefined }>
+}) {
   // Se ja entrou na capsula, vai pra capsula.
   const token = await getVotoToken()
   if (token) redirect('/votar/anonimo')
@@ -31,11 +35,17 @@ export default async function VotarPage() {
 
   // Localização por IP (headers da Vercel): se o IP já resolve pra
   // Sergipe, o eleitor entra direto — o GPS fica de plano B.
+  // ?forcar_gps=1 força a tela do GPS (só a tela, pra testar o plano B;
+  // a validação do servidor não muda).
+  const sp = await searchParams
+  const forcarGps = sp?.forcar_gps === '1'
   const h = await headers()
-  const ipSergipe = ipEmSergipe(
-    h.get('x-vercel-ip-country'),
-    h.get('x-vercel-ip-country-region'),
-  )
+  const ipSergipe =
+    !forcarGps &&
+    ipEmSergipe(
+      h.get('x-vercel-ip-country'),
+      h.get('x-vercel-ip-country-region'),
+    )
 
   return (
     <>
