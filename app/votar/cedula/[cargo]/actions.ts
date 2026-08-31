@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation'
 
 import { compararHashes, hashTokenVoto } from '@/lib/crypto'
+import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
 import {
   CARGO_CONFIG,
   isCargo,
@@ -94,6 +95,17 @@ export async function submeterVoto(
     }
   }
   const edicaoId = tokenReg.edicao_id
+
+  // Guarda de edição: cápsula de teste/demo antiga não vota na edição
+  // atual (nem o contrário) — mesmo chegando por bookmark direto.
+  const alvoEdicao = await resolverEdicaoAlvo()
+  if (!alvoEdicao || alvoEdicao.id !== edicaoId) {
+    return {
+      ok: false,
+      message:
+        'Sua cápsula era de uma edição anterior da pesquisa. Volte ao início e recomece.',
+    }
+  }
 
   // Flag de admin: consulta Zona de Expansão pode estar desligada nesta
   // edicao. Se estiver, nao roteia pra ela e recusa voto direto nela.

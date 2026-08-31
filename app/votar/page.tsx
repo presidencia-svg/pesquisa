@@ -4,10 +4,12 @@ import { redirect } from 'next/navigation'
 
 import { EntradaVotacao } from '@/components/entrada-votacao'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
+import { hashTokenVoto } from '@/lib/crypto'
 import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
 import { PUBLIC_ENV } from '@/lib/env'
 import { ipEmSergipe } from '@/lib/geo-sergipe'
 import { getPreVoto, getVotoToken } from '@/lib/sessao'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export const metadata = {
   title: 'Identifique-se · Pesquisa Eleitoral Sergipe 2026',
@@ -21,17 +23,36 @@ export default async function VotarPage({
 }: {
   searchParams: Promise<{ [k: string]: string | string[] | undefined }>
 }) {
-  // Se ja entrou na capsula, vai pra capsula.
-  const token = await getVotoToken()
-  if (token) redirect('/votar/anonimo')
-
-  // Se ja existe rascunho de cadastro, pula direto pro proximo passo.
-  const draft = await getPreVoto()
-  if (draft) redirect('/votar/confirma')
-
   // Janela da edição alvo (ativa, ou a de TESTE via cookie) — controla
   // cronômetro e gate.
   const edicao = await resolverEdicaoAlvo()
+
+  // Se ja entrou na capsula, vai pra capsula — MAS só se a cápsula for
+  // DESTA edição. Token de teste/demo antigo → limpa e recomeça, senão
+  // o voto cairia na edição errada.
+  const token = await getVotoToken()
+  if (token) {
+    let mesmaEdicao = false
+    if (edicao) {
+      const db = supabaseAdmin()
+      const { data: tok } = await db
+        .from('tokens_emitidos')
+        .select('edicao_id')
+        .eq('token_hash', hashTokenVoto(token))
+        .maybeSingle()
+      mesmaEdicao = tok?.edicao_id === edicao.id
+    }
+    if (mesmaEdicao) redirect('/votar/anonimo')
+    redirect('/votar/reiniciar')
+  }
+
+  // Rascunho de cadastro: retoma só se for DESTA edição; resquício de
+  // outra edição → limpa e recomeça.
+  const draft = await getPreVoto()
+  if (draft) {
+    if (edicao && draft.edicaoId === edicao.id) redirect('/votar/confirma')
+    redirect('/votar/reiniciar')
+  }
 
   // Localização por IP (headers da Vercel): se o IP já resolve pra
   // Sergipe, o eleitor entra direto — o GPS fica de plano B.

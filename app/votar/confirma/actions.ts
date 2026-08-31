@@ -8,8 +8,9 @@ import { gerarOtp, hashOtp } from '@/lib/crypto'
 import { DEV_MODE } from '@/lib/env'
 import { obterIpCliente } from '@/lib/ip'
 import { enviarOtpWhatsApp, metaWhatsappConfigurada } from '@/lib/meta-whatsapp'
+import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
 import { checarRateLimit } from '@/lib/rate-limit'
-import { getPreVoto, setPreVoto } from '@/lib/sessao'
+import { clearPreVoto, getPreVoto, setPreVoto } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { validarTituloEleitor } from '@/lib/titulo-eleitor'
 
@@ -88,6 +89,18 @@ export async function confirmarDados(
     return {
       ok: false,
       message: 'Sua sessão expirou. Volte ao início e digite o CPF novamente.',
+    }
+  }
+
+  // Guarda de edição: rascunho de teste/demo antigo não pode virar
+  // cadastro na edição atual (nem o contrário). Limpa e pede recomeço.
+  const alvoEdicao = await resolverEdicaoAlvo()
+  if (!alvoEdicao || alvoEdicao.id !== draft.edicaoId) {
+    await clearPreVoto()
+    return {
+      ok: false,
+      message:
+        'Sua sessão era de uma edição anterior da pesquisa. Volte ao início e recomece.',
     }
   }
 
