@@ -282,6 +282,23 @@ export function ControlesDivulgacao({
             <span className="font-mono">/resultados</span> pública pra
             qualquer pessoa. Confira o registro TRE/SE antes.
           </p>
+          <label className="flex flex-col gap-1">
+            <span className="text-[11px] font-medium text-foreground">
+              Código do Google Authenticator (obrigatório)
+            </span>
+            <input
+              name="totp"
+              inputMode="numeric"
+              autoComplete="off"
+              required
+              maxLength={6}
+              placeholder="000000"
+              className="h-9 w-28 px-3 rounded-md border border-border bg-background font-mono tracking-[0.3em] text-sm"
+            />
+            <span className="text-[10px] text-muted-foreground">
+              O resultado só é liberado com o seu código de 6 dígitos.
+            </span>
+          </label>
           {estadoDivulgar.message && (
             <p className="text-[11px] text-error">{estadoDivulgar.message}</p>
           )}

@@ -5,7 +5,9 @@ import { z } from 'zod'
 
 import { requireAdmin } from '@/lib/admin-auth'
 import { registrarAcessoAdmin } from '@/lib/admin-audit'
+import { SERVER_ENV } from '@/lib/env'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { verifyTotp } from '@/lib/totp'
 
 export type EdicaoState = { ok: boolean; message?: string }
 
@@ -94,6 +96,26 @@ export async function desativarEdicao(formData: FormData): Promise<void> {
  */
 export async function divulgarEdicao(formData: FormData): Promise<EdicaoState> {
   await requireAdmin()
+
+  // Trava extra: a divulgação de resultado exige o código do Google
+  // Authenticator (TOTP) NO MOMENTO de divulgar — não basta estar logado.
+  const totpSecret = SERVER_ENV.ADMIN_TOTP_SECRET
+  if (!totpSecret) {
+    return {
+      ok: false,
+      message:
+        'TOTP do responsável não configurado (ADMIN_TOTP_SECRET). A divulgação exige o código — configure antes.',
+    }
+  }
+  const totp = String(formData.get('totp') ?? '').replace(/\s/g, '')
+  if (!verifyTotp(totpSecret, totp)) {
+    return {
+      ok: false,
+      message:
+        'Código do Google Authenticator inválido ou vazio. A divulgação do resultado só é liberada com o código.',
+    }
+  }
+
   const id = String(formData.get('id') ?? '')
   if (!id) return { ok: false, message: 'ID invalido.' }
 
