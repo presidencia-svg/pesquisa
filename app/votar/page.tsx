@@ -1,3 +1,4 @@
+import { headers } from 'next/headers'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -5,6 +6,7 @@ import { EntradaVotacao } from '@/components/entrada-votacao'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
 import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
 import { PUBLIC_ENV } from '@/lib/env'
+import { ipEmSergipe } from '@/lib/geo-sergipe'
 import { getPreVoto, getVotoToken } from '@/lib/sessao'
 
 export const metadata = {
@@ -26,6 +28,14 @@ export default async function VotarPage() {
   // Janela da edição alvo (ativa, ou a de TESTE via cookie) — controla
   // cronômetro e gate.
   const edicao = await resolverEdicaoAlvo()
+
+  // Localização por IP (headers da Vercel): se o IP já resolve pra
+  // Sergipe, o eleitor entra direto — o GPS fica de plano B.
+  const h = await headers()
+  const ipSergipe = ipEmSergipe(
+    h.get('x-vercel-ip-country'),
+    h.get('x-vercel-ip-country-region'),
+  )
 
   return (
     <>
@@ -51,6 +61,7 @@ export default async function VotarPage() {
                 inicioISO={edicao.inicio as string}
                 fimISO={edicao.fim as string}
                 turnstileSiteKey={PUBLIC_ENV.TURNSTILE_SITE_KEY}
+                ipDentroSergipe={ipSergipe}
               />
             ) : (
               <div className="text-center py-10">

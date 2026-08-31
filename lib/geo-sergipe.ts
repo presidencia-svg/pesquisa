@@ -22,3 +22,16 @@ export function dentroDeSergipe(lat: unknown, lng: unknown): boolean {
     lo <= LIMITES.lngMax
   )
 }
+
+/**
+ * Checagem por IP (headers de geolocalização da Vercel): true quando o
+ * IP do eleitor resolve pra Sergipe. Zero fricção — não pede permissão.
+ * Menos preciso que GPS (operadoras roteiam por outros estados), por
+ * isso é usado como caminho FELIZ; o GPS fica de plano B.
+ */
+export function ipEmSergipe(
+  country: string | null | undefined,
+  region: string | null | undefined,
+): boolean {
+  return country === 'BR' && region === 'SE'
+}

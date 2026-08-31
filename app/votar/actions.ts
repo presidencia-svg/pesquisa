@@ -7,7 +7,7 @@ import { cpfValido, mascararCpf, normalizarCpf } from '@/lib/cpf'
 import { hashCpf } from '@/lib/crypto'
 import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
 import { DEV_MODE } from '@/lib/env'
-import { dentroDeSergipe } from '@/lib/geo-sergipe'
+import { dentroDeSergipe, ipEmSergipe } from '@/lib/geo-sergipe'
 import { obterIpCliente } from '@/lib/ip'
 import { consultarSpc, type SpcDadosEleitor } from '@/lib/spc'
 import { setPreVoto, type PreVotoDraft } from '@/lib/sessao'
@@ -109,16 +109,22 @@ export async function entrarComCpf(
     }
   }
 
-  // 0b. Fator de localização: o eleitor deve estar em Sergipe. O client já
-  //     confirma pelo gate visual (card grande); aqui revalidamos as
-  //     coordenadas (autoritativo). A coordenada é validada e DESCARTADA
-  //     (LGPD). Em DEV_MODE faz bypass.
+  // 0b. Fator de localização: o eleitor deve estar em Sergipe. Caminho
+  //     feliz: o IP (headers da Vercel) já resolve pra SE — zero fricção.
+  //     Plano B: coordenadas do GPS (o client mostra o card grande).
+  //     Revalidação autoritativa aqui; a coordenada é validada e
+  //     DESCARTADA (LGPD). Em DEV_MODE faz bypass.
   if (!DEV_MODE) {
+    const h = await headers()
+    const ipOk = ipEmSergipe(
+      h.get('x-vercel-ip-country'),
+      h.get('x-vercel-ip-country-region'),
+    )
     const latRaw = formData.get('geo_lat')
     const lngRaw = formData.get('geo_lng')
     const lat = typeof latRaw === 'string' && latRaw ? Number(latRaw) : NaN
     const lng = typeof lngRaw === 'string' && lngRaw ? Number(lngRaw) : NaN
-    if (!dentroDeSergipe(lat, lng)) {
+    if (!ipOk && !dentroDeSergipe(lat, lng)) {
       return {
         ok: false,
         code: 'localizacao',

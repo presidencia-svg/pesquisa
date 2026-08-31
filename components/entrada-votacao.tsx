@@ -10,11 +10,14 @@ import { dentroDeSergipe } from '@/lib/geo-sergipe'
  * mostrar:
  *   - antes do início  → CRONÔMETRO regressivo (quando a votação abre)
  *   - depois do fim     → aviso de encerrada
- *   - dentro da janela  → GATE DE LOCALIZAÇÃO (grande) e, confirmado que o
- *                          eleitor está em Sergipe, o formulário de CPF.
+ *   - dentro da janela  → se o IP já confirma Sergipe (ipDentroSergipe,
+ *                          vindo do servidor), vai DIRETO pro CPF — zero
+ *                          fricção. Senão, GATE DE LOCALIZAÇÃO (grande)
+ *                          como plano B via GPS.
  *
  * A checagem de localização aqui é feedback instantâneo; o servidor
- * revalida as coordenadas (autoritativo). Coordenada não é armazenada.
+ * revalida (IP em SE ou coordenadas em SE — autoritativo). Coordenada
+ * não é armazenada.
  */
 type Fase = 'antes' | 'aberta' | 'encerrada'
 
@@ -38,10 +41,12 @@ export function EntradaVotacao({
   inicioISO,
   fimISO,
   turnstileSiteKey,
+  ipDentroSergipe = false,
 }: {
   inicioISO: string
   fimISO: string
   turnstileSiteKey?: string
+  ipDentroSergipe?: boolean
 }) {
   const inicio = new Date(inicioISO).getTime()
   const fim = new Date(fimISO).getTime()
@@ -58,6 +63,8 @@ export function EntradaVotacao({
 
   if (fase === 'antes') return <Cronometro alvo={inicio} inicioISO={inicioISO} />
   if (fase === 'encerrada') return <Encerrada fimISO={fimISO} />
+  // IP já confirmou Sergipe → direto pro CPF, sem pedir GPS.
+  if (ipDentroSergipe) return <CpfForm turnstileSiteKey={turnstileSiteKey} />
   return <GateLocalizacao turnstileSiteKey={turnstileSiteKey} />
 }
 
