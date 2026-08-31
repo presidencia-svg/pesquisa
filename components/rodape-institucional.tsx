@@ -20,7 +20,11 @@ export function RodapeInstitucional() {
             <p className="text-[10px] uppercase tracking-[0.2em]">
               Pesquisa Eleitoral Sergipe 2026
             </p>
-            <p className="text-[10px]">Registro TRE/SE pendente</p>
+            <p className="text-[10px]">
+              Registro TRE-SE{' '}
+              <strong className="text-foreground">SE-09441/2026</strong> · TSE{' '}
+              <strong className="text-foreground">BR-04041/2026</strong>
+            </p>
           </div>
         </div>
 
