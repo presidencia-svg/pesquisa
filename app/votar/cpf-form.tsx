@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Script from 'next/script'
-import { useActionState, useEffect, useState } from 'react'
+import { useActionState, useCallback, useEffect, useState } from 'react'
 
 import { entrarComCpf, type VotarFormState } from './actions'
 
@@ -97,6 +97,38 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
     detectarNavegadorAnonimo().then(setNavegadorAnonimo)
   }, [])
 
+  // Fator de localização (bloqueio rígido): o eleitor deve estar em Sergipe.
+  // Pede a posição do GPS; o servidor valida contra os limites do estado.
+  // 'pedindo' = aguardando permissão/posição; 'ok' = temos coordenada;
+  // 'negado' = permissão negada ou GPS indisponível → bloqueia.
+  const [geo, setGeo] = useState<{
+    status: 'pedindo' | 'ok' | 'negado'
+    lat?: number
+    lng?: number
+  }>({ status: 'pedindo' })
+
+  const pedirLocalizacao = useCallback(() => {
+    setGeo({ status: 'pedindo' })
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      setGeo({ status: 'negado' })
+      return
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) =>
+        setGeo({
+          status: 'ok',
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        }),
+      () => setGeo({ status: 'negado' }),
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 },
+    )
+  }, [])
+
+  useEffect(() => {
+    pedirLocalizacao()
+  }, [pedirLocalizacao])
+
   const showTurnstile =
     typeof turnstileSiteKey === 'string' && turnstileSiteKey.length > 0
   const bloqueadoPorAnonimato = navegadorAnonimo === true
@@ -155,7 +187,8 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
               state.code === 'cpf_irregular' ||
               state.code === 'cpf_inativo' ||
               state.code === 'cpf_falecido' ||
-              state.code === 'navegador_anonimo'
+              state.code === 'navegador_anonimo' ||
+              state.code === 'localizacao'
                 ? 'text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 flex flex-col gap-2'
                 : 'text-sm text-error bg-error/5 border border-error/20 rounded-md px-3 py-2 flex flex-col gap-2'
             }
@@ -221,6 +254,40 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
           value={navegadorAnonimo === true ? '1' : '0'}
         />
 
+        {/* Coordenadas do GPS pro gate de localização (validadas e
+            descartadas no servidor). Vazias enquanto não houver posição. */}
+        <input
+          type="hidden"
+          name="geo_lat"
+          value={geo.status === 'ok' && geo.lat != null ? String(geo.lat) : ''}
+        />
+        <input
+          type="hidden"
+          name="geo_lng"
+          value={geo.status === 'ok' && geo.lng != null ? String(geo.lng) : ''}
+        />
+
+        {geo.status === 'negado' ? (
+          <div
+            role="alert"
+            className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 flex flex-col gap-2"
+          >
+            <p>
+              <strong>Localização necessária.</strong> A Pesquisa Eleitoral
+              Sergipe 2026 é restrita a eleitores que estão no estado de
+              Sergipe. Permita o acesso à sua localização no navegador para
+              participar.
+            </p>
+            <button
+              type="button"
+              onClick={pedirLocalizacao}
+              className="self-start text-xs font-medium underline hover:no-underline"
+            >
+              Permitir localização e tentar de novo
+            </button>
+          </div>
+        ) : null}
+
         {bloqueadoPorAnonimato ? (
           <div
             role="alert"
@@ -258,7 +325,8 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
             cpfDisplay.replace(/\D/g, '').length !== 11 ||
             !consentido ||
             bloqueadoPorAnonimato ||
-            navegadorAnonimo === null
+            navegadorAnonimo === null ||
+            geo.status !== 'ok'
           }
           className="h-14 px-6 rounded-md bg-primary text-primary-foreground font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition"
         >
@@ -268,7 +336,11 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
               ? 'Verificando navegador…'
               : bloqueadoPorAnonimato
                 ? 'Não permitido em modo anônimo'
-                : 'Continuar'}
+                : geo.status === 'pedindo'
+                  ? 'Confirmando sua localização…'
+                  : geo.status === 'negado'
+                    ? 'Permita a localização para continuar'
+                    : 'Continuar'}
         </button>
 
         <p className="text-xs text-muted-foreground">
