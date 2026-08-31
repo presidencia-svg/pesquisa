@@ -53,3 +53,7 @@ docs/confidencial/pesqele/
 
 # Relatórios de pentest/compliance/jurídico — NUNCA no repo público
 docs/confidencial/
+
+# Arquivos de lock do Word/Office
+~$*
+**/~$*

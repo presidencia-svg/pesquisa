@@ -1,0 +1,389 @@
+cargo,numero,nome_urna,partido,impedimento,tem_foto
+presidente,13,"LULA",PT,"",sim
+presidente,14,"RENAN SANTOS",MISSÃO,"",sim
+presidente,16,"HERTZ DIAS",PSTU,"",sim
+presidente,21,"EDMILSON COSTA",PCB,"",sim
+presidente,22,"FLAVIO BOLSONARO",PL,"",sim
+presidente,27,"CLARIANA BARAO",DC,"",sim
+presidente,28,"PABLO MARÇAL",PRTB,"",sim
+presidente,29,"RUI COSTA PIMENTA",PCO,"",sim
+presidente,30,"ZEMA",NOVO,"",sim
+presidente,35,"VETERINÁRIO WILSON GRASSI",DEMOCRATA,"",nao
+presidente,55,"RONALDO CAIADO",PSD,"",sim
+presidente,70,"ESCRITOR AUGUSTO CURY",AVANTE,"",sim
+presidente,80,"SAMARA",UP,"",sim
+governador,10,"VALMIR DE FRANCISQUINHO",REPUBLICANOS,"",nao
+governador,22,"RICARDO MARQUES",PL,"",nao
+governador,27,"TATY  CRISTINA DE JESUS",DC,"",nao
+governador,45,"EMANUEL CACHO",PSDB,"",nao
+governador,50,"DR. HELTON",PSOL,"",nao
+governador,55,"FÁBIO",PSD,"",sim
+senador,100,"EDUARDO AMORIM",REPUBLICANOS,"",sim
+senador,101,"DELEGADO ANDRÉ DAVID",REPUBLICANOS,"",nao
+senador,123,"EDVALDO",PDT,"",sim
+senador,131,"ROGERIO CARVALHO",PT,"",sim
+senador,155,"DELEGADO ALESSANDRO",MDB,"",sim
+senador,221,"CORONEL ROCHA",PL,"",nao
+senador,222,"RODRIGO VALADARES",PL,"",sim
+senador,270,"PAULINHO DA UNIÃO TUR",DC,"",nao
+senador,277,"RENATINHA",DC,"",sim
+senador,444,"ANDRÉ MOURA",UNIÃO,"",sim
+senador,500,"IRAN BARBOSA",PSOL,"",nao
+federal,1000,"ICARO DE VALMIR",REPUBLICANOS,"",sim
+federal,1010,"PASTOR HELENO",REPUBLICANOS,"",nao
+federal,1011,"THIAGO DE JOALDO",REPUBLICANOS,"",nao
+federal,1012,"GRACINHA GARCEZ",REPUBLICANOS,"",nao
+federal,1023,"MISSIONÁRIA GISELE",REPUBLICANOS,"",nao
+federal,1026,"EMANUELLY HORA",REPUBLICANOS,"",nao
+federal,1033,"JORNALISTA SUSANE VIDAL",REPUBLICANOS,"",nao
+federal,1044,"ALBERTO MACEDO",REPUBLICANOS,"",nao
+federal,1077,"DRA. CLÉCIA",REPUBLICANOS,"",sim
+federal,1111,"LEVI OLIVEIRA",PP,"",sim
+federal,1112,"FIOTE",PP,"",nao
+federal,1133,"GEDALVA UMBAUBÁ",PP,"",nao
+federal,1177,"GUSTINHO RIBEIRO",PP,"",sim
+federal,1199,"ANDRÉA CORAÇÃO VALENTE",PP,"",nao
+federal,1200,"BEATRIZ ANDRADE",PDT,"",nao
+federal,1210,"BAGADAL",PDT,"",sim
+federal,1211,"NALLDO AMARO",PDT,"",nao
+federal,1212,"VAGNER GASTÃO",PDT,"",nao
+federal,1222,"BRUNA TELES",PDT,"",sim
+federal,1234,"CAJU",PDT,"",sim
+federal,1236,"PASTORA TÂNIA",PDT,"",nao
+federal,1255,"GALO MOTORISTA",PDT,"",nao
+federal,1311,"JOAO DANIEL",PT,"",sim
+federal,1313,"MARCIO MACEDO",PT,"",sim
+federal,1320,"ANDRESA DE VALMIR",PT,"",nao
+federal,1333,"MAFY DE YGOR GOMES",PT,"",nao
+federal,1390,"PROFESSOR BENIZARIO",PT,"",nao
+federal,1400,"RODRIGO SANTOS",MISSÃO,"",sim
+federal,1404,"DEYSY LIMA",MISSÃO,"",nao
+federal,1411,"ENGENHEIRO ISAAC",MISSÃO,"",nao
+federal,1414,"DAVI VALENÇA",MISSÃO,"",nao
+federal,1441,"LUIZ FERNANDO",MISSÃO,"",sim
+federal,1444,"JOÃO MARCELO",MISSÃO,"",sim
+federal,1477,"JONMHARA",MISSÃO,"",sim
+federal,1499,"KEL GUIMARÃES",MISSÃO,"",nao
+federal,1500,"SIL RIBEIRO",MDB,"",sim
+federal,1510,"PROFESSOR AYSLAN",MDB,"",nao
+federal,1515,"IRMÃ MABEL",MDB,"",nao
+federal,1523,"TATY CHAVES",MDB,"",nao
+federal,1533,"PRISCILA CRUZ",MDB,"",sim
+federal,1540,"CHINA DA BORRACHARIA",MDB,"",nao
+federal,1555,"PITUXO",MDB,"",sim
+federal,1577,"ELIANA DA SOPA",MDB,"",nao
+federal,1593,"MAJOR JAILSON",MDB,"",nao
+federal,2002,"INGRID OLIVEIRA",PODE,"",sim
+federal,2011,"RITA DA SAÚDE",PODE,"",nao
+federal,2020,"GILSON ELETRICISTA",PODE,"",sim
+federal,2022,"PR. PAULO ROBERTO",PODE,"",sim
+federal,2030,"GENIVALDO CAMPOS",PODE,"",nao
+federal,2055,"MARLEIDE SANTOS",PODE,"",sim
+federal,2066,"ANDRÉ SANTANA",PODE,"",nao
+federal,2077,"SERGIO DA GRAÇAS",PODE,"",nao
+federal,2090,"SARGENTO SILVIO",PODE,"",nao
+federal,2200,"LUIZÃO DONA TRAMPI",PL,"",nao
+federal,2201,"DELEGADO AUGUSTO CÉSAR",PL,"",nao
+federal,2210,"MENDONÇA PRADO",PL,"",sim
+federal,2211,"WELINGTON CAMARGO",PL,"",sim
+federal,2222,"MOANA VALADARES",PL,"",nao
+federal,2233,"SARGENTO VIEIRA",PL,"",nao
+federal,2244,"NEO SOBRAL",PL,"",nao
+federal,2255,"VITÓRIA PAULINE",PL,"",nao
+federal,2277,"DINÁ ALMEIDA",PL,"",nao
+federal,2323,"DR. ANDRE SOTERO",CIDADANIA,"",nao
+federal,2333,"DRA. JEANNE LIMA",CIDADANIA,"",nao
+federal,2722,"MARIA RAIMUNDA",DC,"",sim
+federal,2727,"IRMÃ MICHELI",DC,"",sim
+federal,2772,"TAMARA GARDENIA",DC,"",nao
+federal,2777,"GEL DE SERGIPE",DC,"",nao
+federal,2788,"MARCOS ROMEU",DC,"Indeferido (TSE)",sim
+federal,2789,"GILMAR DA ESTÂNCIA",DC,"Indeferido (TSE)",nao
+federal,3000,"TITÓ",NOVO,"",sim
+federal,3001,"GRACE KELLY",NOVO,"",sim
+federal,3011,"PROFESSOR GENILTON GÓIS",NOVO,"",nao
+federal,3012,"DEIVISSON DE JESUS",NOVO,"",nao
+federal,3013,"RONADSON ALVES",NOVO,"",nao
+federal,3022,"PROFESSOR EDUARDO PITBULL",NOVO,"",nao
+federal,3024,"EDILEUZA SÁ MELO",NOVO,"",nao
+federal,3030,"MARIA CONCEIÇÃO",NOVO,"",sim
+federal,3033,"ALLAN MARQUES",NOVO,"",sim
+federal,3666,"FELIPE DE ROCHA",AGIR,"Indeferido (TSE)",nao
+federal,3688,"IZABELA MORAIS",AGIR,"Indeferido (TSE)",nao
+federal,4000,"MARCOS SANTANA",PSB,"",nao
+federal,4004,"BRENO GARIBALDE",PSB,"",nao
+federal,4010,"ELBER BATALHA",PSB,"",sim
+federal,4011,"ANGELA MIRANDA",PSB,"",sim
+federal,4013,"TATHIANE ARAÚJO",PSB,"",nao
+federal,4015,"MARCOS FRANCO",PSB,"",sim
+federal,4040,"CLAUDIO MITIDIERI",PSB,"",nao
+federal,4055,"DRA. TATI DE VAVÁ DO ALGODÃO",PSB,"Indeferido (TSE)",nao
+federal,4056,"ROBSON VIANA",PSB,"",nao
+federal,4313,"EVERTON SOUZA",PV,"",sim
+federal,4343,"AMANDA OLIVEIRA",PV,"",nao
+federal,4400,"ALEX PINTADO",UNIÃO,"",nao
+federal,4420,"SHEYLA GALBA",UNIÃO,"",nao
+federal,4422,"CAPITÃO SAMUEL",UNIÃO,"",nao
+federal,4444,"YANDRA MOURA",UNIÃO,"",sim
+federal,4500,"TONY DOS AMBULANTES",PSDB,"",nao
+federal,4510,"MARQUINHOS FONTES",PSDB,"",nao
+federal,4522,"ZOYA",PSDB,"",sim
+federal,4545,"ACÁCIO CARDOSO",PSDB,"",nao
+federal,4555,"NATALI DA SAÚDE",PSDB,"",nao
+federal,4577,"CANTORA DEBORA CRISTIANE",PSDB,"",nao
+federal,4588,"TADEU TAXISTA",PSDB,"",nao
+federal,5000,"DAÍA",PSOL,"",sim
+federal,5010,"LÚCIA BARROSO",PSOL,"",nao
+federal,5013,"IGOR BAIMA",PSOL,"",sim
+federal,5019,"DR. EMERSON",PSOL,"",sim
+federal,5050,"DELEGADO MÁRIO LEONY",PSOL,"",nao
+federal,5505,"DELEGADA KATARINA",PSD,"",sim
+federal,5511,"DR MANUEL MARCOS",PSD,"",nao
+federal,5513,"ISABEL FERREIRA",PSD,"",nao
+federal,5515,"ANDERSON DE ZÉ DAS CANAS",PSD,"",nao
+federal,5523,"FLAVIO BRASIL",PSD,"",sim
+federal,5555,"FÁBIO REIS",PSD,"",sim
+federal,5577,"NITINHO",PSD,"",nao
+federal,5588,"NETO BATALHA",PSD,"",nao
+federal,5599,"JULIANA VARGAS",PSD,"",sim
+federal,6513,"WALDIR RODRIGUES",PCDOB,"",sim
+federal,6555,"DRA CATIA JUSTO",PCDOB,"",nao
+federal,7000,"ALESSANDRA DA ONG PET AJU",AVANTE,"",nao
+federal,7007,"JEFERSON VASCO",AVANTE,"",nao
+federal,7010,"THANNATA DA EQUOTERAPIA",AVANTE,"",nao
+federal,7022,"CORONEL MANO",AVANTE,"",sim
+federal,7055,"TONINHO ARIMATEA",AVANTE,"",nao
+federal,7070,"CLAUDIO LUIS APRESENTADOR",AVANTE,"",nao
+federal,7077,"TININHO ESTEVEZ",AVANTE,"",nao
+federal,7079,"JULIANA SILVA MÃE ATÍPICA",AVANTE,"",nao
+federal,7090,"CABO DIDI",AVANTE,"",sim
+federal,7700,"SOARES PINTO",SOLIDARIEDADE,"",nao
+federal,7707,"FABIANA SANTANA",SOLIDARIEDADE,"",nao
+federal,7711,"LENE HALL",SOLIDARIEDADE,"",sim
+federal,7722,"MOACIR DA AMBULÂNCIA",SOLIDARIEDADE,"",nao
+federal,7733,"GIVALDO SILVA",SOLIDARIEDADE,"",nao
+federal,7755,"SERGINHO MENDONÇA",SOLIDARIEDADE,"",nao
+federal,7766,"GLEIDOALDO",SOLIDARIEDADE,"",nao
+federal,7777,"GIOVANNA ROCHA",SOLIDARIEDADE,"",sim
+federal,7788,"VITORIA SIMÕES",SOLIDARIEDADE,"",nao
+federal,8000,"MATEUS HENRIQUES",UP,"",sim
+federal,8080,"BRUNA MAKIDA",UP,"",sim
+estadual,10000,"MARCOS OLIVEIRA",REPUBLICANOS,"",sim
+estadual,10001,"CRISTINA BRANDÃO",REPUBLICANOS,"",sim
+estadual,10010,"PROFESSOR BONFIM",REPUBLICANOS,"",nao
+estadual,10013,"LUCIANA DÉDA",REPUBLICANOS,"",nao
+estadual,10079,"DRA CÍCERA RENOVATTO",REPUBLICANOS,"",nao
+estadual,10100,"BETH DA SAÚDE",REPUBLICANOS,"",nao
+estadual,10111,"ANA LUIZA",REPUBLICANOS,"",sim
+estadual,10122,"PINHA MOTOS",REPUBLICANOS,"",nao
+estadual,10123,"BRENO SILVEIRA",REPUBLICANOS,"",sim
+estadual,10144,"HALAERIO DO POVO",REPUBLICANOS,"",nao
+estadual,10166,"PROF. DAVID SOARES",REPUBLICANOS,"",nao
+estadual,10190,"SARGENTO M. FILHO",REPUBLICANOS,"",nao
+estadual,10200,"TIA GLEIDE",REPUBLICANOS,"",sim
+estadual,10222,"EDUARDO DO TÊNIS",REPUBLICANOS,"",nao
+estadual,10223,"ROSA DE TEIÚ",REPUBLICANOS,"",nao
+estadual,10300,"EUQUIAS CORREIA PASTORZÃO",REPUBLICANOS,"",nao
+estadual,10333,"MATHEUS CORRÊA",REPUBLICANOS,"",nao
+estadual,10357,"MARCOS ROCHA SEGURANÇA PRIVADA",REPUBLICANOS,"",nao
+estadual,10456,"GLEITON MEDEIROS",REPUBLICANOS,"",nao
+estadual,10666,"NIVALDO DA BALA",REPUBLICANOS,"",nao
+estadual,10700,"TATIANE DA SEGURANÇA",REPUBLICANOS,"",nao
+estadual,10777,"GEORGEO PASSOS",REPUBLICANOS,"",nao
+estadual,10789,"CATIA MODESTO",REPUBLICANOS,"",nao
+estadual,10888,"NEGO DO MATUTO",REPUBLICANOS,"",nao
+estadual,10999,"WENDELL OLIVEIRA",REPUBLICANOS,"",nao
+estadual,11000,"GIBRAN",PP,"",nao
+estadual,11079,"FELIPE DUARTE",PP,"",nao
+estadual,11111,"ELI ACIOLE",PP,"",sim
+estadual,11123,"ENFERMEIRO MÁRCIO",PP,"",nao
+estadual,11190,"SGT NALDINHO",PP,"",nao
+estadual,11222,"VALDSON COSTA",PP,"",nao
+estadual,11333,"LUCAS MENESES",PP,"",sim
+estadual,11555,"CRYS MOURA",PP,"",sim
+estadual,11777,"HILDA RIBEIRO",PP,"",nao
+estadual,11800,"NIVALDA GONÇALVES",PP,"",nao
+estadual,13000,"CAMILO DANIEL",PT,"",sim
+estadual,13003,"ANA PAULA",PT,"",sim
+estadual,13111,"PROFESSOR BISPO",PT,"",nao
+estadual,13123,"PROFESSOR CHICAO",PT,"",nao
+estadual,13130,"AUGUSTO CESAR",PT,"",sim
+estadual,13131,"CANDISSE CARVALHO",PT,"",nao
+estadual,13133,"ZE NELSON",PT,"",sim
+estadual,13189,"DR EMANUEL MATIAS",PT,"",nao
+estadual,13333,"CHICO DO CORREIO",PT,"",nao
+estadual,13555,"PADRE INALDO",PT,"",nao
+estadual,13600,"LARISSA TRINDADE",PT,"",nao
+estadual,13773,"APOSTOLA MARILEIDE",PT,"",nao
+estadual,13777,"EDSON JUNIOR",PT,"",nao
+estadual,13800,"MAURA DE BIBI",PT,"",nao
+estadual,13900,"PROFESSOR DUDU",PT,"",sim
+estadual,15000,"GARIBALDE",MDB,"",nao
+estadual,15100,"TIA CLÉO",MDB,"",sim
+estadual,15101,"APOSTOLO JORGE",MDB,"",sim
+estadual,15111,"DR. GILSON ANDRADE",MDB,"",nao
+estadual,15123,"MARIANA DANTAS",MDB,"",sim
+estadual,15130,"ROSA REIS",MDB,"",nao
+estadual,15190,"DELEGADA DANIELLE",MDB,"",nao
+estadual,15192,"GIVALDO GARÇÃO",MDB,"",nao
+estadual,15200,"PASTOR MARCOS",MDB,"",sim
+estadual,15222,"GABRIEL TELES",MDB,"",sim
+estadual,15234,"CLARISSA MARQUES",MDB,"",nao
+estadual,15300,"IDALINO",MDB,"",sim
+estadual,15333,"JEJÊ PRODUÇÕES",MDB,"",nao
+estadual,15398,"DONA ANNA",MDB,"",sim
+estadual,15500,"FÁBIO HENRIQUE",MDB,"",sim
+estadual,15555,"ANTÔNIO BALA",MDB,"",sim
+estadual,15600,"FILIPE DE DR. JOCELINO",MDB,"",nao
+estadual,15700,"MARILU",MDB,"",sim
+estadual,15777,"PROFESSOR LUCIANO",MDB,"",nao
+estadual,15888,"ENFERMEIRA VÂNIA",MDB,"",nao
+estadual,15999,"PASTORA FÁBIA VALADARES",MDB,"",nao
+estadual,20000,"JEFERSON SOUZA",PODE,"",nao
+estadual,20002,"CÁCIO JEORGE",PODE,"",nao
+estadual,20012,"PR. DANIEL OLIVEIRA",PODE,"",nao
+estadual,20019,"MARCINHA DA SAÚDE",PODE,"",nao
+estadual,20020,"SÉRGIO SANTANA",PODE,"",sim
+estadual,20100,"DRA LYLIAN",PODE,"",sim
+estadual,20111,"TIAGO RANGEL",PODE,"",nao
+estadual,20120,"JOEL FERNANDES CANTOR CAMELÔ",PODE,"",nao
+estadual,20123,"PR. ZÉ CARLOS VIEIRA",PODE,"",nao
+estadual,20180,"NICINHA CHAGAS",PODE,"",nao
+estadual,20190,"MARIANA SERVENTE",PODE,"",sim
+estadual,20192,"ROBÉRIO BATISTA",PODE,"",sim
+estadual,20199,"ELTON DA ENFERMAGEM",PODE,"",nao
+estadual,20200,"ADALTO ARAGÃO",PODE,"",sim
+estadual,20202,"ZÉ MARQUES",PODE,"",nao
+estadual,20222,"JÚNIOR LIMA",PODE,"",sim
+estadual,20333,"ANITA SILVA",PODE,"",sim
+estadual,20345,"FÁTIMA BERNARDO",PODE,"",sim
+estadual,20444,"ALLYSON O SONHADOR",PODE,"",nao
+estadual,20456,"SIMONE LINHARES",PODE,"",nao
+estadual,20555,"DRA. TERESA NEUMA",PODE,"",nao
+estadual,20567,"JÔ DO MOSQUEIRO",PODE,"",nao
+estadual,20777,"DR SANDRO ANDRÉ",PODE,"",nao
+estadual,20888,"VALDSON",PODE,"",nao
+estadual,20999,"DR. GILMÁRCIO",PODE,"",nao
+estadual,22000,"TARCÍSIO DA NCT",PL,"",nao
+estadual,22002,"MARA SIQUEIRA",PL,"",nao
+estadual,22007,"PETER COSTA",PL,"",sim
+estadual,22022,"BENÁRIA DE BOCÃO",PL,"",nao
+estadual,22100,"FLÁVIO DA DIREITA SERGIPANA",PL,"",nao
+estadual,22111,"DELEGADO MARCELO PAES",PL,"",nao
+estadual,22122,"CORONEL FABIO",PL,"",sim
+estadual,22123,"LUCIANO PIMENTEL",PL,"",nao
+estadual,22190,"CORONEL PONTUAL",PL,"",nao
+estadual,22200,"FERNANDINHO FRANCO",PL,"",nao
+estadual,22221,"PROFESSORA AVILETE",PL,"",nao
+estadual,22222,"CECILIA MARQUES",PL,"",nao
+estadual,22300,"PRIPRI DO POVO",PL,"",nao
+estadual,22322,"BOLSONARO SERGIPANO",PL,"",nao
+estadual,22333,"SHEILA MATOS",PL,"",nao
+estadual,22345,"GG LEANDRO",PL,"",sim
+estadual,22444,"VF - VANILTON FRANCISCO",PL,"",nao
+estadual,22456,"GABRIEL DÉDA",PL,"Indeferido (TSE)",sim
+estadual,22522,"ITAMAR ALVES",PL,"",nao
+estadual,22555,"DRA. CATARINA",PL,"",sim
+estadual,22777,"DRA RAYZA",PL,"",sim
+estadual,22789,"JOSIVALDO DA EQUOTERAPIA",PL,"",nao
+estadual,22800,"PASTOR ALEXANDRE",PL,"",nao
+estadual,22822,"JESSICA DE DONA VERA",PL,"",nao
+estadual,22888,"CLEVSON PROJETO BIKE ROUBADA",PL,"",nao
+estadual,40000,"ZEZINHO SOBRAL",PSB,"",sim
+estadual,40040,"DR SARMENTO",PSB,"",nao
+estadual,40100,"VALÉRIA DA CABANA",PSB,"",nao
+estadual,40111,"VENÂNCIO FONSECA",PSB,"",nao
+estadual,40123,"ALAN DE MUNDINHO",PSB,"",nao
+estadual,40192,"MAGNA MOURA",PSB,"",nao
+estadual,40222,"DELEGADO CLEVER FARIAS",PSB,"",nao
+estadual,40300,"FRANCISCO GUALBERTO",PSB,"",nao
+estadual,40333,"ACACIA DO PORTO DANTAS",PSB,"",nao
+estadual,40345,"DANIEL DO ESPORTE",PSB,"",nao
+estadual,40400,"KITTY LIMA",PSB,"",nao
+estadual,40444,"CESAR PRADO",PSB,"",sim
+estadual,40446,"ROSÂNGELA DA BARRA",PSB,"",nao
+estadual,40555,"NÚBIA LOPES",PSB,"",nao
+estadual,40600,"NINA GOMES",PSB,"",sim
+estadual,40777,"DRA LEYLA PAIXÃO",PSB,"",nao
+estadual,40789,"LÉA SOBRAL",PSB,"",sim
+estadual,40800,"LUIZ SANTANA",PSB,"",sim
+estadual,40888,"CLEDSON LIMA",PSB,"",nao
+estadual,40999,"DA LUZ",PSB,"",sim
+estadual,43000,"IBRAIN DE VALMIR",PV,"",nao
+estadual,43123,"BISPA WALTERCYA",PV,"",nao
+estadual,43333,"MARIA PEDRITA",PV,"",sim
+estadual,43456,"SOUZA DA ENFERMAGEM",PV,"",nao
+estadual,43777,"PAULO JR",PV,"",sim
+estadual,44000,"DRA LIDIANE LUCENA",UNIÃO,"",nao
+estadual,44044,"LAYSE SANTIAGO",UNIÃO,"",nao
+estadual,44111,"MARCELO SOBRAL",UNIÃO,"",nao
+estadual,44123,"ANDERSON DE TUCA",UNIÃO,"",nao
+estadual,44177,"VIVI DOCINHO",UNIÃO,"",nao
+estadual,44200,"IRAÍLTON MATIAS",UNIÃO,"",nao
+estadual,44222,"PATO MARAVILHA",UNIÃO,"",nao
+estadual,44321,"MARCEL DA ENFERMAGEM",UNIÃO,"",nao
+estadual,44333,"GILSON DOS ANJOS",UNIÃO,"",nao
+estadual,44444,"CRISTIANO CAVALCANTE",UNIÃO,"",nao
+estadual,44445,"ROSA CARVALHO",UNIÃO,"",nao
+estadual,44555,"KAKÁ SANTOS",UNIÃO,"",nao
+estadual,44744,"PASTOR DIEGO",UNIÃO,"",sim
+estadual,44777,"NETINHO GUIMARÃES",UNIÃO,"",nao
+estadual,44789,"VAL SERRA",UNIÃO,"",nao
+estadual,50000,"SERGIO SAMPAIO",PSOL,"",sim
+estadual,50079,"ANDRE LUCAS",PSOL,"",nao
+estadual,50100,"ESPAÇO QUILOMBOLA",PSOL,"",nao
+estadual,50113,"ATENILSON JOSÉ",PSOL,"",nao
+estadual,50121,"VANESSA DO POVO",PSOL,"",nao
+estadual,50123,"PROFESSORA SÔNIA MEIRE",PSOL,"",sim
+estadual,50180,"LINDA BRASIL",PSOL,"",sim
+estadual,50333,"GILDO DE BOQUIM",PSOL,"",nao
+estadual,50500,"PROFESSOR OTÁVIO SALES",PSOL,"",nao
+estadual,50555,"RICARDO RIBEIRO DA ENERGIA",PSOL,"",nao
+estadual,50631,"EDER MATOS",PSOL,"",sim
+estadual,50777,"MARIA SALVADOR",PSOL,"",sim
+estadual,55000,"ALICE CAROLINE",PSD,"",sim
+estadual,55015,"LUCIANO BISPO",PSD,"",nao
+estadual,55100,"DIEGO SEO CHICO",PSD,"",nao
+estadual,55111,"MARCELL DE MAIM",PSD,"",nao
+estadual,55123,"ADAILTON MARTINS",PSD,"",sim
+estadual,55190,"CORONEL RIBEIRO",PSD,"",nao
+estadual,55192,"GIL DA SAÚDE",PSD,"",nao
+estadual,55200,"SAMIRA DAUD",PSD,"",sim
+estadual,55255,"CARLINHOS FERREIRA",PSD,"",sim
+estadual,55444,"ENFERMEIRA GABRYELLA GARIBALDE",PSD,"",nao
+estadual,55456,"BRUNO  VASCONCELOS",PSD,"",nao
+estadual,55555,"MAISA MITIDIERI",PSD,"",nao
+estadual,55713,"SANDRA CIGANINHA",PSD,"",nao
+estadual,55777,"JORGINHO ARAUJO",PSD,"",nao
+estadual,55888,"ADROALDO ALVES",PSD,"",nao
+estadual,55999,"SIDICLEI FONSECA",PSD,"",nao
+estadual,65123,"FIRMO",PCDOB,"",sim
+estadual,65555,"PROFESSORA CLAUDICEIA",PCDOB,"",nao
+estadual,70000,"JUAREZ VETERINÁRIO",AVANTE,"",nao
+estadual,70022,"MESSIAS CAVALCANTE",AVANTE,"",nao
+estadual,70079,"DOUTOR WELLINGTON DO TEA",AVANTE,"",nao
+estadual,70111,"SIDNEY ROCHA",AVANTE,"",nao
+estadual,70123,"EVERALDO VIEIRA",AVANTE,"",nao
+estadual,70170,"GAGUINHA DE ILHÉUS",AVANTE,"",nao
+estadual,70180,"ANDRÉA NASCIMENTO",AVANTE,"",nao
+estadual,70190,"SGT ALEX LIMA",AVANTE,"",nao
+estadual,70222,"ZOMINHO",AVANTE,"",sim
+estadual,70231,"ANDRIELY SOUZA",AVANTE,"",nao
+estadual,70270,"VANUZA FILHA DE BOCA RICA",AVANTE,"",nao
+estadual,70280,"GUGU LIBERATO",AVANTE,"",sim
+estadual,70333,"NELSON ARAÚJO",AVANTE,"",nao
+estadual,70370,"PASTOR JADSON ALVES",AVANTE,"",nao
+estadual,70444,"ANNE COUTO",AVANTE,"",nao
+estadual,70456,"NORBERTO PINTO",AVANTE,"",sim
+estadual,70500,"KENO ALMEIDA",AVANTE,"",sim
+estadual,70555,"PRICILA CARVALHO",AVANTE,"",nao
+estadual,70570,"FREI EDSON LUIZ",AVANTE,"",nao
+estadual,70700,"TACY QUEIROZ",AVANTE,"",nao
+estadual,70770,"ALINE REZENDE",AVANTE,"",nao
+estadual,70777,"JÚNIOR DE DIOGENES",AVANTE,"",nao
+estadual,70789,"TENENTE CORONEL MANUELA",AVANTE,"",nao
+estadual,70870,"VOVOZINHO",AVANTE,"",nao
+estadual,70888,"CORONEL LINO",AVANTE,"",nao
+estadual,70999,"MARCOS COUTO REPÓRTER",AVANTE,"",nao
+estadual,80123,"ROSE DO MLB",UP,"",nao
+estadual,80800,"GIOVANNI OLIVEIRA",UP,"",nao
