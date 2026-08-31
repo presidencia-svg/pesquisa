@@ -5,8 +5,6 @@ import { redirect } from 'next/navigation'
 
 import { cpfValido, mascararCpf, normalizarCpf } from '@/lib/cpf'
 import { hashCpf } from '@/lib/crypto'
-import { DEV_MODE } from '@/lib/env'
-import { dentroDeSergipe } from '@/lib/geo-sergipe'
 import { obterIpCliente } from '@/lib/ip'
 import { consultarSpc, type SpcDadosEleitor } from '@/lib/spc'
 import { setPreVoto, type PreVotoDraft } from '@/lib/sessao'
@@ -107,35 +105,9 @@ export async function entrarComCpf(
     }
   }
 
-  // 0b. Fator de localização — o eleitor deve estar em Sergipe (bloqueio
-  //     rígido). O cliente envia lat/lng do GPS; validamos contra os
-  //     limites do estado e DESCARTAMOS a coordenada (não é armazenada —
-  //     minimização LGPD). Em DEV_MODE o gate é ignorado (testes locais).
-  if (!DEV_MODE) {
-    const latRaw = formData.get('geo_lat')
-    const lngRaw = formData.get('geo_lng')
-    const semCoord =
-      typeof latRaw !== 'string' ||
-      latRaw.length === 0 ||
-      typeof lngRaw !== 'string' ||
-      lngRaw.length === 0
-    if (semCoord) {
-      return {
-        ok: false,
-        code: 'localizacao',
-        message:
-          'Para participar, permita o acesso à sua localização — a pesquisa é restrita a eleitores que estão em Sergipe.',
-      }
-    }
-    if (!dentroDeSergipe(latRaw, lngRaw)) {
-      return {
-        ok: false,
-        code: 'localizacao',
-        message:
-          'Você precisa estar no estado de Sergipe para participar desta pesquisa.',
-      }
-    }
-  }
+  // 0b. Fator de localização (bloqueio rígido) DESATIVADO temporariamente
+  //     — estava barrando acesso (GPS em desktop/indoor). Reativar antes
+  //     da coleta real 01-03/09 com tratamento pra quem nega o GPS.
 
   const db = supabaseAdmin()
 

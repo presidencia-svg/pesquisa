@@ -267,26 +267,6 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
           value={geo.status === 'ok' && geo.lng != null ? String(geo.lng) : ''}
         />
 
-        {geo.status === 'negado' ? (
-          <div
-            role="alert"
-            className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 flex flex-col gap-2"
-          >
-            <p>
-              <strong>Localização necessária.</strong> A Pesquisa Eleitoral
-              Sergipe 2026 é restrita a eleitores que estão no estado de
-              Sergipe. Permita o acesso à sua localização no navegador para
-              participar.
-            </p>
-            <button
-              type="button"
-              onClick={pedirLocalizacao}
-              className="self-start text-xs font-medium underline hover:no-underline"
-            >
-              Permitir localização e tentar de novo
-            </button>
-          </div>
-        ) : null}
 
         {bloqueadoPorAnonimato ? (
           <div
@@ -325,8 +305,7 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
             cpfDisplay.replace(/\D/g, '').length !== 11 ||
             !consentido ||
             bloqueadoPorAnonimato ||
-            navegadorAnonimo === null ||
-            geo.status !== 'ok'
+            navegadorAnonimo === null
           }
           className="h-14 px-6 rounded-md bg-primary text-primary-foreground font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition"
         >
@@ -336,11 +315,7 @@ export function CpfForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
               ? 'Verificando navegador…'
               : bloqueadoPorAnonimato
                 ? 'Não permitido em modo anônimo'
-                : geo.status === 'pedindo'
-                  ? 'Confirmando sua localização…'
-                  : geo.status === 'negado'
-                    ? 'Permita a localização para continuar'
-                    : 'Continuar'}
+                : 'Continuar'}
         </button>
 
         <p className="text-xs text-muted-foreground">

@@ -24,15 +24,8 @@ export const ROTULO_COTA: Record<CotaPatro, string> = {
 }
 
 export async function carregarPatrocinadores(): Promise<PatroFaixa[]> {
-  const db = supabaseAdmin()
-  const { data } = await db
-    .from('interessados_patrocinio')
-    .select('empresa, logo_url, cota')
-    .eq('status', 'firmado')
-    .eq('mostrar_publico', true)
-    .not('logo_url', 'is', null)
-  const ordem: Record<CotaPatro, number> = { diamante: 0, ouro: 1, prata: 2 }
-  return ((data ?? []) as Array<{ empresa: string; logo_url: string; cota: CotaPatro }>)
-    .map((p) => ({ empresa: p.empresa, logoUrl: p.logo_url, cota: p.cota }))
-    .sort((a, b) => ordem[a.cota] - ordem[b.cota])
+  // Patrocinadores REMOVIDOS da jornada do votante (decisão do usuário).
+  // Para reexibir: restaurar a query em interessados_patrocinio
+  // (status='firmado', mostrar_publico=true, logo_url não nulo).
+  return []
 }
