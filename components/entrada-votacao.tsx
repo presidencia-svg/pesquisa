@@ -45,7 +45,9 @@ export function EntradaVotacao({
 }) {
   const inicio = new Date(inicioISO).getTime()
   const fim = new Date(fimISO).getTime()
-  const [fase, setFase] = useState<Fase>('aberta')
+  // Inicializa já com a fase pelo relógio (SSR usa o relógio do servidor),
+  // pra não "piscar" o card de localização antes do cronômetro.
+  const [fase, setFase] = useState<Fase>(() => faseDe(inicio, fim))
 
   // Só avalia o relógio no cliente (evita divergência de SSR).
   useEffect(() => {
