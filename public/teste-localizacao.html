@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Teste de Localização · Pesquisa Sergipe 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+  :root{
+    --paper:#eef2f7; --card:#ffffff; --ink:#0c1a3a; --ink-soft:#4a5877; --ink-faint:#8894ad;
+    --line:#d7deea; --blue:#2f6fe0; --green:#16794a; --green-bg:#e7f5ee; --red:#b3261e; --red-bg:#fdecea;
+    --amber:#8a6410; --amber-bg:#fbf3dd;
+    --f:'Public Sans',system-ui,-apple-system,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){:root{
+    --paper:#070f22; --card:#0e1a34; --ink:#eaf0ff; --ink-soft:#a6b6da; --ink-faint:#6f80a6;
+    --line:#243456; --blue:#6f9bf4; --green:#4ec78c; --green-bg:#0f2e20; --red:#f38b83; --red-bg:#3a1512;
+    --amber:#e6bb57; --amber-bg:#3a2f13;
+  }}
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--f);-webkit-font-smoothing:antialiased;
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+  .wrap{width:100%;max-width:460px;display:flex;flex-direction:column;gap:16px;margin-top:8px}
+  .top{text-align:center;display:flex;flex-direction:column;gap:6px}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
+  h1{margin:0;font-size:22px;font-weight:800;letter-spacing:-.01em}
+  .aviso{font-size:12px;color:var(--amber);background:var(--amber-bg);border:1px solid var(--line);
+    border-radius:10px;padding:8px 12px;text-align:center}
+  .card{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:28px 22px;
+    display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;box-shadow:0 18px 44px -24px rgba(12,26,58,.4)}
+  .card.ok{border-color:var(--green);background:var(--green-bg)}
+  .card.fora{border-color:var(--red);background:var(--red-bg)}
+  .icon{font-size:60px;line-height:1}
+  .card h2{margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em}
+  .card p{margin:0;font-size:15px;color:var(--ink-soft);line-height:1.5;max-width:34ch}
+  .status-ok h2{color:var(--green)} .status-fora h2{color:var(--red)}
+  button{appearance:none;border:none;cursor:pointer;font-family:var(--f);font-weight:700;
+    background:var(--blue);color:#fff;font-size:17px;padding:15px 26px;border-radius:14px;
+    box-shadow:0 12px 28px -12px rgba(47,111,224,.6);transition:transform .12s,opacity .12s}
+  button:hover{opacity:.92} button:active{transform:translateY(1px)} button:disabled{opacity:.55;cursor:default}
+  button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+  .dbg{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;
+    display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px}
+  .dbg-k{color:var(--ink-faint);font-weight:600}
+  .dbg-v{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
+  .foot{font-size:11px;color:var(--ink-faint);text-align:center;line-height:1.6}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--paper);padding:1px 5px;border-radius:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <span class="kicker">Pesquisa Sergipe 2026</span>
+    <h1>Teste de Localização (GPS)</h1>
+  </div>
+  <div class="aviso">🧪 Ambiente de teste — não registra voto nem CPF. Usa os mesmos limites de Sergipe do site real.</div>
+
+  <div class="card" id="card">
+    <div class="icon" id="icon">📍</div>
+    <h2 id="titulo">Testar sua localização</h2>
+    <p id="msg">Toque no botão e escolha <strong>“Permitir”</strong> quando o navegador pedir. Faça o teste no celular, com o GPS ligado.</p>
+    <button id="btn">Permitir localização e testar</button>
+  </div>
+
+  <div class="dbg" id="dbg" style="display:none">
+    <span class="dbg-k">Latitude</span><span class="dbg-v" id="v-lat">—</span>
+    <span class="dbg-k">Longitude</span><span class="dbg-v" id="v-lng">—</span>
+    <span class="dbg-k">Precisão</span><span class="dbg-v" id="v-acc">—</span>
+    <span class="dbg-k">Em Sergipe?</span><span class="dbg-v" id="v-se">—</span>
+    <span class="dbg-k">Horário</span><span class="dbg-v" id="v-hora">—</span>
+  </div>
+
+  <div class="foot">
+    Limites usados (caixa do estado + margem): lat <code>-11,62 a -9,46</code> · lng <code>-38,30 a -36,34</code>.<br>
+    O site real valida também no servidor e descarta a coordenada (LGPD).
+  </div>
+</div>
+
+<script>
+  var LIM = { latMin:-11.62, latMax:-9.46, lngMin:-38.30, lngMax:-36.34 };
+  function dentroDeSergipe(la, lo){
+    if (!isFinite(la) || !isFinite(lo)) return false;
+    return la>=LIM.latMin && la<=LIM.latMax && lo>=LIM.lngMin && lo<=LIM.lngMax;
+  }
+  var card=document.getElementById('card'), icon=document.getElementById('icon'),
+      titulo=document.getElementById('titulo'), msg=document.getElementById('msg'),
+      btn=document.getElementById('btn'), dbg=document.getElementById('dbg');
+  function set(id,v){ document.getElementById(id).textContent=v; }
+  function pedir(){
+    card.className='card'; icon.textContent='📡'; titulo.textContent='Buscando sua localização…';
+    msg.innerHTML='Aguarde — pode levar alguns segundos e pedir sua permissão.';
+    btn.disabled=true; btn.textContent='Buscando…';
+    if(!navigator.geolocation){ return negado('Este navegador não tem GPS/geolocalização.'); }
+    navigator.geolocation.getCurrentPosition(sucesso, function(err){
+      var m = err.code===1 ? 'Permissão de localização negada. Libere nas configurações do navegador e tente de novo.'
+            : err.code===2 ? 'Não foi possível obter a localização (GPS indisponível). Ligue a localização do aparelho.'
+            : 'Tempo esgotado buscando a localização. Tente de novo.';
+      negado(m);
+    }, { enableHighAccuracy:true, timeout:15000, maximumAge:0 });
+  }
+  function sucesso(pos){
+    var la=pos.coords.latitude, lo=pos.coords.longitude, acc=pos.coords.accuracy;
+    var dentro=dentroDeSergipe(la,lo);
+    dbg.style.display='grid';
+    set('v-lat', la.toFixed(5)); set('v-lng', lo.toFixed(5));
+    set('v-acc', Math.round(acc)+' m'); set('v-se', dentro?'SIM ✓':'NÃO ✗');
+    set('v-hora', new Date().toLocaleTimeString('pt-BR'));
+    btn.disabled=false; btn.textContent='Testar de novo';
+    if(dentro){
+      card.className='card ok status-ok'; icon.textContent='✅';
+      titulo.textContent='Você está em Sergipe';
+      msg.innerHTML='No site real, aqui a votação seria <strong>liberada</strong> e apareceria o campo do CPF.';
+    } else {
+      card.className='card fora status-fora'; icon.textContent='🚫';
+      titulo.textContent='Fora de Sergipe';
+      msg.innerHTML='No site real, aqui o eleitor seria <strong>bloqueado</strong>. Se você ESTÁ em Sergipe e deu isto, confira se o GPS está ligado (a precisão acima ajuda a diagnosticar).';
+    }
+  }
+  function negado(texto){
+    card.className='card'; icon.textContent='⚠️'; titulo.textContent='Localização não confirmada';
+    msg.textContent=texto; btn.disabled=false; btn.textContent='Permitir e tentar de novo';
+    dbg.style.display='none';
+  }
+  btn.addEventListener('click', pedir);
+</script>
+</body>
+</html>

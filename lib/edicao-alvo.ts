@@ -1,0 +1,49 @@
+/**
+ * Resolve a edição-alvo do fluxo de voto.
+ *
+ * Normalmente é a edição ATIVA. Mas se o cookie `edicao_teste` estiver
+ * setado (via link secreto /teste-ficticio?k=…), usa aquela edição —
+ * permite testar o fluxo completo com uma base FICTÍCIA (a demo) sem
+ * tocar na edição real, e sem afetar quem não tem o cookie.
+ *
+ * Server-only.
+ */
+import 'server-only'
+
+import { cookies } from 'next/headers'
+
+import { supabaseAdmin } from '@/lib/supabase/admin'
+
+export const COOKIE_EDICAO_TESTE = 'edicao_teste'
+
+export type EdicaoAlvo = {
+  id: string
+  inicio: string
+  fim: string
+  teste: boolean
+}
+
+export async function resolverEdicaoAlvo(): Promise<EdicaoAlvo | null> {
+  const db = supabaseAdmin()
+  const jar = await cookies()
+  const testeId = jar.get(COOKIE_EDICAO_TESTE)?.value
+
+  if (testeId) {
+    const { data } = await db
+      .from('edicao')
+      .select('id, inicio, fim')
+      .eq('id', testeId)
+      .maybeSingle()
+    if (data) {
+      return { id: data.id as string, inicio: data.inicio as string, fim: data.fim as string, teste: true }
+    }
+  }
+
+  const { data } = await db
+    .from('edicao')
+    .select('id, inicio, fim')
+    .eq('ativa', true)
+    .maybeSingle()
+  if (!data) return null
+  return { id: data.id as string, inicio: data.inicio as string, fim: data.fim as string, teste: false }
+}

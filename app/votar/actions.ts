@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 
 import { cpfValido, mascararCpf, normalizarCpf } from '@/lib/cpf'
 import { hashCpf } from '@/lib/crypto'
+import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
 import { DEV_MODE } from '@/lib/env'
 import { dentroDeSergipe } from '@/lib/geo-sergipe'
 import { obterIpCliente } from '@/lib/ip'
@@ -129,20 +130,8 @@ export async function entrarComCpf(
 
   const db = supabaseAdmin()
 
-  // 1. Edicao ativa
-  const { data: edicao, error: errEdicao } = await db
-    .from('edicao')
-    .select('id, inicio, fim')
-    .eq('ativa', true)
-    .maybeSingle()
-  if (errEdicao) {
-    console.error('[votar] erro buscando edicao:', errEdicao)
-    return {
-      ok: false,
-      code: 'sistema',
-      message: 'Erro de sistema. Tente novamente em instantes.',
-    }
-  }
+  // 1. Edicao alvo (ativa, ou a de TESTE se o cookie estiver setado)
+  const edicao = await resolverEdicaoAlvo()
   if (!edicao) {
     return {
       ok: false,

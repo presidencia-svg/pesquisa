@@ -3,9 +3,9 @@ import { redirect } from 'next/navigation'
 
 import { EntradaVotacao } from '@/components/entrada-votacao'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
+import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
 import { PUBLIC_ENV } from '@/lib/env'
 import { getPreVoto, getVotoToken } from '@/lib/sessao'
-import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export const metadata = {
   title: 'Identifique-se · Pesquisa Eleitoral Sergipe 2026',
@@ -23,13 +23,9 @@ export default async function VotarPage() {
   const draft = await getPreVoto()
   if (draft) redirect('/votar/confirma')
 
-  // Janela da edição ativa (início/fim) — controla cronômetro e gate.
-  const db = supabaseAdmin()
-  const { data: edicao } = await db
-    .from('edicao')
-    .select('inicio, fim')
-    .eq('ativa', true)
-    .maybeSingle()
+  // Janela da edição alvo (ativa, ou a de TESTE via cookie) — controla
+  // cronômetro e gate.
+  const edicao = await resolverEdicaoAlvo()
 
   return (
     <>
