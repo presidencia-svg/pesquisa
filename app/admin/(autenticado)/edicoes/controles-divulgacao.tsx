@@ -4,6 +4,7 @@ import { useActionState, useState } from 'react'
 
 import {
   alternarConsultaZona,
+  alternarExigirLocalizacao,
   atualizarTurno,
   divulgarEdicao,
   retirarDivulgacao,
@@ -22,6 +23,7 @@ type Props = {
   divulgacaoPrevista: string | null
   turno: number
   consultaZonaAtiva: boolean
+  exigirLocalizacao: boolean
 }
 
 /**
@@ -39,6 +41,7 @@ export function ControlesDivulgacao({
   divulgacaoPrevista,
   turno,
   consultaZonaAtiva,
+  exigirLocalizacao,
 }: Props) {
   const [editando, setEditando] = useState(false)
   const [estadoMeta, salvarMeta, salvandoMeta] = useActionState(
@@ -118,10 +121,47 @@ export function ControlesDivulgacao({
     </form>
   )
 
+  // Liga/desliga o fator de localização do /votar.
+  const blocoLocalizacao = (
+    <form
+      action={alternarExigirLocalizacao}
+      className="flex items-center justify-between gap-3 pt-3 mt-2 border-t border-dashed border-border"
+    >
+      <input type="hidden" name="id" value={edicaoId} />
+      <input type="hidden" name="exigir" value={exigirLocalizacao ? 'false' : 'true'} />
+      <div className="flex flex-col gap-0.5">
+        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+          Fator de localização (GPS/IP)
+        </span>
+        <span className="text-[11px] text-muted-foreground">
+          {exigirLocalizacao ? (
+            <span className="text-accent font-medium">ligado</span>
+          ) : (
+            <span className="text-error font-medium">desligado</span>
+          )}{' '}
+          — ligado: IP do Brasil entra direto e IP do exterior precisa de GPS
+          em Sergipe. Desligado: nenhuma checagem de localização (voto único
+          segue por CPF + WhatsApp).
+        </span>
+      </div>
+      <button
+        type="submit"
+        className={`h-8 px-3 rounded-md border text-[11px] transition whitespace-nowrap ${
+          exigirLocalizacao
+            ? 'border-error/40 text-error hover:bg-error/5'
+            : 'border-accent/40 text-accent hover:bg-accent/5'
+        }`}
+      >
+        {exigirLocalizacao ? 'Desligar' : 'Ligar'}
+      </button>
+    </form>
+  )
+
   const blocosConfig = (
     <>
       {blocoTurno}
       {blocoZona}
+      {blocoLocalizacao}
     </>
   )
 

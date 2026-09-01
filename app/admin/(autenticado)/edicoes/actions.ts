@@ -212,6 +212,28 @@ export async function atualizarTurno(formData: FormData): Promise<void> {
  * nesta edicao. Quando desligada, a cedula some do fluxo de votacao
  * (mesmo pra eleitores de Aracaju/SC) e do bloco de resultados.
  */
+/**
+ * Liga/desliga o fator de LOCALIZAÇÃO do /votar (por edição).
+ * Desligado (default): nenhuma checagem de localização — voto único fica
+ * por CPF + WhatsApp. Ligado: IP do Brasil entra direto; IP estrangeiro
+ * precisa de GPS em Sergipe.
+ */
+export async function alternarExigirLocalizacao(formData: FormData): Promise<void> {
+  await requireAdmin()
+  const id = String(formData.get('id') ?? '')
+  const exigir = String(formData.get('exigir') ?? '') === 'true'
+  if (!id) return
+  const db = supabaseAdmin()
+  await db.from('edicao').update({ exigir_localizacao: exigir }).eq('id', id)
+  await registrarAcessoAdmin(
+    'alternar_exigir_localizacao',
+    { edicao_id: id, exigir_localizacao: exigir },
+    `edicao:${id}`,
+  )
+  revalidatePath('/admin/edicoes')
+  revalidatePath('/votar')
+}
+
 export async function alternarConsultaZona(formData: FormData): Promise<void> {
   await requireAdmin()
   const id = String(formData.get('id') ?? '')

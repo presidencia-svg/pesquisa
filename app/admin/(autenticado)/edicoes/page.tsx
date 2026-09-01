@@ -19,6 +19,7 @@ type Edicao = {
   divulgacao_prevista: string | null
   turno: number
   consulta_zona_ativa: boolean | null
+  exigir_localizacao: boolean | null
   criado_em: string
 }
 
@@ -113,6 +114,7 @@ export default async function EdicoesPage() {
                 divulgacaoPrevista={e.divulgacao_prevista}
                 turno={e.turno ?? 1}
                 consultaZonaAtiva={e.consulta_zona_ativa ?? true}
+                exigirLocalizacao={e.exigir_localizacao ?? false}
               />
             </div>
           ))

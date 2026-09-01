@@ -111,12 +111,23 @@ export async function entrarComCpf(
 
   const db = supabaseAdmin()
 
+  // Edicao alvo primeiro: o fator de localização é um toggle POR EDIÇÃO
+  // (admin/edicoes) e precisamos dele antes da checagem geo.
+  const edicao = await resolverEdicaoAlvo()
+  if (!edicao) {
+    return {
+      ok: false,
+      code: 'sistema',
+      message: 'Nenhuma pesquisa está ativa neste momento.',
+    }
+  }
+
   // 0b. Fator de localização: o eleitor deve estar em Sergipe. Caminho
   //     feliz: o IP (headers da Vercel) já resolve pra SE — zero fricção.
   //     Plano B: coordenadas do GPS (o client mostra o card grande).
   //     Revalidação autoritativa aqui; a coordenada é validada e
   //     DESCARTADA (LGPD). Em DEV_MODE faz bypass.
-  if (!DEV_MODE) {
+  if (!DEV_MODE && edicao.exigirLocalizacao) {
     const h = await headers()
     const ipOk = ipEmSergipe(
       h.get('x-vercel-ip-country'),
@@ -160,15 +171,7 @@ export async function entrarComCpf(
     }
   }
 
-  // 1. Edicao alvo (ativa, ou a de TESTE se o cookie estiver setado)
-  const edicao = await resolverEdicaoAlvo()
-  if (!edicao) {
-    return {
-      ok: false,
-      code: 'sistema',
-      message: 'Nenhuma pesquisa está ativa neste momento.',
-    }
-  }
+  // 1. Janela da edição
   if (new Date(edicao.fim) < new Date()) {
     return {
       ok: false,

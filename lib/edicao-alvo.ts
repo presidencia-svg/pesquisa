@@ -21,6 +21,7 @@ export type EdicaoAlvo = {
   inicio: string
   fim: string
   teste: boolean
+  exigirLocalizacao: boolean
 }
 
 export async function resolverEdicaoAlvo(): Promise<EdicaoAlvo | null> {
@@ -37,19 +38,31 @@ export async function resolverEdicaoAlvo(): Promise<EdicaoAlvo | null> {
   if (testeId && testeHabilitado) {
     const { data } = await db
       .from('edicao')
-      .select('id, inicio, fim')
+      .select('id, inicio, fim, exigir_localizacao')
       .eq('id', testeId)
       .maybeSingle()
     if (data) {
-      return { id: data.id as string, inicio: data.inicio as string, fim: data.fim as string, teste: true }
+      return {
+        id: data.id as string,
+        inicio: data.inicio as string,
+        fim: data.fim as string,
+        teste: true,
+        exigirLocalizacao: Boolean(data.exigir_localizacao),
+      }
     }
   }
 
   const { data } = await db
     .from('edicao')
-    .select('id, inicio, fim')
+    .select('id, inicio, fim, exigir_localizacao')
     .eq('ativa', true)
     .maybeSingle()
   if (!data) return null
-  return { id: data.id as string, inicio: data.inicio as string, fim: data.fim as string, teste: false }
+  return {
+    id: data.id as string,
+    inicio: data.inicio as string,
+    fim: data.fim as string,
+    teste: false,
+    exigirLocalizacao: Boolean(data.exigir_localizacao),
+  }
 }
