@@ -109,6 +109,8 @@ export async function entrarComCpf(
     }
   }
 
+  const db = supabaseAdmin()
+
   // 0b. Fator de localização: o eleitor deve estar em Sergipe. Caminho
   //     feliz: o IP (headers da Vercel) já resolve pra SE — zero fricção.
   //     Plano B: coordenadas do GPS (o client mostra o card grande).
@@ -124,7 +126,23 @@ export async function entrarComCpf(
     const lngRaw = formData.get('geo_lng')
     const lat = typeof latRaw === 'string' && latRaw ? Number(latRaw) : NaN
     const lng = typeof lngRaw === 'string' && lngRaw ? Number(lngRaw) : NaN
+    // 3ª via, sem fricção: quem já está na base da CDL Aracaju é
+    //     comprovadamente do nosso cadastro sergipano — não faz sentido
+    //     exigir GPS dele. No 4G o IP quase sempre cai em outro estado
+    //     (a operadora roteia), e a tela de permissão fazia o eleitor
+    //     desistir. O vínculo com Sergipe segue garantido adiante: na
+    //     etapa seguinte ele escolhe o município, e a lista só tem os 75
+    //     de Sergipe.
+    let naBaseCdl = false
     if (!ipOk && !dentroDeSergipe(lat, lng)) {
+      const { data: cdlGeo } = await db
+        .from('cdl_base')
+        .select('cpf_hash')
+        .eq('cpf_hash', hashCpf(cpf))
+        .maybeSingle()
+      naBaseCdl = Boolean(cdlGeo)
+    }
+    if (!ipOk && !dentroDeSergipe(lat, lng) && !naBaseCdl) {
       return {
         ok: false,
         code: 'localizacao',
@@ -133,8 +151,6 @@ export async function entrarComCpf(
       }
     }
   }
-
-  const db = supabaseAdmin()
 
   // 1. Edicao alvo (ativa, ou a de TESTE se o cookie estiver setado)
   const edicao = await resolverEdicaoAlvo()

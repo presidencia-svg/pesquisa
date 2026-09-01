@@ -140,7 +140,7 @@ function Encerrada({ fimISO }: { fimISO: string }) {
 }
 
 /* ------------------- Gate de localização (grande) ------------------- */
-type GeoEstado = 'inicial' | 'pedindo' | 'ok' | 'negado' | 'fora'
+type GeoEstado = 'inicial' | 'pedindo' | 'ok' | 'negado' | 'fora' | 'sem_gps'
 
 function GateLocalizacao({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
   const [estado, setEstado] = useState<GeoEstado>('inicial')
@@ -192,6 +192,23 @@ function GateLocalizacao({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
           </p>
         </div>
         <CpfForm turnstileSiteKey={turnstileSiteKey} lat={coords.lat} lng={coords.lng} />
+      </div>
+    )
+  }
+
+  if (estado === 'sem_gps') {
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-semibold text-foreground">
+            Identifique-se
+          </h1>
+          <p className="text-base text-muted-foreground">
+            Informe seu CPF. Validamos que é real e que ainda não foi usado
+            nesta edição da pesquisa.
+          </p>
+        </div>
+        <CpfForm turnstileSiteKey={turnstileSiteKey} />
       </div>
     )
   }
@@ -251,13 +268,50 @@ function GateLocalizacao({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
             : 'Permitir localização'}
       </button>
 
-      {estado === 'negado' && (
-        <p className="text-sm text-muted-foreground max-w-sm">
-          Se não apareceu o pedido, verifique nas configurações do navegador se
-          a permissão de <strong>localização</strong> está bloqueada para este
-          site e libere.
-        </p>
-      )}
+      {estado === 'negado' && <ComoLiberarGps />}
+
+      {/* Saída pra quem não consegue liberar o GPS. No 4G o IP costuma cair
+          em outro estado e a permissão trava o eleitor legítimo. Quem já
+          está na base da CDL passa por aqui; quem não está recebe o aviso
+          de localização do servidor. */}
+      <button
+        type="button"
+        onClick={() => setEstado('sem_gps')}
+        className="text-sm underline underline-offset-4 text-muted-foreground hover:text-foreground transition"
+      >
+        Não consigo liberar a localização — continuar mesmo assim
+      </button>
+    </div>
+  )
+}
+
+/** Passo a passo curto, por aparelho, pra liberar a localização. */
+function ComoLiberarGps() {
+  const ua = typeof navigator !== 'undefined' ? navigator.userAgent : ''
+  const ios = /iPhone|iPad/i.test(ua)
+  const passos = ios
+    ? [
+        'Abra os Ajustes do iPhone',
+        'Toque em "Apps" → "Safari" (ou o navegador que você usa)',
+        'Em "Localização", escolha "Perguntar" ou "Permitir"',
+        'Volte aqui e toque em "Tentar novamente"',
+      ]
+    : [
+        'Deslize a barra de cima do celular e ligue a "Localização" (GPS)',
+        'Aqui no navegador, toque no cadeado ⓘ ao lado do endereço',
+        'Em "Permissões" → "Localização", escolha "Permitir"',
+        'Volte aqui e toque em "Tentar novamente"',
+      ]
+  return (
+    <div className="w-full max-w-sm rounded-xl border border-border bg-background/60 p-4 text-left">
+      <p className="text-sm font-semibold text-foreground mb-2">
+        Como liberar a localização{ios ? ' (iPhone)' : ' (Android)'}:
+      </p>
+      <ol className="flex flex-col gap-1.5 text-sm text-muted-foreground list-decimal pl-5">
+        {passos.map((p) => (
+          <li key={p}>{p}</li>
+        ))}
+      </ol>
     </div>
   )
 }
