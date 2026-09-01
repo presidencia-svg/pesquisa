@@ -80,6 +80,9 @@ const schema = z.object({
 
 const OTP_VALIDADE_MIN = 10
 
+/** Máximo de CPFs distintos que podem votar do mesmo aparelho. */
+const MAX_CPFS_POR_DISPOSITIVO = 4
+
 export async function confirmarDados(
   _prev: ConfirmaState,
   formData: FormData,
@@ -271,22 +274,25 @@ export async function confirmarDados(
     }
   }
 
-  // 2b. Voto único por dispositivo: outro CPF já votou neste aparelho?
-  //     Trava por device_fingerprint quando o cliente o enviou.
+  // 2b. Limite de CPFs por aparelho. NÃO é 1: aparelho é compartilhado no
+  //     mundo real (família, escritório, lan house) e o fingerprint
+  //     (canvas+UA+tela+fuso+CPUs) COLIDE entre celulares do mesmo modelo
+  //     com a mesma configuração — com trava de 1, eleitor legítimo era
+  //     barrado. O voto único segue garantido por CPF e por WhatsApp, que
+  //     são identificadores fortes e sem colisão. Aqui a trava serve só
+  //     contra uso em massa do mesmo aparelho.
   if (device_fingerprint) {
-    const { data: outroPorDispositivo } = await db
+    const { count: outrosNoDispositivo } = await db
       .from('eleitores_pesquisa')
-      .select('id')
+      .select('id', { count: 'exact', head: true })
       .eq('edicao_id', draft.edicaoId)
       .eq('device_fingerprint', device_fingerprint)
       .eq('wa_validado', true)
       .neq('cpf_hash', draft.cpfHash)
-      .maybeSingle()
-    if (outroPorDispositivo) {
+    if ((outrosNoDispositivo ?? 0) >= MAX_CPFS_POR_DISPOSITIVO) {
       return {
         ok: false,
-        message:
-          'Este dispositivo já foi usado para votar nesta pesquisa por outro CPF.',
+        message: `Este aparelho já foi usado por ${MAX_CPFS_POR_DISPOSITIVO} eleitores diferentes nesta pesquisa. Se você não votou ainda, use outro aparelho.`,
       }
     }
   }
