@@ -99,6 +99,19 @@ const formatarWhatsappInput = (raw: string): string => {
 
 type Escolaridade = 'fundamental' | 'medio' | 'superior'
 
+// 27 UFs. SE primeiro (público-alvo); as demais em ordem alfabética.
+const UFS: ReadonlyArray<[string, string]> = [
+  ['SE', 'Sergipe'],
+  ['AC', 'Acre'], ['AL', 'Alagoas'], ['AP', 'Amapá'], ['AM', 'Amazonas'],
+  ['BA', 'Bahia'], ['CE', 'Ceará'], ['DF', 'Distrito Federal'],
+  ['ES', 'Espírito Santo'], ['GO', 'Goiás'], ['MA', 'Maranhão'],
+  ['MT', 'Mato Grosso'], ['MS', 'Mato Grosso do Sul'], ['MG', 'Minas Gerais'],
+  ['PA', 'Pará'], ['PB', 'Paraíba'], ['PR', 'Paraná'], ['PE', 'Pernambuco'],
+  ['PI', 'Piauí'], ['RJ', 'Rio de Janeiro'], ['RN', 'Rio Grande do Norte'],
+  ['RS', 'Rio Grande do Sul'], ['RO', 'Rondônia'], ['RR', 'Roraima'],
+  ['SC', 'Santa Catarina'], ['SP', 'São Paulo'], ['TO', 'Tocantins'],
+]
+
 export function DadosForm({
   municipios,
   prefilledMunicipio,
@@ -126,6 +139,34 @@ export function DadosForm({
   )
   const [deviceFingerprint, setDeviceFingerprint] = useState('')
   const [titulo, setTitulo] = useState('')
+  // Estado (UF) do título. SE usa a lista do servidor (com cotas); outra
+  // UF carrega o JSON estático pré-gerado (public/municipios/{UF}.json,
+  // IBGE completo — 5.571 municípios).
+  const [uf, setUf] = useState('SE')
+  const [municipiosUf, setMunicipiosUf] = useState<
+    Array<{ i: number; n: string }>
+  >([])
+  const [carregandoMun, setCarregandoMun] = useState(false)
+
+  useEffect(() => {
+    if (uf === 'SE') return
+    let vivo = true
+    setCarregandoMun(true)
+    fetch(`/municipios/${uf}.json`)
+      .then((r) => r.json())
+      .then((lista) => {
+        if (vivo) setMunicipiosUf(lista)
+      })
+      .catch(() => {
+        if (vivo) setMunicipiosUf([])
+      })
+      .finally(() => {
+        if (vivo) setCarregandoMun(false)
+      })
+    return () => {
+      vivo = false
+    }
+  }, [uf])
 
   useEffect(() => {
     gerarDeviceFingerprint().then((fp) => {
@@ -147,28 +188,78 @@ export function DadosForm({
           sem transferir o título. Por isso o rótulo pergunta em vez de
           afirmar: quem só confirma sem ler erraria a variável que mais pesa
           na ponderação geográfica. */}
+      {/* AVISO GRANDE: domicílio ELEITORAL, não residência. */}
+      <div className="rounded-xl border-2 border-amber-300 bg-amber-50 px-4 py-3">
+        <p className="text-base font-bold text-amber-900">
+          ⚠️ Informe onde você VOTA
+        </p>
+        <p className="text-sm text-amber-800 leading-snug mt-1">
+          É o estado e a cidade do seu <strong>título de eleitor</strong> —
+          pode ser diferente de onde você mora hoje. Eleitor de{' '}
+          <strong>Sergipe</strong> vota em todos os cargos; eleitor de outro
+          estado vota <strong>só para Presidente</strong>.
+        </p>
+      </div>
+
+      <label className="flex flex-col gap-2">
+        <span className="text-sm font-medium text-foreground">
+          Em qual estado você vota?
+        </span>
+        <select
+          value={uf}
+          onChange={(e) => setUf(e.target.value)}
+          className="h-12 px-3 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          {UFS.map(([sigla, nome]) => (
+            <option key={sigla} value={sigla}>
+              {nome} ({sigla})
+            </option>
+          ))}
+        </select>
+      </label>
+
       <label className="flex flex-col gap-2">
         <span className="text-sm font-medium text-foreground">
           Em qual cidade você vota?
         </span>
-        <select
-          name="municipio_ibge"
-          required
-          defaultValue={prefilledMunicipio ?? ''}
-          aria-invalid={state.field === 'municipio_ibge'}
-          className="h-12 px-3 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          <option value="" disabled>
-            Selecione…
-          </option>
-          {municipios.map((m) => (
-            <option key={m.ibge_codigo} value={m.ibge_codigo}>
-              {m.nome}
+        {uf === 'SE' ? (
+          <select
+            name="municipio_ibge"
+            required
+            defaultValue={prefilledMunicipio ?? ''}
+            aria-invalid={state.field === 'municipio_ibge'}
+            className="h-12 px-3 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <option value="" disabled>
+              Selecione…
             </option>
-          ))}
-        </select>
+            {municipios.map((m) => (
+              <option key={m.ibge_codigo} value={m.ibge_codigo}>
+                {m.nome}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <select
+            name="municipio_ibge"
+            required
+            key={uf}
+            defaultValue=""
+            aria-invalid={state.field === 'municipio_ibge'}
+            className="h-12 px-3 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <option value="" disabled>
+              {carregandoMun ? 'Carregando municípios…' : 'Selecione…'}
+            </option>
+            {municipiosUf.map((m) => (
+              <option key={m.i} value={m.i}>
+                {m.n}
+              </option>
+            ))}
+          </select>
+        )}
         <span className="text-xs text-muted-foreground">
-          {prefilledMunicipio
+          {prefilledMunicipio && uf === 'SE'
             ? 'Confira: é a cidade do seu título de eleitor, que pode ser diferente de onde você mora hoje.'
             : 'A cidade do seu título de eleitor — pode ser diferente de onde você mora hoje.'}
         </span>

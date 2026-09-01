@@ -117,11 +117,33 @@ export const isCargo = (raw: string): raw is Cargo =>
  * `zonaAtiva` reflete o flag `edicao.consulta_zona_ativa` — quando o
  * admin desliga a consulta, ela some do fluxo mesmo pra Aracaju/SC.
  */
+/**
+ * Município de Sergipe = código IBGE começando com 28.
+ * null (sessão antiga, sem município no cookie) conta como SE: até
+ * 01/09 só existiam eleitores de Sergipe — não podemos encurtar a
+ * cédula de quem já estava no meio do fluxo.
+ */
+export const municipioEhDeSergipe = (municipioIbge: number | null): boolean =>
+  municipioIbge == null || String(municipioIbge).startsWith('28')
+
+/**
+ * Cargos que o eleitor pode votar conforme o domicílio eleitoral.
+ * Fora de Sergipe: SÓ presidente (disputa nacional). Sergipe: todos.
+ */
+export const cargoPermitidoParaMunicipio = (
+  cargo: Cargo,
+  municipioIbge: number | null,
+): boolean => municipioEhDeSergipe(municipioIbge) || cargo === 'presidente'
+
 export const proximoCargoConsiderandoMunicipio = (
   cargoAtual: Cargo,
   municipioIbge: number | null,
   zonaAtiva = true,
 ): Cargo | null => {
+  // Eleitor de FORA de Sergipe vota só pra presidente — as demais
+  // disputas (governador, senador, federal, estadual) são estaduais.
+  if (!municipioEhDeSergipe(municipioIbge)) return null
+
   // Sequencia normal pra todos os cargos exceto estadual
   const cfg = CARGO_CONFIG[cargoAtual]
   if (cfg.proximo) return cfg.proximo

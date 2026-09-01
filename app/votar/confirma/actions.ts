@@ -205,8 +205,25 @@ export async function confirmarDados(
 
   const db = supabaseAdmin()
 
-  // 1. Verificar cota do município (skip em DEV_MODE)
-  if (!DEV_MODE) {
+  // 1. Valida o município. SE (IBGE 28xxxxx): tabela municipios_se, com
+  //    checagem de cota. Fora de SE: municipios_br (5.571 do IBGE), sem
+  //    cota — esse eleitor vota SÓ pra presidente.
+  const municipioDeSergipe = String(municipio_ibge).startsWith('28')
+  if (!DEV_MODE && !municipioDeSergipe) {
+    const { data: muniBr } = await db
+      .from('municipios_br')
+      .select('nome')
+      .eq('ibge_codigo', municipio_ibge)
+      .maybeSingle()
+    if (!muniBr) {
+      return {
+        ok: false,
+        field: 'municipio_ibge',
+        message: 'Município não encontrado.',
+      }
+    }
+  }
+  if (!DEV_MODE && municipioDeSergipe) {
     const { data: muni } = await db
       .from('municipios_se')
       .select('nome, cota_pesquisa')

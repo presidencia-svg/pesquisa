@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { compararHashes, hashTokenVoto } from '@/lib/crypto'
 import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
 import {
+  cargoPermitidoParaMunicipio,
   CARGO_CONFIG,
   isCargo,
   proximoCargoConsiderandoMunicipio,
@@ -59,6 +60,14 @@ export async function submeterVoto(
   const metodo = String(formData.get('metodo') ?? '')
   if (!['numero', 'branco', 'nao_sabe'].includes(metodo)) {
     return { ok: false, message: 'Tipo de voto inválido.' }
+  }
+
+  // Fora de Sergipe vota só pra presidente (defesa server-side).
+  if (!cargoPermitidoParaMunicipio(cargo, municipioIbge)) {
+    return {
+      ok: false,
+      message: 'Eleitores de fora de Sergipe votam apenas para Presidente.',
+    }
   }
 
   // Se for zona_expansao mas municipio nao bate, bloqueia

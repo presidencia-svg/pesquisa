@@ -331,7 +331,30 @@ type SpcConsultaPadraoResponse = {
   message?: string
 }
 
+/**
+ * O SPC oscila (janelas curtas de 500/timeout — visto ao vivo em
+ * 01/09/2026, na coleta). Sem retry, cada soluço vira
+ * 'servico_indisponivel' na cara do eleitor e ele desiste. Tentamos até
+ * 3x com backoff curto; só erros transitórios (rede/5xx) re-tentam —
+ * negativas de negócio (CPF irregular etc.) retornam direto.
+ */
 async function consultarSpcNova(cpfDigits: string): Promise<SpcResult> {
+  const TENTATIVAS = 3
+  let ultimo: SpcResult = { ok: false, razao: 'erro_api' }
+  for (let i = 1; i <= TENTATIVAS; i++) {
+    ultimo = await consultarSpcNovaUmaVez(cpfDigits)
+    if (ultimo.ok) return ultimo
+    const transitorio = !ultimo.ok && ultimo.razao === 'erro_api'
+    if (!transitorio) return ultimo
+    if (i < TENTATIVAS) {
+      console.warn(`[spc-nova] tentativa ${i} falhou (${'razao' in ultimo ? ultimo.razao : '?'}), re-tentando…`)
+      await new Promise((r) => setTimeout(r, 700 * i))
+    }
+  }
+  return ultimo
+}
+
+async function consultarSpcNovaUmaVez(cpfDigits: string): Promise<SpcResult> {
   const token = SERVER_ENV.SPC_USER
   const senha = SERVER_ENV.SPC_PASSWORD
 

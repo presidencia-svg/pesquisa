@@ -3,7 +3,9 @@ import { notFound, redirect } from 'next/navigation'
 
 import {
   CARGO_CONFIG,
+  cargoPermitidoParaMunicipio,
   isCargo,
+  municipioEhDeSergipe,
   proximoCargoConsiderandoMunicipio,
   type Cargo,
 } from '@/lib/cargos'
@@ -51,6 +53,12 @@ export default async function CedulaPage({ params }: PageProps) {
   if (!votoData) redirect('/votar')
   const tokenClaro = votoData.token
   const municipioIbge = votoData.municipioIbge ?? null
+
+  // Eleitor de FORA de Sergipe vota só pra presidente. Acesso direto por
+  // URL a outra cédula cai no /obrigado.
+  if (!cargoPermitidoParaMunicipio(cargo, municipioIbge)) {
+    redirect('/votar/obrigado')
+  }
 
   // Se a cedula tem restricao de municipio e o eleitor nao se aplica,
   // pula direto pro proximo (ou /obrigado se nao houver).
@@ -185,10 +193,11 @@ export default async function CedulaPage({ params }: PageProps) {
   const patrocinadores = await carregarPatrocinadores()
 
   // Cabecalho diferencia ordem maxima por municipio (e pelo flag da consulta)
-  const totalCedulas =
-    zonaAtiva &&
-    municipioIbge &&
-    CARGO_CONFIG.zona_expansao.municipiosAplicaveis?.includes(municipioIbge)
+  const totalCedulas = !municipioEhDeSergipe(municipioIbge)
+    ? 1 // fora de SE: só presidente
+    : zonaAtiva &&
+        municipioIbge &&
+        CARGO_CONFIG.zona_expansao.municipiosAplicaveis?.includes(municipioIbge)
       ? 6
       : 5
 
