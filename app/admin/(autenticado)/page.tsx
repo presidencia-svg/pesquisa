@@ -27,15 +27,26 @@ export default async function DashboardPage() {
     .select('*')
     .maybeSingle<Resumo>()
 
+  // Edição ativa — as contagens de candidatos/fotos são só dela (senão
+  // somam a edição demo e o "com foto" fica falso-pendente).
+  const { data: edicaoAtiva } = await db
+    .from('edicao')
+    .select('id')
+    .eq('ativa', true)
+    .maybeSingle<{ id: string }>()
+  const edicaoAtivaId = edicaoAtiva?.id ?? '00000000-0000-0000-0000-000000000000'
+
   const { count: candidatosCount } = await db
     .from('candidatos_pesquisa')
     .select('id', { count: 'exact', head: true })
     .eq('ativo', true)
+    .eq('edicao_id', edicaoAtivaId)
 
   const { count: candidatosComFotoCount } = await db
     .from('candidatos_pesquisa')
     .select('id', { count: 'exact', head: true })
     .eq('ativo', true)
+    .eq('edicao_id', edicaoAtivaId)
     .not('foto_url', 'is', null)
 
   const { count: municipiosCount } = await db
