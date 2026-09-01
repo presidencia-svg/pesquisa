@@ -121,6 +121,8 @@ export function CpfForm({
         />
       ) : null}
 
+      {pending ? <TelaBuscando /> : null}
+
       <form action={formAction} className="flex flex-col gap-5">
         <label htmlFor="cpf" className="flex flex-col gap-2">
           <span className="text-sm font-medium text-foreground">Seu CPF</span>
@@ -298,5 +300,37 @@ export function CpfForm({
         </p>
       </form>
     </>
+  )
+}
+
+/**
+ * Overlay bloqueante enquanto o CPF é validado.
+ *
+ * A consulta ao SPC leva ~1,5s no caminho feliz, mas pode chegar a ~7s
+ * quando cai no retry (a API dá blips de alguns segundos). Sem um sinal
+ * claro, o eleitor achava que a tela travou e abandonava — o botão só
+ * mudava de texto, o que passa despercebido no celular.
+ */
+function TelaBuscando() {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-5 bg-background/95 backdrop-blur-sm px-6 text-center"
+    >
+      <div
+        className="h-14 w-14 rounded-full border-4 border-primary/25 border-t-primary animate-spin"
+        aria-hidden="true"
+      />
+      <div className="flex flex-col gap-1.5">
+        <p className="text-xl font-semibold text-foreground">
+          Consultando seu CPF…
+        </p>
+        <p className="text-sm text-muted-foreground max-w-xs">
+          Estamos validando seus dados na Receita Federal. Pode levar
+          alguns segundos — <strong>não feche esta tela</strong>.
+        </p>
+      </div>
+    </div>
   )
 }
