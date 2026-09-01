@@ -28,7 +28,13 @@ export async function resolverEdicaoAlvo(): Promise<EdicaoAlvo | null> {
   const jar = await cookies()
   const testeId = jar.get(COOKIE_EDICAO_TESTE)?.value
 
-  if (testeId) {
+  // O override por cookie de teste só vale quando PERMITIR_EDICAO_TESTE=true.
+  // Depois que a coleta real começa, deixamos DESLIGADO (default) pra que
+  // NINGUÉM caia na edição demo por causa de um cookie de teste antigo —
+  // todo mundo vai pra edição ativa (a real).
+  const testeHabilitado = process.env.PERMITIR_EDICAO_TESTE === 'true'
+
+  if (testeId && testeHabilitado) {
     const { data } = await db
       .from('edicao')
       .select('id, inicio, fim')
