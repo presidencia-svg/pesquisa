@@ -7,7 +7,6 @@ import { RodapeInstitucional } from '@/components/rodape-institucional'
 import { hashTokenVoto } from '@/lib/crypto'
 import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
 import { PUBLIC_ENV } from '@/lib/env'
-import { ipEmSergipe } from '@/lib/geo-sergipe'
 import { getPreVoto, getVotoToken } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
@@ -61,12 +60,11 @@ export default async function VotarPage({
   const sp = await searchParams
   const forcarGps = sp?.forcar_gps === '1'
   const h = await headers()
+  // Gate de GPS só pra IP de FORA DO BRASIL (o servidor exige GPS-SE
+  // nesses casos). IP nacional entra direto: a pesquisa é do eleitorado
+  // de Sergipe inteiro e o 4G rotea IP pra outros estados o tempo todo.
   const ipSergipe =
-    !forcarGps &&
-    ipEmSergipe(
-      h.get('x-vercel-ip-country'),
-      h.get('x-vercel-ip-country-region'),
-    )
+    !forcarGps && h.get('x-vercel-ip-country') === 'BR'
 
   return (
     <>

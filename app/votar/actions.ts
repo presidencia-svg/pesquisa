@@ -142,7 +142,15 @@ export async function entrarComCpf(
         .maybeSingle()
       naBaseCdl = Boolean(cdlGeo)
     }
-    if (!ipOk && !dentroDeSergipe(lat, lng) && !naBaseCdl) {
+    // A pesquisa é do eleitorado de SERGIPE INTEIRO (1,73 mi) — a base da
+    // CDL cobre só 44 mil. Exigir GPS de todo mundo no 4G (IP roteado pra
+    // outro estado) excluiria a maioria. Aceitamos qualquer IP do BRASIL;
+    // só o exterior fica de fora sem GPS-SE. O voto único e o vínculo com
+    // SE seguem garantidos por CPF (Receita/SPC), WhatsApp com OTP e o
+    // município do título (a lista só tem os 75 de Sergipe). IP fica
+    // gravado no cadastro pra auditoria.
+    const paisBrasil = h.get('x-vercel-ip-country') === 'BR'
+    if (!ipOk && !dentroDeSergipe(lat, lng) && !naBaseCdl && !paisBrasil) {
       return {
         ok: false,
         code: 'localizacao',
