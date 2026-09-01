@@ -265,10 +265,14 @@ function CedulaUrna({
 
       <div className="pt-3 border-t border-capsule-foreground/15 flex flex-col gap-2">
         <p className="text-xs text-capsule-foreground/60 leading-snug">
-          Não lembra do número? Esta pesquisa é{' '}
-          <strong>espontânea</strong> — não mostramos lista de candidatos.
-          Use os botões abaixo se não souber.
+          Sabe em quem quer votar mas não lembra o número? Busque pelo nome.
+          Esta pesquisa é <strong>espontânea</strong> — não exibimos lista de
+          candidatos, então digite o nome de quem você já escolheu.
         </p>
+        <BuscaPorNome
+          opcoes={opcoes}
+          onEscolher={(n) => setNumero(String(n).slice(0, cfg.digitos))}
+        />
         <div className="flex flex-col sm:flex-row gap-2">
           <button
             type="button"
@@ -371,6 +375,137 @@ function ConsultaForm({ cargo, cfg }: { cargo: Cargo; cfg: CargoConfig }) {
           Voto em branco
         </button>
       </div>
+    </div>
+  )
+}
+
+
+// ─── Busca por nome ────────────────────────────────────────────────────────
+
+/**
+ * Ajuda o eleitor que SABE em quem quer votar mas não lembra o número —
+ * equivalente digital da "cola" que o eleitor pode levar pra urna real.
+ *
+ * A pesquisa continua ESPONTÂNEA por desenho: não há lista navegável e
+ * nada aparece sem busca. É preciso digitar ao menos 3 letras do nome de
+ * alguém que o eleitor já escolheu — ou seja, a lembrança continua vindo
+ * dele, não da tela. Por isso também limitamos os resultados: a busca
+ * responde "qual é o número de fulano", não "quem são os candidatos".
+ */
+function BuscaPorNome({
+  opcoes,
+  onEscolher,
+}: {
+  opcoes: Opcao[]
+  onEscolher: (numero: number) => void
+}) {
+  const [aberto, setAberto] = useState(false)
+  const [termo, setTermo] = useState('')
+
+  const normalizar = (v: string) =>
+    v
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim()
+
+  const MIN_LETRAS = 3
+  const MAX_RESULTADOS = 6
+  const busca = normalizar(termo)
+
+  const achados = useMemo(() => {
+    if (busca.length < MIN_LETRAS) return []
+    return opcoes
+      .filter((o) => normalizar(o.nome).includes(busca))
+      .slice(0, MAX_RESULTADOS)
+  }, [busca, opcoes])
+
+  if (!aberto) {
+    return (
+      <button
+        type="button"
+        onClick={() => setAberto(true)}
+        className="self-start text-sm font-medium underline underline-offset-4 text-capsule-foreground/85 hover:text-capsule-foreground transition"
+      >
+        🔎 Buscar candidato pelo nome
+      </button>
+    )
+  }
+
+  return (
+    <div className="rounded-md border border-capsule-foreground/25 bg-capsule-foreground/5 p-3 flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-2">
+        <label
+          htmlFor="busca-candidato"
+          className="text-xs uppercase tracking-wider text-capsule-foreground/70"
+        >
+          Nome do candidato
+        </label>
+        <button
+          type="button"
+          onClick={() => {
+            setAberto(false)
+            setTermo('')
+          }}
+          className="text-xs text-capsule-foreground/60 hover:text-capsule-foreground"
+        >
+          fechar
+        </button>
+      </div>
+
+      <input
+        id="busca-candidato"
+        type="text"
+        value={termo}
+        onChange={(e) => setTermo(e.target.value)}
+        autoComplete="off"
+        placeholder="Digite ao menos 3 letras do nome"
+        className="h-11 px-3 rounded-md bg-capsule-foreground/10 border border-capsule-foreground/30 text-capsule-foreground placeholder:text-capsule-foreground/40 text-base"
+      />
+
+      {busca.length > 0 && busca.length < MIN_LETRAS ? (
+        <p className="text-xs text-capsule-foreground/55">
+          Digite mais {MIN_LETRAS - busca.length}{' '}
+          {MIN_LETRAS - busca.length === 1 ? 'letra' : 'letras'}…
+        </p>
+      ) : null}
+
+      {busca.length >= MIN_LETRAS && achados.length === 0 ? (
+        <p className="text-xs text-capsule-foreground/55">
+          Nenhum candidato encontrado com esse nome nesta cédula.
+        </p>
+      ) : null}
+
+      {achados.map((o) => (
+        <button
+          key={o.numero}
+          type="button"
+          onClick={() => {
+            onEscolher(o.numero)
+            setAberto(false)
+            setTermo('')
+          }}
+          className="flex items-center gap-3 rounded-md p-2 text-left hover:bg-capsule-foreground/10 transition"
+        >
+          <FotoAvatar
+            fotoUrl={o.fotoUrl}
+            nome={o.nome}
+            corHex={o.corHex}
+            tamanho="vice"
+          />
+          <span className="flex-1 min-w-0">
+            <span className="block text-sm font-semibold text-capsule-foreground truncate">
+              {o.nome}
+            </span>
+            <span className="block text-xs text-capsule-foreground/70">
+              {o.partidoSigla}
+            </span>
+          </span>
+          <span className="font-mono text-lg font-bold tabular-nums text-capsule-foreground">
+            {o.numero}
+          </span>
+        </button>
+      ))}
     </div>
   )
 }
