@@ -119,12 +119,14 @@ export const SERVER_ENV = {
    *   222  CONFIRME PF RF     — com receita federal explícita
    *   320  CONSULTA COMPLETA  — mais cara, todos os insumos
    *   479  CONSULTA CPF SPC   — padrão consulta cadastral
-   *   1182 produto do contrato CDL Aracaju (usado na produção)
-   * Default '1182' — produto contratado pela CDL. Sobrescrevível por
-   * SPC_CODIGO_PRODUTO_NOVO se o contrato mudar.
+   * ATENÇÃO: 1182 foi testado em 01/09/2026 e o SPC RECUSA
+   * ("Operador nao possui acesso a essa funcionalidade" [CN_INT006.E6]),
+   * derrubando a validação de todo eleitor fora do cache cdl_base.
+   * O operador 106074512 só tem acesso ao 11 — não troque sem testar
+   * a resposta real da API antes.
    */
   get SPC_CODIGO_PRODUTO_NOVO() {
-    return optional('SPC_CODIGO_PRODUTO_NOVO', '1182')
+    return optional('SPC_CODIGO_PRODUTO_NOVO', '11')
   },
   get SPC_MOCK() {
     return process.env.SPC_MOCK === 'true'
