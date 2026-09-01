@@ -80,8 +80,6 @@ const schema = z.object({
 
 const OTP_VALIDADE_MIN = 10
 
-/** Máximo de CPFs distintos que podem votar do mesmo aparelho. */
-const MAX_CPFS_POR_DISPOSITIVO = 4
 
 export async function confirmarDados(
   _prev: ConfirmaState,
@@ -274,28 +272,23 @@ export async function confirmarDados(
     }
   }
 
-  // 2b. Limite de CPFs por aparelho. NÃO é 1: aparelho é compartilhado no
-  //     mundo real (família, escritório, lan house) e o fingerprint
-  //     (canvas+UA+tela+fuso+CPUs) COLIDE entre celulares do mesmo modelo
-  //     com a mesma configuração — com trava de 1, eleitor legítimo era
-  //     barrado. O voto único segue garantido por CPF e por WhatsApp, que
-  //     são identificadores fortes e sem colisão. Aqui a trava serve só
-  //     contra uso em massa do mesmo aparelho.
-  if (device_fingerprint) {
-    const { count: outrosNoDispositivo } = await db
-      .from('eleitores_pesquisa')
-      .select('id', { count: 'exact', head: true })
-      .eq('edicao_id', draft.edicaoId)
-      .eq('device_fingerprint', device_fingerprint)
-      .eq('wa_validado', true)
-      .neq('cpf_hash', draft.cpfHash)
-    if ((outrosNoDispositivo ?? 0) >= MAX_CPFS_POR_DISPOSITIVO) {
-      return {
-        ok: false,
-        message: `Este aparelho já foi usado por ${MAX_CPFS_POR_DISPOSITIVO} eleitores diferentes nesta pesquisa. Se você não votou ainda, use outro aparelho.`,
-      }
-    }
-  }
+  // 2b. NÃO travamos por aparelho. O device_fingerprint (canvas + UA +
+  //     tela + fuso + núcleos) NÃO identifica um aparelho de forma
+  //     confiável: celulares do mesmo modelo com a mesma configuração
+  //     produzem a MESMA digital. Medido na coleta de 01/09/2026, com
+  //     ~145 eleitores, 16% das digitais apareciam em 2 a 4 CPFs — e
+  //     eleitores que comprovadamente não tinham votado eram barrados.
+  //     Bloquear por um sinal que erra assim custa voto legítimo sem
+  //     ganho real de segurança.
+  //
+  //     O voto único continua garantido por dois identificadores fortes
+  //     e sem colisão: CPF (validado na Receita via SPC, UNIQUE por
+  //     edição) e WhatsApp (validado por OTP, UNIQUE por edição). Pra
+  //     votar duas vezes seria preciso outro CPF válido E outro número
+  //     com OTP — o fingerprint não acrescentava barreira a isso.
+  //
+  //     A digital continua sendo GRAVADA: serve pra auditoria posterior
+  //     (detectar padrão de abuso em massa sem barrar ninguém na hora).
 
   if (existing) {
     const { error: errUpd } = await db
