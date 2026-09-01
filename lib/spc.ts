@@ -339,7 +339,7 @@ type SpcConsultaPadraoResponse = {
  * negativas de negócio (CPF irregular etc.) retornam direto.
  */
 async function consultarSpcNova(cpfDigits: string): Promise<SpcResult> {
-  const TENTATIVAS = 3
+  const TENTATIVAS = 4
   let ultimo: SpcResult = { ok: false, razao: 'erro_api' }
   for (let i = 1; i <= TENTATIVAS; i++) {
     ultimo = await consultarSpcNovaUmaVez(cpfDigits)
@@ -348,7 +348,14 @@ async function consultarSpcNova(cpfDigits: string): Promise<SpcResult> {
     if (!transitorio) return ultimo
     if (i < TENTATIVAS) {
       console.warn(`[spc-nova] tentativa ${i} falhou (${'razao' in ultimo ? ultimo.razao : '?'}), re-tentando…`)
-      await new Promise((r) => setTimeout(r, 700 * i))
+      // Backoff crescente + jitter. Blips do SPC observados na coleta
+      // duram alguns SEGUNDOS (01/09: eleitora com CPF regular levou
+      // 'servico_indisponivel' enquanto outros passavam no mesmo minuto).
+      // Janela total ~7s cobre o soluço sem deixar o eleitor esperando
+      // demais; sem jitter, requisições simultâneas re-tentariam juntas
+      // e baterem no mesmo limite de concorrência do SPC.
+      const espera = 600 * i * i + Math.floor(Math.random() * 400)
+      await new Promise((r) => setTimeout(r, espera))
     }
   }
   return ultimo
