@@ -252,6 +252,14 @@ export default async function ResultadosPage() {
             Mapa de Sergipe
           </Link>
           <Link
+            href="/admin/resultados/municipios"
+            target="_blank"
+            rel="noopener"
+            className="inline-flex items-center gap-2 h-10 px-4 rounded-md border border-accent/40 bg-accent/5 text-accent text-sm font-semibold hover:bg-accent/10 transition whitespace-nowrap"
+          >
+            Cobertura por município
+          </Link>
+          <Link
             href="/admin/resultados/cruzamentos"
             target="_blank"
             rel="noopener"
