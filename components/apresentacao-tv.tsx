@@ -214,6 +214,13 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
     })
   }, [cur, linhas, usandoEleitos, grown])
 
+  // Municípios com amostra suficiente — sai de qualquer mapa disponível.
+  const municipiosComDados =
+    data.mapas?.governador?.comDados ??
+    data.mapas?.presidente?.comDados ??
+    data.mapas?.senador?.comDados ??
+    null
+
   return (
     <div className="apres-root">
       <style>{CSS}</style>
@@ -499,71 +506,18 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
           ) : null}
         </div>
 
-        {/* ===== SPONSOR RAIL ===== */}
+        {/* ===== FICHA TÉCNICA ===== */}
+        {/* Antes esta coluna era o mural de patrocinadores. Sem cotas
+            vendidas, ela virava um vazio enorme no ar. Agora carrega o
+            que sustenta a pesquisa diante do telespectador: quem fez,
+            com que método e sob qual registro. As logos sobem pro topo
+            — canto fixo, visível em todas as telas do rodízio. */}
         <div className="apres-rail">
           <div className="apres-rail-accent" />
           <div className="apres-rail-inner">
-            {data.oferecimento.length > 0 && (
-              <>
-                <div className="apres-rail-label apres-rail-label-of">
-                  OFERECIMENTO
-                </div>
-                <div className="apres-of-card">
-                  {data.oferecimento.map((s) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img key={s.empresa} src={s.logoUrl} alt={s.empresa} className="apres-of-logo" />
-                  ))}
-                </div>
-              </>
-            )}
-
-            {data.patrocinio.length > 0 && (
-              <>
-                <div className="apres-rail-label">PATROCÍNIO</div>
-                <div className="apres-tier-logos">
-                  {data.patrocinio.map((s) => {
-                    // Logos muito largos (ex: Valor, Iguá) ganham cap de
-                    // largura pra ficarem na mesma largura visual dos mais
-                    // "quadrados" (Celi, Maratá).
-                    const largo = /valor|igu/i.test(s.empresa)
-                    return (
-                      <div
-                        key={s.empresa}
-                        className={`apres-tier-card apres-tier-ouro${largo ? ' apres-tier-largo' : ''}`}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={s.logoUrl} alt={s.empresa} />
-                      </div>
-                    )
-                  })}
-                </div>
-              </>
-            )}
-
-            {data.apoio.length > 0 && (
-              <>
-                <div className="apres-rail-label">APOIO</div>
-                <div className="apres-tier-logos apres-tier-logos-apoio">
-                  {data.apoio.map((s) => {
-                    const largo = /valor|igu/i.test(s.empresa)
-                    return (
-                      <div
-                        key={s.empresa}
-                        className={`apres-tier-card apres-tier-prata${largo ? ' apres-tier-largo' : ''}`}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={s.logoUrl} alt={s.empresa} />
-                      </div>
-                    )
-                  })}
-                </div>
-              </>
-            )}
-
-            <div className="apres-spacer" />
-
-            {/* ASSINATURA — em todas as telas */}
-            <div className="apres-assinatura-label">REALIZAÇÃO E TRANSMISSÃO</div>
+            <div className="apres-rail-label apres-rail-label-of">
+              REALIZAÇÃO E TRANSMISSÃO
+            </div>
             <div className="apres-assinatura">
               <div className="apres-assina-card apres-assina-cdl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -572,6 +526,67 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
               <div className="apres-assina-card apres-assina-tv">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/tv-atalaia-logo.png" alt="TV Atalaia" />
+              </div>
+            </div>
+
+            <div className="apres-rail-label">FICHA TÉCNICA</div>
+            <div className="apres-ficha">
+              <div className="apres-ficha-row">
+                <span>Amostra</span>
+                <b>{data.amostra} eleitores</b>
+              </div>
+              <div className="apres-ficha-row">
+                <span>Margem de erro</span>
+                <b>{data.margem}</b>
+              </div>
+              <div className="apres-ficha-row">
+                <span>Confiança</span>
+                <b>95%</b>
+              </div>
+              <div className="apres-ficha-row">
+                <span>Municípios</span>
+                <b>75 de 75</b>
+              </div>
+              {municipiosComDados ? (
+                <div className="apres-ficha-row">
+                  <span>Cidades no mapa</span>
+                  <b>{municipiosComDados}</b>
+                </div>
+              ) : null}
+              <div className="apres-ficha-row">
+                <span>Método</span>
+                <b>Espontânea</b>
+              </div>
+            </div>
+
+            <div className="apres-rail-label">COMO VERIFICAMOS</div>
+            <div className="apres-verif">
+              <div className="apres-verif-item">
+                <i>1</i>
+                <p><b>CPF na Receita Federal</b><br />Cada eleitor é uma pessoa real</p>
+              </div>
+              <div className="apres-verif-item">
+                <i>2</i>
+                <p><b>WhatsApp com código</b><br />Confirma que o número é dele</p>
+              </div>
+              <div className="apres-verif-item">
+                <i>3</i>
+                <p><b>Um voto por eleitor</b><br />CPF e telefone únicos</p>
+              </div>
+              <div className="apres-verif-item">
+                <i>4</i>
+                <p><b>Voto secreto</b><br />O sistema não liga voto a pessoa</p>
+              </div>
+            </div>
+
+            <div className="apres-spacer" />
+
+            <div className="apres-registros">
+              <div className="apres-reg-linha">
+                <span>TRE-SE</span><b>SE-09441/2026</b>
+              </div>
+              <div className="apres-reg-linha">
+                <span>TSE</span><b>BR-04041/2026</b>
               </div>
             </div>
             <div className="apres-pesqele">
@@ -698,8 +713,21 @@ const CSS = `
 .apres-tier-prata{height:48px;flex:1 1 calc(33.33% - 6px);min-width:calc(33.33% - 6px);padding:7px;}
 .apres-tier-card img{max-width:100%;max-height:100%;object-fit:contain;display:block;}
 .apres-tier-logos-apoio .apres-tier-prata{opacity:.95;}
+.apres-ficha{margin-top:11px;display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,.08);border-radius:10px;overflow:hidden;}
+.apres-ficha-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:11px 14px;background:rgba(8,18,48,.55);}
+.apres-ficha-row span{font-family:'Public Sans',sans-serif;font-size:15px;color:#9fb0da;}
+.apres-ficha-row b{font-family:'Archivo',sans-serif;font-weight:800;font-size:19px;color:#fff;letter-spacing:-.01em;}
+.apres-verif{margin-top:11px;display:flex;flex-direction:column;gap:9px;}
+.apres-verif-item{display:flex;align-items:flex-start;gap:11px;}
+.apres-verif-item i{flex:none;width:26px;height:26px;border-radius:50%;background:#f4b62c;color:#0a1741;font-family:'Archivo',sans-serif;font-weight:900;font-size:14px;font-style:normal;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+.apres-verif-item p{margin:0;font-family:'Public Sans',sans-serif;font-size:14px;line-height:1.35;color:#9fb0da;}
+.apres-verif-item p b{color:#fff;font-weight:700;font-size:15px;}
+.apres-registros{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+.apres-reg-linha{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:8px 12px;border-radius:8px;background:rgba(244,182,44,.12);border:1px solid rgba(244,182,44,.3);}
+.apres-reg-linha span{font-family:'Archivo',sans-serif;font-weight:800;font-size:12px;letter-spacing:.16em;color:#f4b62c;}
+.apres-reg-linha b{font-family:'Archivo',sans-serif;font-weight:800;font-size:16px;color:#fff;}
 .apres-assinatura-label{font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;letter-spacing:.2em;color:#7f93c7;margin-bottom:10px;}
-.apres-assinatura{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.apres-assinatura{margin-top:11px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .apres-assina-card{border-radius:9px;height:64px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .apres-assina-cdl{background:#fff;padding:9px 11px;}
 .apres-assina-tv{background:#fff;padding:6px 10px;}
