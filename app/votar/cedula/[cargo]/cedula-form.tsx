@@ -276,19 +276,19 @@ function CedulaUrna({
         <div className="flex flex-col sm:flex-row gap-2">
           <button
             type="button"
-            onClick={() => enviar('nao_sabe')}
+            onClick={() => enviar('branco')}
             disabled={pending}
-            className="flex-1 h-12 text-sm font-medium rounded-md border-2 border-capsule-foreground/40 bg-capsule-foreground/5 text-capsule-foreground hover:bg-capsule-foreground/15 disabled:opacity-30 transition"
+            className="flex-1 h-16 text-base font-semibold rounded-md border-2 border-capsule-foreground/40 bg-capsule-foreground/5 text-capsule-foreground hover:bg-capsule-foreground/15 disabled:opacity-30 transition"
           >
-            Não lembro o número
+            Voto em branco
           </button>
           <button
             type="button"
-            onClick={() => enviar('branco')}
+            onClick={() => enviar('nao_sabe')}
             disabled={pending}
-            className="flex-1 h-12 text-sm font-medium rounded-md border border-capsule-foreground/30 text-capsule-foreground/90 hover:bg-capsule-foreground/10 disabled:opacity-30 transition"
+            className="flex-1 h-16 text-base font-semibold rounded-md border-2 border-capsule-foreground/40 bg-capsule-foreground/5 text-capsule-foreground hover:bg-capsule-foreground/15 disabled:opacity-30 transition"
           >
-            Voto em branco
+            Não quero responder
           </button>
         </div>
       </div>
@@ -425,7 +425,7 @@ function BuscaPorNome({
       <button
         type="button"
         onClick={() => setAberto(true)}
-        className="self-start text-sm font-medium underline underline-offset-4 text-capsule-foreground/85 hover:text-capsule-foreground transition"
+        className="w-full h-16 rounded-md border-2 border-emerald-400/60 bg-emerald-400/10 text-emerald-100 text-base font-semibold hover:bg-emerald-400/20 transition flex items-center justify-center gap-2"
       >
         🔎 Buscar candidato pelo nome
       </button>
