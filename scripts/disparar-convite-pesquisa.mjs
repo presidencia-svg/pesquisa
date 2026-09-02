@@ -157,10 +157,18 @@ async function main() {
       console.log(`  [dry] ${numero} · "Olá, ${alvo.nome}!"`)
       continue
     }
-    const r = await enviar(numero, alvo.nome)
+    // Falha de rede/Supabase não pode derrubar o lote inteiro: um erro
+    // aqui antes fazia o script morrer sem imprimir o resumo, e o runner
+    // lia isso como "fila vazia" e encerrava a campanha no meio.
+    let r
+    try {
+      r = await enviar(numero, alvo.nome)
+      if (r.ok) await marcarEnviado(alvo.whatsapp)
+    } catch (e) {
+      r = { ok: false, erro: `excecao: ${e?.message ?? e}` }
+    }
     if (r.ok) {
       ok++
-      await marcarEnviado(alvo.whatsapp)
     } else {
       falha++
       erros.set(r.erro, (erros.get(r.erro) ?? 0) + 1)
