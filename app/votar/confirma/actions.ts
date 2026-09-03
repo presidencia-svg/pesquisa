@@ -196,7 +196,7 @@ export async function confirmarDados(
   // incomodo ao eleitor titular).
   const rl = await checarRateLimit({
     acao: 'otp_enviar',
-    max: 5,
+    max: 20, // por IP — rede compartilhada (casa/loja) tem várias pessoas votando
     janelaMin: 15,
   })
   if (!rl.ok) {

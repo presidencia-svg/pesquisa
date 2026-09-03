@@ -45,8 +45,12 @@ export type VotarFormState = {
   code?: VotarErroCode
 }
 
+// Limite POR IP. Casa com Wi-Fi compartilhado ou loja com 10-15
+// funcionários na mesma rede dividem um único IP — com 5 em 5 min, a 6ª
+// pessoa da mesma rede era barrada sem nunca ter tentado. 20 cobre o grupo
+// realista; robô enumerando CPF já esbarra no Turnstile antes daqui.
 const RATE_LIMIT_WINDOW_MIN = 5
-const RATE_LIMIT_MAX = 5
+const RATE_LIMIT_MAX = 20
 
 /**
  * Server Action chamada pelo form de /votar.
@@ -206,7 +210,8 @@ export async function entrarComCpf(
       return {
         ok: false,
         code: 'rate_limit',
-        message: 'Muitas tentativas. Aguarde alguns minutos e tente novamente.',
+        message:
+          'Muitas tentativas vindas da sua rede (outras pessoas no mesmo Wi-Fi podem ter acabado de votar). Aguarde 5 minutos ou desligue o Wi-Fi e use os dados móveis (4G/5G) pra tentar agora.',
       }
     }
     await db.from('rate_limit_ip').insert({ ip, acao: 'votar_cpf' })

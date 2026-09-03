@@ -60,7 +60,7 @@ export async function checarRateLimit(
     return {
       ok: false,
       ip,
-      message: `Muitas tentativas. Aguarde ${opts.janelaMin} minutos e tente novamente.`,
+      message: `Muitas tentativas vindas da sua rede (outras pessoas no mesmo Wi-Fi podem ter acabado de usar). Aguarde ${opts.janelaMin} minutos ou desligue o Wi-Fi e use os dados móveis (4G/5G) pra tentar agora.`,
     }
   }
 

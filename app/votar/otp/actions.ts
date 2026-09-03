@@ -73,7 +73,7 @@ export async function validarOtp(
   // adicional contra rotacao de CPF/codigos por bot.
   const rl = await checarRateLimit({
     acao: 'otp_validar',
-    max: 15,
+    max: 40, // por IP — rede compartilhada; o bruteforce real é segurado por código
     janelaMin: 15,
   })
   if (!rl.ok) {
@@ -292,7 +292,7 @@ export async function reenviarOtp(): Promise<OtpState> {
   // queima de cota e risco de ban do número (derruba TODA a coleta).
   const rlIp = await checarRateLimit({
     acao: 'otp_reenviar',
-    max: 3,
+    max: 10, // por IP — rede compartilhada; o limite por CPF segue apertado abaixo
     janelaMin: 15,
   })
   if (!rlIp.ok) {
