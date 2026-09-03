@@ -137,11 +137,21 @@ async function destinatarios() {
   return lista
 }
 
+// Depois que a Meta aceita a mensagem não dá pra "desenviar" — então marcar
+// no banco não pode falhar silenciosamente, senão o numero fica pra sempre
+// como "pendente" e uma proxima rodada manda a MESMA pessoa de novo.
+// Tenta 3x antes de desistir.
 async function marcarEnviado(whats) {
-  await db
-    .from('votantes')
-    .update({ convite_pesquisa_enviado_em: new Date().toISOString() })
-    .eq('whatsapp', whats) // marca TODAS as linhas do mesmo número
+  const TENTATIVAS = 3
+  for (let i = 1; i <= TENTATIVAS; i++) {
+    const { error } = await db
+      .from('votantes')
+      .update({ convite_pesquisa_enviado_em: new Date().toISOString() })
+      .eq('whatsapp', whats) // marca TODAS as linhas do mesmo número
+    if (!error) return true
+    if (i < TENTATIVAS) await sleep(500 * i)
+  }
+  return false
 }
 
 async function main() {
@@ -150,6 +160,7 @@ async function main() {
   console.log(`${GRAVAR ? 'ENVIANDO' : 'DRY-RUN'} · ${alvos.length} destinatário(s) · numero ${PHONE_ID}`)
   let ok = 0, falha = 0
   const erros = new Map()
+  const enviadosNaoMarcados = []
   for (const [i, alvo] of alvos.entries()) {
     const numero = e164(alvo.whatsapp)
     if (!numero) { falha++; continue }
@@ -163,7 +174,13 @@ async function main() {
     let r
     try {
       r = await enviar(numero, alvo.nome)
-      if (r.ok) await marcarEnviado(alvo.whatsapp)
+      if (r.ok && !(await marcarEnviado(alvo.whatsapp))) {
+        // Mensagem SAIU pela Meta mas o banco não confirmou a marcação —
+        // NÃO pode contar como falha (senão uma rodada futura reenvia pra
+        // quem já recebeu). Registra à parte pra reconciliação manual.
+        enviadosNaoMarcados.push(alvo.whatsapp)
+        console.log(`  AVISO: enviado mas nao marcado — ${alvo.whatsapp} (id ${r.id})`)
+      }
     } catch (e) {
       r = { ok: false, erro: `excecao: ${e?.message ?? e}` }
     }
@@ -180,6 +197,10 @@ async function main() {
   }
   console.log(`\nFim: ${ok} enviados, ${falha} falhas`)
   if (erros.size) { console.log('Erros:'); for (const [e, n] of erros) console.log(`  ${n}x ${e}`) }
+  if (enviadosNaoMarcados.length) {
+    console.log(`\n${enviadosNaoMarcados.length} enviado(s) sem confirmar marcação — reconciliar manualmente:`)
+    for (const w of enviadosNaoMarcados) console.log(`  ${w}`)
+  }
 }
 
 main().catch((e) => { console.error('ERRO:', e.message); process.exit(1) })
