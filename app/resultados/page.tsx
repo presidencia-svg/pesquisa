@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { CronometroDivulgacao } from '@/components/cronometro-divulgacao'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
 import {
   carregarResultados,
@@ -335,6 +336,8 @@ function AguardandoDivulgacao({ edicao }: { edicao: EdicaoRow | null }) {
               </p>
             )}
           </div>
+
+          {prevista && <CronometroDivulgacao ateISO={prevista} />}
 
           <div className="flex flex-col sm:flex-row gap-3 w-full">
             <Link
