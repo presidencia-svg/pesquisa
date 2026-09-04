@@ -99,6 +99,7 @@ export default async function CargoResultadoPage({
           : { cargoCandidato: cargo as CargoCandidato })}
         edicaoLabel={r.pesquisa.meta.edicao}
         turno={r.pesquisa.meta.turno}
+        amostra={r.pesquisa.meta.n}
       />
       <RodapeInstitucional />
     </>

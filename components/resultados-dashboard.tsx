@@ -195,9 +195,12 @@ function Avatar({
 export function Detalhe({
   cargo,
   onClose,
+  amostra,
 }: {
   cargo: CargoCandidato
   onClose: () => void
+  /** n da pesquisa (eleitores com identidade verificada) — o mesmo do hub e da TV. */
+  amostra?: number
 }) {
   const t = totalsFor(cargo)
   const ordered = useMemo(
@@ -229,7 +232,8 @@ export function Detalhe({
           <p className="rs-detail-kicker">Detalhamento</p>
           <h2 className="rs-detail-title">{cargo.titulo}</h2>
           <p className="rs-detail-meta">
-            {fmt(t.total)} votos contabilizados
+            {amostra ? `Amostra: ${fmt(amostra)} eleitores · ` : ''}
+            {fmt(t.total)} votos contabilizados neste cargo
             {cargo.vagas ? ` · ${cargo.vagas} cadeiras em disputa` : ''}
           </p>
         </div>

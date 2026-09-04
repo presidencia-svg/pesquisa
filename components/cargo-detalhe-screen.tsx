@@ -21,6 +21,7 @@ import {
 export function CargoDetalheScreen({
   kind,
   cargoCandidato,
+  amostra,
   cargoZona,
   edicaoLabel,
   turno,
@@ -30,6 +31,8 @@ export function CargoDetalheScreen({
   cargoZona?: CargoZona
   edicaoLabel: string
   turno: 1 | 2
+  /** n da pesquisa (eleitores com identidade verificada) — mesmo número do hub e da TV. */
+  amostra?: number
 }) {
   const router = useRouter()
   const voltar = () => router.push('/resultados')
@@ -56,7 +59,7 @@ export function CargoDetalheScreen({
           {kind === 'zona' && cargoZona ? (
             <DetalheZona cargo={cargoZona} onClose={voltar} />
           ) : cargoCandidato ? (
-            <Detalhe cargo={cargoCandidato} onClose={voltar} />
+            <Detalhe cargo={cargoCandidato} onClose={voltar} amostra={amostra} />
           ) : null}
 
           <div className="rs-cargoscreen-foot">
