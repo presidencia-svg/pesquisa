@@ -220,16 +220,17 @@ export default async function ResultadosPage() {
   const zona = (zonaRows ?? []) as ZonaLinha[]
 
   // -------- Branco / Não sei por cargo --------
+  // View agregada — o fetch cru truncava em 1.000 linhas (PostgREST) e
+  // zerava os brancos/indecisos dos primeiros cargos.
   const { data: bnsRows } = await db
-    .from('votos_pesquisa')
-    .select('cargo, metodo')
+    .from('v_votos_branco_nao_sabe')
+    .select('cargo, metodo, votos')
     .eq('edicao_id', edicao.id)
-    .in('metodo', ['branco', 'nao_sabe'])
   const brancoNaoSei: BrancoNaoSei = {}
-  for (const r of (bnsRows ?? []) as { cargo: string; metodo: string }[]) {
+  for (const r of (bnsRows ?? []) as { cargo: string; metodo: string; votos: number }[]) {
     if (!brancoNaoSei[r.cargo]) brancoNaoSei[r.cargo] = { branco: 0, nao_sabe: 0 }
-    if (r.metodo === 'branco') brancoNaoSei[r.cargo].branco++
-    if (r.metodo === 'nao_sabe') brancoNaoSei[r.cargo].nao_sabe++
+    if (r.metodo === 'branco') brancoNaoSei[r.cargo].branco += r.votos
+    if (r.metodo === 'nao_sabe') brancoNaoSei[r.cargo].nao_sabe += r.votos
   }
 
   return (

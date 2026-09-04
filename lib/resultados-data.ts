@@ -18,6 +18,7 @@ import type {
   Pesquisa,
 } from '@/components/resultados-dashboard'
 import { projetarCadeiras, type PartidoVotos } from '@/lib/projecao'
+import { lerTudo } from '@/lib/supabase/ler-tudo'
 import {
   montaRegionais,
   type CandidatoLeve,
@@ -155,11 +156,12 @@ export async function carregarResultados(
       .from('v_resultados_zona')
       .select('resposta, votos')
       .eq('edicao_id', edicao.id),
+    // View agregada: o fetch cru truncava em 1.000 linhas e zerava os
+    // brancos/indecisos de presidente, governador e senador.
     db
-      .from('votos_pesquisa')
-      .select('cargo, metodo')
-      .eq('edicao_id', edicao.id)
-      .in('metodo', ['branco', 'nao_sabe']),
+      .from('v_votos_branco_nao_sabe')
+      .select('cargo, metodo, votos')
+      .eq('edicao_id', edicao.id),
     db
       .from('eleitores_pesquisa')
       .select('id', { count: 'exact', head: true })
@@ -179,22 +181,31 @@ export async function carregarResultados(
     db
       .from('municipios_se')
       .select('ibge_codigo, regiao'),
-    db
-      .from('votos_pesquisa')
-      .select('candidato_id, municipio_ibge, cargo')
-      .eq('edicao_id', edicao.id)
-      .eq('metodo', 'numero')
-      .in('cargo', ['presidente', 'governador', 'senador'])
-      .not('candidato_id', 'is', null)
-      .not('municipio_ibge', 'is', null),
+    // Votos por (candidato, município) já agregados + paginação: o fetch
+    // cru de votos_pesquisa truncava em 1.000 linhas e os líderes por
+    // região saíam de uma fatia minúscula dos ~36 mil votos.
+    lerTudo<{
+      candidato_id: string
+      municipio_ibge: number
+      cargo: string
+      votos: number
+    }>((de, ate) =>
+      db
+        .from('v_proj_candidato_mun')
+        .select('candidato_id, municipio_ibge, cargo, votos')
+        .eq('edicao_id', edicao.id)
+        .in('cargo', ['presidente', 'governador', 'senador'])
+        .not('municipio_ibge', 'is', null)
+        .range(de, ate),
+    ).then((data) => ({ data })),
   ])
 
   // ----- Branco / Não sei -----
   const brancoNaoSei: Record<string, { branco: number; nao_sabe: number }> = {}
-  for (const r of (bnsData ?? []) as Array<{ cargo: string; metodo: string }>) {
+  for (const r of (bnsData ?? []) as Array<{ cargo: string; metodo: string; votos: number }>) {
     if (!brancoNaoSei[r.cargo]) brancoNaoSei[r.cargo] = { branco: 0, nao_sabe: 0 }
-    if (r.metodo === 'branco') brancoNaoSei[r.cargo].branco++
-    if (r.metodo === 'nao_sabe') brancoNaoSei[r.cargo].nao_sabe++
+    if (r.metodo === 'branco') brancoNaoSei[r.cargo].branco += r.votos
+    if (r.metodo === 'nao_sabe') brancoNaoSei[r.cargo].nao_sabe += r.votos
   }
 
   // ----- Mapa município → região -----
@@ -336,12 +347,13 @@ export async function carregarResultados(
       candidato_id: string
       municipio_ibge: number
       cargo: string
+      votos: number
     }>)
       .filter((v) => v.cargo === cargoKey)
       .map((v) => ({
         candidato_id: v.candidato_id,
         municipio_ibge: v.municipio_ibge,
-        votos: 1,
+        votos: v.votos,
       }))
     let regionalLeve: ReturnType<typeof montaRegionais> | undefined
     if (votosCargo.length > 0) {
