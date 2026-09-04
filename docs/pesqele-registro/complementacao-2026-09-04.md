@@ -12,7 +12,7 @@ seguinte, o registro deve ser complementado com os dados da amostra final, sob p
 pesquisa ser considerada não registrada. **Divulgação: 04/09/2026 → prazo: 05/09/2026**
 (itens do § 7º-C: até 3 dias adicionais).
 
-Dados extraídos do banco em 04/09/2026 00h15, após o encerramento da coleta
+Dados extraídos do banco em 04/09/2026, 09:18, após o encerramento da coleta
 (01/09/2026 00h00 a 03/09/2026 23h59). Só agregados — nenhum dado pessoal.
 
 ---
@@ -21,14 +21,14 @@ Dados extraídos do banco em 04/09/2026 00h15, após o encerramento da coleta
 
 | Item | Valor |
 |---|---|
-| Eleitores com identidade verificada (CPF + WhatsApp) | **10.309** |
-| — em municípios de Sergipe | 10.284 |
+| Eleitores com identidade verificada (CPF + WhatsApp) | **10.310** |
+| — em municípios de Sergipe | 10.285 |
 | — fora de Sergipe (votaram só para presidente, registro BR) | 25 |
 | Municípios de Sergipe com respondentes | **75 de 75** |
 | Período de coleta | 01/09/2026 a 03/09/2026 |
 | Método | Digital, auto-aplicado, voto espontâneo (o eleitor digita o número, sem lista) |
 
-Nota: o registro declarou 20.000 entrevistas previstas; a amostra efetiva foi de 10.309.
+Nota: o registro declarou 20.000 entrevistas previstas; a amostra efetiva foi de 10.310.
 
 ## 2. Composição da amostra final
 
@@ -36,38 +36,38 @@ Nota: o registro declarou 20.000 entrevistas previstas; a amostra efetiva foi de
 
 | Sexo | n | % |
 |---|---|---|
-| Masculino | 4.572 | 44,3% |
-| Feminino | 3.467 | 33,6% |
-| Não informado | 2.270 | 22,0% |
+| Masculino | 4.568 | 44,3% |
+| Feminino | 3.554 | 34,5% |
+| Não informado | 2.188 | 21,2% |
 
 **Faixa etária** (fonte: data de nascimento na Receita Federal via SPC)
 
 | Faixa | n | % |
 |---|---|---|
 | 16–17 | 0 | 0,0% |
-| 18–24 | 1.147 | 11,1% |
-| 25–34 | 2.902 | 28,2% |
-| 35–44 | 3.149 | 30,5% |
-| 45–59 | 2.536 | 24,6% |
-| 60+ | 575 | 5,6% |
+| 18–24 | 1.103 | 10,7% |
+| 25–34 | 2.729 | 26,5% |
+| 35–44 | 3.150 | 30,6% |
+| 45–59 | 2.690 | 26,1% |
+| 60+ | 638 | 6,2% |
 
 **Grau de instrução** (autodeclarado no cadastro)
 
 | Instrução | n | % |
 |---|---|---|
-| Fundamental | 553 | 5,4% |
-| Médio | 4.472 | 43,4% |
-| Superior | 5.284 | 51,3% |
+| Fundamental | 517 | 5,0% |
+| Médio | 4.363 | 42,3% |
+| Superior | 5.430 | 52,7% |
 
 **Nível econômico** (autodeclarado, classes ABEP; "não informado" = eleitor optou por não declarar — LGPD)
 
 | Classe | n | % |
 |---|---|---|
-| A | 398 | 3,9% |
-| B | 1.734 | 16,8% |
-| C | 2.641 | 25,6% |
-| D/E | 1.754 | 17,0% |
-| Não informado | 3.782 | 36,7% |
+| A | 444 | 4,3% |
+| B | 1.841 | 17,9% |
+| C | 2.633 | 25,5% |
+| D/E | 1.665 | 16,1% |
+| Não informado | 3.727 | 36,1% |
 
 ## 3. Setor censitário — justificativa técnica (§ 7º-F)
 
@@ -103,7 +103,7 @@ verificada que responderam, por município do título.
 | Carira | Agreste | 17.195 | 141 | 0,820% |
 | Carmópolis | Leste | 13.098 | 83 | 0,634% |
 | Cedro de São João | Leste | 5.441 | 44 | 0,809% |
-| Cristinápolis | Centro-Sul | 14.983 | 23 | 0,154% |
+| Cristinápolis | Centro-Sul | 14.983 | 23 | 0,153% |
 | Cumbe | Sertão | 4.514 | 12 | 0,266% |
 | Divina Pastora | Leste | 4.402 | 78 | 1,772% |
 | Estância | Centro-Sul | 51.062 | 209 | 0,409% |
@@ -151,7 +151,7 @@ verificada que responderam, por município do título.
 | Salgado | Centro-Sul | 18.123 | 41 | 0,226% |
 | Santa Luzia do Itanhy | Centro-Sul | 12.803 | 12 | 0,094% |
 | Santa Rosa de Lima | Sertão | 4.736 | 30 | 0,633% |
-| Santana do São Francisco | Leste | 6.484 | 6 | 0,093% |
+| Santana do São Francisco | Leste | 6.484 | 6 | 0,092% |
 | Santo Amaro das Brotas | Leste | 10.793 | 36 | 0,334% |
 | São Cristóvão | Grande Aracaju | 61.587 | 329 | 0,534% |
 | São Domingos | Agreste | 8.725 | 207 | 2,373% |
@@ -159,11 +159,11 @@ verificada que responderam, por município do título.
 | São Miguel do Aleixo | Agreste | 4.108 | 24 | 0,584% |
 | Simão Dias | Centro-Sul | 37.027 | 166 | 0,448% |
 | Siriri | Leste | 7.022 | 51 | 0,726% |
-| Telha | Leste | 3.729 | 23 | 0,617% |
+| Telha | Leste | 3.729 | 24 | 0,644% |
 | Tobias Barreto | Centro-Sul | 41.941 | 104 | 0,248% |
 | Tomar do Geru | Centro-Sul | 10.717 | 35 | 0,327% |
 | Umbaúba | Centro-Sul | 18.255 | 41 | 0,225% |
-| **Total (75 municípios)** | | **1.731.960** | **10.284** | **0,594%** |
+| **Total (75 municípios)** | | **1.731.960** | **10.285** | **0,594%** |
 
 Mais 25 eleitores com título fora de Sergipe (aptos só a presidente — registro BR-04041/2026).
 
