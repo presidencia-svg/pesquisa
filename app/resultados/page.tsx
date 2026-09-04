@@ -5,7 +5,6 @@ import { RodapeInstitucional } from '@/components/rodape-institucional'
 import {
   carregarResultados,
   CONTRATANTE_CNPJ,
-  formatarData,
   type EdicaoRow,
   type PatroPublico,
 } from '@/lib/resultados-data'
@@ -314,6 +313,12 @@ function AguardandoDivulgacao({ edicao }: { edicao: EdicaoRow | null }) {
     <>
       <main className="flex flex-col flex-1 bg-background items-center justify-center px-5 py-16">
         <div className="w-full max-w-md flex flex-col gap-8 items-start">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/cdl-pesquisas-logo.png"
+            alt="CDL Pesquisas"
+            className="h-12 w-auto"
+          />
           <div className="flex flex-col gap-3">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">
               Resultados
@@ -325,7 +330,18 @@ function AguardandoDivulgacao({ edicao }: { edicao: EdicaoRow | null }) {
               <p className="text-base text-muted-foreground leading-relaxed">
                 A Pesquisa Eleitoral Sergipe 2026 da CDL Aracaju será divulgada em{' '}
                 <strong className="text-foreground">
-                  {formatarData(prevista)}
+                  {new Date(prevista).toLocaleString('pt-BR', {
+                    timeZone: 'America/Recife',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                  })}
+                  {' às '}
+                  {new Date(prevista).toLocaleString('pt-BR', {
+                    timeZone: 'America/Recife',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  }).replace(':', 'h')}
                 </strong>
                 , após registro no PesqEle do TRE/SE conforme Resolução TSE
                 23.747/2026.
