@@ -134,8 +134,14 @@ export async function divulgarEdicao(formData: FormData): Promise<EdicaoState> {
 
   // --- Gate de compliance (Lei 9.504/97 art. 33 + Res. TSE 23.747/2026) ---
   // Formato do nº de registro PesqEle: UF/BR + dígitos + /ano (ex.: SE-06661/2026).
+  // Pode haver MAIS DE UM registro (TSE pra presidente + TRE pros demais):
+  // "SE-09441/2026 · BR-04041/2026". Cada um precisa estar no formato.
   const registro = (ed.registro_tre ?? '').trim()
-  if (!/^[A-Za-z]{2}[-\s]?\d{1,6}\/\d{4}$/.test(registro)) {
+  const registros: string[] = String(registro).split(/[\s·,;|]+/).filter(Boolean)
+  const formatoOk =
+    registros.length > 0 &&
+    registros.every((r: string) => /^[A-Za-z]{2}-?\d{1,6}\/\d{4}$/.test(r))
+  if (!formatoOk) {
     return {
       ok: false,
       message:
