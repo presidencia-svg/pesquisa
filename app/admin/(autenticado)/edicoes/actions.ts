@@ -137,10 +137,13 @@ export async function divulgarEdicao(formData: FormData): Promise<EdicaoState> {
   // Pode haver MAIS DE UM registro (TSE pra presidente + TRE pros demais):
   // "SE-09441/2026 · BR-04041/2026". Cada um precisa estar no formato.
   const registro = (ed.registro_tre ?? '').trim()
-  const registros: string[] = String(registro).split(/[\s·,;|]+/).filter(Boolean)
-  const formatoOk =
-    registros.length > 0 &&
-    registros.every((r: string) => /^[A-Za-z]{2}-?\d{1,6}\/\d{4}$/.test(r))
+  // Aceita qualquer separador entre eles (espaco, ·, •, virgula, ponto e
+  // virgula, barra vertical): extrai os numeros validos e exige que o
+  // resto do campo seja so pontuacao/espaco.
+  const RE = /[A-Za-z]{2}-?\d{1,6}\/\d{4}/g
+  const encontrados = String(registro).match(RE) ?? []
+  const sobra = String(registro).replace(RE, "").replace(/[\s\p{P}\p{S}]/gu, "")
+  const formatoOk = encontrados.length > 0 && sobra === ""
   if (!formatoOk) {
     return {
       ok: false,
