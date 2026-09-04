@@ -11,7 +11,9 @@ import { carregarResultados } from '@/lib/resultados-data'
 
 import '../resultados.css'
 
-export const revalidate = 15
+// Coleta encerrada: numeros finais. 5 min de cache — a cada revalidacao a pagina
+// roda ~11 agregacoes sobre 59 mil votos; a 15 s isso saturou o banco no pico.
+export const revalidate = 300
 
 // Slug da URL → chave do cargo em Pesquisa. 'mapa' não cai aqui porque
 // /resultados/mapa é rota estática (Next prioriza segmento estático).

@@ -17,7 +17,9 @@ export const metadata = {
   title: 'Pesquisa Eleitoral Sergipe 2026 · Ao vivo',
   robots: { index: false, follow: false },
 }
-export const dynamic = 'force-dynamic'
+// Coleta encerrada: resultado e' estatico. Cache de 60 s tira o banco do caminho
+// de cada visitante (a TV Atalaia e o publico abrem isto ao mesmo tempo).
+export const revalidate = 60
 
 export default async function TvPage() {
   const r = await carregarResultados()

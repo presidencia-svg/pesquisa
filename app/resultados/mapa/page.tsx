@@ -16,7 +16,8 @@ import './mapa-publico.css'
 export const metadata = {
   title: 'Mapa por cidade · Pesquisa Eleitoral Sergipe 2026',
 }
-export const dynamic = 'force-dynamic'
+// Coleta encerrada: mapa e' estatico. Cache de 120 s.
+export const revalidate = 120
 
 type Cargo = 'presidente' | 'governador' | 'senador'
 

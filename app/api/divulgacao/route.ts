@@ -12,7 +12,9 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
  *
  * CORS aberto de propósito: é informação pública e não identifica ninguém.
  */
-export const dynamic = 'force-dynamic'
+// Cache de 15 s: o pop-up do site da CDL consulta isto a cada 30 s em cada aba
+// aberta — sem cache, cada consulta batia no banco.
+export const revalidate = 15
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
