@@ -111,36 +111,56 @@ export async function processarLoteNotificacao(): Promise<ProcessarResultado> {
   let enviados = 0
   let falhas = 0
 
-  for (const eleitor of lote) {
-    if (!eleitor.whatsapp_e164) {
-      falhas++
-      continue
-    }
-    const envio = await enviarResultadoWhatsApp(
-      eleitor.whatsapp_e164,
-      URL_RESULTADOS,
-    )
-    if (envio.ok) {
-      const { error: errUpd } = await db
-        .from('eleitores_pesquisa')
-        .update({ resultado_enviado_em: new Date().toISOString() })
-        .eq('id', eleitor.id)
-      if (errUpd) {
-        console.error('[notificar-resultado] erro marcando enviado:', errUpd)
+  // Orçamento de tempo + concorrência moderada.
+  //
+  // Sequencial, cada envio custava ~0,5 s (Meta ~300 ms + UPDATE + sleep):
+  // 500 por lote = ~250 s, muito acima do maxDuration de 60 s da função.
+  // A Vercel matava a execução no meio — ~150 envios por tick, sem gravar
+  // o cron_log e, às vezes, com o último eleitor enviado mas não marcado
+  // (reenvio no tick seguinte). Agora: para de puxar novos eleitores aos
+  // 45 s e roda 6 envios em paralelo (~13 msg/s, bem abaixo dos 80/s da
+  // Meta) — ~500 por tick, com o log sempre gravado.
+  const INICIO = Date.now()
+  const ORCAMENTO_MS = 45_000
+  const CONCORRENCIA = 6
+  let proximo = 0
+  let processados = 0
+
+  const worker = async () => {
+    while (proximo < lote.length && Date.now() - INICIO < ORCAMENTO_MS) {
+      const eleitor = lote[proximo++]
+      processados++
+      if (!eleitor.whatsapp_e164) {
         falhas++
-      } else {
-        enviados++
+        continue
       }
-    } else {
-      console.error(
-        '[notificar-resultado] falha envio',
-        eleitor.id,
-        envio.detalhe,
+      const envio = await enviarResultadoWhatsApp(
+        eleitor.whatsapp_e164,
+        URL_RESULTADOS,
       )
-      falhas++
+      if (envio.ok) {
+        const { error: errUpd } = await db
+          .from('eleitores_pesquisa')
+          .update({ resultado_enviado_em: new Date().toISOString() })
+          .eq('id', eleitor.id)
+        if (errUpd) {
+          console.error('[notificar-resultado] erro marcando enviado:', errUpd)
+          falhas++
+        } else {
+          enviados++
+        }
+      } else {
+        console.error(
+          '[notificar-resultado] falha envio',
+          eleitor.id,
+          envio.detalhe,
+        )
+        falhas++
+      }
+      await sleep(SLEEP_MS)
     }
-    await sleep(SLEEP_MS)
   }
+  await Promise.all(Array.from({ length: CONCORRENCIA }, () => worker()))
 
   const { count: pendentesRestantes } = await db
     .from('eleitores_pesquisa')
@@ -154,7 +174,7 @@ export async function processarLoteNotificacao(): Promise<ProcessarResultado> {
     ok: true,
     message: `Lote processado: ${enviados} enviado(s), ${falhas} falha(s).`,
     resumo: {
-      processados: lote.length,
+      processados,
       enviados,
       falhas,
       pendentes_restantes: pendentesRestantes ?? 0,
