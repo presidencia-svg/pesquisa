@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { AvisoRegistro } from '@/components/aviso-registro'
 import { BaseEleitoralSe } from '@/components/base-eleitoral-se'
 import { MarcaCdl } from '@/components/marca-cdl'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
@@ -730,8 +731,9 @@ export default function TransparenciaPage() {
                   ['mai–jul/2026', 'Desenvolvimento. Integrações reais (SPC, Meta WhatsApp, Turnstile). Contratação do estatístico CONRE.'],
                   ['ago/2026', 'Piloto fechado, com código de convite. ~50 testers. Estressa o sistema sem divulgação pública.'],
                   ['ago/2026 (após piloto)', 'Reunião com advogado eleitoral. Trava material divulgável e questionário.'],
-                  ['set/2026', 'Registro no PesqEle (≥ 5 dias antes da divulgação).'],
-                  ['set/2026', 'Coleta da pesquisa principal e divulgação.'],
+                  ['22/ago/2026', 'Registro no PesqEle: BR-04041/2026 (TSE) e SE-09441/2026 (TRE-SE).'],
+                  ['01–03/set/2026', 'Coleta da pesquisa principal.'],
+                  ['04/set/2026', 'Divulgação dos resultados.'],
                   ['04/out/2026', '1º turno das eleições.'],
                 ].map(([when, what]) => (
                   <li key={when} className="flex flex-col sm:flex-row gap-1 sm:gap-4">
@@ -868,11 +870,13 @@ export default function TransparenciaPage() {
                   {' '}(RFC 9116).
                 </li>
                 <li>
-                  <strong>Registro no PesqEle (TRE/SE).</strong> Após o
-                  registro formal, qualquer interessado pode consultar a
-                  ficha técnica diretamente no sistema oficial da Justiça
-                  Eleitoral. O número do registro será publicado nesta
-                  página.
+                  <strong>Registro no PesqEle (TSE e TRE-SE).</strong> Feito em
+                  22/08/2026 sob os números BR-04041/2026 (TSE, presidente) e
+                  SE-09441/2026 (TRE-SE, demais cargos). O aviso oficial da
+                  Justiça Eleitoral e o caminho pra conferir estão logo abaixo.
+                  <div className="mt-3">
+                    <AvisoRegistro />
+                  </div>
                 </li>
                 <li>
                   <strong>Pedido de dados auditáveis (Res. TSE 23.747/2026,
