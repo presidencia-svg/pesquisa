@@ -1,5 +1,10 @@
 import Link from 'next/link'
 
+// Admin nunca e pre-renderizado no build: toda pagina le o banco e exige
+// sessao. Sem isto, o `next build` tentava gerar /admin estaticamente e
+// estourava 60 s quando o banco estava ocupado (deploy caiu com erro).
+export const dynamic = 'force-dynamic'
+
 import { MarcaCdl } from '@/components/marca-cdl'
 import { TreinamentoLgpd } from '@/components/treinamento-lgpd'
 import { requireAdmin } from '@/lib/admin-auth'
