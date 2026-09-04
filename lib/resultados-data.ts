@@ -449,31 +449,37 @@ export async function carregarResultados(
       .sort((a, b) => b.votos - a.votos)
 
     const totalNominal = candidatos.reduce((s, c) => s + c.votos, 0)
-    const cadeirasPorPartido = new Map(
-      projecao.partidos.map((p) => [p.partidoId, p.cadeirasTotal]),
-    )
 
-    for (const p of partidosInput) {
-      const cadeiras = cadeirasPorPartido.get(p.partidoId) ?? 0
-      if (cadeiras === 0) continue
-      const candsPartido = [...p.candidatos].sort((a, b) => b.votos - a.votos)
-      for (let i = cadeiras; i < candsPartido.length; i++) {
-        const found = candidatos.find((x) => x.id === candsPartido[i].candidatoId)
-        if (found) found.suplente = i - cadeiras + 1
-      }
+    // Suplência e empate são por AGREMIAÇÃO: na federação a lista nominal é
+    // única (UNIÃO e PP disputam a mesma ordem), e com as travas de 10%/20%
+    // do QE o eleito de um partido não é necessariamente o seu N-ésimo mais
+    // votado — por isso a referência é o conjunto de eleitos da agremiação.
+    const partidoIdsPorAgremiacao = new Map<string, string[]>()
+    for (const p of projecao.partidos) {
+      const lista = partidoIdsPorAgremiacao.get(p.agremiacaoChave) ?? []
+      lista.push(p.partidoId)
+      partidoIdsPorAgremiacao.set(p.agremiacaoChave, lista)
     }
+    for (const partidoIds of partidoIdsPorAgremiacao.values()) {
+      const listaNominal = partidosInput
+        .filter((p) => partidoIds.includes(p.partidoId))
+        .flatMap((p) => p.candidatos)
+        .sort((a, b) => b.votos - a.votos || a.numero - b.numero)
+      const eleitosDaAg = listaNominal.filter((c) => eleitosIds.has(c.candidatoId))
+      if (eleitosDaAg.length === 0) continue
+      const naoEleitos = listaNominal.filter((c) => !eleitosIds.has(c.candidatoId))
+      naoEleitos.forEach((c, i) => {
+        const found = candidatos.find((x) => x.id === c.candidatoId)
+        if (found) found.suplente = i + 1
+      })
 
-    if (totalNominal > 0) {
-      for (const p of partidosInput) {
-        const cadeiras = cadeirasPorPartido.get(p.partidoId) ?? 0
-        if (cadeiras === 0) continue
-        const candsPartido = [...p.candidatos].sort((a, b) => b.votos - a.votos)
-        const ultimoEleito = candsPartido[cadeiras - 1]
+      if (totalNominal > 0) {
+        // Empate técnico com o eleito MENOS votado da agremiação.
+        const ultimoEleito = eleitosDaAg[eleitosDaAg.length - 1]
         if (!ultimoEleito || ultimoEleito.votos === 0) continue
         const pCut = ultimoEleito.votos / totalNominal
         const meCut = 1.96 * Math.sqrt((pCut * (1 - pCut)) / totalNominal)
-        for (let i = cadeiras; i < candsPartido.length; i++) {
-          const c = candsPartido[i]
+        for (const c of naoEleitos) {
           const pC = c.votos / totalNominal
           const meC = 1.96 * Math.sqrt((pC * (1 - pC)) / totalNominal)
           if (pCut - pC <= meCut + meC) {

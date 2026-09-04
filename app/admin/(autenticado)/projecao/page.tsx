@@ -313,20 +313,33 @@ export default async function ProjecaoPage({
         </summary>
         <ol className="mt-3 flex flex-col gap-2 text-muted-foreground list-decimal pl-5">
           <li>
-            <strong>QE (Quociente Eleitoral)</strong> = floor(total de votos
-            válidos ÷ número de vagas).
+            <strong>Federação conta como um partido só</strong> (Lei 14.208/2021):
+            União Progressista (UNIÃO + PP), Brasil da Esperança (PT + PCdoB + PV),
+            PSOL-Rede, PSDB-Cidadania e Renovação Solidária somam os votos de
+            todos os seus partidos e disputam juntas. Partido fora de federação
+            concorre sozinho (coligação é proibida no proporcional).
           </li>
           <li>
-            <strong>Cláusula de barreira:</strong> só partidos que atingem 80% do QE.
+            <strong>QE (Quociente Eleitoral)</strong> = votos válidos ÷ vagas,
+            desprezada a fração se igual ou inferior a meio, arredondada pra cima
+            se superior (CE art. 106).
           </li>
           <li>
-            <strong>QP (Quociente Partidário)</strong> = floor(votos do partido ÷ QE).
+            <strong>QP (Quociente Partidário)</strong> = parte inteira de votos da
+            agremiação ÷ QE (art. 107). As vagas vão pros candidatos mais votados
+            da agremiação — na federação, lista única sem cota por partido — desde
+            que cada um tenha pelo menos <strong>10% do QE</strong> (art. 108).
           </li>
           <li>
-            <strong>Sobras por maiores médias:</strong> votos ÷ (cadeiras + 1).
+            <strong>Sobras por maiores médias:</strong> votos ÷ (cadeiras já obtidas + 1),
+            uma vaga por rodada (art. 109). Só disputa agremiação com pelo menos{' '}
+            <strong>80% do QE</strong>, e só entra candidato com pelo menos{' '}
+            <strong>20% do QE</strong> (§ 2º). Se ninguém atender, as vagas
+            restantes vão pelas médias sem as travas.
           </li>
           <li>
-            <strong>Eleitos projetados</strong> = top N candidatos do partido por voto individual.
+            <strong>Eleitos projetados</strong> = quem levou cada vaga pelos passos
+            acima. Suplência e empate técnico são calculados dentro da agremiação.
           </li>
         </ol>
       </details>
@@ -438,6 +451,47 @@ function SecaoProjecao({
         </p>
       ) : (
         <div className="flex flex-col gap-3">
+          {/* Como o TSE apura: por agremiação (federação = um partido só) */}
+          <div className="rounded-md border border-border bg-muted/40 px-4 py-3">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
+              Por agremiação (federação conta como um partido só) · mínimo nominal{' '}
+              {Math.ceil(projecao.minimoNominalQP).toLocaleString('pt-BR')} (QP) /{' '}
+              {Math.ceil(projecao.minimoNominalSobra).toLocaleString('pt-BR')} (sobras)
+              {projecao.fallbackSemTravas && (
+                <span className="ml-2 text-error normal-case tracking-normal">
+                  · alguma vaga preenchida sem as travas de 80%/20% (ninguém atendia)
+                </span>
+              )}
+            </p>
+            <table className="w-full text-xs">
+              <tbody>
+                {projecao.agremiacoes
+                  .filter((a) => a.cadeirasTotal > 0 || a.atingiuClausula)
+                  .map((a) => (
+                    <tr key={a.chave} className="border-t border-border/60">
+                      <td className="py-1 pr-2">
+                        <span className="font-semibold">{a.nome}</span>
+                        {a.federacao && (
+                          <span className="ml-1 text-muted-foreground">
+                            ({a.siglas.join(' + ')})
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-1 px-2 text-right tabular-nums">
+                        {a.votos.toLocaleString('pt-BR')} · {a.pctValidos.toFixed(1)}%
+                      </td>
+                      <td className="py-1 pl-2 text-right tabular-nums whitespace-nowrap">
+                        <strong>{a.cadeirasTotal}</strong>{' '}
+                        <span className="text-muted-foreground">
+                          (QP {a.cadeirasIniciais} + sobras {a.cadeirasSobras})
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+
           {projecao.partidos.map((p) => (
             <div
               key={p.partidoId}
@@ -463,7 +517,12 @@ function SecaoProjecao({
                       </span>
                     )}
                   </p>
-                  <p className="text-xs text-muted-foreground truncate">{p.nome}</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {p.nome}
+                    {p.federacao && (
+                      <span className="ml-2 text-accent">· Federação {p.federacao}</span>
+                    )}
+                  </p>
                 </div>
                 <div className="flex flex-col items-end text-right">
                   <p className="text-sm font-semibold tabular-nums">
