@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { coligacaoCurta } from '@/lib/federacoes'
 import { calcularPesos } from '@/lib/ponderacao'
 import {
   projetarCadeiras,
@@ -161,7 +162,7 @@ export default async function ProjecaoPage({
     // Lista de partidos com candidatos cadastrados
     const { data: candidatos } = await db
       .from('candidatos_pesquisa')
-      .select('id, numero, nome_urna, partido_id, partidos!inner(id, numero, sigla, nome, cor_hex)')
+      .select('id, numero, nome_urna, partido_id, coligacao, partidos!inner(id, numero, sigla, nome, cor_hex)')
       .eq('edicao_id', edicao.id)
       .eq('cargo', cargo)
       .eq('ativo', true)
@@ -174,6 +175,7 @@ export default async function ProjecaoPage({
         sigla: string
         nome: string
         corHex: string | null
+        coligacao: string | null
         candidatos: Array<{
           candidatoId: string
           numero: number
@@ -187,6 +189,7 @@ export default async function ProjecaoPage({
       numero: number
       nome_urna: string
       partido_id: string
+      coligacao: string | null
       partidos: {
         id: string
         numero: number
@@ -202,8 +205,11 @@ export default async function ProjecaoPage({
         sigla: p.sigla,
         nome: p.nome,
         corHex: p.cor_hex,
+        coligacao: null,
         candidatos: [],
       }
+      // Coligação oficial (TSE) do partido neste cargo — vem do candidato.
+      if (!entry.coligacao && c.coligacao) entry.coligacao = c.coligacao
       entry.candidatos.push({
         candidatoId: c.id,
         numero: c.numero,
@@ -241,6 +247,7 @@ export default async function ProjecaoPage({
           sigla: p.sigla,
           nome: p.nome,
           corHex: p.cor_hex,
+          coligacao: null,
           candidatos: [],
         })
       }
@@ -253,6 +260,7 @@ export default async function ProjecaoPage({
         sigla: p.sigla,
         nome: p.nome,
         corHex: p.corHex,
+        coligacao: p.coligacao,
         votosLegenda: ponderado
           ? Math.round(votosPartidoPond.get(p.partidoId) ?? 0)
           : votosPartidoBruto.get(p.partidoId) ?? 0,
@@ -470,10 +478,10 @@ function SecaoProjecao({
                   .map((a) => (
                     <tr key={a.chave} className="border-t border-border/60">
                       <td className="py-1 pr-2">
-                        <span className="font-semibold">{a.nome}</span>
+                        <span className="font-semibold">{coligacaoCurta(a.nome) ?? a.nome}</span>
                         {a.federacao && (
                           <span className="ml-1 text-muted-foreground">
-                            ({a.siglas.join(' + ')})
+                            ({a.siglas.join(' + ')}) · {a.nome}
                           </span>
                         )}
                       </td>
@@ -520,7 +528,9 @@ function SecaoProjecao({
                   <p className="text-xs text-muted-foreground truncate">
                     {p.nome}
                     {p.federacao && (
-                      <span className="ml-2 text-accent">· Federação {p.federacao}</span>
+                      <span className="ml-2 text-accent">
+                        · Federação {coligacaoCurta(p.federacao)}
+                      </span>
                     )}
                   </p>
                 </div>

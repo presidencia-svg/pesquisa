@@ -28,6 +28,7 @@ import {
   type PatroPublico,
 } from '@/lib/resultados-data'
 import { CARGO_CONFIG, type Cargo } from '@/lib/cargos'
+import { coligacaoCurta } from '@/lib/federacoes'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 /** Número como digitado na urna — preserva zeros à esquerda ("01", "010"). */
@@ -114,11 +115,13 @@ function montaCargo(
   // a visão separada "quem leva a cadeira".
   let rowsEleitos: ApresRow[] | undefined
   if (ehDeputado) {
+    // Na visão "quem leva a cadeira" o rótulo é a COLIGAÇÃO/federação oficial
+    // (a vaga é da agremiação, não do partido): "União Progressista", não "PP".
     rowsEleitos = ordenados
       .filter((c) => c.eleito)
       .map((c) => ({
         name: c.nome,
-        party: c.partido || undefined,
+        party: coligacaoCurta(c.coligacao) ?? c.partido ?? undefined,
         num: numUrna(meta.key, c.numero),
         pct: total > 0 ? (c.votos / total) * 100 : 0,
         color: c.cor || '#2F6FE0',

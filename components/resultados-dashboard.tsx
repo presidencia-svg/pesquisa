@@ -43,6 +43,8 @@ export type Candidato = {
   empate?: boolean
   /** Posição na fila de suplentes do partido (1, 2, 3...). Só pra proporcional, em partido que ganhou cadeira. */
   suplente?: number
+  /** Coligação/federação oficial (TSE) — a vaga de deputado é dela, não do partido. */
+  coligacao?: string | null
   /** Pres/Gov: candidato vai pro 2º turno (top 1 e top 2 quando ninguém atingiu 50%) */
   segundoTurno?: boolean
   delta?: number

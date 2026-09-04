@@ -52,6 +52,8 @@ type CandidatoTse = {
   numero: number
   nomeUrna: string
   nomeCompleto: string | null
+  /** "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)", "PSB", "SERGIPE CRESCE COM VOCÊ"… */
+  nomeColigacao?: string | null
   fotoUrl: string | null
   fotoUrlPublicavel: boolean
   descricaoSituacao: string | null
@@ -200,6 +202,8 @@ async function main() {
             ativo: true,
             ano_referencia: ANO,
             impedimento,
+            // Federação/coligação oficial — a projeção de cadeiras agrupa por ela.
+            coligacao: c.nomeColigacao ?? null,
           })
           if (error) console.error(`    ERRO: ${error.message}`)
         }
@@ -218,6 +222,7 @@ async function main() {
               ativo: true,
               ano_referencia: ANO,
               impedimento,
+              coligacao: c.nomeColigacao ?? null,
             })
             .eq('id', atual.id)
           if (error) console.error(`    ERRO: ${error.message}`)

@@ -132,7 +132,7 @@ export async function carregarResultados(
   ] = await Promise.all([
     db
       .from('candidatos_pesquisa')
-      .select('id, cargo, numero, nome_urna, foto_url, impedimento, partido_id, partidos!inner(sigla, cor_hex)')
+      .select('id, cargo, numero, nome_urna, foto_url, impedimento, partido_id, coligacao, partidos!inner(sigla, cor_hex)')
       .eq('edicao_id', edicao.id)
       .eq('ativo', true)
       .in('cargo', ['federal', 'estadual']),
@@ -396,6 +396,7 @@ export async function carregarResultados(
       foto_url: string | null
       impedimento: string | null
       partido_id: string
+      coligacao: string | null
       partidos: { sigla: string; cor_hex: string | null } | { sigla: string; cor_hex: string | null }[]
     }>).filter((c) => c.cargo === cargoKey)
 
@@ -415,6 +416,9 @@ export async function carregarResultados(
       sigla: l.sigla,
       nome: l.nome,
       corHex: l.cor_hex,
+      // Coligação/federação oficial (TSE) do partido neste cargo, via candidato.
+      coligacao:
+        cands.find((c) => c.partido_id === l.partido_id && c.coligacao)?.coligacao ?? null,
       votosLegenda: l.votos,
       candidatos: cands
         .filter((c) => c.partido_id === l.partido_id)
@@ -443,6 +447,7 @@ export async function carregarResultados(
           votos: votosCandidato.get(c.id) ?? 0,
           foto: c.foto_url,
           impedimento: c.impedimento,
+          coligacao: c.coligacao,
           eleito: eleitosIds.has(c.id),
         }
       })

@@ -34,6 +34,13 @@ export type PartidoVotos = {
   sigla: string
   nome: string
   corHex: string | null
+  /**
+   * Coligação/federação oficial do partido neste cargo, como o TSE registrou
+   * (candidatos_pesquisa.coligacao). É por ela que a apuração agrupa. Quando
+   * o partido não tem candidato no cargo (só voto de legenda), cai no mapa
+   * de federações de lib/federacoes.ts.
+   */
+  coligacao?: string | null
   votosLegenda: number // total = soma legenda + nominal
   candidatos: Array<{
     candidatoId: string
@@ -138,15 +145,33 @@ export function projetarCadeiras(
     obtidas: number
     eleitos: Array<{ cand: Cand; via: 'qp' | 'sobra' }>
   }
+  // Coligação oficial (TSE) manda. Partido sem candidato no cargo não tem
+  // coligação gravada: se ele está numa federação, adota a string oficial
+  // que os partidos irmãos trouxeram (senão viraria uma agremiação à parte).
+  const oficialDaFederacao = new Map<string, string>()
+  for (const p of partidos) {
+    const col = p.coligacao?.trim()
+    const fed = federacaoDe(p.sigla)
+    if (col && fed && /FEDERA/i.test(col)) oficialDaFederacao.set(fed, col)
+  }
+  const coligacaoDe = (p: PartidoVotos): { chave: string; nome: string; federacao: string | null } => {
+    const col = p.coligacao?.trim() || null
+    const fed = federacaoDe(p.sigla)
+    const oficial = col ?? (fed ? oficialDaFederacao.get(fed) ?? fed : null)
+    if (oficial && (fed || /FEDERA/i.test(oficial))) {
+      return { chave: `col:${oficial}`, nome: oficial, federacao: oficial }
+    }
+    return { chave: `partido:${p.partidoId}`, nome: oficial ?? p.sigla, federacao: null }
+  }
+
   const ags = new Map<string, Ag>()
   for (const p of partidos) {
-    const fed = federacaoDe(p.sigla)
-    const chave = fed ? `fed:${fed}` : `partido:${p.partidoId}`
+    const { chave, nome, federacao: fed } = coligacaoDe(p)
     const ag =
       ags.get(chave) ??
       {
         chave,
-        nome: fed ?? p.sigla,
+        nome,
         federacao: fed,
         partidoIds: [],
         siglas: [],
