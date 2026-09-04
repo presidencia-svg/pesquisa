@@ -28,6 +28,14 @@ const SLUG_PARA_CARGO = {
 
 type Slug = keyof typeof SLUG_PARA_CARGO
 
+// Sem generateStaticParams o segmento dinâmico era renderizado a cada
+// request (cache-control: private, no-store) e o `revalidate` não valia:
+// no pico pós-divulgação cada visitante disparava ~14 consultas no banco.
+// Com os slugs declarados, as 6 páginas viram ISR de verdade (300 s).
+export function generateStaticParams() {
+  return (Object.keys(SLUG_PARA_CARGO) as Slug[]).map((cargo) => ({ cargo }))
+}
+
 const ROTULO: Record<Slug, string> = {
   presidente: 'Presidente',
   governador: 'Governador',
