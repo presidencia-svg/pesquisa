@@ -35,6 +35,12 @@ export type Candidato = {
   partido: string
   cor: string
   votos: number
+  /**
+   * Votos ponderados por município (peso = share do município no eleitorado
+   * TSE ÷ share na amostra) — resultado oficial conforme o registro PesqEle.
+   * `votos` é o bruto, mostrado ao lado.
+   */
+  votosPond?: number
   foto: string | null
   impedimento: string | null
   /** Projeção: ficaria eleito se a eleição fosse agora */
@@ -71,6 +77,9 @@ export type CargoCandidato = {
   candidatos: Candidato[]
   branco: number
   nao_sabe: number
+  /** Brancos e "não sabe" ponderados por município (mesmo peso dos candidatos). */
+  brancoPond?: number
+  naoSabePond?: number
   regional?: RegiaoResultadoLeve[]
 }
 
@@ -92,6 +101,8 @@ export type Meta = {
   turno: 1 | 2
   /** Quem contratou a pesquisa — exigido na divulgação (Lei 9.504/97 art. 33) */
   contratante: string
+  /** Descrição da ponderação aplicada aos percentuais (registro PesqEle). */
+  ponderacao?: string
 }
 
 export type Pesquisa = {
@@ -138,13 +149,23 @@ function rankColor(i: number, total: number) {
   return `hsl(${hue.toFixed(1)}, ${sat.toFixed(0)}%, ${lig.toFixed(0)}%)`
 }
 
+/** Voto ponderado do candidato (cai no bruto quando a ponderação não veio). */
+const vpond = (c: Candidato) => c.votosPond ?? c.votos
+
 function totalsFor(c: CargoCandidato) {
   const validos = c.candidatos.reduce((a, b) => a + b.votos, 0)
+  const validosPond = c.candidatos.reduce((a, b) => a + vpond(b), 0)
+  const brancoPond = c.brancoPond ?? c.branco ?? 0
+  const naoSabePond = c.naoSabePond ?? c.nao_sabe ?? 0
   return {
     validos,
     branco: c.branco ?? 0,
     nao_sabe: c.nao_sabe ?? 0,
     total: validos + (c.branco ?? 0) + (c.nao_sabe ?? 0),
+    validosPond,
+    brancoPond,
+    naoSabePond,
+    totalPond: validosPond + brancoPond + naoSabePond,
   }
 }
 
@@ -203,14 +224,16 @@ export function Detalhe({
   amostra?: number
 }) {
   const t = totalsFor(cargo)
+  // Ordem e percentuais principais pelo PONDERADO (resultado oficial,
+  // conforme o registro PesqEle); o bruto aparece ao lado em cada linha.
   const ordered = useMemo(
-    () => [...cargo.candidatos].sort((a, b) => b.votos - a.votos),
+    () => [...cargo.candidatos].sort((a, b) => vpond(b) - vpond(a) || b.votos - a.votos),
     [cargo.candidatos],
   )
   const lider = ordered[0]
   const segundo = ordered[1]
-  const liderPct = lider ? pct(lider.votos, t.total) : 0
-  const segundoPct = segundo ? pct(segundo.votos, t.total) : 0
+  const liderPct = lider ? pct(vpond(lider), t.totalPond) : 0
+  const segundoPct = segundo ? pct(vpond(segundo), t.totalPond) : 0
   const dif = liderPct - segundoPct
 
   const [filtro, setFiltro] = useState<'todos' | 'eleitos' | 'empate'>('todos')
@@ -235,6 +258,10 @@ export function Detalhe({
             {amostra ? `Amostra: ${fmt(amostra)} eleitores · ` : ''}
             {fmt(t.total)} votos contabilizados neste cargo
             {cargo.vagas ? ` · ${cargo.vagas} cadeiras em disputa` : ''}
+          </p>
+          <p className="rs-detail-meta" style={{ marginTop: 4 }}>
+            Percentual <strong>ponderado por município</strong> (eleitorado TSE ÷ amostra),
+            conforme o registro no PesqEle · ao lado, o <strong>bruto</strong> (contagem simples).
           </p>
         </div>
         <button className="rs-close" onClick={onClose} aria-label="Fechar">
@@ -280,6 +307,7 @@ export function Detalhe({
             c={c}
             posicao={ordered.indexOf(c) + 1}
             totalVal={t.total}
+            totalPond={t.totalPond}
             vagas={cargo.vagas}
             totalLista={ordered.length}
             onAbrirBio={() => setBioOpen({ nome: c.nome, partido: c.partido })}
@@ -393,6 +421,7 @@ function LinhaCandidato({
   c,
   posicao,
   totalVal,
+  totalPond,
   vagas,
   totalLista,
   onAbrirBio,
@@ -400,11 +429,15 @@ function LinhaCandidato({
   c: Candidato
   posicao: number
   totalVal: number
+  /** Total ponderado do cargo (válidos + brancos + não sabe, com peso por município). */
+  totalPond?: number
   vagas?: number
   totalLista: number
   onAbrirBio?: () => void
 }) {
-  const p = pct(c.votos, totalVal)
+  // Percentual principal = ponderado; bruto vai ao lado.
+  const p = pct(vpond(c), totalPond ?? totalVal)
+  const pBruto = pct(c.votos, totalVal)
   const barColor = rankColor((posicao || 1) - 1, totalLista || 10)
   const eleito = c.eleito === true
   return (
@@ -468,8 +501,15 @@ function LinhaCandidato({
           {c.impedimento && (
             <span className="rs-tag rs-tag-warn">sub judice</span>
           )}
-          <span className="rs-row-pct">
+          <span className="rs-row-pct" title="Ponderado por município">
             {p.toFixed(1).replace('.', ',')}%
+          </span>
+          <span
+            className="rs-row-bruto"
+            title="Bruto: contagem simples, sem ponderação"
+            style={{ fontSize: '0.78em', color: '#6b7280', whiteSpace: 'nowrap' }}
+          >
+            bruto {pBruto.toFixed(1).replace('.', ',')}%
           </span>
         </div>
         <div className="rs-row-track">
@@ -547,12 +587,23 @@ function RegionalStrip({ regional }: { regional: RegiaoResultadoLeve[] }) {
 function Totais({
   t,
 }: {
-  t: { validos: number; branco: number; nao_sabe: number; total: number }
+  t: {
+    validos: number
+    branco: number
+    nao_sabe: number
+    total: number
+    validosPond?: number
+    brancoPond?: number
+    naoSabePond?: number
+    totalPond?: number
+  }
 }) {
   if (t.total === 0) return null
-  const v = pct(t.validos, t.total)
-  const b = pct(t.branco, t.total)
-  const ns = pct(t.nao_sabe, t.total)
+  // Percentuais ponderados por município; os absolutos são a contagem bruta.
+  const tp = t.totalPond && t.totalPond > 0 ? t.totalPond : t.total
+  const v = pct(t.validosPond ?? t.validos, tp)
+  const b = pct(t.brancoPond ?? t.branco, tp)
+  const ns = pct(t.naoSabePond ?? t.nao_sabe, tp)
   return (
     <div className="rs-totais">
       <div className="rs-tot-bar">
@@ -565,19 +616,25 @@ function Totais({
           <span className="rs-tot-dot" style={{ background: '#1d3a8a' }} />
           <span className="rs-tot-rot">Válidos</span>
           <span className="rs-tot-val">{fmtPct(v, 2)}</span>
-          <span className="rs-tot-abs">{fmt(t.validos)}</span>
+          <span className="rs-tot-abs">
+            {fmt(t.validos)} · bruto {fmtPct(pct(t.validos, t.total), 2)}
+          </span>
         </div>
         <div>
           <span className="rs-tot-dot" style={{ background: '#a1a1aa' }} />
           <span className="rs-tot-rot">Brancos</span>
           <span className="rs-tot-val">{fmtPct(b, 2)}</span>
-          <span className="rs-tot-abs">{fmt(t.branco)}</span>
+          <span className="rs-tot-abs">
+            {fmt(t.branco)} · bruto {fmtPct(pct(t.branco, t.total), 2)}
+          </span>
         </div>
         <div>
           <span className="rs-tot-dot" style={{ background: '#d4d4d8' }} />
           <span className="rs-tot-rot">Não sabe</span>
           <span className="rs-tot-val">{fmtPct(ns, 2)}</span>
-          <span className="rs-tot-abs">{fmt(t.nao_sabe)}</span>
+          <span className="rs-tot-abs">
+            {fmt(t.nao_sabe)} · bruto {fmtPct(pct(t.nao_sabe, t.total), 2)}
+          </span>
         </div>
       </div>
     </div>

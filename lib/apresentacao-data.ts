@@ -17,6 +17,7 @@ import type {
   ApresSponsor,
 } from '@/components/apresentacao-tv'
 import type {
+  Candidato,
   CargoCandidato,
   CargoZona,
   Pesquisa,
@@ -69,7 +70,17 @@ function montaCargo(
   const total = validos + cargo.branco + cargo.nao_sabe
   if (total === 0) return null
 
-  const ordenados = [...cargo.candidatos].sort((a, b) => b.votos - a.votos)
+  // Ponderado por município = resultado oficial (registro PesqEle); o bruto
+  // vai junto em cada linha (pctBruto).
+  const vp = (c: Candidato) => c.votosPond ?? c.votos
+  const validosPond = cargo.candidatos.reduce((s, c) => s + vp(c), 0)
+  const brancoPond = cargo.brancoPond ?? cargo.branco
+  const naoSabePond = cargo.naoSabePond ?? cargo.nao_sabe
+  const totalPond = validosPond + brancoPond + naoSabePond || total
+  const pp = (x: number) => (totalPond > 0 ? (x / totalPond) * 100 : 0)
+  const pb = (x: number) => (total > 0 ? (x / total) * 100 : 0)
+
+  const ordenados = [...cargo.candidatos].sort((a, b) => vp(b) - vp(a) || b.votos - a.votos)
 
   // Deputado: "Mais votados" precisa ir pelo menos até o ÚLTIMO ELEITO —
   // como a vaga vem do quociente do partido, um eleito pode estar bem
@@ -90,25 +101,27 @@ function montaCargo(
   const topN = ordenados.slice(0, corte)
   const resto = ordenados.slice(corte)
   const restoVotos = resto.reduce((s, c) => s + c.votos, 0)
+  const restoPond = resto.reduce((s, c) => s + vp(c), 0)
 
   const candRows: ApresRow[] = topN.map((c) => ({
     name: c.nome,
     party: c.partido || undefined,
     num: numUrna(meta.key, c.numero),
-    pct: total > 0 ? (c.votos / total) * 100 : 0,
+    pct: pp(vp(c)),
+    pctBruto: pb(c.votos),
     color: c.cor || '#2F6FE0',
     eleito: c.eleito,
   }))
 
   const rows: ApresRow[] = [...candRows]
   if (restoVotos > 0) {
-    rows.push({ name: 'Outros', pct: (restoVotos / total) * 100, other: true })
+    rows.push({ name: 'Outros', pct: pp(restoPond), pctBruto: pb(restoVotos), other: true })
   }
   if (cargo.branco > 0) {
-    rows.push({ name: 'Brancos / Nulos', pct: (cargo.branco / total) * 100, other: true })
+    rows.push({ name: 'Brancos / Nulos', pct: pp(brancoPond), pctBruto: pb(cargo.branco), other: true })
   }
   if (cargo.nao_sabe > 0) {
-    rows.push({ name: 'Indecisos', pct: (cargo.nao_sabe / total) * 100, other: true })
+    rows.push({ name: 'Indecisos', pct: pp(naoSabePond), pctBruto: pb(cargo.nao_sabe), other: true })
   }
 
   // Deputado: lista dos candidatos ELEITOS pela projeção (D'Hondt), pra
@@ -123,7 +136,8 @@ function montaCargo(
         name: c.nome,
         party: coligacaoCurta(c.coligacao) ?? c.partido ?? undefined,
         num: numUrna(meta.key, c.numero),
-        pct: total > 0 ? (c.votos / total) * 100 : 0,
+        pct: pp(vp(c)),
+        pctBruto: pb(c.votos),
         color: c.cor || '#2F6FE0',
         eleito: true,
       }))
@@ -292,6 +306,7 @@ export async function construirApresData(
     cargos,
     amostra: meta.n.toLocaleString('pt-BR'),
     margem: meta.margem,
+    ponderacao: meta.ponderacao,
     oferecimento: sponsors(patroPorCota.diamante),
     patrocinio: sponsors(patroPorCota.ouro),
     apoio: sponsors(patroPorCota.prata),

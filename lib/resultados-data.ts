@@ -17,6 +17,7 @@ import type {
   CargoZona,
   Pesquisa,
 } from '@/components/resultados-dashboard'
+import { calcularPesos } from '@/lib/ponderacao'
 import { projetarCadeiras, type PartidoVotos } from '@/lib/projecao'
 import { lerTudo } from '@/lib/supabase/ler-tudo'
 import {
@@ -130,6 +131,9 @@ export async function carregarResultados(
     { data: candidatosCargoSimples },
     { data: municipiosRegiaoData },
     { data: votosRegionaisData },
+    { data: respostasMunData },
+    { data: partidoMunData },
+    { data: bnsMunData },
   ] = await Promise.all([
     db
       .from('candidatos_pesquisa')
@@ -180,7 +184,7 @@ export async function carregarResultados(
       .in('cargo', ['presidente', 'governador', 'senador']),
     db
       .from('municipios_se')
-      .select('ibge_codigo, regiao'),
+      .select('ibge_codigo, regiao, eleitorado'),
     // Votos por (candidato, município) já agregados + paginação: o fetch
     // cru de votos_pesquisa truncava em 1.000 linhas e os líderes por
     // região saíam de uma fatia minúscula dos ~36 mil votos.
@@ -194,11 +198,84 @@ export async function carregarResultados(
         .from('v_proj_candidato_mun')
         .select('candidato_id, municipio_ibge, cargo, votos')
         .eq('edicao_id', edicao.id)
-        .in('cargo', ['presidente', 'governador', 'senador'])
         .not('municipio_ibge', 'is', null)
         .range(de, ate),
     ).then((data) => ({ data })),
+    // ----- Ponderação por município (registro PesqEle: peso = share do
+    // município no eleitorado TSE ÷ share na amostra) -----
+    db
+      .from('v_respostas_municipio')
+      .select('municipio_ibge, respostas')
+      .eq('edicao_id', edicao.id),
+    lerTudo<{ partido_id: string; municipio_ibge: number; cargo: string; votos: number }>(
+      (de, ate) =>
+        db
+          .from('v_proj_partido_mun')
+          .select('partido_id, municipio_ibge, cargo, votos')
+          .eq('edicao_id', edicao.id)
+          .in('cargo', ['federal', 'estadual'])
+          .not('municipio_ibge', 'is', null)
+          .range(de, ate),
+    ).then((data) => ({ data })),
+    db
+      .from('v_votos_branco_nao_sabe_mun')
+      .select('cargo, metodo, municipio_ibge, votos')
+      .eq('edicao_id', edicao.id),
   ])
+
+  // ----- Pesos por município (mesma fórmula da projeção do admin) -----
+  const pesos = calcularPesos(
+    ((municipiosRegiaoData ?? []) as Array<{
+      ibge_codigo: number
+      regiao: string
+      eleitorado: number | null
+    }>).map((m) => ({ ibgeCodigo: m.ibge_codigo, nome: '', eleitorado: m.eleitorado })),
+    new Map(
+      ((respostasMunData ?? []) as Array<{ municipio_ibge: number; respostas: number }>).map(
+        (r) => [r.municipio_ibge, r.respostas],
+      ),
+    ),
+  )
+  const pesoDe = (ibge: number | null | undefined) =>
+    ibge == null ? 0 : (pesos.get(ibge)?.peso ?? 0)
+
+  // Votos ponderados por candidato (todos os cargos) e por partido (proporcional)
+  const votosPondCandidato = new Map<string, number>()
+  for (const r of (votosRegionaisData ?? []) as Array<{
+    candidato_id: string
+    municipio_ibge: number
+    cargo: string
+    votos: number
+  }>) {
+    votosPondCandidato.set(
+      r.candidato_id,
+      (votosPondCandidato.get(r.candidato_id) ?? 0) + r.votos * pesoDe(r.municipio_ibge),
+    )
+  }
+  const votosPondPartido = new Map<string, number>()
+  for (const r of (partidoMunData ?? []) as Array<{
+    partido_id: string
+    municipio_ibge: number
+    cargo: string
+    votos: number
+  }>) {
+    const k = `${r.cargo}:${r.partido_id}`
+    votosPondPartido.set(k, (votosPondPartido.get(k) ?? 0) + r.votos * pesoDe(r.municipio_ibge))
+  }
+  const bnsPond: Record<string, { branco: number; nao_sabe: number }> = {}
+  for (const r of (bnsMunData ?? []) as Array<{
+    cargo: string
+    metodo: string
+    municipio_ibge: number
+    votos: number
+  }>) {
+    if (!bnsPond[r.cargo]) bnsPond[r.cargo] = { branco: 0, nao_sabe: 0 }
+    const w = r.votos * pesoDe(r.municipio_ibge)
+    if (r.metodo === 'branco') bnsPond[r.cargo].branco += w
+    if (r.metodo === 'nao_sabe') bnsPond[r.cargo].nao_sabe += w
+  }
+  const PONDERACAO =
+    'Ponderação por município: peso = participação do município no eleitorado (TSE) ÷ participação na amostra'
 
   // ----- Branco / Não sei -----
   const brancoNaoSei: Record<string, { branco: number; nao_sabe: number }> = {}
@@ -287,36 +364,40 @@ export async function carregarResultados(
           partido: m.sigla,
           cor: m.cor,
           votos: r.votos,
+          votosPond: votosPondCandidato.get(r.candidato_id) ?? 0,
           foto: r.foto_url ?? m.foto,
           impedimento: m.impedimento,
         }
       })
-      .sort((a, b) => b.votos - a.votos)
+      // Ordem e projeções pelo PONDERADO (resultado oficial conforme o
+      // registro); o bruto fica ao lado, na tela.
+      .sort((a, b) => (b.votosPond ?? 0) - (a.votosPond ?? 0) || b.votos - a.votos)
+    const vp = (c: Candidato) => c.votosPond ?? c.votos
 
     if (cargoKey === 'senador') {
       for (let i = 0; i < Math.min(2, candidatos.length); i++) {
-        if (candidatos[i].votos > 0) candidatos[i].eleito = true
+        if (vp(candidatos[i]) > 0) candidatos[i].eleito = true
       }
-    } else if (candidatos.length > 0 && candidatos[0].votos > 0) {
-      const totalValidos = candidatos.reduce((acc, c) => acc + c.votos, 0)
-      if (candidatos[0].votos / totalValidos > 0.5) {
+    } else if (candidatos.length > 0 && vp(candidatos[0]) > 0) {
+      const totalValidos = candidatos.reduce((acc, c) => acc + vp(c), 0)
+      if (vp(candidatos[0]) / totalValidos > 0.5) {
         candidatos[0].eleito = true
       } else {
         for (let i = 0; i < Math.min(2, candidatos.length); i++) {
-          if (candidatos[i].votos > 0) candidatos[i].segundoTurno = true
+          if (vp(candidatos[i]) > 0) candidatos[i].segundoTurno = true
         }
       }
     }
 
     if (cargoKey === 'senador' && candidatos.length > 2) {
-      const totalCargo = candidatos.reduce((s, c) => s + c.votos, 0)
+      const totalCargo = candidatos.reduce((s, c) => s + vp(c), 0)
       if (totalCargo > 0) {
         const cutoff = candidatos[1]
-        const pCut = cutoff.votos / totalCargo
+        const pCut = vp(cutoff) / totalCargo
         const meCut = 1.96 * Math.sqrt((pCut * (1 - pCut)) / totalCargo)
         for (let i = 2; i < candidatos.length; i++) {
           const cand = candidatos[i]
-          const p = cand.votos / totalCargo
+          const p = vp(cand) / totalCargo
           const me = 1.96 * Math.sqrt((p * (1 - p)) / totalCargo)
           if (pCut - p <= meCut + me) {
             cand.empate = true
@@ -372,6 +453,8 @@ export async function carregarResultados(
       candidatos,
       branco: bns.branco,
       nao_sabe: bns.nao_sabe,
+      brancoPond: bnsPond[cargoKey]?.branco ?? 0,
+      naoSabePond: bnsPond[cargoKey]?.nao_sabe ?? 0,
       regional: regionalLeve?.map((r) => ({
         regiao: r.regiao,
         rotulo: r.rotulo,
@@ -431,14 +514,15 @@ export async function carregarResultados(
       // Coligação/federação oficial (TSE) do partido neste cargo, via candidato.
       coligacao:
         cands.find((c) => c.partido_id === l.partido_id && c.coligacao)?.coligacao ?? null,
-      votosLegenda: l.votos,
+      // Projeção de cadeiras sobre os votos PONDERADOS (resultado oficial).
+      votosLegenda: Math.round(votosPondPartido.get(`${cargoKey}:${l.partido_id}`) ?? 0),
       candidatos: cands
         .filter((c) => c.partido_id === l.partido_id)
         .map((c) => ({
           candidatoId: c.id,
           numero: c.numero,
           nomeUrna: c.nome_urna,
-          votos: votosCandidato.get(c.id) ?? 0,
+          votos: Math.round(votosPondCandidato.get(c.id) ?? 0),
         })),
     }))
     const projecao = projetarCadeiras(partidosInput, VAGAS[cargoKey])
@@ -457,15 +541,16 @@ export async function carregarResultados(
           partido: partido?.sigla ?? '',
           cor: partido?.cor_hex ?? '#52525b',
           votos: votosCandidato.get(c.id) ?? 0,
+          votosPond: votosPondCandidato.get(c.id) ?? 0,
           foto: c.foto_url,
           impedimento: c.impedimento,
           coligacao: c.coligacao,
           eleito: eleitosIds.has(c.id),
         }
       })
-      .sort((a, b) => b.votos - a.votos)
+      .sort((a, b) => (b.votosPond ?? 0) - (a.votosPond ?? 0) || b.votos - a.votos)
 
-    const totalNominal = candidatos.reduce((s, c) => s + c.votos, 0)
+    const totalNominal = candidatos.reduce((s, c) => s + (c.votosPond ?? c.votos), 0)
 
     // Suplência e empate são por AGREMIAÇÃO: na federação a lista nominal é
     // única (UNIÃO e PP disputam a mesma ordem), e com as travas de 10%/20%
@@ -525,6 +610,8 @@ export async function carregarResultados(
       candidatos,
       branco: bns.branco,
       nao_sabe: bns.nao_sabe,
+      brancoPond: bnsPond[cargoKey]?.branco ?? 0,
+      naoSabePond: bnsPond[cargoKey]?.nao_sabe ?? 0,
     }
   }
 
@@ -568,6 +655,7 @@ export async function carregarResultados(
       edicao: edicao.nome,
       turno: (edicao.turno === 2 ? 2 : 1) as 1 | 2,
       contratante: CONTRATANTE,
+      ponderacao: PONDERACAO,
     },
     governador: montaCargoCandidato('governador'),
     senador: montaCargoCandidato('senador'),

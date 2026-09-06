@@ -122,6 +122,11 @@ export default async function ResultadosHubPage() {
             <FichaCard rotulo="Margem" valor={meta.margem} sub="Erro amostral" />
             <FichaCard rotulo="Confiança" valor={meta.confianca} sub="Intervalo" />
             <FichaCard
+              rotulo="Ponderação"
+              valor="Por município"
+              sub="Eleitorado TSE ÷ amostra · bruto ao lado"
+            />
+            <FichaCard
               rotulo="Divulgada"
               valor={meta.divulgada_em}
               sub={ehDemo ? 'Demonstração' : `TRE: ${meta.registro_tre}`}
@@ -132,6 +137,16 @@ export default async function ResultadosHubPage() {
               sub={`CNPJ ${CONTRATANTE_CNPJ}`}
             />
           </section>
+          <p
+            className="rs-hub-lead"
+            style={{ fontSize: 13, color: '#52525b', marginTop: 8 }}
+          >
+            <strong>Nota metodológica (06/09/2026):</strong> os percentuais passam a ser
+            apresentados <strong>ponderados por município</strong> (peso = participação do
+            município no eleitorado TSE ÷ participação na amostra), como previsto no plano
+            amostral registrado no PesqEle. Ao lado de cada percentual está o resultado{' '}
+            <strong>bruto</strong> (contagem simples), que era o exibido até esta data.
+          </p>
 
           {/* Patrocinador Diamante — apresentada por */}
           {patroPorCota.diamante.length > 0 && (

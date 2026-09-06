@@ -22,7 +22,10 @@ export type ApresRow = {
   name: string
   party?: string
   num?: string
+  /** Percentual ponderado por município (oficial). */
   pct: number
+  /** Percentual bruto (contagem simples) — mostrado pequeno, ao lado. */
+  pctBruto?: number
   color?: string
   other?: boolean
   /** Projeção: este candidato estaria eleito */
@@ -74,6 +77,8 @@ export type ApresData = {
   cargos: ApresCargo[]
   amostra: string
   margem: string
+  /** Descrição da ponderação aplicada aos percentuais (ficha técnica). */
+  ponderacao?: string
   oferecimento: ApresSponsor[]
   patrocinio: ApresSponsor[]
   apoio: ApresSponsor[]
@@ -207,6 +212,7 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
         color,
         nameColor: r.other ? '#9fb0d8' : '#ffffff',
         displayPct: fmt(r.pct),
+        displayBruto: r.pctBruto != null ? fmt(r.pctBruto) : null,
         width: grown ? `${(r.pct / maxPct) * 100}%` : '0%',
         isLeader,
         eleito: !!r.eleito,
@@ -457,6 +463,9 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
                       </div>
                       <span className="apres-pct" style={{ color: b.nameColor }}>
                         {b.displayPct}%
+                        {b.displayBruto && (
+                          <span className="apres-bruto">bruto {b.displayBruto}%</span>
+                        )}
                       </span>
                     </div>
                     <div className="apres-track">
@@ -535,6 +544,12 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
                 <span>Amostra</span>
                 <b>{data.amostra} eleitores</b>
               </div>
+              {data.ponderacao && (
+                <div className="apres-ficha-row" title={data.ponderacao}>
+                  <span>Ponderação</span>
+                  <b>Por município · bruto ao lado</b>
+                </div>
+              )}
               <div className="apres-ficha-row">
                 <span>Margem de erro</span>
                 <b>{data.margem}</b>
@@ -683,7 +698,8 @@ const CSS = `
 .apres-numchip{font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;color:#cdd8f4;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);padding:3px 9px;border-radius:7px;letter-spacing:.04em;}
 .apres-cand{font-family:'Archivo',sans-serif;font-weight:700;font-size:25px;}
 .apres-party{font-size:15px;font-weight:600;color:#8294c2;}
-.apres-pct{font-family:'Archivo',sans-serif;font-weight:800;font-size:30px;}
+.apres-pct{font-family:'Archivo',sans-serif;font-weight:800;font-size:30px;display:flex;flex-direction:column;align-items:flex-end;line-height:1;}
+.apres-bruto{font-family:'Archivo',sans-serif;font-weight:600;font-size:12px;letter-spacing:.04em;color:#9fb0d8;margin-top:4px;}
 .apres-track{height:26px;border-radius:8px;background:rgba(255,255,255,.07);overflow:hidden;}
 .apres-fillbar{height:100%;border-radius:8px;transition:width .95s cubic-bezier(.22,1,.36,1);}
 .apres-destaque{display:flex;align-items:center;gap:16px;background:rgba(244,182,44,.1);border:1px solid rgba(244,182,44,.28);border-radius:14px;padding:18px 24px;margin-top:24px;}
