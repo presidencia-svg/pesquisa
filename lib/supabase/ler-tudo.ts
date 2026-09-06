@@ -16,13 +16,32 @@
  * 389 votos em vez de 653 (perdeu a linha de Aracaju).
  */
 export async function lerTudo<T>(
-  fazerQuery: (de: number, ate: number) => PromiseLike<{ data: T[] | null }>,
+  fazerQuery: (de: number, ate: number) => PromiseLike<{ data: T[] | null; error?: unknown }>,
+  /**
+   * Chave única de cada linha (ex.: `${r.candidato_id}:${r.municipio_ibge}`).
+   * Se a mesma chave aparecer duas vezes — sintoma de paginação sem ORDER BY
+   * estável — a leitura FALHA em vez de somar errado em silêncio.
+   */
+  chave?: (row: T) => string,
 ): Promise<T[]> {
   const PAGINA = 1000
   const out: T[] = []
+  const vistas = new Set<string>()
   for (let de = 0; ; de += PAGINA) {
-    const { data } = await fazerQuery(de, de + PAGINA - 1)
+    const { data, error } = await fazerQuery(de, de + PAGINA - 1)
+    if (error) throw new Error(`lerTudo: ${String((error as { message?: string })?.message ?? error)}`)
     if (!data || data.length === 0) break
+    if (chave) {
+      for (const row of data) {
+        const k = chave(row)
+        if (vistas.has(k)) {
+          throw new Error(
+            `lerTudo: linha repetida entre páginas (${k}) — a consulta precisa de .order() por chave estável`,
+          )
+        }
+        vistas.add(k)
+      }
+    }
     out.push(...data)
     if (data.length < PAGINA) break
   }

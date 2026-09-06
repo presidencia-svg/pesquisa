@@ -17,7 +17,6 @@ import type {
   CargoZona,
   Pesquisa,
 } from '@/components/resultados-dashboard'
-import { calcularPesos } from '@/lib/ponderacao'
 import { projetarCadeiras, type PartidoVotos } from '@/lib/projecao'
 import { lerTudo } from '@/lib/supabase/ler-tudo'
 import {
@@ -131,9 +130,9 @@ export async function carregarResultados(
     { data: candidatosCargoSimples },
     { data: municipiosRegiaoData },
     { data: votosRegionaisData },
-    { data: respostasMunData },
-    { data: partidoMunData },
-    { data: bnsMunData },
+    { data: candPondData },
+    { data: legendaPondData },
+    { data: bnsPondData },
   ] = await Promise.all([
     db
       .from('candidatos_pesquisa')
@@ -185,100 +184,81 @@ export async function carregarResultados(
     db
       .from('municipios_se')
       .select('ibge_codigo, regiao, eleitorado'),
-    // Votos por (candidato, município) já agregados + paginação: o fetch
-    // cru de votos_pesquisa truncava em 1.000 linhas e os líderes por
-    // região saíam de uma fatia minúscula dos ~36 mil votos.
+    // Votos por (candidato, município) só pros LÍDERES POR REGIÃO dos cargos
+    // majoritários. Paginado com ORDER BY estável e trava de duplicidade —
+    // sem ordem, uma página repetia linhas e a seguinte omitia outras.
     lerTudo<{
       candidato_id: string
       municipio_ibge: number
       cargo: string
       votos: number
-    }>((de, ate) =>
-      db
-        .from('v_proj_candidato_mun')
-        .select('candidato_id, municipio_ibge, cargo, votos')
-        .eq('edicao_id', edicao.id)
-        .not('municipio_ibge', 'is', null)
-        // ORDER BY estável: paginar sem ordem repete/omite linhas.
-        .order('candidato_id')
-        .order('municipio_ibge')
-        .range(de, ate),
-    ).then((data) => ({ data })),
-    // ----- Ponderação por município (registro PesqEle: peso = share do
-    // município no eleitorado TSE ÷ share na amostra) -----
-    db
-      .from('v_respostas_municipio')
-      .select('municipio_ibge, respostas')
-      .eq('edicao_id', edicao.id),
-    lerTudo<{ partido_id: string; municipio_ibge: number; cargo: string; votos: number }>(
+    }>(
       (de, ate) =>
         db
-          .from('v_proj_partido_mun')
-          .select('partido_id, municipio_ibge, cargo, votos')
+          .from('v_proj_candidato_mun')
+          .select('candidato_id, municipio_ibge, cargo, votos')
           .eq('edicao_id', edicao.id)
-          .in('cargo', ['federal', 'estadual'])
+          .in('cargo', ['presidente', 'governador', 'senador'])
           .not('municipio_ibge', 'is', null)
-          .order('cargo')
-          .order('partido_id')
+          .order('candidato_id')
           .order('municipio_ibge')
           .range(de, ate),
+      (r) => `${r.candidato_id}:${r.municipio_ibge}`,
     ).then((data) => ({ data })),
+    // ----- Ponderação por município, CALCULADA NO BANCO (migration 045) -----
+    // Registro PesqEle: peso = share do município no eleitorado TSE ÷ share na
+    // amostra. As views devolvem o resultado já ponderado por candidato /
+    // partido / branco — poucas centenas de linhas, sem paginação.
     db
-      .from('v_votos_branco_nao_sabe_mun')
-      .select('cargo, metodo, municipio_ibge, votos')
+      .from('v_resultados_candidato_pond')
+      .select('cargo, candidato_id, votos, votos_pond')
+      .eq('edicao_id', edicao.id),
+    db
+      .from('v_resultados_legenda_pond')
+      .select('cargo, partido_id, votos, votos_pond')
+      .eq('edicao_id', edicao.id)
+      .in('cargo', ['federal', 'estadual']),
+    db
+      .from('v_votos_branco_nao_sabe_pond')
+      .select('cargo, metodo, votos, votos_pond')
       .eq('edicao_id', edicao.id),
   ])
 
-  // ----- Pesos por município (mesma fórmula da projeção do admin) -----
-  const pesos = calcularPesos(
-    ((municipiosRegiaoData ?? []) as Array<{
-      ibge_codigo: number
-      regiao: string
-      eleitorado: number | null
-    }>).map((m) => ({ ibgeCodigo: m.ibge_codigo, nome: '', eleitorado: m.eleitorado })),
-    new Map(
-      ((respostasMunData ?? []) as Array<{ municipio_ibge: number; respostas: number }>).map(
-        (r) => [r.municipio_ibge, r.respostas],
-      ),
-    ),
-  )
-  const pesoDe = (ibge: number | null | undefined) =>
-    ibge == null ? 0 : (pesos.get(ibge)?.peso ?? 0)
+  // Trava: as views agregadas têm que caber numa resposta (limite 1.000 do
+  // PostgREST). Se um dia passar, é pra FALHAR, não pra publicar parcial.
+  if ((candPondData ?? []).length >= 1000 || (legendaPondData ?? []).length >= 1000) {
+    throw new Error('resultados: view ponderada devolveu 1.000+ linhas — paginar antes de publicar')
+  }
 
   // Votos ponderados por candidato (todos os cargos) e por partido (proporcional)
   const votosPondCandidato = new Map<string, number>()
-  for (const r of (votosRegionaisData ?? []) as Array<{
-    candidato_id: string
-    municipio_ibge: number
+  for (const r of (candPondData ?? []) as Array<{
     cargo: string
+    candidato_id: string
     votos: number
+    votos_pond: number | string
   }>) {
-    votosPondCandidato.set(
-      r.candidato_id,
-      (votosPondCandidato.get(r.candidato_id) ?? 0) + r.votos * pesoDe(r.municipio_ibge),
-    )
+    votosPondCandidato.set(r.candidato_id, Number(r.votos_pond))
   }
   const votosPondPartido = new Map<string, number>()
-  for (const r of (partidoMunData ?? []) as Array<{
-    partido_id: string
-    municipio_ibge: number
+  for (const r of (legendaPondData ?? []) as Array<{
     cargo: string
+    partido_id: string
     votos: number
+    votos_pond: number | string
   }>) {
-    const k = `${r.cargo}:${r.partido_id}`
-    votosPondPartido.set(k, (votosPondPartido.get(k) ?? 0) + r.votos * pesoDe(r.municipio_ibge))
+    votosPondPartido.set(`${r.cargo}:${r.partido_id}`, Number(r.votos_pond))
   }
   const bnsPond: Record<string, { branco: number; nao_sabe: number }> = {}
-  for (const r of (bnsMunData ?? []) as Array<{
+  for (const r of (bnsPondData ?? []) as Array<{
     cargo: string
     metodo: string
-    municipio_ibge: number
     votos: number
+    votos_pond: number | string
   }>) {
     if (!bnsPond[r.cargo]) bnsPond[r.cargo] = { branco: 0, nao_sabe: 0 }
-    const w = r.votos * pesoDe(r.municipio_ibge)
-    if (r.metodo === 'branco') bnsPond[r.cargo].branco += w
-    if (r.metodo === 'nao_sabe') bnsPond[r.cargo].nao_sabe += w
+    if (r.metodo === 'branco') bnsPond[r.cargo].branco += Number(r.votos_pond)
+    if (r.metodo === 'nao_sabe') bnsPond[r.cargo].nao_sabe += Number(r.votos_pond)
   }
   const PONDERACAO =
     'Ponderação por município: peso = participação do município no eleitorado (TSE) ÷ participação na amostra'

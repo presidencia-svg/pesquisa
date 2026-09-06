@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { coligacaoCurta } from '@/lib/federacoes'
 import { calcularPesos } from '@/lib/ponderacao'
+import { lerTudo as lerTudoLib } from '@/lib/supabase/ler-tudo'
 import {
   projetarCadeiras,
   type PartidoVotos,
@@ -21,18 +22,13 @@ type SearchParams = { ponderado?: string }
  * Lê todas as linhas de uma view paginando — o PostgREST corta em 1.000 linhas
  * por padrão (max-rows). Sem isto, a projeção rodava sobre 1.000 votos só.
  */
+// Delegado pra lib/supabase/ler-tudo: paginação com trava de duplicidade —
+// a mesma chave em duas páginas faz a leitura FALHAR em vez de somar errado.
 async function lerTudo<T>(
-  fazerQuery: (de: number, ate: number) => PromiseLike<{ data: T[] | null }>,
+  fazerQuery: (de: number, ate: number) => PromiseLike<{ data: T[] | null; error?: unknown }>,
+  chave?: (row: T) => string,
 ): Promise<T[]> {
-  const PAGINA = 1000
-  const out: T[] = []
-  for (let de = 0; ; de += PAGINA) {
-    const { data } = await fazerQuery(de, de + PAGINA - 1)
-    if (!data || data.length === 0) break
-    out.push(...data)
-    if (data.length < PAGINA) break
-  }
-  return out
+  return lerTudoLib(fazerQuery, chave)
 }
 
 export default async function ProjecaoPage({
@@ -121,6 +117,7 @@ export default async function ProjecaoPage({
         .order('partido_id')
         .order('municipio_ibge')
         .range(de, ate),
+      (r) => `${r.partido_id}:${r.municipio_ibge}`,
     )
     const votosPartidoBruto = new Map<string, number>()
     const votosPartidoPond = new Map<string, number>()
@@ -150,6 +147,7 @@ export default async function ProjecaoPage({
         .order('candidato_id')
         .order('municipio_ibge')
         .range(de, ate),
+      (r) => `${r.candidato_id}:${r.municipio_ibge}`,
     )
     const votosCandidatoBruto = new Map<string, number>()
     const votosCandidatoPond = new Map<string, number>()
