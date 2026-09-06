@@ -199,6 +199,9 @@ export async function carregarResultados(
         .select('candidato_id, municipio_ibge, cargo, votos')
         .eq('edicao_id', edicao.id)
         .not('municipio_ibge', 'is', null)
+        // ORDER BY estável: paginar sem ordem repete/omite linhas.
+        .order('candidato_id')
+        .order('municipio_ibge')
         .range(de, ate),
     ).then((data) => ({ data })),
     // ----- Ponderação por município (registro PesqEle: peso = share do
@@ -215,6 +218,9 @@ export async function carregarResultados(
           .eq('edicao_id', edicao.id)
           .in('cargo', ['federal', 'estadual'])
           .not('municipio_ibge', 'is', null)
+          .order('cargo')
+          .order('partido_id')
+          .order('municipio_ibge')
           .range(de, ate),
     ).then((data) => ({ data })),
     db

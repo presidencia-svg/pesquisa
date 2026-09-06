@@ -116,6 +116,10 @@ export default async function ProjecaoPage({
         .select('partido_id, municipio_ibge, votos')
         .eq('edicao_id', edicao.id)
         .eq('cargo', cargo)
+        // ORDER BY estável é obrigatório pra paginar: sem ele o Postgres pode
+        // devolver linhas repetidas numa página e omitir outras na seguinte.
+        .order('partido_id')
+        .order('municipio_ibge')
         .range(de, ate),
     )
     const votosPartidoBruto = new Map<string, number>()
@@ -143,6 +147,8 @@ export default async function ProjecaoPage({
         .select('candidato_id, municipio_ibge, votos')
         .eq('edicao_id', edicao.id)
         .eq('cargo', cargo)
+        .order('candidato_id')
+        .order('municipio_ibge')
         .range(de, ate),
     )
     const votosCandidatoBruto = new Map<string, number>()
