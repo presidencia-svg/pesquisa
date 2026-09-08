@@ -36,12 +36,14 @@ Por decisão do presidente, o sítio pesquisa.cdlaju.com.br foi retirado do ar p
 - Capturas do item 1.4 e 1.5, com data/hora.
 - Lista do item 2 preenchida, com data/hora.
 
-## 4. Complementação no PesqEle — FEITO em 08/09/2026 (~14h15–14h17, BRT)
+## 4. Complementação no PesqEle — FEITO em 08/09/2026 (14h15–14h55, BRT) e conferido às 15h
 
-Texto de complementação (`pesqele-texto-campo-bairro-municipio.txt`) e PDF de detalhamento (`pesqele-anexo-detalhamento-e-complementacao-art2-par7.pdf`) lançados nos dois registros pela tela "Editar bairro/município e/ou resultado da pesquisa"; sistema: "Dados alterados com sucesso" / "As informações foram incluídas fora do prazo Legal".
+Texto de complementação (`pesqele-texto-campo-bairro-municipio.txt`), PDF de detalhamento (`pesqele-anexo-detalhamento-e-complementacao-art2-par7.pdf`) e relatório completo com os resultados (`pesqele-relatorio-completo-resultados.pdf`) lançados nos dois registros pela tela "Editar bairro/município e/ou resultado da pesquisa"; sistema: "Dados alterados com sucesso" / "As informações foram incluídas fora do prazo Legal". A primeira gravação (14h17) saiu com "¿" no lugar dos travessões; texto regravado com hífens (14h33–14h55).
+
+Conferido no PesqEle Público (pesqele-divulgacao.tse.jus.br) em 08/09/2026: SE-09441/2026 às 15h09 e BR-04041/2026 às 15h16 — os dois mostram a complementação no campo de municípios/bairros e os links dos dois arquivos. Reproduções textuais em `doc07a-…pdf` / `doc07b-…pdf`; capturas recortadas em `doc06-telas-pesqele-2026-09-08.pdf` (gerados por `scripts/pesqele-docs-06-07.py`).
 
 Falta:
 
-1. Salvar as telas de confirmação dos dois registros (doc. 06) e os espelhos atualizados (doc. 07) — Gerenciar Pesquisas Eleitorais → visualizar/imprimir.
-2. Decidir com o(a) advogado(a) e anexar `pesqele-relatorio-completo-resultados.pdf` no slot "Arquivo do relatório completo com os resultados da pesquisa" (estava vazio) — nos dois registros.
-3. Entregar telas, espelhos e o aviso do TRE-SE de 22/08/2026 (`aviso-tre-se-registro-SE-09441-2026-08-22.pdf`, doc. 15) ao(à) advogado(a) para juntar com a defesa.
+1. Se a tela "Dados alterados com sucesso" ainda estiver aberta em alguma aba, capturar (Cmd+Shift+3) e juntar ao doc. 06.
+2. Entregar ao(à) advogado(a) o pacote `envio-advogado-2026-09-08/` (zip em ~/Downloads): minuta, docs. 04–15 disponíveis, decisão e leia-me com as pendências.
+3. No dia do protocolo, o(a) advogado(a) emite a via oficial dos espelhos pelo botão "Imprimir" do PesqEle Público (ou do PesqEle Empresa).

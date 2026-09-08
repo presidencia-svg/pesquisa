@@ -19,7 +19,7 @@ Fontes: banco de dados da pesquisa (tabela `edicao`, trilha `admin_audit_log`, a
 | 04/09/2026, 09:14:54 | **Divulgação** — única ação `marcar_divulgacao`, com código TOTP do responsável | `edicao.divulgada_em` = 2026-09-04T12:14:54.904Z; `admin_audit_log` |
 | 04/09/2026, 09:15–11:15 | 8.050 notificações de resultado por WhatsApp, só a quem optou (8.900 opt-ins) | `eleitores_pesquisa.resultado_enviado_em` (agregado) |
 | 04/09/2026, 09:18 | Documento de complementação revisado com os dados extraídos após a divulgação (10.310 participantes; 75/75 municípios; composição por sexo, idade, instrução, nível) | commit `a536ed7`; `docs/pesqele-registro/complementacao-2026-09-04.md` |
-| 04/09/2026 | [Lançamento da complementação no PesqEle — confirmar se/como foi feito e em que campo] | [recibo] |
+| 04/09 e 05/09/2026 | Nenhum lançamento no PesqEle: o documento de complementação ficou no repositório público e na página de transparência, sem transposição ao formulário do § 7º (falha operacional reconhecida na defesa, item IV.6) | commit `a536ed7`; consulta do juízo ao PesqEle Público em 06/09/2026, 19:58 (decisão, ID 12163646) |
 | 05/09/2026 | Prazo do art. 2º, §7º (dia seguinte ao da divulgação), segundo a decisão | decisão, ID 12163647 |
 | 06/09/2026, 13:31 | Percentuais ponderados por município publicados ao lado dos brutos | commit `9e3f90f` |
 | 06/09/2026, 14:04 e 14:10 | Correção de paginação nas views (limite de 1.000 linhas) e ponderação calculada no banco com verificador automático | commits `026b26c`, `cc9f084` |
@@ -29,11 +29,11 @@ Fontes: banco de dados da pesquisa (tabela `edicao`, trilha `admin_audit_log`, a
 | 08/09/2026, 06:24 | Representada toma conhecimento **informal** da decisão de 07/09/2026, por terceiro (sem intimação nos autos até então) | arquivo PDF recebido às 06:24; PJe a conferir pelo advogado |
 | 08/09/2026 | Mecanismo de suspensão judicial implantado na plataforma (com a chave desligada), Anexo Técnico gerado e pop-up do site da CDL preparado | commits `a0526c2` (pesquisa) e `149b1f8` (cdlaju-site); `anexo-tecnico-numeros.json` |
 | 08/09/2026, 10:47 | **Sítio pesquisa.cdlaju.com.br retirado do ar por inteiro**, por determinação do presidente da CDL, antes da intimação: todas as páginas públicas respondem "site temporariamente indisponível" (HTTP 503, sem números); a interface de situação informa `suspensa: true` e o pop-up de cdlaju.com.br passa a exibir "Divulgação temporariamente suspensa" | commit `b59a662` (10:46); deploy Vercel; conferência de rotas às 10:47:18 |
-| 08/09/2026, ~14:15–14:17 | Complementação do art. 2º, § 7º (III e IV) e arquivo de detalhamento geográfico lançados no PesqEle Empresa, tela "Editar bairro/município e/ou resultado da pesquisa" (§ 7º-C), nos registros SE-09441/2026 e BR-04041/2026; confirmação "Dados alterados com sucesso" (BR-04041/2026 às 14:17) e aviso do sistema "As informações foram incluídas fora do prazo Legal" | Telas de confirmação (doc. 06); espelhos atualizados (doc. 07) |
 | 08/09/2026, ~10:50 | Publicações sobre os resultados **retiradas dos perfis da CDL nas redes sociais** pelo presidente da entidade; **TV Atalaia comunicada** para retirada do material e não reexibição | informação do presidente; capturas e comprovante da comunicação a juntar (doc. 03) |
+| 08/09/2026, 14:15–14:55 | Complementação do art. 2º, § 7º (III e IV), arquivo de detalhamento geográfico e relatório completo com os resultados lançados no PesqEle Empresa, tela "Editar bairro/município e/ou resultado da pesquisa" (§ 7º-C), nos registros SE-09441/2026 e BR-04041/2026; sistema: "Dados alterados com sucesso" e "As informações foram incluídas fora do prazo Legal" (primeira gravação às 14:17; texto regravado com hífens por causa do caractere "¿" gerado pelo sistema) | doc. 06 (capturas 14:06–14:51) |
+| 08/09/2026, 15:09 e 15:16 | PesqEle Público exibe, nos dois registros, a complementação no campo "Dados relativos aos municípios e bairros" e os links dos dois arquivos anexados | doc. 07 (espelhos SE-09441/2026 e BR-04041/2026) |
 | [dd/mm/2026, hh:mm] | Intimação da CDL | [ID] |
 | [dd/mm/2026, hh:mm] | Suspensão acionada (TOTP) — todas as superfícies públicas bloqueadas | `admin_audit_log` (`suspender_divulgacao`) |
-| [dd/mm/2026, hh:mm] | Complementação lançada no PesqEle (SE e BR), tabelas de estratos e Anexo Técnico anexados | recibos |
 
 ## 2. Observações
 
