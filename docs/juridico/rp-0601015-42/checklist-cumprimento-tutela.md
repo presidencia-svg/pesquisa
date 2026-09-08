@@ -22,10 +22,10 @@ Por decisão do presidente, o sítio pesquisa.cdlaju.com.br foi retirado do ar p
 
 | Canal | O que fazer | Feito em |
 | --- | --- | --- |
-| Instagram da CDL | Arquivar posts/stories/reels com resultados (não apagar: arquivar preserva prova). Anotar quais. | [ ] |
-| Facebook da CDL | Idem (ocultar da linha do tempo). | [ ] |
+| Instagram da CDL | Arquivar posts/stories/reels com resultados (não apagar: arquivar preserva prova). Anotar quais. | [x] FEITO 08/09 ~10h50 — guardar capturas |
+| Facebook da CDL | Idem (ocultar da linha do tempo). | [x] FEITO 08/09 ~10h50 — guardar capturas |
 | WhatsApp (grupos/listas da CDL) | Não reenviar nada; se houver mensagem fixada, desafixar. As 8.050 notificações de 04/09 já foram entregues e não podem ser revogadas — registrar isso. | [ ] |
-| TV Atalaia | Enviar e-mail/ofício comunicando a suspensão e pedindo que não reexiba os quadros; guardar o protocolo. | [ ] |
+| TV Atalaia | Enviar e-mail/ofício comunicando a suspensão e pedindo que não reexiba os quadros; guardar o protocolo. | [x] FEITO 08/09 ~10h50 (aviso enviado) — guardar o comprovante/protocolo |
 | Anúncios Meta/Google | Confirmar que não há campanha ativa sobre a pesquisa (não deve haver — sem autorização SIEP nunca houve). Capturar a tela do gerenciador. | [ ] |
 | Menu "Pesquisas" do site da CDL | O link aponta para /resultados, que já exibe o aviso; nada a fazer além de conferir. | [ ] |
 | Imprensa que reproduziu | Fora do controle da CDL (a ordem fala em canais "sob seu controle"), mas vale comunicar por e-mail e guardar cópia. | [ ] |
