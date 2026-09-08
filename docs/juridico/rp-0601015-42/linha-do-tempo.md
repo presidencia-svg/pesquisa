@@ -8,7 +8,7 @@ Fontes: banco de dados da pesquisa (tabela `edicao`, trilha `admin_audit_log`, a
 | --- | --- | --- |
 | 22/08/2026, 17:35 | Edição criada na plataforma com os dados do registro (registro TRE `SE-09441/2026 · BR-04041/2026`, data de registro PesqEle 22/08/2026, CONRE 8223) | `edicao.criado_em`; Anexo Técnico, seção 6 |
 | 22/08/2026, 17:53 | Textos dos quatro campos do registro versionados no repositório público | commit `b0e9a7b` |
-| 22/08/2026 | Registro no PesqEle: SE-09441/2026 (TRE-SE) e BR-04041/2026 (TSE); "data de divulgação" informada: 28/08/2026 (data mínima admitida pelo sistema; o controle interno da CDL anotou 27/08 como primeiro dia liberado) [confirmar no espelho] | espelho ID 12163645; `docs/pesqele-registro/REGISTROS.txt` |
+| 22/08/2026 | Registro no PesqEle: SE-09441/2026 (TRE-SE) e BR-04041/2026 (TSE); "data de divulgação" informada: 28/08/2026 (data mínima admitida pelo sistema; o controle interno da CDL anotou 27/08 como primeiro dia liberado) — confirmado no espelho público em 08/09/2026 | espelho ID 12163645; `docs/pesqele-registro/REGISTROS.txt` |
 | 01/09/2026, 00:06:43 | Primeiro cadastro (início da coleta; período configurado 01/09 00:00 → 03/09 23:59:59) | `eleitores_pesquisa` (agregado); commit `10a4b27` (01/09 00:06) |
 | 01/09 a 03/09/2026 | Coleta: 7.396 / 1.457 / 2.473 cadastros por dia; 6.552 / 1.348 / 2.271 respondentes; 38.250 / 7.912 / 13.403 respostas | Anexo Técnico, seção 6 |
 | 01/09 a 02/09/2026 | Quatro "snapshots" internos para teste do painel de TV, todos anotados `ja_divulgada: false` — sem publicação | `admin_audit_log` (`gerar_snapshot_tv`) |
@@ -25,7 +25,8 @@ Fontes: banco de dados da pesquisa (tabela `edicao`, trilha `admin_audit_log`, a
 | 06/09/2026, 14:04 e 14:10 | Correção de paginação nas views (limite de 1.000 linhas) e ponderação calculada no banco com verificador automático | commits `026b26c`, `cc9f084` |
 | 06/09/2026, 19:58 | Consulta ao PesqEle Público pelo juízo/PRE: complementação não localizada | decisão, ID 12163646 |
 | 07/09/2026, 13:12 | Decisão: tutela deferida em parte (suspensão em 24 h; multa R$ 20.000/ato; defesa em 2 dias; reapreciação após a complementação) | Rp 0601015-42.2026.6.25.0000 |
-| 08/09/2026 | Mecanismo de suspensão judicial implantado na plataforma (com a chave desligada) e Anexo Técnico gerado | commits [preencher após o commit]; `anexo-tecnico-numeros.json` |
+| 08/09/2026 | Espelho público de SE-09441/2026 consultado no PesqEle Público: cargos "Governador, Senador, Deputado Federal, Deputado Estadual, Deputado Distrital"; data de divulgação 28/08/2026; campo Metodologia com a frase "Presidente da República" (texto do registro nacional); anexos: DRE, questionário, bairros/municípios, declaração do responsável técnico, relatório de resultado | PesqEle Público, detalhar SE-09441/2026 |
+| 08/09/2026 | Mecanismo de suspensão judicial implantado na plataforma (com a chave desligada), Anexo Técnico gerado e pop-up do site da CDL preparado | commits `a0526c2` (pesquisa) e `149b1f8` (cdlaju-site); `anexo-tecnico-numeros.json` |
 | [dd/mm/2026, hh:mm] | Intimação da CDL | [ID] |
 | [dd/mm/2026, hh:mm] | Suspensão acionada (TOTP) — todas as superfícies públicas bloqueadas | `admin_audit_log` (`suspender_divulgacao`) |
 | [dd/mm/2026, hh:mm] | Complementação lançada no PesqEle (SE e BR), tabelas de estratos e Anexo Técnico anexados | recibos |
