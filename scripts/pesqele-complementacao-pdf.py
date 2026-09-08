@@ -102,3 +102,16 @@ subprocess.run([chrome, '--headless=new', '--disable-gpu', '--no-sandbox', '--no
 final = D / 'pesqele-anexo-detalhamento-e-complementacao-art2-par7.pdf'
 subprocess.run(['pdfunite', str(base.with_suffix('.pdf')), str(ROOT / 'docs/Tabela-Estratos-Ponderacao.pdf'), str(final)], check=True)
 print('ok', final, final.stat().st_size, 'bytes')
+
+# ---- texto para o campo "municípios e bairros" do PesqEle (máx. 4.000 caracteres; só Latin-1: sem travessão) ----
+def pc(v, t): return f'{v/t*100:.1f}%'.replace('.', ',')
+S = sum(c['sexo'].values()); FA = sum(c['faixa_etaria'].values()); E = sum(c['escolaridade'].values()); Q = sum(c['nivel_economico'].values())
+txt = municipios_txt + f"""
+
+COMPLEMENTAÇÃO - art. 2º, §7º, III e IV (08/09/2026), amostra final da coleta de 01 a 03/09/2026.
+III - Número de pesquisados por unidade territorial (município): {n(r['total'])} respondentes, sendo {n(r['se'])} distribuídos pelos 75 municípios de Sergipe (ponderados por pós-estratificação pelo eleitorado TSE) e {n(r['fora_se'])} com título de outra UF (peso zero). A tabela completa por município (eleitorado, planejado, participantes, respondentes e peso) está no arquivo PDF anexo neste campo, junto com a Tabela de Estratos e Ponderação. Amostra efetiva (Kish) {n(k['n_eff'])}; deff {f(k['deff'],2)}; margem de erro ±{f(k['margem_n']*100,1)} p.p. nominal e ±{f(k['margem_n_eff']*100,1)} p.p. sobre a amostra efetiva.
+IV - Composição da amostra final ({n(N)} participantes com identidade verificada): SEXO feminino {n(c['sexo']['F'])} ({pc(c['sexo']['F'],S)}), masculino {n(c['sexo']['M'])} ({pc(c['sexo']['M'],S)}), não informado {n(c['sexo']['nao_informado'])} ({pc(c['sexo']['nao_informado'],S)}). FAIXA ETÁRIA 18-24 {n(c['faixa_etaria']['18-24'])} ({pc(c['faixa_etaria']['18-24'],FA)}), 25-34 {n(c['faixa_etaria']['25-34'])} ({pc(c['faixa_etaria']['25-34'],FA)}), 35-44 {n(c['faixa_etaria']['35-44'])} ({pc(c['faixa_etaria']['35-44'],FA)}), 45-59 {n(c['faixa_etaria']['45-59'])} ({pc(c['faixa_etaria']['45-59'],FA)}), 60+ {n(c['faixa_etaria']['60+'])} ({pc(c['faixa_etaria']['60+'],FA)}). GRAU DE INSTRUÇÃO fundamental {n(c['escolaridade']['fundamental'])} ({pc(c['escolaridade']['fundamental'],E)}), médio {n(c['escolaridade']['medio'])} ({pc(c['escolaridade']['medio'],E)}), superior {n(c['escolaridade']['superior'])} ({pc(c['escolaridade']['superior'],E)}). NÍVEL ECONÔMICO (autodeclarado) A {n(c['nivel_economico']['A'])} ({pc(c['nivel_economico']['A'],Q)}), B {n(c['nivel_economico']['B'])} ({pc(c['nivel_economico']['B'],Q)}), C {n(c['nivel_economico']['C'])} ({pc(c['nivel_economico']['C'],Q)}), D/E {n(c['nivel_economico']['D_E'])} ({pc(c['nivel_economico']['D_E'],Q)}), não informado {n(c['nivel_economico']['nao_informado'])} ({pc(c['nivel_economico']['nao_informado'],Q)}). Cruzamentos sexo × faixa etária × instrução no PDF anexo."""
+assert not [ch for ch in txt if ord(ch) > 255], 'caractere fora do Latin-1 no texto do campo'
+assert len(txt) <= 4000, 'texto do campo acima de 4.000 caracteres'
+(D / 'pesqele-texto-campo-bairro-municipio.txt').write_text(txt)
+print('ok texto do campo:', len(txt), 'caracteres')
