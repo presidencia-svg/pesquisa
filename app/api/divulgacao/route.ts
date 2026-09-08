@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { siteDesabilitado } from '@/lib/site-desabilitado'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 /**
@@ -27,6 +28,9 @@ export async function OPTIONS() {
 }
 
 export async function GET() {
+  // Site desabilitado (proxy.ts): o pop-up da CDL deve mostrar "suspensa".
+  const desabilitado = siteDesabilitado()
+
   const db = supabaseAdmin()
   const { data } = await db
     .from('edicao')
@@ -40,8 +44,8 @@ export async function GET() {
       // Suspensão judicial (Rp 0601015-42.2026.6.25.0000, TRE-SE): enquanto
       // suspensa_em estiver preenchido o pop-up do site da CDL não pode levar
       // ao resultado — `divulgada` volta a false e `suspensa` fica true.
-      divulgada: Boolean(data?.divulgada_em) && !data?.suspensa_em,
-      suspensa: Boolean(data?.suspensa_em),
+      divulgada: Boolean(data?.divulgada_em) && !data?.suspensa_em && !desabilitado,
+      suspensa: Boolean(data?.suspensa_em) || desabilitado,
       divulgadaEm: data?.divulgada_em ?? null,
       prevista: data?.divulgacao_prevista ?? null,
       coletaFim: data?.fim ?? null,
