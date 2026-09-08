@@ -23,11 +23,20 @@ REGIÃO: Grande Aracaju 5.811 (56,4%); Centro-Sul 1.276 (12,4%); Leste Sergipano
 PONDERAÇÃO APLICADA: pós-estratificação por município (75 estratos) pelo eleitorado TSE; pesos entre 0,249 (São Domingos) e 7,612 (Santana do São Francisco); amostra efetiva 6.644. Cruzamentos sexo × faixa etária × instrução constam do Anexo Técnico e da Tabela de Estratos e Ponderação anexada. Resultados divulgados em 04/09/2026 (contagem direta); percentuais ponderados por município publicados em 06/09/2026 ao lado dos brutos.
 ```
 
-## C. Passo a passo no PesqEle (área logada — usuário da CDL)
+## C. Onde lançar — tela real do PesqEle Empresa (conferida em 08/09/2026)
 
-1. Entrar em https://pesqele.tse.jus.br com o certificado/usuário da CDL e abrir a pesquisa **SE-09441/2026**; repetir tudo depois para **BR-04041/2026**.
-2. Usar a opção de **alteração/complementação de dados** da pesquisa registrada (art. 2º, §7º) e localizar os campos "número de pesquisados por unidade territorial" e "composição da amostra final". Se os campos não existirem separados, colar os blocos A e B no campo de "plano amostral / informações complementares".
-3. **Anexar** de novo `docs/Tabela-Estratos-Ponderacao.pdf` (a tabela de estratos que a decisão não localizou), o **Anexo Técnico** em PDF (`anexo-tecnico-numeros.pdf`) e a declaração do estatístico responsável (CONRE 8223) se o sistema pedir.
-4. Corrigir o cargo **"Deputado Distrital"** (confirmado no espelho público em 08/09/2026; Sergipe não elege deputado distrital) e, no registro **SE-09441/2026**, substituir no campo "Metodologia de pesquisa" a frase "Cargo pesquisado: Presidente da República, com campo de coleta delimitado ao estado de Sergipe" por "Cargos pesquisados: Governador, Senador (duas indicações), Deputado Federal e Deputado Estadual" (a frase do registro nacional foi transcrita por erro material). Quanto à **data de divulgação** (o espelho exibe 28/08/2026), registrar na justificativa que a divulgação efetiva foi 04/09/2026 09h14 (BRT) e que 28/08 era apenas a data mínima permitida (registro + 5 dias).
-5. Gerar/salvar o **recibo** da complementação e o **espelho** atualizado (Imprimir → PDF) dos dois registros.
-6. Juntar nos autos da Rp 0601015-42.2026.6.25.0000: recibo + espelho + Anexo Técnico + Tabela de Estratos + este texto, e pedir a reapreciação da tutela (a decisão diz que "a medida será reapreciada tão logo comprovada nos autos a complementação").
+Sistema: **PesqEle Empresa** (`pesqele-empresa.tse.jus.br`), login da CDL Aracaju.
+
+1. Menu **Gerenciar Pesquisas Eleitorais** → localizar **SE-09441/2026** → ação **"Editar bairro/município e/ou resultado da pesquisa"**.
+2. **Campo de texto (bairro/município)**: apagar o conteúdo atual e colar o texto de `pesqele-texto-campo-bairro-municipio.txt` (é o campo 4 original + bloco "COMPLEMENTAÇÃO — art. 2º, §7º, III e IV"). Se o campo recusar o tamanho, manter o texto original e colar só o bloco de complementação abaixo dele, ou só a frase de remissão ao PDF.
+3. **"Arquivo do detalhamento geográfico — bairro, regiões administrativas, áreas, municípios (PDF)"** → **Substituir arquivo** → enviar `pesqele-anexo-detalhamento-e-complementacao-art2-par7.pdf` (8 páginas: identificação, área de abrangência, tabela dos 75 municípios com eleitorado/planejado/participantes/respondentes/peso, composição por sexo, faixa etária, instrução, nível econômico e região, cruzamentos, ponderação + Tabela de Estratos e Ponderação). **Não contém resultados de voto nem dado pessoal.**
+4. **"Arquivo do relatório completo com os resultados da pesquisa (PDF)"**: não mexer (já está o relatório de 04/09).
+5. **Estatístico**: não mexer (Danilio Silva Santos, vínculo "Contratado(a)").
+6. Botão **ALTERAR**. Anotar data e hora exatas (BRT) da confirmação.
+7. Voltar a **Gerenciar Pesquisas Eleitorais** → abrir/imprimir o **espelho** do registro atualizado (salvar em PDF) — doc. 07 da defesa; se o sistema emitir recibo/protocolo da alteração, salvar — doc. 06.
+8. Repetir os passos 1–7 para **BR-04041/2026** (mesmo texto, mesmo PDF).
+9. Enviar os dois espelhos + recibos ao(à) advogado(a) para juntar nos autos com a defesa (docs. 06 e 07) e informar a hora do lançamento para o item IV.5 da petição.
+
+Observações:
+- A correção de "Deputado Distrital" e da frase sobre o Presidente (campo 2) provavelmente **não** é editável nessa tela; a defesa já explica os dois pontos (itens V.11–V.12). Se houver campo editável para o "sistema/questionário", corrigir; se não, deixar.
+- Os arquivos são gerados por `python3 scripts/pesqele-complementacao-pdf.py` a partir de `anexo-tecnico-numeros.json` (saídas .pdf/.html ignoradas pelo git).
