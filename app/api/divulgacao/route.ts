@@ -30,14 +30,18 @@ export async function GET() {
   const db = supabaseAdmin()
   const { data } = await db
     .from('edicao')
-    .select('nome, divulgada_em, divulgacao_prevista, fim')
+    .select('nome, divulgada_em, divulgacao_prevista, fim, suspensa_em')
     .eq('ativa', true)
     .maybeSingle()
 
   return NextResponse.json(
     {
       edicao: data?.nome ?? null,
-      divulgada: Boolean(data?.divulgada_em),
+      // Suspensão judicial (Rp 0601015-42.2026.6.25.0000, TRE-SE): enquanto
+      // suspensa_em estiver preenchido o pop-up do site da CDL não pode levar
+      // ao resultado — `divulgada` volta a false e `suspensa` fica true.
+      divulgada: Boolean(data?.divulgada_em) && !data?.suspensa_em,
+      suspensa: Boolean(data?.suspensa_em),
       divulgadaEm: data?.divulgada_em ?? null,
       prevista: data?.divulgacao_prevista ?? null,
       coletaFim: data?.fim ?? null,

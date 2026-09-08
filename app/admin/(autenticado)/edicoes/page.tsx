@@ -20,6 +20,8 @@ type Edicao = {
   turno: number
   consulta_zona_ativa: boolean | null
   exigir_localizacao: boolean | null
+  suspensa_em: string | null
+  suspensao_motivo: string | null
   criado_em: string
 }
 
@@ -66,6 +68,11 @@ export default async function EdicoesPage() {
                     {e.divulgada_em ? (
                       <span className="text-[10px] uppercase tracking-widest text-accent bg-accent/10 border border-accent/30 rounded-full px-2 py-0.5">
                         divulgada
+                      </span>
+                    ) : null}
+                    {e.suspensa_em ? (
+                      <span className="text-[10px] uppercase tracking-widest text-error bg-error/10 border border-error/40 rounded-full px-2 py-0.5 font-semibold">
+                        suspensa · ordem judicial
                       </span>
                     ) : null}
                   </div>
@@ -115,6 +122,8 @@ export default async function EdicoesPage() {
                 turno={e.turno ?? 1}
                 consultaZonaAtiva={e.consulta_zona_ativa ?? true}
                 exigirLocalizacao={e.exigir_localizacao ?? false}
+                suspensaEm={e.suspensa_em ?? null}
+                suspensaoMotivo={e.suspensao_motivo ?? null}
               />
             </div>
           ))

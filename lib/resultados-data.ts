@@ -53,6 +53,9 @@ export type EdicaoRow = {
   registro_tre: string | null
   turno: number | null
   consulta_zona_ativa: boolean | null
+  /** Ordem judicial: divulgação pública suspensa desde (null = não suspensa). */
+  suspensa_em: string | null
+  suspensao_motivo: string | null
 }
 
 export type PatroPorCota = {
@@ -71,6 +74,7 @@ export type PatroPublico = {
 
 export type ResultadosCarregados =
   | { status: 'aguardando'; edicao: EdicaoRow | null }
+  | { status: 'suspensa'; edicao: EdicaoRow }
   | { status: 'ok'; pesquisa: Pesquisa; patroPorCota: PatroPorCota }
 
 export function formatarData(iso: string | null): string {
@@ -98,7 +102,9 @@ export async function carregarResultados(
   const db = supabaseAdmin()
   const { data: edicao } = await db
     .from('edicao')
-    .select('id, nome, divulgada_em, divulgacao_prevista, registro_tre, turno, consulta_zona_ativa')
+    .select(
+      'id, nome, divulgada_em, divulgacao_prevista, registro_tre, turno, consulta_zona_ativa, suspensa_em, suspensao_motivo',
+    )
     .eq('ativa', true)
     .maybeSingle<EdicaoRow>()
 
@@ -107,6 +113,15 @@ export async function carregarResultados(
   // operar com os dados antes da divulgação pública.
   if (!edicao || (!edicao.divulgada_em && !opts?.ignorarDivulgacao)) {
     return { status: 'aguardando', edicao: edicao ?? null }
+  }
+
+  // Ordem judicial (TRE-SE, Rp 0601015-42.2026.6.25.0000): enquanto
+  // suspensa_em estiver preenchido o público não vê número nenhum — sem
+  // apagar divulgada_em, que é a prova da data real da divulgação.
+  // Ferramentas internas (ignorarDivulgacao) seguem funcionando pra
+  // preparar defesa/perícia.
+  if (edicao.suspensa_em && !opts?.ignorarDivulgacao) {
+    return { status: 'suspensa', edicao }
   }
 
   // Patrocinadores REMOVIDOS da exibição pública da pesquisa (decisão 25/08):

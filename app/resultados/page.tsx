@@ -42,6 +42,10 @@ export default async function ResultadosHubPage() {
   if (r.status === 'aguardando') {
     return <AguardandoDivulgacao edicao={r.edicao} />
   }
+  if (r.status === 'suspensa') {
+    // Ordem judicial (TRE-SE, Rp 0601015-42.2026.6.25.0000): nenhum número.
+    return <SuspensaJudicial edicao={r.edicao} />
+  }
 
   const { pesquisa, patroPorCota } = r
   const { meta } = pesquisa
@@ -372,6 +376,76 @@ function AguardandoDivulgacao({ edicao }: { edicao: EdicaoRow | null }) {
           </div>
 
           {prevista && <CronometroDivulgacao ateISO={prevista} />}
+
+          <AvisoRegistro compacto />
+
+          <div className="flex flex-col sm:flex-row gap-3 w-full">
+            <Link
+              href="/"
+              className="flex-1 inline-flex justify-center items-center h-11 px-5 rounded-md border border-border text-foreground text-sm font-medium hover:bg-muted transition"
+            >
+              ← Voltar ao início
+            </Link>
+            <Link
+              href="/transparencia"
+              className="flex-1 inline-flex justify-center items-center h-11 px-5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition"
+            >
+              Ver metodologia
+            </Link>
+          </div>
+        </div>
+      </main>
+      <RodapeInstitucional />
+    </>
+  )
+}
+
+/**
+ * Tela exibida enquanto edicao.suspensa_em estiver preenchido — ordem
+ * judicial (Rp 0601015-42.2026.6.25.0000, TRE-SE, 07/09/2026). Não mostra
+ * número nenhum, nem cronômetro, nem link pra página de resultado.
+ */
+function SuspensaJudicial({ edicao }: { edicao: EdicaoRow }) {
+  const desde = edicao.suspensa_em
+    ? new Date(edicao.suspensa_em).toLocaleString('pt-BR', {
+        timeZone: 'America/Recife',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : null
+  return (
+    <>
+      <main className="flex flex-col flex-1 bg-background items-center justify-center px-5 py-16">
+        <div className="w-full max-w-md flex flex-col gap-8 items-start">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/cdl-pesquisas-logo.png"
+            alt="CDL Pesquisas"
+            className="h-12 w-auto"
+          />
+          <div className="flex flex-col gap-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">
+              Resultados
+            </p>
+            <h1 className="text-3xl sm:text-4xl font-semibold leading-tight">
+              Divulgação temporariamente suspensa
+            </h1>
+            <p className="text-base text-muted-foreground leading-relaxed">
+              Em cumprimento a decisão judicial do Tribunal Regional Eleitoral
+              de Sergipe (Representação nº 0601015-42.2026.6.25.0000), a
+              divulgação dos resultados da Pesquisa Eleitoral Sergipe 2026 está
+              suspensa até nova ordem{desde ? ` desde ${desde}` : ''}.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              A pesquisa permanece registrada na Justiça Eleitoral (TRE-SE
+              SE-09441/2026 e TSE BR-04041/2026). A CDL Aracaju está prestando
+              ao Tribunal os esclarecimentos e a documentação complementar
+              requeridos.
+            </p>
+          </div>
 
           <AvisoRegistro compacto />
 

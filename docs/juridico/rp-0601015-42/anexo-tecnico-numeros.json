@@ -1,0 +1,5385 @@
+{
+  "gerado_em": "2026-09-08T12:13:14.725Z",
+  "gerado_em_brt": "08/09/2026, 09:13:14",
+  "representacao": "0601015-42.2026.6.25.0000",
+  "registros": "TRE-SE SE-09441/2026 · TSE BR-04041/2026",
+  "edicao": {
+    "id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+    "nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+    "inicio": "2026-09-01T03:00:00+00:00",
+    "fim": "2026-09-04T02:59:59+00:00",
+    "criado_em": "2026-08-22T20:35:30.740883+00:00",
+    "registro_tre": "SE-09441/2026 · BR-04041/2026",
+    "data_registro_pesqele": "2026-08-22",
+    "divulgacao_prevista": "2026-09-04T11:30:00+00:00",
+    "divulgada_em": "2026-09-04T12:14:54.904+00:00",
+    "suspensa_em": null,
+    "suspensao_motivo": null,
+    "conre": "8223",
+    "turno": 1
+  },
+  "resumo": {
+    "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+    "nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+    "ativa": true,
+    "eleitores_cadastrados": 11326,
+    "via_cdl_base": 2202,
+    "via_spc": 9124,
+    "com_spc": 11326,
+    "com_wa": 10306,
+    "tokens_emitidos": 10313,
+    "tokens_usados": 9767,
+    "votos_validos": 53709,
+    "votos_brancos": 3170,
+    "votos_nao_sabe": 2715,
+    "zona_pra_aracaju": 0,
+    "zona_pra_sao_cristovao": 0
+  },
+  "eleitorado_total_se": 1731960,
+  "meta_amostra": 20000,
+  "planejado_total": 20004,
+  "participantes": {
+    "validados_total": 10306,
+    "validados_se": 10281,
+    "validados_fora_se": 25
+  },
+  "respondentes": {
+    "total": 10166,
+    "se": 10145,
+    "fora_se": 21,
+    "sem_municipio": 0,
+    "n_total_peso": 10166
+  },
+  "kish": {
+    "soma_nw": 10165.999999999998,
+    "soma_nw2": 15554.093952395959,
+    "n_eff": 6644.39576591861,
+    "deff": 1.5268506508954798,
+    "margem_n": 0.009729713449266118,
+    "margem_n_eff": 0.012022598095667083,
+    "peso_min": {
+      "municipio": "São Domingos",
+      "peso": 0.24860534571416593
+    },
+    "peso_max": {
+      "municipio": "Santana do São Francisco",
+      "peso": 7.611762858264625
+    },
+    "desvio_max_recalculo": 8.881784197001252e-16
+  },
+  "municipios": [
+    {
+      "ibge": 2800308,
+      "nome": "Aracaju",
+      "regiao": "grande_aracaju",
+      "eleitorado": 416605,
+      "share": 0.2405396198526525,
+      "planejado": 4811,
+      "participantes": 4130,
+      "respondentes": 4061,
+      "share_amostra": 0.3994688176273854,
+      "peso": 0.6021486765383071,
+      "peso_recalc": 0.6021486765383072
+    },
+    {
+      "ibge": 2804805,
+      "nome": "Nossa Senhora do Socorro",
+      "regiao": "grande_aracaju",
+      "eleitorado": 121723,
+      "share": 0.07028049146631563,
+      "planejado": 1406,
+      "participantes": 812,
+      "respondentes": 796,
+      "share_amostra": 0.0783002164076333,
+      "peso": 0.8975772314655334,
+      "peso_recalc": 0.8975772314655334
+    },
+    {
+      "ibge": 2803500,
+      "nome": "Lagarto",
+      "regiao": "centro_sul",
+      "eleitorado": 80724,
+      "share": 0.04660846670823807,
+      "planejado": 932,
+      "participantes": 327,
+      "respondentes": 327,
+      "share_amostra": 0.03216604367499508,
+      "peso": 1.448995940538068,
+      "peso_recalc": 1.448995940538068
+    },
+    {
+      "ibge": 2802908,
+      "nome": "Itabaiana",
+      "regiao": "agreste",
+      "eleitorado": 75563,
+      "share": 0.043628605741472086,
+      "planejado": 873,
+      "participantes": 443,
+      "respondentes": 440,
+      "share_amostra": 0.04328152665748574,
+      "peso": 1.0080191044722846,
+      "peso_recalc": 1.0080191044722846
+    },
+    {
+      "ibge": 2806701,
+      "nome": "São Cristóvão",
+      "regiao": "grande_aracaju",
+      "eleitorado": 61587,
+      "share": 0.035559135314903345,
+      "planejado": 711,
+      "participantes": 329,
+      "respondentes": 329,
+      "share_amostra": 0.03236277788707456,
+      "peso": 1.0987664729826974,
+      "peso_recalc": 1.0987664729826974
+    },
+    {
+      "ibge": 2802106,
+      "nome": "Estância",
+      "regiao": "centro_sul",
+      "eleitorado": 51062,
+      "share": 0.02948220513175824,
+      "planejado": 590,
+      "participantes": 209,
+      "respondentes": 205,
+      "share_amostra": 0.020165256738146765,
+      "peso": 1.4620297432656306,
+      "peso_recalc": 1.4620297432656304
+    },
+    {
+      "ibge": 2807402,
+      "nome": "Tobias Barreto",
+      "regiao": "centro_sul",
+      "eleitorado": 41941,
+      "share": 0.02421591722672579,
+      "planejado": 484,
+      "participantes": 104,
+      "respondentes": 103,
+      "share_amostra": 0.010131811922093252,
+      "peso": 2.3900875196785862,
+      "peso_recalc": 2.3900875196785862
+    },
+    {
+      "ibge": 2807105,
+      "nome": "Simão Dias",
+      "regiao": "centro_sul",
+      "eleitorado": 37027,
+      "share": 0.021378669253331487,
+      "planejado": 428,
+      "participantes": 166,
+      "respondentes": 166,
+      "share_amostra": 0.016328939602596893,
+      "peso": 1.3092503110202884,
+      "peso_recalc": 1.3092503110202884
+    },
+    {
+      "ibge": 2803005,
+      "nome": "Itabaianinha",
+      "regiao": "centro_sul",
+      "eleitorado": 32348,
+      "share": 0.018677105706829258,
+      "planejado": 374,
+      "participantes": 134,
+      "respondentes": 133,
+      "share_amostra": 0.013082825103285461,
+      "peso": 1.4276049369595958,
+      "peso_recalc": 1.4276049369595958
+    },
+    {
+      "ibge": 2800605,
+      "nome": "Barra dos Coqueiros",
+      "regiao": "grande_aracaju",
+      "eleitorado": 30257,
+      "share": 0.017469802997759763,
+      "planejado": 349,
+      "participantes": 208,
+      "respondentes": 203,
+      "share_amostra": 0.019968522526067282,
+      "peso": 0.8748670801735259,
+      "peso_recalc": 0.8748670801735259
+    },
+    {
+      "ibge": 2803203,
+      "nome": "Itaporanga d'Ajuda",
+      "regiao": "grande_aracaju",
+      "eleitorado": 29885,
+      "share": 0.017255017436892308,
+      "planejado": 345,
+      "participantes": 290,
+      "respondentes": 288,
+      "share_amostra": 0.02832972653944521,
+      "peso": 0.6090781502203028,
+      "peso_recalc": 0.6090781502203028
+    },
+    {
+      "ibge": 2804508,
+      "nome": "Nossa Senhora da Glória",
+      "regiao": "sertao",
+      "eleitorado": 29446,
+      "share": 0.01700154737984711,
+      "planejado": 340,
+      "participantes": 138,
+      "respondentes": 137,
+      "share_amostra": 0.013476293527444422,
+      "peso": 1.261589274916246,
+      "peso_recalc": 1.2615892749162463
+    },
+    {
+      "ibge": 2801306,
+      "nome": "Capela",
+      "regiao": "leste",
+      "eleitorado": 27337,
+      "share": 0.015783851821058223,
+      "planejado": 316,
+      "participantes": 123,
+      "respondentes": 121,
+      "share_amostra": 0.011902419830808577,
+      "peso": 1.3261044430816356,
+      "peso_recalc": 1.3261044430816356
+    },
+    {
+      "ibge": 2801207,
+      "nome": "Canindé de São Francisco",
+      "regiao": "sertao",
+      "eleitorado": 24884,
+      "share": 0.014367537356520936,
+      "planejado": 287,
+      "participantes": 40,
+      "respondentes": 40,
+      "share_amostra": 0.003934684241589613,
+      "peso": 3.6515096191597958,
+      "peso_recalc": 3.6515096191597953
+    },
+    {
+      "ibge": 2805604,
+      "nome": "Porto da Folha",
+      "regiao": "sertao",
+      "eleitorado": 24637,
+      "share": 0.014224924363149264,
+      "planejado": 284,
+      "participantes": 142,
+      "respondentes": 137,
+      "share_amostra": 0.013476293527444422,
+      "peso": 1.055551686684492,
+      "peso_recalc": 1.055551686684492
+    },
+    {
+      "ibge": 2805406,
+      "nome": "Poço Redondo",
+      "regiao": "sertao",
+      "eleitorado": 22637,
+      "share": 0.013070163283216703,
+      "planejado": 261,
+      "participantes": 66,
+      "respondentes": 65,
+      "share_amostra": 0.00639386189258312,
+      "peso": 2.0441735374950922,
+      "peso_recalc": 2.0441735374950922
+    },
+    {
+      "ibge": 2803609,
+      "nome": "Laranjeiras",
+      "regiao": "grande_aracaju",
+      "eleitorado": 22426,
+      "share": 0.012948335989283816,
+      "planejado": 259,
+      "participantes": 42,
+      "respondentes": 41,
+      "share_amostra": 0.0040330513476293526,
+      "peso": 3.210555699196568,
+      "peso_recalc": 3.210555699196568
+    },
+    {
+      "ibge": 2800670,
+      "nome": "Boquim",
+      "regiao": "centro_sul",
+      "eleitorado": 22168,
+      "share": 0.012799371809972517,
+      "planejado": 256,
+      "participantes": 51,
+      "respondentes": 51,
+      "share_amostra": 0.005016722408026756,
+      "peso": 2.5513414474545217,
+      "peso_recalc": 2.5513414474545217
+    },
+    {
+      "ibge": 2804607,
+      "nome": "Nossa Senhora das Dores",
+      "regiao": "agreste",
+      "eleitorado": 21305,
+      "share": 0.012301092403981617,
+      "planejado": 246,
+      "participantes": 50,
+      "respondentes": 50,
+      "share_amostra": 0.004918355301987015,
+      "peso": 2.501058107577542,
+      "peso_recalc": 2.5010581075775424
+    },
+    {
+      "ibge": 2805703,
+      "nome": "Propriá",
+      "regiao": "leste",
+      "eleitorado": 20350,
+      "share": 0.011749693988313818,
+      "planejado": 235,
+      "participantes": 185,
+      "respondentes": 183,
+      "share_amostra": 0.018001180405272477,
+      "peso": 0.6527179731431599,
+      "peso_recalc": 0.6527179731431599
+    },
+    {
+      "ibge": 2805505,
+      "nome": "Poço Verde",
+      "regiao": "centro_sul",
+      "eleitorado": 19792,
+      "share": 0.011427515647012634,
+      "planejado": 229,
+      "participantes": 57,
+      "respondentes": 56,
+      "share_amostra": 0.005508557938225457,
+      "peso": 2.0745022154916146,
+      "peso_recalc": 2.074502215491615
+    },
+    {
+      "ibge": 2807600,
+      "nome": "Umbaúba",
+      "regiao": "centro_sul",
+      "eleitorado": 18255,
+      "share": 0.010540081757084459,
+      "planejado": 211,
+      "participantes": 41,
+      "respondentes": 41,
+      "share_amostra": 0.0040330513476293526,
+      "peso": 2.613426125427332,
+      "peso_recalc": 2.613426125427332
+    },
+    {
+      "ibge": 2806206,
+      "nome": "Salgado",
+      "regiao": "centro_sul",
+      "eleitorado": 18123,
+      "share": 0.01046386752580891,
+      "planejado": 209,
+      "participantes": 41,
+      "respondentes": 40,
+      "share_amostra": 0.003934684241589613,
+      "peso": 2.6593919316843344,
+      "peso_recalc": 2.6593919316843344
+    },
+    {
+      "ibge": 2805802,
+      "nome": "Riachão do Dantas",
+      "regiao": "centro_sul",
+      "eleitorado": 17874,
+      "share": 0.010320099771357305,
+      "planejado": 206,
+      "participantes": 27,
+      "respondentes": 27,
+      "share_amostra": 0.0026559118630729885,
+      "peso": 3.8857086768747546,
+      "peso_recalc": 3.885708676874754
+    },
+    {
+      "ibge": 2800209,
+      "nome": "Aquidabã",
+      "regiao": "leste",
+      "eleitorado": 17451,
+      "share": 0.010075867802951569,
+      "planejado": 202,
+      "participantes": 128,
+      "respondentes": 128,
+      "share_amostra": 0.012590989573086759,
+      "peso": 0.8002443131625442,
+      "peso_recalc": 0.8002443131625442
+    },
+    {
+      "ibge": 2801405,
+      "nome": "Carira",
+      "regiao": "agreste",
+      "eleitorado": 17195,
+      "share": 0.009928058384720202,
+      "planejado": 199,
+      "participantes": 141,
+      "respondentes": 140,
+      "share_amostra": 0.013771394845563643,
+      "peso": 0.7209188681361827,
+      "peso_recalc": 0.7209188681361827
+    },
+    {
+      "ibge": 2801009,
+      "nome": "Campo do Brito",
+      "regiao": "agreste",
+      "eleitorado": 15766,
+      "share": 0.009102981593108387,
+      "planejado": 182,
+      "participantes": 29,
+      "respondentes": 29,
+      "share_amostra": 0.002852646075152469,
+      "peso": 3.191065892259995,
+      "peso_recalc": 3.1910658922599953
+    },
+    {
+      "ibge": 2800506,
+      "nome": "Areia Branca",
+      "regiao": "agreste",
+      "eleitorado": 15245,
+      "share": 0.008802166331785953,
+      "planejado": 176,
+      "participantes": 15,
+      "respondentes": 15,
+      "share_amostra": 0.0014755065905961047,
+      "peso": 5.965521528595733,
+      "peso_recalc": 5.965521528595733
+    },
+    {
+      "ibge": 2803302,
+      "nome": "Japaratuba",
+      "regiao": "leste",
+      "eleitorado": 14988,
+      "share": 0.008653779533014619,
+      "planejado": 173,
+      "participantes": 69,
+      "respondentes": 68,
+      "share_amostra": 0.006688963210702341,
+      "peso": 1.2937400401856856,
+      "peso_recalc": 1.2937400401856856
+    },
+    {
+      "ibge": 2801702,
+      "nome": "Cristinápolis",
+      "regiao": "centro_sul",
+      "eleitorado": 14983,
+      "share": 0.008650892630314789,
+      "planejado": 173,
+      "participantes": 23,
+      "respondentes": 22,
+      "share_amostra": 0.0021640763328742867,
+      "peso": 3.997498839990006,
+      "peso_recalc": 3.9974988399900067
+    },
+    {
+      "ibge": 2806008,
+      "nome": "Ribeirópolis",
+      "regiao": "agreste",
+      "eleitorado": 14679,
+      "share": 0.00847536894616504,
+      "planejado": 170,
+      "participantes": 89,
+      "respondentes": 86,
+      "share_amostra": 0.008459571119417668,
+      "peso": 1.0018674500780673,
+      "peso_recalc": 1.001867450078067
+    },
+    {
+      "ibge": 2804409,
+      "nome": "Neópolis",
+      "regiao": "leste",
+      "eleitorado": 14569,
+      "share": 0.008411857086768747,
+      "planejado": 168,
+      "participantes": 68,
+      "respondentes": 68,
+      "share_amostra": 0.006688963210702341,
+      "peso": 1.2575726344719278,
+      "peso_recalc": 1.2575726344719276
+    },
+    {
+      "ibge": 2802809,
+      "nome": "Indiaroba",
+      "regiao": "centro_sul",
+      "eleitorado": 14202,
+      "share": 0.008199958428601122,
+      "planejado": 164,
+      "participantes": 18,
+      "respondentes": 18,
+      "share_amostra": 0.0017706079087153256,
+      "peso": 4.631154299175501,
+      "peso_recalc": 4.6311542991755
+    },
+    {
+      "ibge": 2802304,
+      "nome": "Frei Paulo",
+      "regiao": "agreste",
+      "eleitorado": 13645,
+      "share": 0.007878357467839905,
+      "planejado": 158,
+      "participantes": 62,
+      "respondentes": 60,
+      "share_amostra": 0.005902026362384419,
+      "peso": 1.3348563669676743,
+      "peso_recalc": 1.3348563669676745
+    },
+    {
+      "ibge": 2804003,
+      "nome": "Maruim",
+      "regiao": "leste",
+      "eleitorado": 13300,
+      "share": 0.007679161181551537,
+      "planejado": 154,
+      "participantes": 41,
+      "respondentes": 41,
+      "share_amostra": 0.0040330513476293526,
+      "peso": 1.9040573797964129,
+      "peso_recalc": 1.9040573797964129
+    },
+    {
+      "ibge": 2801504,
+      "nome": "Carmópolis",
+      "regiao": "leste",
+      "eleitorado": 13098,
+      "share": 0.007562530312478348,
+      "planejado": 151,
+      "participantes": 83,
+      "respondentes": 82,
+      "share_amostra": 0.008066102695258705,
+      "peso": 0.9375693067884743,
+      "peso_recalc": 0.9375693067884743
+    },
+    {
+      "ibge": 2804201,
+      "nome": "Monte Alegre de Sergipe",
+      "regiao": "sertao",
+      "eleitorado": 12921,
+      "share": 0.007460333956904317,
+      "planejado": 149,
+      "participantes": 56,
+      "respondentes": 56,
+      "share_amostra": 0.005508557938225457,
+      "peso": 1.3543170536765943,
+      "peso_recalc": 1.3543170536765943
+    },
+    {
+      "ibge": 2806305,
+      "nome": "Santa Luzia do Itanhy",
+      "regiao": "centro_sul",
+      "eleitorado": 12803,
+      "share": 0.007392203053188296,
+      "planejado": 148,
+      "participantes": 12,
+      "respondentes": 12,
+      "share_amostra": 0.0011804052724768838,
+      "peso": 6.262428019892684,
+      "peso_recalc": 6.262428019892685
+    },
+    {
+      "ibge": 2804904,
+      "nome": "Pacatuba",
+      "regiao": "leste",
+      "eleitorado": 12031,
+      "share": 0.006946465276334327,
+      "planejado": 139,
+      "participantes": 20,
+      "respondentes": 20,
+      "share_amostra": 0.0019673421207948064,
+      "peso": 3.530888299960738,
+      "peso_recalc": 3.530888299960738
+    },
+    {
+      "ibge": 2803401,
+      "nome": "Japoatã",
+      "regiao": "leste",
+      "eleitorado": 11699,
+      "share": 0.006754774937065521,
+      "planejado": 135,
+      "participantes": 29,
+      "respondentes": 29,
+      "share_amostra": 0.002852646075152469,
+      "peso": 2.367898000352003,
+      "peso_recalc": 2.367898000352003
+    },
+    {
+      "ibge": 2806602,
+      "nome": "Santo Amaro das Brotas",
+      "regiao": "leste",
+      "eleitorado": 10793,
+      "share": 0.00623166816785607,
+      "planejado": 125,
+      "participantes": 36,
+      "respondentes": 35,
+      "share_amostra": 0.0034428487113909107,
+      "peso": 1.8100325312692804,
+      "peso_recalc": 1.8100325312692804
+    },
+    {
+      "ibge": 2807501,
+      "nome": "Tomar do Geru",
+      "regiao": "centro_sul",
+      "eleitorado": 10717,
+      "share": 0.006187787246818633,
+      "planejado": 124,
+      "participantes": 35,
+      "respondentes": 35,
+      "share_amostra": 0.0034428487113909107,
+      "peso": 1.7972870043188065,
+      "peso_recalc": 1.7972870043188065
+    },
+    {
+      "ibge": 2803906,
+      "nome": "Malhador",
+      "regiao": "agreste",
+      "eleitorado": 10340,
+      "share": 0.005970114783251345,
+      "planejado": 119,
+      "participantes": 52,
+      "respondentes": 51,
+      "share_amostra": 0.005016722408026756,
+      "peso": 1.1900428801281016,
+      "peso_recalc": 1.1900428801281013
+    },
+    {
+      "ibge": 2804102,
+      "nome": "Moita Bonita",
+      "regiao": "agreste",
+      "eleitorado": 9881,
+      "share": 0.005705097115406822,
+      "planejado": 114,
+      "participantes": 17,
+      "respondentes": 16,
+      "share_amostra": 0.0015738736966358449,
+      "peso": 3.6248760797016097,
+      "peso_recalc": 3.6248760797016097
+    },
+    {
+      "ibge": 2800407,
+      "nome": "Arauá",
+      "regiao": "centro_sul",
+      "eleitorado": 9856,
+      "share": 0.005690662601907665,
+      "planejado": 114,
+      "participantes": 8,
+      "respondentes": 8,
+      "share_amostra": 0.0007869368483179224,
+      "peso": 7.2314095013741655,
+      "peso_recalc": 7.231409501374166
+    },
+    {
+      "ibge": 2802403,
+      "nome": "Gararu",
+      "regiao": "sertao",
+      "eleitorado": 9592,
+      "share": 0.0055382341393565675,
+      "planejado": 111,
+      "participantes": 57,
+      "respondentes": 56,
+      "share_amostra": 0.005508557938225457,
+      "peso": 1.0053872903696226,
+      "peso_recalc": 1.0053872903696226
+    },
+    {
+      "ibge": 2806107,
+      "nome": "Rosário do Catete",
+      "regiao": "leste",
+      "eleitorado": 9181,
+      "share": 0.0053009307374304255,
+      "planejado": 106,
+      "participantes": 43,
+      "respondentes": 41,
+      "share_amostra": 0.0040330513476293526,
+      "peso": 1.3143722408955538,
+      "peso_recalc": 1.3143722408955538
+    },
+    {
+      "ibge": 2805307,
+      "nome": "Pirambu",
+      "regiao": "leste",
+      "eleitorado": 9001,
+      "share": 0.005197002240236495,
+      "planejado": 104,
+      "participantes": 51,
+      "respondentes": 49,
+      "share_amostra": 0.004819988195947276,
+      "peso": 1.0782188729437594,
+      "peso_recalc": 1.0782188729437592
+    },
+    {
+      "ibge": 2806800,
+      "nome": "São Domingos",
+      "regiao": "agreste",
+      "eleitorado": 8725,
+      "share": 0.005037645211205801,
+      "planejado": 101,
+      "participantes": 207,
+      "respondentes": 206,
+      "share_amostra": 0.020263623844186503,
+      "peso": 0.24860534571416593,
+      "peso_recalc": 0.24860534571416593
+    },
+    {
+      "ibge": 2805901,
+      "nome": "Riachuelo",
+      "regiao": "leste",
+      "eleitorado": 8619,
+      "share": 0.004976442873969375,
+      "planejado": 100,
+      "participantes": 30,
+      "respondentes": 30,
+      "share_amostra": 0.0029510131811922094,
+      "peso": 1.6863506085590891,
+      "peso_recalc": 1.686350608559089
+    },
+    {
+      "ibge": 2800704,
+      "nome": "Brejo Grande",
+      "regiao": "leste",
+      "eleitorado": 8315,
+      "share": 0.004800919189819626,
+      "planejado": 96,
+      "participantes": 11,
+      "respondentes": 11,
+      "share_amostra": 0.0010820381664371434,
+      "peso": 4.436922225791483,
+      "peso_recalc": 4.436922225791483
+    },
+    {
+      "ibge": 2805109,
+      "nome": "Pedrinhas",
+      "regiao": "centro_sul",
+      "eleitorado": 8043,
+      "share": 0.004643871682948798,
+      "planejado": 93,
+      "participantes": 10,
+      "respondentes": 10,
+      "share_amostra": 0.0009836710603974032,
+      "peso": 4.720959952885748,
+      "peso_recalc": 4.720959952885748
+    },
+    {
+      "ibge": 2802700,
+      "nome": "Ilha das Flores",
+      "regiao": "leste",
+      "eleitorado": 7801,
+      "share": 0.004504145592276958,
+      "planejado": 90,
+      "participantes": 20,
+      "respondentes": 20,
+      "share_amostra": 0.0019673421207948064,
+      "peso": 2.2894572045543775,
+      "peso_recalc": 2.2894572045543775
+    },
+    {
+      "ibge": 2804458,
+      "nome": "Nossa Senhora Aparecida",
+      "regiao": "agreste",
+      "eleitorado": 7687,
+      "share": 0.0044383242107208015,
+      "planejado": 89,
+      "participantes": 40,
+      "respondentes": 41,
+      "share_amostra": 0.0040330513476293526,
+      "peso": 1.1004879006387236,
+      "peso_recalc": 1.1004879006387236
+    },
+    {
+      "ibge": 2804300,
+      "nome": "Muribeca",
+      "regiao": "leste",
+      "eleitorado": 7678,
+      "share": 0.004433127785861106,
+      "planejado": 89,
+      "participantes": 36,
+      "respondentes": 36,
+      "share_amostra": 0.0035412158174306513,
+      "peso": 1.2518660297517776,
+      "peso_recalc": 1.2518660297517776
+    },
+    {
+      "ibge": 2807204,
+      "nome": "Siriri",
+      "regiao": "leste",
+      "eleitorado": 7022,
+      "share": 0.004054366151643225,
+      "planejado": 81,
+      "participantes": 51,
+      "respondentes": 51,
+      "share_amostra": 0.005016722408026756,
+      "peso": 0.8081703195608828,
+      "peso_recalc": 0.8081703195608828
+    },
+    {
+      "ibge": 2803708,
+      "nome": "Macambira",
+      "regiao": "agreste",
+      "eleitorado": 6891,
+      "share": 0.003978729300907642,
+      "planejado": 80,
+      "participantes": 12,
+      "respondentes": 12,
+      "share_amostra": 0.0011804052724768838,
+      "peso": 3.3706468394189244,
+      "peso_recalc": 3.370646839418924
+    },
+    {
+      "ibge": 2806404,
+      "nome": "Santana do São Francisco",
+      "regiao": "leste",
+      "eleitorado": 6484,
+      "share": 0.003743735421141366,
+      "planejado": 75,
+      "participantes": 6,
+      "respondentes": 5,
+      "share_amostra": 0.0004918355301987016,
+      "peso": 7.611762858264625,
+      "peso_recalc": 7.611762858264624
+    },
+    {
+      "ibge": 2802601,
+      "nome": "Graccho Cardoso",
+      "regiao": "agreste",
+      "eleitorado": 6462,
+      "share": 0.0037310330492621078,
+      "planejado": 75,
+      "participantes": 32,
+      "respondentes": 32,
+      "share_amostra": 0.0031477473932716897,
+      "peso": 1.1853025618374557,
+      "peso_recalc": 1.185302561837456
+    },
+    {
+      "ibge": 2802205,
+      "nome": "Feira Nova",
+      "regiao": "sertao",
+      "eleitorado": 6345,
+      "share": 0.0036634795260860526,
+      "planejado": 73,
+      "participantes": 12,
+      "respondentes": 12,
+      "share_amostra": 0.0011804052724768838,
+      "peso": 3.103577738515901,
+      "peso_recalc": 3.103577738515901
+    },
+    {
+      "ibge": 2804706,
+      "nome": "Nossa Senhora de Lourdes",
+      "regiao": "leste",
+      "eleitorado": 6245,
+      "share": 0.003605741472089425,
+      "planejado": 72,
+      "participantes": 49,
+      "respondentes": 49,
+      "share_amostra": 0.004819988195947276,
+      "peso": 0.7480809756175733,
+      "peso_recalc": 0.7480809756175733
+    },
+    {
+      "ibge": 2805208,
+      "nome": "Pinhão",
+      "regiao": "centro_sul",
+      "eleitorado": 5607,
+      "share": 0.0032373726875909374,
+      "planejado": 65,
+      "participantes": 13,
+      "respondentes": 13,
+      "share_amostra": 0.0012787723785166241,
+      "peso": 2.531625441696113,
+      "peso_recalc": 2.531625441696113
+    },
+    {
+      "ibge": 2801603,
+      "nome": "Cedro de São João",
+      "regiao": "leste",
+      "eleitorado": 5441,
+      "share": 0.0031415275179565347,
+      "planejado": 63,
+      "participantes": 44,
+      "respondentes": 43,
+      "share_amostra": 0.004229785559708834,
+      "peso": 0.7427155522685147,
+      "peso_recalc": 0.7427155522685146
+    },
+    {
+      "ibge": 2803104,
+      "nome": "Itabi",
+      "regiao": "sertao",
+      "eleitorado": 4851,
+      "share": 0.002800872999376429,
+      "planejado": 56,
+      "participantes": 39,
+      "respondentes": 38,
+      "share_amostra": 0.0037379500295101316,
+      "peso": 0.7493072345173889,
+      "peso_recalc": 0.7493072345173889
+    },
+    {
+      "ibge": 2806503,
+      "nome": "Santa Rosa de Lima",
+      "regiao": "sertao",
+      "eleitorado": 4736,
+      "share": 0.0027344742372803067,
+      "planejado": 55,
+      "participantes": 30,
+      "respondentes": 30,
+      "share_amostra": 0.0029510131811922094,
+      "peso": 0.9266221698730532,
+      "peso_recalc": 0.9266221698730532
+    },
+    {
+      "ibge": 2801108,
+      "nome": "Canhoba",
+      "regiao": "sertao",
+      "eleitorado": 4721,
+      "share": 0.0027258135291808126,
+      "planejado": 55,
+      "participantes": 93,
+      "respondentes": 92,
+      "share_amostra": 0.00904977375565611,
+      "peso": 0.30120239497447976,
+      "peso_recalc": 0.30120239497447976
+    },
+    {
+      "ibge": 2801900,
+      "nome": "Cumbe",
+      "regiao": "sertao",
+      "eleitorado": 4514,
+      "share": 0.0026062957574077925,
+      "planejado": 52,
+      "participantes": 12,
+      "respondentes": 12,
+      "share_amostra": 0.0011804052724768838,
+      "peso": 2.2079668891506348,
+      "peso_recalc": 2.2079668891506348
+    },
+    {
+      "ibge": 2802007,
+      "nome": "Divina Pastora",
+      "regiao": "leste",
+      "eleitorado": 4402,
+      "share": 0.002541629136931569,
+      "planejado": 51,
+      "participantes": 78,
+      "respondentes": 78,
+      "share_amostra": 0.0076726342710997444,
+      "peso": 0.3312589975134145,
+      "peso_recalc": 0.3312589975134145
+    },
+    {
+      "ibge": 2803807,
+      "nome": "Malhada dos Bois",
+      "regiao": "leste",
+      "eleitorado": 4246,
+      "share": 0.002451557772696829,
+      "planejado": 49,
+      "participantes": 13,
+      "respondentes": 13,
+      "share_amostra": 0.0012787723785166241,
+      "peso": 1.9171181782489204,
+      "peso_recalc": 1.91711817824892
+    },
+    {
+      "ibge": 2807006,
+      "nome": "São Miguel do Aleixo",
+      "regiao": "agreste",
+      "eleitorado": 4108,
+      "share": 0.002371879258181482,
+      "planejado": 47,
+      "participantes": 24,
+      "respondentes": 24,
+      "share_amostra": 0.0023608105449537675,
+      "peso": 1.0046885224447062,
+      "peso_recalc": 1.0046885224447062
+    },
+    {
+      "ibge": 2806909,
+      "nome": "São Francisco",
+      "regiao": "leste",
+      "eleitorado": 3848,
+      "share": 0.002221760317790249,
+      "planejado": 44,
+      "participantes": 19,
+      "respondentes": 19,
+      "share_amostra": 0.0018689750147550658,
+      "peso": 1.1887587047713513,
+      "peso_recalc": 1.1887587047713513
+    },
+    {
+      "ibge": 2807303,
+      "nome": "Telha",
+      "regiao": "leste",
+      "eleitorado": 3729,
+      "share": 0.0021530520335342617,
+      "planejado": 43,
+      "participantes": 24,
+      "respondentes": 24,
+      "share_amostra": 0.0023608105449537675,
+      "peso": 0.9119969572045544,
+      "peso_recalc": 0.9119969572045543
+    },
+    {
+      "ibge": 2805000,
+      "nome": "Pedra Mole",
+      "regiao": "agreste",
+      "eleitorado": 3476,
+      "share": 0.0020069747569227926,
+      "planejado": 40,
+      "participantes": 5,
+      "respondentes": 5,
+      "share_amostra": 0.0004918355301987016,
+      "peso": 4.080581075775422,
+      "peso_recalc": 4.080581075775421
+    },
+    {
+      "ibge": 2802502,
+      "nome": "General Maynard",
+      "regiao": "leste",
+      "eleitorado": 3406,
+      "share": 0.001966558119125153,
+      "planejado": 39,
+      "participantes": 20,
+      "respondentes": 20,
+      "share_amostra": 0.0019673421207948064,
+      "peso": 0.9996014919513153,
+      "peso_recalc": 0.9996014919513152
+    },
+    {
+      "ibge": 2800100,
+      "nome": "Amparo do São Francisco",
+      "regiao": "leste",
+      "eleitorado": 2666,
+      "share": 0.001539296519550105,
+      "planejado": 31,
+      "participantes": 14,
+      "respondentes": 14,
+      "share_amostra": 0.0013771394845563643,
+      "peso": 1.1177491726961692,
+      "peso_recalc": 1.1177491726961692
+    }
+  ],
+  "composicao": {
+    "sexo": {
+      "F": 3468,
+      "M": 4568,
+      "nao_informado": 2270
+    },
+    "faixa_etaria": {
+      "18-24": 1147,
+      "25-34": 2902,
+      "35-44": 3149,
+      "45-59": 2534,
+      "60+": 574
+    },
+    "escolaridade": {
+      "fundamental": 553,
+      "medio": 4471,
+      "superior": 5282
+    },
+    "nivel_economico": {
+      "A": 398,
+      "B": 1731,
+      "C": 2642,
+      "D_E": 1754,
+      "nao_informado": 3781
+    },
+    "regiao": {
+      "grande_aracaju": 5811,
+      "centro_sul": 1276,
+      "leste": 1291,
+      "agreste": 1218,
+      "sertao": 685,
+      "fora_de_se": 25
+    }
+  },
+  "composicao_view_sexo": {
+    "M": 4568,
+    "F": 3468
+  },
+  "cruzamento_sexo_faixa_instrucao": {
+    "F|18-24|medio": 63,
+    "F|18-24|superior": 43,
+    "F|25-34|fundamental": 41,
+    "F|25-34|medio": 392,
+    "F|25-34|superior": 533,
+    "F|35-44|fundamental": 55,
+    "F|35-44|medio": 458,
+    "F|35-44|superior": 642,
+    "F|45-59|fundamental": 75,
+    "F|45-59|medio": 361,
+    "F|45-59|superior": 565,
+    "F|60+|fundamental": 33,
+    "F|60+|medio": 67,
+    "F|60+|superior": 140,
+    "M|18-24|fundamental": 2,
+    "M|18-24|medio": 72,
+    "M|18-24|superior": 60,
+    "M|25-34|fundamental": 43,
+    "M|25-34|medio": 513,
+    "M|25-34|superior": 558,
+    "M|35-44|fundamental": 75,
+    "M|35-44|medio": 706,
+    "M|35-44|superior": 904,
+    "M|45-59|fundamental": 103,
+    "M|45-59|medio": 530,
+    "M|45-59|superior": 700,
+    "M|60+|fundamental": 18,
+    "M|60+|medio": 101,
+    "M|60+|superior": 183,
+    "nao_informado|18-24|fundamental": 37,
+    "nao_informado|18-24|medio": 598,
+    "nao_informado|18-24|superior": 272,
+    "nao_informado|25-34|fundamental": 38,
+    "nao_informado|25-34|medio": 395,
+    "nao_informado|25-34|superior": 389,
+    "nao_informado|35-44|fundamental": 14,
+    "nao_informado|35-44|medio": 130,
+    "nao_informado|35-44|superior": 165,
+    "nao_informado|45-59|fundamental": 14,
+    "nao_informado|45-59|medio": 73,
+    "nao_informado|45-59|superior": 113,
+    "nao_informado|60+|fundamental": 5,
+    "nao_informado|60+|medio": 12,
+    "nao_informado|60+|superior": 15
+  },
+  "nivel_x_sexo": {
+    "A|F": 66,
+    "A|M": 285,
+    "A|nao_informado": 47,
+    "B|F": 448,
+    "B|M": 1068,
+    "B|nao_informado": 215,
+    "C|F": 808,
+    "C|M": 1301,
+    "C|nao_informado": 533,
+    "D_E|F": 562,
+    "D_E|M": 689,
+    "D_E|nao_informado": 503,
+    "nao_informado|F": 1584,
+    "nao_informado|M": 1225,
+    "nao_informado|nao_informado": 972
+  },
+  "resultados": {
+    "presidente": {
+      "rotulo": "Presidente da República",
+      "candidatos": [
+        {
+          "nome": "LULA",
+          "numero": 13,
+          "partido": "PT",
+          "coligacao": "BRASIL PRONTO PRA MAIS",
+          "votos": 4679,
+          "pond": 4675.6963,
+          "pct_bruto": 0.47837644412636743,
+          "pct_pond": 0.47626464114876804
+        },
+        {
+          "nome": "FLAVIO BOLSONARO",
+          "numero": 22,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 2968,
+          "pond": 3015.5516,
+          "pct_bruto": 0.3034454554749003,
+          "pct_pond": 0.3071629354198204
+        },
+        {
+          "nome": "ESCRITOR AUGUSTO CURY",
+          "numero": 70,
+          "partido": "AVANTE",
+          "coligacao": "BRASIL DOS NOSSOS SONHOS",
+          "votos": 1608,
+          "pond": 1615.1069,
+          "pct_bruto": 0.16440036806052552,
+          "pct_pond": 0.16451417260470902
+        },
+        {
+          "nome": "RONALDO CAIADO",
+          "numero": 55,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 263,
+          "pond": 241.2213,
+          "pct_bruto": 0.026888866169103364,
+          "pct_pond": 0.024570709582215453
+        },
+        {
+          "nome": "RENAN SANTOS",
+          "numero": 14,
+          "partido": "MISSÃO",
+          "coligacao": "MISSÃO",
+          "votos": 198,
+          "pond": 212.258,
+          "pct_bruto": 0.020243328902975154,
+          "pct_pond": 0.02162051889489812
+        },
+        {
+          "nome": "ZEMA",
+          "numero": 30,
+          "partido": "NOVO",
+          "coligacao": "NOVO",
+          "votos": 35,
+          "pond": 32.2606,
+          "pct_bruto": 0.003578366220222881,
+          "pct_pond": 0.0032860524072626245
+        },
+        {
+          "nome": "PABLO MARÇAL",
+          "numero": 28,
+          "partido": "PRTB",
+          "coligacao": "PRTB",
+          "votos": 22,
+          "pond": 19.5212,
+          "pct_bruto": 0.0022492587669972397,
+          "pct_pond": 0.0019884219838643778
+        },
+        {
+          "nome": "SAMARA",
+          "numero": 80,
+          "partido": "UP",
+          "coligacao": "UP",
+          "votos": 4,
+          "pond": 2.9121,
+          "pct_bruto": 0.00040895613945404356,
+          "pct_pond": 0.00029662539491483387
+        },
+        {
+          "nome": "HERTZ DIAS",
+          "numero": 16,
+          "partido": "PSTU",
+          "coligacao": "PSTU",
+          "votos": 2,
+          "pond": 1.2043,
+          "pct_bruto": 0.00020447806972702178,
+          "pct_pond": 0.00012266953851033084
+        },
+        {
+          "nome": "RUI COSTA PIMENTA",
+          "numero": 29,
+          "partido": "PCO",
+          "coligacao": "PCO",
+          "votos": 1,
+          "pond": 1.0988,
+          "pct_bruto": 0.00010223903486351089,
+          "pct_pond": 0.00011192334876289257
+        },
+        {
+          "nome": "EDMILSON COSTA",
+          "numero": 21,
+          "partido": "PCB",
+          "coligacao": "PCB",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00010223903486351089,
+          "pct_pond": 0.00006132967627424247
+        }
+      ],
+      "base_nominal_bruta": 9781,
+      "base_nominal_pond": 9817.433199999996,
+      "legendas": [],
+      "base_partido_bruta": 0,
+      "base_partido_pond": 0,
+      "branco": {
+        "votos": 200,
+        "pond": 188.8682,
+        "pct_bruto": 0.01967342120794806,
+        "pct_pond": 0.018578418439685412
+      },
+      "nao_sabe": {
+        "votos": 185,
+        "pond": 159.6985,
+        "pct_bruto": 0.018197914617351957,
+        "pct_pond": 0.01570907943841314
+      },
+      "respostas_total": 10166,
+      "respondentes": 10166,
+      "votos_numero": 9781,
+      "votos_branco": 200,
+      "votos_nao_sabe": 185,
+      "votos_legenda_pura": 0
+    },
+    "governador": {
+      "rotulo": "Governador",
+      "candidatos": [
+        {
+          "nome": "FÁBIO",
+          "numero": 55,
+          "partido": "PSD",
+          "coligacao": "SERGIPE CRESCE COM VOCÊ",
+          "votos": 6855,
+          "pond": 6772.1062,
+          "pct_bruto": 0.7133936934124259,
+          "pct_pond": 0.7033785602878879
+        },
+        {
+          "nome": "VALMIR DE FRANCISQUINHO",
+          "numero": 10,
+          "partido": "REPUBLICANOS",
+          "coligacao": "MUDA SERGIPE COM A FORÇA DO POVO",
+          "votos": 2043,
+          "pond": 2197.2618,
+          "pct_bruto": 0.21261317514829847,
+          "pct_pond": 0.2282165689397448
+        },
+        {
+          "nome": "RICARDO MARQUES",
+          "numero": 22,
+          "partido": "PL",
+          "coligacao": "FÉ E CORAGEM PRA MUDAR",
+          "votos": 534,
+          "pond": 487.9073,
+          "pct_bruto": 0.0555729004058695,
+          "pct_pond": 0.050676041410565975
+        },
+        {
+          "nome": "DR. HELTON",
+          "numero": 50,
+          "partido": "PSOL",
+          "coligacao": "FEDERAÇÃO PSOL REDE(PSOL/REDE)",
+          "votos": 155,
+          "pond": 153.0557,
+          "pct_bruto": 0.016130710791965864,
+          "pct_pond": 0.01589698902091271
+        },
+        {
+          "nome": "EMANUEL CACHO",
+          "numero": 45,
+          "partido": "PSDB",
+          "coligacao": "FEDERAÇÃO PSDB CIDADANIA(PSDB/CIDADANIA)",
+          "votos": 14,
+          "pond": 10.453,
+          "pct_bruto": 0.0014569674263711105,
+          "pct_pond": 0.0010856911976202162
+        },
+        {
+          "nome": "TATY  CRISTINA DE JESUS",
+          "numero": 27,
+          "partido": "DC",
+          "coligacao": "DC",
+          "votos": 8,
+          "pond": 7.1839,
+          "pct_bruto": 0.000832552815069206,
+          "pct_pond": 0.0007461491432683318
+        }
+      ],
+      "base_nominal_bruta": 9609,
+      "base_nominal_pond": 9627.967900000001,
+      "legendas": [],
+      "base_partido_bruta": 0,
+      "base_partido_pond": 0,
+      "branco": {
+        "votos": 208,
+        "pond": 208.5404,
+        "pct_bruto": 0.020657463501837323,
+        "pct_pond": 0.020691955361423788
+      },
+      "nao_sabe": {
+        "votos": 252,
+        "pond": 241.8239,
+        "pct_bruto": 0.02502731155030291,
+        "pct_pond": 0.023994436301673007
+      },
+      "respostas_total": 10069,
+      "respondentes": 10069,
+      "votos_numero": 9609,
+      "votos_branco": 208,
+      "votos_nao_sabe": 252,
+      "votos_legenda_pura": 0
+    },
+    "senador": {
+      "rotulo": "Senador (cada respondente indicou até duas opções)",
+      "candidatos": [
+        {
+          "nome": "ANDRÉ MOURA",
+          "numero": 444,
+          "partido": "UNIÃO",
+          "coligacao": "SERGIPE CRESCE COM VOCÊ",
+          "votos": 4158,
+          "pond": 4147.6981,
+          "pct_bruto": 0.25177111716621253,
+          "pct_pond": 0.2504972729774643
+        },
+        {
+          "nome": "DELEGADO ALESSANDRO",
+          "numero": 155,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 2996,
+          "pond": 3212.2937,
+          "pct_bruto": 0.18141083863154708,
+          "pct_pond": 0.19400419038518957
+        },
+        {
+          "nome": "ROGERIO CARVALHO",
+          "numero": 131,
+          "partido": "PT",
+          "coligacao": "SERGIPE CRESCE COM VOCÊ",
+          "votos": 2839,
+          "pond": 2769.1286,
+          "pct_bruto": 0.1719043293975174,
+          "pct_pond": 0.16723954976952246
+        },
+        {
+          "nome": "DELEGADO ANDRÉ DAVID",
+          "numero": 101,
+          "partido": "REPUBLICANOS",
+          "coligacao": "MUDA SERGIPE COM A FORÇA DO POVO",
+          "votos": 2122,
+          "pond": 2130.1207,
+          "pct_bruto": 0.12848925219497426,
+          "pct_pond": 0.1286471227167781
+        },
+        {
+          "nome": "EDUARDO AMORIM",
+          "numero": 100,
+          "partido": "REPUBLICANOS",
+          "coligacao": "MUDA SERGIPE COM A FORÇA DO POVO",
+          "votos": 1254,
+          "pond": 1336.9757,
+          "pct_bruto": 0.07593097184377838,
+          "pct_pond": 0.08074569527785459
+        },
+        {
+          "nome": "RODRIGO VALADARES",
+          "numero": 222,
+          "partido": "PL",
+          "coligacao": "FÉ E CORAGEM PRA MUDAR",
+          "votos": 1068,
+          "pond": 1116.764,
+          "pct_bruto": 0.06466848319709355,
+          "pct_pond": 0.06744616647952391
+        },
+        {
+          "nome": "EDVALDO",
+          "numero": 123,
+          "partido": "PDT",
+          "coligacao": "PDT",
+          "votos": 1249,
+          "pond": 1071.9396,
+          "pct_bruto": 0.07562821677263094,
+          "pct_pond": 0.06473902876309968
+        },
+        {
+          "nome": "IRAN BARBOSA",
+          "numero": 500,
+          "partido": "PSOL",
+          "coligacao": "FEDERAÇÃO PSOL REDE(PSOL/REDE)",
+          "votos": 489,
+          "pond": 445.9131,
+          "pct_bruto": 0.0296094459582198,
+          "pct_pond": 0.026930604118686304
+        },
+        {
+          "nome": "CORONEL ROCHA",
+          "numero": 221,
+          "partido": "PL",
+          "coligacao": "FÉ E CORAGEM PRA MUDAR",
+          "votos": 297,
+          "pond": 288.5542,
+          "pct_bruto": 0.017983651226158037,
+          "pct_pond": 0.017427025415903304
+        },
+        {
+          "nome": "RENATINHA",
+          "numero": 277,
+          "partido": "DC",
+          "coligacao": "DC",
+          "votos": 37,
+          "pond": 32.3646,
+          "pct_bruto": 0.0022403875264910686,
+          "pct_pond": 0.0019546369686372408
+        },
+        {
+          "nome": "PAULINHO DA UNIÃO TUR",
+          "numero": 270,
+          "partido": "DC",
+          "coligacao": "DC",
+          "votos": 6,
+          "pond": 6.105,
+          "pct_bruto": 0.00036330608537693006,
+          "pct_pond": 0.00036870712734068565
+        }
+      ],
+      "base_nominal_bruta": 16515,
+      "base_nominal_pond": 16557.857299999996,
+      "legendas": [],
+      "base_partido_bruta": 0,
+      "base_partido_pond": 0,
+      "branco": {
+        "votos": 1833,
+        "pond": 1912.2375,
+        "pct_bruto": 0.09248700741712498,
+        "pct_pond": 0.09627751559902309
+      },
+      "nao_sabe": {
+        "votos": 1471,
+        "pond": 1391.6298,
+        "pct_bruto": 0.07422170644331197,
+        "pct_pond": 0.07006590958370253
+      },
+      "respostas_total": 19819,
+      "respondentes": 9956,
+      "votos_numero": 16515,
+      "votos_branco": 1833,
+      "votos_nao_sabe": 1471,
+      "votos_legenda_pura": 0
+    },
+    "federal": {
+      "rotulo": "Deputado Federal",
+      "candidatos": [
+        {
+          "nome": "YANDRA MOURA",
+          "numero": 4444,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 1580,
+          "pond": 1510.0559,
+          "pct_bruto": 0.1824269714813532,
+          "pct_pond": 0.1731307274339903
+        },
+        {
+          "nome": "CLAUDIO MITIDIERI",
+          "numero": 4040,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 1078,
+          "pond": 1143.3829,
+          "pct_bruto": 0.12446599699803718,
+          "pct_pond": 0.1310909835937765
+        },
+        {
+          "nome": "DELEGADA KATARINA",
+          "numero": 5505,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 727,
+          "pond": 653.2902,
+          "pct_bruto": 0.08393949890312898,
+          "pct_pond": 0.07490094078735562
+        },
+        {
+          "nome": "FÁBIO REIS",
+          "numero": 5555,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 510,
+          "pond": 589.831,
+          "pct_bruto": 0.05888465535157603,
+          "pct_pond": 0.06762522506161389
+        },
+        {
+          "nome": "THIAGO DE JOALDO",
+          "numero": 1011,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 365,
+          "pond": 484.2,
+          "pct_bruto": 0.04214293961436324,
+          "pct_pond": 0.055514433752775705
+        },
+        {
+          "nome": "ICARO DE VALMIR",
+          "numero": 1000,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 376,
+          "pond": 432.2056,
+          "pct_bruto": 0.04341300080822076,
+          "pct_pond": 0.0495531787459287
+        },
+        {
+          "nome": "ANDERSON DE ZÉ DAS CANAS",
+          "numero": 5515,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 309,
+          "pond": 387.0705,
+          "pct_bruto": 0.03567717353654312,
+          "pct_pond": 0.044378355286872714
+        },
+        {
+          "nome": "GUSTINHO RIBEIRO",
+          "numero": 1177,
+          "partido": "PP",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 257,
+          "pond": 344.3153,
+          "pct_bruto": 0.02967324789285302,
+          "pct_pond": 0.03947639180486801
+        },
+        {
+          "nome": "LEVI OLIVEIRA",
+          "numero": 1111,
+          "partido": "PP",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 314,
+          "pond": 290.5962,
+          "pct_bruto": 0.03625447407920564,
+          "pct_pond": 0.033317396723891696
+        },
+        {
+          "nome": "MARCIO MACEDO",
+          "numero": 1313,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 302,
+          "pond": 276.8631,
+          "pct_bruto": 0.034868952776815614,
+          "pct_pond": 0.031742871176245586
+        },
+        {
+          "nome": "CAPITÃO SAMUEL",
+          "numero": 4422,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 309,
+          "pond": 272.3611,
+          "pct_bruto": 0.03567717353654312,
+          "pct_pond": 0.031226708473323258
+        },
+        {
+          "nome": "JOAO DANIEL",
+          "numero": 1311,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 243,
+          "pond": 235.8976,
+          "pct_bruto": 0.02805680637339799,
+          "pct_pond": 0.027046100139691828
+        },
+        {
+          "nome": "MOANA VALADARES",
+          "numero": 2222,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 189,
+          "pond": 173.7085,
+          "pct_bruto": 0.02182196051264288,
+          "pct_pond": 0.019916003749574633
+        },
+        {
+          "nome": "MARCOS SANTANA",
+          "numero": 4000,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 138,
+          "pond": 142.4916,
+          "pct_bruto": 0.01593349497748528,
+          "pct_pond": 0.016336927898651415
+        },
+        {
+          "nome": "NETO BATALHA",
+          "numero": 5588,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 126,
+          "pond": 126.0761,
+          "pct_bruto": 0.014547973675095255,
+          "pct_pond": 0.014454860184341852
+        },
+        {
+          "nome": "NEO SOBRAL",
+          "numero": 2244,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 150,
+          "pond": 120.9076,
+          "pct_bruto": 0.017319016279875303,
+          "pct_pond": 0.013862282012406246
+        },
+        {
+          "nome": "NITINHO",
+          "numero": 5577,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 153,
+          "pond": 112.3402,
+          "pct_bruto": 0.01766539660547281,
+          "pct_pond": 0.012880013611469586
+        },
+        {
+          "nome": "ELBER BATALHA",
+          "numero": 4010,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 125,
+          "pond": 91.6201,
+          "pct_bruto": 0.014432513566562753,
+          "pct_pond": 0.010504415472682126
+        },
+        {
+          "nome": "JORNALISTA SUSANE VIDAL",
+          "numero": 1033,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 113,
+          "pond": 89.6283,
+          "pct_bruto": 0.01304699226417273,
+          "pct_pond": 0.010276051885014265
+        },
+        {
+          "nome": "BRENO GARIBALDE",
+          "numero": 4004,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 115,
+          "pond": 81.9554,
+          "pct_bruto": 0.013277912481237733,
+          "pct_pond": 0.009396339578649802
+        },
+        {
+          "nome": "LUIZÃO DONA TRAMPI",
+          "numero": 2200,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 82,
+          "pond": 78.5462,
+          "pct_bruto": 0.009467728899665165,
+          "pct_pond": 0.009005468435423939
+        },
+        {
+          "nome": "DINÁ ALMEIDA",
+          "numero": 2277,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 36,
+          "pond": 78.2243,
+          "pct_bruto": 0.004156563907170073,
+          "pct_pond": 0.008968561999601925
+        },
+        {
+          "nome": "PASTOR HELENO",
+          "numero": 1010,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 75,
+          "pond": 74.5031,
+          "pct_bruto": 0.008659508139937652,
+          "pct_pond": 0.008541919474032267
+        },
+        {
+          "nome": "VAGNER GASTÃO",
+          "numero": 1212,
+          "partido": "PDT",
+          "coligacao": "PDT",
+          "votos": 65,
+          "pond": 66.6863,
+          "pct_bruto": 0.007504907054612631,
+          "pct_pond": 0.007645708764080394
+        },
+        {
+          "nome": "CORONEL MANO",
+          "numero": 7022,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 66,
+          "pond": 60.2032,
+          "pct_bruto": 0.007620367163145133,
+          "pct_pond": 0.006902409248461599
+        },
+        {
+          "nome": "MISSIONÁRIA GISELE",
+          "numero": 1023,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 59,
+          "pond": 48.0197,
+          "pct_bruto": 0.0068121464034176194,
+          "pct_pond": 0.005505548233123015
+        },
+        {
+          "nome": "DAVI VALENÇA",
+          "numero": 1414,
+          "partido": "MISSÃO",
+          "coligacao": "MISSÃO",
+          "votos": 41,
+          "pond": 47.4832,
+          "pct_bruto": 0.004733864449832583,
+          "pct_pond": 0.005444037506752993
+        },
+        {
+          "nome": "SHEYLA GALBA",
+          "numero": 4420,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 60,
+          "pond": 47.4065,
+          "pct_bruto": 0.006927606511950121,
+          "pct_pond": 0.0054352437085934775
+        },
+        {
+          "nome": "MAFY DE YGOR GOMES",
+          "numero": 1333,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 35,
+          "pond": 45.195,
+          "pct_bruto": 0.004041103798637571,
+          "pct_pond": 0.0051816911058585255
+        },
+        {
+          "nome": "DRA. CLÉCIA",
+          "numero": 1077,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 47,
+          "pond": 40.9774,
+          "pct_bruto": 0.005426625101027595,
+          "pct_pond": 0.0046981353937649555
+        },
+        {
+          "nome": "ROBSON VIANA",
+          "numero": 4056,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 40,
+          "pond": 38.6844,
+          "pct_bruto": 0.004618404341300081,
+          "pct_pond": 0.0044352386639113514
+        },
+        {
+          "nome": "MARCOS FRANCO",
+          "numero": 4015,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 39,
+          "pond": 37.8684,
+          "pct_bruto": 0.004502944232767579,
+          "pct_pond": 0.004341682740858347
+        },
+        {
+          "nome": "SARGENTO VIEIRA",
+          "numero": 2233,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 27,
+          "pond": 27.048,
+          "pct_bruto": 0.0031174229303775544,
+          "pct_pond": 0.003101103684727545
+        },
+        {
+          "nome": "PROFESSOR BENIZARIO",
+          "numero": 1390,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 21,
+          "pond": 26.3881,
+          "pct_bruto": 0.0024246622791825423,
+          "pct_pond": 0.003025444918033087
+        },
+        {
+          "nome": "FLAVIO BRASIL",
+          "numero": 5523,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 19,
+          "pond": 26.3503,
+          "pct_bruto": 0.0021937420621175384,
+          "pct_pond": 0.003021111077479896
+        },
+        {
+          "nome": "DELEGADO MÁRIO LEONY",
+          "numero": 5050,
+          "partido": "PSOL",
+          "coligacao": "FEDERAÇÃO PSOL REDE(PSOL/REDE)",
+          "votos": 35,
+          "pond": 26.1971,
+          "pct_bruto": 0.004041103798637571,
+          "pct_pond": 0.00300354641153416
+        },
+        {
+          "nome": "TININHO ESTEVEZ",
+          "numero": 7077,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 28,
+          "pond": 24.6993,
+          "pct_bruto": 0.0032328830389100564,
+          "pct_pond": 0.0028318208459106424
+        },
+        {
+          "nome": "MENDONÇA PRADO",
+          "numero": 2210,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 23,
+          "pond": 23.8107,
+          "pct_bruto": 0.0026555824962475466,
+          "pct_pond": 0.0027299411973507157
+        },
+        {
+          "nome": "ALBERTO MACEDO",
+          "numero": 1044,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 23,
+          "pond": 19.9002,
+          "pct_bruto": 0.0026555824962475466,
+          "pct_pond": 0.0022815950734551573
+        },
+        {
+          "nome": "SIL RIBEIRO",
+          "numero": 1500,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 25,
+          "pond": 17.7152,
+          "pct_bruto": 0.0028865027133125505,
+          "pct_pond": 0.0020310807451820985
+        },
+        {
+          "nome": "GRACINHA GARCEZ",
+          "numero": 1012,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 24,
+          "pond": 17.656,
+          "pct_bruto": 0.0027710426047800486,
+          "pct_pond": 0.0020242933546860964
+        },
+        {
+          "nome": "ANDRESA DE VALMIR",
+          "numero": 1320,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 15,
+          "pond": 16.5779,
+          "pct_bruto": 0.0017319016279875303,
+          "pct_pond": 0.0019006871774269731
+        },
+        {
+          "nome": "ANGELA MIRANDA",
+          "numero": 4011,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 21,
+          "pond": 15.4524,
+          "pct_bruto": 0.0024246622791825423,
+          "pct_pond": 0.0017716465016963886
+        },
+        {
+          "nome": "JOÃO MARCELO",
+          "numero": 1444,
+          "partido": "MISSÃO",
+          "coligacao": "MISSÃO",
+          "votos": 8,
+          "pond": 14.3456,
+          "pct_bruto": 0.0009236808682600162,
+          "pct_pond": 0.001644749815869102
+        },
+        {
+          "nome": "FIOTE",
+          "numero": 1112,
+          "partido": "PP",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 12,
+          "pond": 14.2561,
+          "pct_bruto": 0.0013855213023900243,
+          "pct_pond": 0.0016344884738185579
+        },
+        {
+          "nome": "CABO DIDI",
+          "numero": 7090,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 17,
+          "pond": 13.2959,
+          "pct_bruto": 0.0019628218450525345,
+          "pct_pond": 0.001524399751618196
+        },
+        {
+          "nome": "LÚCIA BARROSO",
+          "numero": 5010,
+          "partido": "PSOL",
+          "coligacao": "FEDERAÇÃO PSOL REDE(PSOL/REDE)",
+          "votos": 12,
+          "pond": 13.1772,
+          "pct_bruto": 0.0013855213023900243,
+          "pct_pond": 0.0015107905750662454
+        },
+        {
+          "nome": "CLAUDIO LUIS APRESENTADOR",
+          "numero": 7070,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 17,
+          "pond": 12.2232,
+          "pct_bruto": 0.0019628218450525345,
+          "pct_pond": 0.0014014126944381
+        },
+        {
+          "nome": "WELINGTON CAMARGO",
+          "numero": 2211,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 7,
+          "pond": 11.4446,
+          "pct_bruto": 0.0008082207597275141,
+          "pct_pond": 0.001312144751191691
+        },
+        {
+          "nome": "GIOVANNA ROCHA",
+          "numero": 7777,
+          "partido": "SOLIDARIEDADE",
+          "coligacao": "FEDERAÇÃO RENOVAÇÃO SOLIDÁRIA(PRD/SOLIDARIEDADE)",
+          "votos": 4,
+          "pond": 9.8977,
+          "pct_bruto": 0.0004618404341300081,
+          "pct_pond": 0.0011347897789236846
+        },
+        {
+          "nome": "ALEX PINTADO",
+          "numero": 4400,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 8,
+          "pond": 9.8036,
+          "pct_bruto": 0.0009236808682600162,
+          "pct_pond": 0.0011240010382873025
+        },
+        {
+          "nome": "MAJOR JAILSON",
+          "numero": 1593,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 13,
+          "pond": 9.1881,
+          "pct_bruto": 0.0015009814109225262,
+          "pct_pond": 0.001053432814464846
+        },
+        {
+          "nome": "DELEGADO AUGUSTO CÉSAR",
+          "numero": 2201,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 13,
+          "pond": 8.9438,
+          "pct_bruto": 0.0015009814109225262,
+          "pct_pond": 0.0010254233634821878
+        },
+        {
+          "nome": "THANNATA DA EQUOTERAPIA",
+          "numero": 7010,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 8,
+          "pond": 8.817,
+          "pct_bruto": 0.0009236808682600162,
+          "pct_pond": 0.0010108855068116963
+        },
+        {
+          "nome": "ZOYA",
+          "numero": 4522,
+          "partido": "PSDB",
+          "coligacao": "FEDERAÇÃO PSDB CIDADANIA(PSDB/CIDADANIA)",
+          "votos": 4,
+          "pond": 8.3416,
+          "pct_bruto": 0.0004618404341300081,
+          "pct_pond": 0.0009563800094840021
+        },
+        {
+          "nome": "LUIZ FERNANDO",
+          "numero": 1441,
+          "partido": "MISSÃO",
+          "coligacao": "MISSÃO",
+          "votos": 7,
+          "pond": 7.447,
+          "pct_bruto": 0.0008082207597275141,
+          "pct_pond": 0.0008538124497251563
+        },
+        {
+          "nome": "TONINHO ARIMATEA",
+          "numero": 7055,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 7,
+          "pond": 7.3189,
+          "pct_bruto": 0.0008082207597275141,
+          "pct_pond": 0.0008391255456282324
+        },
+        {
+          "nome": "CAJU",
+          "numero": 1234,
+          "partido": "PDT",
+          "coligacao": "PDT",
+          "votos": 9,
+          "pond": 6.9493,
+          "pct_bruto": 0.0010391409767925182,
+          "pct_pond": 0.0007967502157748126
+        },
+        {
+          "nome": "ELIANA DA SOPA",
+          "numero": 1577,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 8,
+          "pond": 6.8852,
+          "pct_bruto": 0.0009236808682600162,
+          "pct_pond": 0.0007894010311330263
+        },
+        {
+          "nome": "ISABEL FERREIRA",
+          "numero": 5513,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 9,
+          "pond": 6.4305,
+          "pct_bruto": 0.0010391409767925182,
+          "pct_pond": 0.0007372688274416031
+        },
+        {
+          "nome": "RONADSON ALVES",
+          "numero": 3013,
+          "partido": "NOVO",
+          "coligacao": "NOVO",
+          "votos": 1,
+          "pond": 6.2624,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.0007179958486852182
+        },
+        {
+          "nome": "DR. EMERSON",
+          "numero": 5019,
+          "partido": "PSOL",
+          "coligacao": "FEDERAÇÃO PSOL REDE(PSOL/REDE)",
+          "votos": 7,
+          "pond": 5.2996,
+          "pct_bruto": 0.0008082207597275141,
+          "pct_pond": 0.0006076090316319911
+        },
+        {
+          "nome": "EMANUELLY HORA",
+          "numero": 1026,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 4,
+          "pond": 4.1365,
+          "pct_bruto": 0.0004618404341300081,
+          "pct_pond": 0.0004742574457215132
+        },
+        {
+          "nome": "DAÍA",
+          "numero": 5000,
+          "partido": "PSOL",
+          "coligacao": "FEDERAÇÃO PSOL REDE(PSOL/REDE)",
+          "votos": 6,
+          "pond": 4.1095,
+          "pct_bruto": 0.0006927606511950121,
+          "pct_pond": 0.00047116184532637704
+        },
+        {
+          "nome": "BRUNA TELES",
+          "numero": 1222,
+          "partido": "PDT",
+          "coligacao": "PDT",
+          "votos": 5,
+          "pond": 4.0982,
+          "pct_bruto": 0.0005773005426625101,
+          "pct_pond": 0.00046986627923507933
+        },
+        {
+          "nome": "EVERTON SOUZA",
+          "numero": 4313,
+          "partido": "PV",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 6,
+          "pond": 3.9083,
+          "pct_bruto": 0.0006927606511950121,
+          "pct_pond": 0.0004480938897892881
+        },
+        {
+          "nome": "DR MANUEL MARCOS",
+          "numero": 5511,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 6,
+          "pond": 3.5847,
+          "pct_bruto": 0.0006927606511950121,
+          "pct_pond": 0.00041099254579424844
+        },
+        {
+          "nome": "RODRIGO SANTOS",
+          "numero": 1400,
+          "partido": "MISSÃO",
+          "coligacao": "MISSÃO",
+          "votos": 5,
+          "pond": 3.2835,
+          "pct_bruto": 0.0005773005426625101,
+          "pct_pond": 0.0003764594036085069
+        },
+        {
+          "nome": "ALESSANDRA DA ONG PET AJU",
+          "numero": 7000,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 4,
+          "pond": 3.1157,
+          "pct_bruto": 0.0004618404341300081,
+          "pct_pond": 0.00035722082041206787
+        },
+        {
+          "nome": "IRMÃ MABEL",
+          "numero": 1515,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 5,
+          "pond": 3.0177,
+          "pct_bruto": 0.0005773005426625101,
+          "pct_pond": 0.0003459849374963884
+        },
+        {
+          "nome": "DR. ANDRE SOTERO",
+          "numero": 2323,
+          "partido": "CIDADANIA",
+          "coligacao": "FEDERAÇÃO PSDB CIDADANIA(PSDB/CIDADANIA)",
+          "votos": 5,
+          "pond": 3.0107,
+          "pct_bruto": 0.0005773005426625101,
+          "pct_pond": 0.00034518237443098267
+        },
+        {
+          "nome": "PRISCILA CRUZ",
+          "numero": 1533,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 4,
+          "pond": 2.704,
+          "pct_bruto": 0.0004618404341300081,
+          "pct_pond": 0.0003100186469795653
+        },
+        {
+          "nome": "PITUXO",
+          "numero": 1555,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 4,
+          "pond": 2.6813,
+          "pct_bruto": 0.0004618404341300081,
+          "pct_pond": 0.00030741604961032114
+        },
+        {
+          "nome": "JULIANA VARGAS",
+          "numero": 5599,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 2,
+          "pond": 2.6522,
+          "pct_bruto": 0.00023092021706500404,
+          "pct_pond": 0.0003040796802955633
+        },
+        {
+          "nome": "GILSON ELETRICISTA",
+          "numero": 2020,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 3,
+          "pond": 2.5985,
+          "pct_bruto": 0.00034638032559750607,
+          "pct_pond": 0.00029792287506523685
+        },
+        {
+          "nome": "DRA. TATI DE VAVÁ DO ALGODÃO",
+          "numero": 4055,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 2,
+          "pond": 2.4866,
+          "pct_bruto": 0.00023092021706500404,
+          "pct_pond": 0.00028509333120539464
+        },
+        {
+          "nome": "ACÁCIO CARDOSO",
+          "numero": 4545,
+          "partido": "PSDB",
+          "coligacao": "FEDERAÇÃO PSDB CIDADANIA(PSDB/CIDADANIA)",
+          "votos": 3,
+          "pond": 2.3726,
+          "pct_bruto": 0.00034638032559750607,
+          "pct_pond": 0.0002720230184259307
+        },
+        {
+          "nome": "TITÓ",
+          "numero": 3000,
+          "partido": "NOVO",
+          "coligacao": "NOVO",
+          "votos": 2,
+          "pond": 2.3369,
+          "pct_bruto": 0.00023092021706500404,
+          "pct_pond": 0.0002679299467923617
+        },
+        {
+          "nome": "TATHIANE ARAÚJO",
+          "numero": 4013,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 2,
+          "pond": 1.9114,
+          "pct_bruto": 0.00023092021706500404,
+          "pct_pond": 0.00021914557760234507
+        },
+        {
+          "nome": "DRA CATIA JUSTO",
+          "numero": 6555,
+          "partido": "PCDOB",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 3,
+          "pond": 1.8064,
+          "pct_bruto": 0.00034638032559750607,
+          "pct_pond": 0.0002071071316212599
+        },
+        {
+          "nome": "BEATRIZ ANDRADE",
+          "numero": 1200,
+          "partido": "PDT",
+          "coligacao": "PDT",
+          "votos": 3,
+          "pond": 1.8064,
+          "pct_bruto": 0.00034638032559750607,
+          "pct_pond": 0.0002071071316212599
+        },
+        {
+          "nome": "FABIANA SANTANA",
+          "numero": 7707,
+          "partido": "SOLIDARIEDADE",
+          "coligacao": "FEDERAÇÃO RENOVAÇÃO SOLIDÁRIA(PRD/SOLIDARIEDADE)",
+          "votos": 2,
+          "pond": 1.7009,
+          "pct_bruto": 0.00023092021706500404,
+          "pct_pond": 0.00019501135970693143
+        },
+        {
+          "nome": "TADEU TAXISTA",
+          "numero": 4588,
+          "partido": "PSDB",
+          "coligacao": "FEDERAÇÃO PSDB CIDADANIA(PSDB/CIDADANIA)",
+          "votos": 1,
+          "pond": 1.6864,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.0001933489076428768
+        },
+        {
+          "nome": "GIVALDO SILVA",
+          "numero": 7733,
+          "partido": "SOLIDARIEDADE",
+          "coligacao": "FEDERAÇÃO RENOVAÇÃO SOLIDÁRIA(PRD/SOLIDARIEDADE)",
+          "votos": 2,
+          "pond": 1.477,
+          "pct_bruto": 0.00023092021706500404,
+          "pct_pond": 0.00016934080680059836
+        },
+        {
+          "nome": "VITÓRIA PAULINE",
+          "numero": 2255,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 2,
+          "pond": 1.2043,
+          "pct_bruto": 0.00023092021706500404,
+          "pct_pond": 0.0001380752428097228
+        },
+        {
+          "nome": "RITA DA SAÚDE",
+          "numero": 2011,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 2,
+          "pond": 1.2043,
+          "pct_bruto": 0.00023092021706500404,
+          "pct_pond": 0.0001380752428097228
+        },
+        {
+          "nome": "IRMÃ MICHELI",
+          "numero": 2727,
+          "partido": "DC",
+          "coligacao": "DC",
+          "votos": 2,
+          "pond": 1.2043,
+          "pct_bruto": 0.00023092021706500404,
+          "pct_pond": 0.0001380752428097228
+        },
+        {
+          "nome": "SERGINHO MENDONÇA",
+          "numero": 7755,
+          "partido": "SOLIDARIEDADE",
+          "coligacao": "FEDERAÇÃO RENOVAÇÃO SOLIDÁRIA(PRD/SOLIDARIEDADE)",
+          "votos": 2,
+          "pond": 1.2043,
+          "pct_bruto": 0.00023092021706500404,
+          "pct_pond": 0.0001380752428097228
+        },
+        {
+          "nome": "ALLAN MARQUES",
+          "numero": 3033,
+          "partido": "NOVO",
+          "coligacao": "NOVO",
+          "votos": 2,
+          "pond": 1.2043,
+          "pct_bruto": 0.00023092021706500404,
+          "pct_pond": 0.0001380752428097228
+        },
+        {
+          "nome": "BRUNA MAKIDA",
+          "numero": 8080,
+          "partido": "UP",
+          "coligacao": "UP",
+          "votos": 1,
+          "pond": 1.0988,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00012597947089539437
+        },
+        {
+          "nome": "GEDALVA UMBAUBÁ",
+          "numero": 1133,
+          "partido": "PP",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 1,
+          "pond": 1.008,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00011556908141841783
+        },
+        {
+          "nome": "TONY DOS AMBULANTES",
+          "numero": 4500,
+          "partido": "PSDB",
+          "coligacao": "FEDERAÇÃO PSDB CIDADANIA(PSDB/CIDADANIA)",
+          "votos": 1,
+          "pond": 0.8976,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00010291151535830539
+        },
+        {
+          "nome": "ANDRÉA CORAÇÃO VALENTE",
+          "numero": 1199,
+          "partido": "PP",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00006903188881153708
+        },
+        {
+          "nome": "CANTORA DEBORA CRISTIANE",
+          "numero": 4577,
+          "partido": "PSDB",
+          "coligacao": "FEDERAÇÃO PSDB CIDADANIA(PSDB/CIDADANIA)",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00006903188881153708
+        },
+        {
+          "nome": "JULIANA SILVA MÃE ATÍPICA",
+          "numero": 7079,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00006903188881153708
+        },
+        {
+          "nome": "DRA. JEANNE LIMA",
+          "numero": 2333,
+          "partido": "CIDADANIA",
+          "coligacao": "FEDERAÇÃO PSDB CIDADANIA(PSDB/CIDADANIA)",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00006903188881153708
+        },
+        {
+          "nome": "INGRID OLIVEIRA",
+          "numero": 2002,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00006903188881153708
+        },
+        {
+          "nome": "NATALI DA SAÚDE",
+          "numero": 4555,
+          "partido": "PSDB",
+          "coligacao": "FEDERAÇÃO PSDB CIDADANIA(PSDB/CIDADANIA)",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00006903188881153708
+        },
+        {
+          "nome": "BAGADAL",
+          "numero": 1210,
+          "partido": "PDT",
+          "coligacao": "PDT",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00006903188881153708
+        },
+        {
+          "nome": "GALO MOTORISTA",
+          "numero": 1255,
+          "partido": "PDT",
+          "coligacao": "PDT",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00006903188881153708
+        },
+        {
+          "nome": "IGOR BAIMA",
+          "numero": 5013,
+          "partido": "PSOL",
+          "coligacao": "FEDERAÇÃO PSOL REDE(PSOL/REDE)",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00006903188881153708
+        },
+        {
+          "nome": "SOARES PINTO",
+          "numero": 7700,
+          "partido": "SOLIDARIEDADE",
+          "coligacao": "FEDERAÇÃO RENOVAÇÃO SOLIDÁRIA(PRD/SOLIDARIEDADE)",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00006903188881153708
+        },
+        {
+          "nome": "PROFESSOR AYSLAN",
+          "numero": 1510,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00006903188881153708
+        },
+        {
+          "nome": "DEYSY LIMA",
+          "numero": 1404,
+          "partido": "MISSÃO",
+          "coligacao": "MISSÃO",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00006903188881153708
+        },
+        {
+          "nome": "MARCOS ROMEU",
+          "numero": 2788,
+          "partido": "DC",
+          "coligacao": "DC",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011546010853250202,
+          "pct_pond": 0.00006903188881153708
+        }
+      ],
+      "base_nominal_bruta": 8661,
+      "base_nominal_pond": 8722.056000000002,
+      "legendas": [
+        {
+          "sigla": "PSD",
+          "numero": 55,
+          "votos": 1880,
+          "pond": 1926.2833,
+          "pct_bruto": 0.21358782094978415,
+          "pct_pond": 0.21744923123754886
+        },
+        {
+          "sigla": "UNIÃO",
+          "numero": 44,
+          "votos": 1972,
+          "pond": 1851.5231,
+          "pct_bruto": 0.22403999091115656,
+          "pct_pond": 0.20900989730511774
+        },
+        {
+          "sigla": "PSB",
+          "numero": 40,
+          "votos": 1567,
+          "pond": 1562.3669,
+          "pct_bruto": 0.17802772097250624,
+          "pct_pond": 0.17636838844836186
+        },
+        {
+          "sigla": "REPUBLICANOS",
+          "numero": 10,
+          "votos": 1097,
+          "pond": 1221.0428,
+          "pct_bruto": 0.12463076573506021,
+          "pct_pond": 0.13783788613447676
+        },
+        {
+          "sigla": "PP",
+          "numero": 11,
+          "votos": 589,
+          "pond": 655.4329,
+          "pct_bruto": 0.06691660986139514,
+          "pct_pond": 0.07398879501929817
+        },
+        {
+          "sigla": "PT",
+          "numero": 13,
+          "votos": 656,
+          "pond": 641.9994,
+          "pct_bruto": 0.07452851624630766,
+          "pct_pond": 0.07247234920479642
+        },
+        {
+          "sigla": "PL",
+          "numero": 22,
+          "votos": 542,
+          "pond": 539.7281,
+          "pct_bruto": 0.061576914337650536,
+          "pct_pond": 0.06092741416711805
+        },
+        {
+          "sigla": "AVANTE",
+          "numero": 70,
+          "votos": 150,
+          "pond": 132.2037,
+          "pct_bruto": 0.017041581458759374,
+          "pct_pond": 0.014923865524743707
+        },
+        {
+          "sigla": "PDT",
+          "numero": 12,
+          "votos": 87,
+          "pond": 82.8464,
+          "pct_bruto": 0.009884117246080437,
+          "pct_pond": 0.009352147729671158
+        },
+        {
+          "sigla": "MISSÃO",
+          "numero": 14,
+          "votos": 64,
+          "pond": 75.5209,
+          "pct_bruto": 0.007271074755737333,
+          "pct_pond": 0.00852520584452339
+        },
+        {
+          "sigla": "PSOL",
+          "numero": 50,
+          "votos": 63,
+          "pond": 50.5898,
+          "pct_bruto": 0.007157464212678937,
+          "pct_pond": 0.005710849031635871
+        },
+        {
+          "sigla": "MDB",
+          "numero": 15,
+          "votos": 64,
+          "pond": 46.3797,
+          "pct_bruto": 0.007271074755737333,
+          "pct_pond": 0.005235590273781714
+        },
+        {
+          "sigla": "SOLIDARIEDADE",
+          "numero": 77,
+          "votos": 12,
+          "pond": 15.7941,
+          "pct_bruto": 0.0013633265167007499,
+          "pct_pond": 0.0017829230534724412
+        },
+        {
+          "sigla": "PSDB",
+          "numero": 45,
+          "votos": 12,
+          "pond": 15.4,
+          "pct_bruto": 0.0013633265167007499,
+          "pct_pond": 0.0017384349233875685
+        },
+        {
+          "sigla": "PV",
+          "numero": 43,
+          "votos": 12,
+          "pond": 11.4903,
+          "pct_bruto": 0.0013633265167007499,
+          "pct_pond": 0.0012970869350779335
+        },
+        {
+          "sigla": "NOVO",
+          "numero": 30,
+          "votos": 5,
+          "pond": 9.8036,
+          "pct_bruto": 0.0005680527152919791,
+          "pct_pond": 0.0011066831568131406
+        },
+        {
+          "sigla": "PODE",
+          "numero": 20,
+          "votos": 8,
+          "pond": 5.6092,
+          "pct_bruto": 0.0009088843444671666,
+          "pct_pond": 0.0006331966994977629
+        },
+        {
+          "sigla": "CIDADANIA",
+          "numero": 23,
+          "votos": 7,
+          "pond": 4.215,
+          "pct_bruto": 0.0007952738014087707,
+          "pct_pond": 0.00047581189623887015
+        },
+        {
+          "sigla": "DEM_HIST",
+          "numero": 25,
+          "votos": 3,
+          "pond": 2.1524,
+          "pct_bruto": 0.00034083162917518747,
+          "pct_pond": 0.0002429745018895716
+        },
+        {
+          "sigla": "DC",
+          "numero": 27,
+          "votos": 3,
+          "pond": 1.8064,
+          "pct_bruto": 0.00034083162917518747,
+          "pct_pond": 0.00020391615880566906
+        },
+        {
+          "sigla": "PCDOB",
+          "numero": 65,
+          "votos": 3,
+          "pond": 1.8064,
+          "pct_bruto": 0.00034083162917518747,
+          "pct_pond": 0.00020391615880566906
+        },
+        {
+          "sigla": "UP",
+          "numero": 80,
+          "votos": 1,
+          "pond": 1.0988,
+          "pct_bruto": 0.00011361054305839582,
+          "pct_pond": 0.00012403846063754935
+        },
+        {
+          "sigla": "PSL",
+          "numero": 17,
+          "votos": 2,
+          "pond": 0.9334,
+          "pct_bruto": 0.00022722108611679165,
+          "pct_pond": 0.00010536721801882833
+        },
+        {
+          "sigla": "REDE",
+          "numero": 18,
+          "votos": 1,
+          "pond": 0.8976,
+          "pct_bruto": 0.00011361054305839582,
+          "pct_pond": 0.00010132592124887541
+        },
+        {
+          "sigla": "PMN",
+          "numero": 33,
+          "votos": 1,
+          "pond": 0.8976,
+          "pct_bruto": 0.00011361054305839582,
+          "pct_pond": 0.00010132592124887541
+        },
+        {
+          "sigla": "CONSERVADORES",
+          "numero": 54,
+          "votos": 1,
+          "pond": 0.7209,
+          "pct_bruto": 0.00011361054305839582,
+          "pct_pond": 0.0000813790737837726
+        }
+      ],
+      "base_partido_bruta": 8802,
+      "base_partido_pond": 8858.542699999998,
+      "branco": {
+        "votos": 531,
+        "pond": 540.5015,
+        "pct_bruto": 0.05421133231240429,
+        "pct_pond": 0.05503183763696043
+      },
+      "nao_sabe": {
+        "votos": 462,
+        "pond": 422.5704,
+        "pct_bruto": 0.04716692189892802,
+        "pct_pond": 0.043024534886555214
+      },
+      "respostas_total": 9795,
+      "respondentes": 9795,
+      "votos_numero": 8802,
+      "votos_branco": 531,
+      "votos_nao_sabe": 462,
+      "votos_legenda_pura": 141
+    },
+    "estadual": {
+      "rotulo": "Deputado Estadual",
+      "candidatos": [
+        {
+          "nome": "ZEZINHO SOBRAL",
+          "numero": 40000,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 495,
+          "pond": 566.4991,
+          "pct_bruto": 0.05574324324324324,
+          "pct_pond": 0.06273056911997842
+        },
+        {
+          "nome": "MAISA MITIDIERI",
+          "numero": 55555,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 557,
+          "pond": 510.4888,
+          "pct_bruto": 0.06272522522522522,
+          "pct_pond": 0.05652833862114668
+        },
+        {
+          "nome": "JORGINHO ARAUJO",
+          "numero": 55777,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 402,
+          "pond": 439.3466,
+          "pct_bruto": 0.04527027027027027,
+          "pct_pond": 0.0486504961065737
+        },
+        {
+          "nome": "CRISTIANO CAVALCANTE",
+          "numero": 44444,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 409,
+          "pond": 426.3858,
+          "pct_bruto": 0.04605855855855856,
+          "pct_pond": 0.047215298133178485
+        },
+        {
+          "nome": "MARCELO SOBRAL",
+          "numero": 44111,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 420,
+          "pond": 371.1782,
+          "pct_bruto": 0.0472972972972973,
+          "pct_pond": 0.04110195361462917
+        },
+        {
+          "nome": "LUCIANO BISPO",
+          "numero": 55015,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 295,
+          "pond": 342.3886,
+          "pct_bruto": 0.03322072072072072,
+          "pct_pond": 0.03791397327584923
+        },
+        {
+          "nome": "CORONEL RIBEIRO",
+          "numero": 55190,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 343,
+          "pond": 333.3246,
+          "pct_bruto": 0.03862612612612613,
+          "pct_pond": 0.036910282575363586
+        },
+        {
+          "nome": "KAKÁ SANTOS",
+          "numero": 44555,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 285,
+          "pond": 280.1358,
+          "pct_bruto": 0.03209459459459459,
+          "pct_pond": 0.03102048734919517
+        },
+        {
+          "nome": "ADAILTON MARTINS",
+          "numero": 55123,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 227,
+          "pond": 226.4175,
+          "pct_bruto": 0.025563063063063062,
+          "pct_pond": 0.025072058602957553
+        },
+        {
+          "nome": "ANA LUIZA",
+          "numero": 10111,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 164,
+          "pond": 225.5976,
+          "pct_bruto": 0.018468468468468467,
+          "pct_pond": 0.02498126800219319
+        },
+        {
+          "nome": "IBRAIN DE VALMIR",
+          "numero": 43000,
+          "partido": "PV",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 154,
+          "pond": 210.391,
+          "pct_bruto": 0.017342342342342342,
+          "pct_pond": 0.023297384175405358
+        },
+        {
+          "nome": "GEORGEO PASSOS",
+          "numero": 10777,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 201,
+          "pond": 199.4112,
+          "pct_bruto": 0.022635135135135136,
+          "pct_pond": 0.02208154975868071
+        },
+        {
+          "nome": "MARCOS OLIVEIRA",
+          "numero": 10000,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 184,
+          "pond": 196.1447,
+          "pct_bruto": 0.02072072072072072,
+          "pct_pond": 0.02171983796773451
+        },
+        {
+          "nome": "FÁBIO HENRIQUE",
+          "numero": 15500,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 225,
+          "pond": 193.2371,
+          "pct_bruto": 0.02533783783783784,
+          "pct_pond": 0.02139786851928658
+        },
+        {
+          "nome": "LUCIANO PIMENTEL",
+          "numero": 22123,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 163,
+          "pond": 189.1552,
+          "pct_bruto": 0.018355855855855856,
+          "pct_pond": 0.020945864429446296
+        },
+        {
+          "nome": "DRA LIDIANE LUCENA",
+          "numero": 44000,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 213,
+          "pond": 168.064,
+          "pct_bruto": 0.023986486486486488,
+          "pct_pond": 0.018610356783585448
+        },
+        {
+          "nome": "PATO MARAVILHA",
+          "numero": 44222,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 120,
+          "pond": 163.0089,
+          "pct_bruto": 0.013513513513513514,
+          "pct_pond": 0.01805058660926672
+        },
+        {
+          "nome": "CARLINHOS FERREIRA",
+          "numero": 55255,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 118,
+          "pond": 160.4122,
+          "pct_bruto": 0.013288288288288288,
+          "pct_pond": 0.017763044283367443
+        },
+        {
+          "nome": "PAULO JR",
+          "numero": 43777,
+          "partido": "PV",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 164,
+          "pond": 157.9883,
+          "pct_bruto": 0.018468468468468467,
+          "pct_pond": 0.01749463674928678
+        },
+        {
+          "nome": "ANTÔNIO BALA",
+          "numero": 15555,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 118,
+          "pond": 151.9143,
+          "pct_bruto": 0.013288288288288288,
+          "pct_pond": 0.016822039958162574
+        },
+        {
+          "nome": "CHICO DO CORREIO",
+          "numero": 13333,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 123,
+          "pond": 151.4035,
+          "pct_bruto": 0.013851351351351352,
+          "pct_pond": 0.016765477159198756
+        },
+        {
+          "nome": "GILSON DOS ANJOS",
+          "numero": 44333,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 142,
+          "pond": 148.3973,
+          "pct_bruto": 0.01599099099099099,
+          "pct_pond": 0.016432589363104322
+        },
+        {
+          "nome": "DELEGADA DANIELLE",
+          "numero": 15190,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 167,
+          "pond": 140.2858,
+          "pct_bruto": 0.018806306306306305,
+          "pct_pond": 0.015534372558493856
+        },
+        {
+          "nome": "HILDA RIBEIRO",
+          "numero": 11777,
+          "partido": "PP",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 115,
+          "pond": 138.1989,
+          "pct_bruto": 0.01295045045045045,
+          "pct_pond": 0.015303282297809449
+        },
+        {
+          "nome": "KITTY LIMA",
+          "numero": 40400,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 160,
+          "pond": 137.6943,
+          "pct_bruto": 0.018018018018018018,
+          "pct_pond": 0.01524740604808912
+        },
+        {
+          "nome": "JÚNIOR DE DIOGENES",
+          "numero": 70777,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 80,
+          "pond": 127.7861,
+          "pct_bruto": 0.009009009009009009,
+          "pct_pond": 0.014150233916739627
+        },
+        {
+          "nome": "NORBERTO PINTO",
+          "numero": 70456,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 122,
+          "pond": 126.7114,
+          "pct_bruto": 0.013738738738738739,
+          "pct_pond": 0.014031228356742724
+        },
+        {
+          "nome": "PASTOR DIEGO",
+          "numero": 44744,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 184,
+          "pond": 126.0447,
+          "pct_bruto": 0.02072072072072072,
+          "pct_pond": 0.01395740216631755
+        },
+        {
+          "nome": "CANDISSE CARVALHO",
+          "numero": 13131,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 166,
+          "pond": 125.0988,
+          "pct_bruto": 0.018693693693693694,
+          "pct_pond": 0.013852659113185449
+        },
+        {
+          "nome": "FERNANDINHO FRANCO",
+          "numero": 22200,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 128,
+          "pond": 124.5052,
+          "pct_bruto": 0.014414414414414415,
+          "pct_pond": 0.013786927559808544
+        },
+        {
+          "nome": "VENÂNCIO FONSECA",
+          "numero": 40111,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 103,
+          "pond": 116.2127,
+          "pct_bruto": 0.011599099099099099,
+          "pct_pond": 0.01286866794663807
+        },
+        {
+          "nome": "MARIANA DANTAS",
+          "numero": 15123,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 128,
+          "pond": 113.5656,
+          "pct_bruto": 0.014414414414414415,
+          "pct_pond": 0.012575544639791696
+        },
+        {
+          "nome": "MATHEUS CORRÊA",
+          "numero": 10333,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 118,
+          "pond": 107.4922,
+          "pct_bruto": 0.013288288288288288,
+          "pct_pond": 0.011903014288916863
+        },
+        {
+          "nome": "BRENO SILVEIRA",
+          "numero": 10123,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 62,
+          "pond": 104.4298,
+          "pct_bruto": 0.006981981981981982,
+          "pct_pond": 0.011563903256131424
+        },
+        {
+          "nome": "CECILIA MARQUES",
+          "numero": 22222,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 119,
+          "pond": 94.9793,
+          "pct_bruto": 0.013400900900900901,
+          "pct_pond": 0.010517413961676488
+        },
+        {
+          "nome": "DR. GILSON ANDRADE",
+          "numero": 15111,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 66,
+          "pond": 94.6412,
+          "pct_bruto": 0.007432432432432433,
+          "pct_pond": 0.010479974881156387
+        },
+        {
+          "nome": "CAMILO DANIEL",
+          "numero": 13000,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 100,
+          "pond": 89.6322,
+          "pct_bruto": 0.01126126126126126,
+          "pct_pond": 0.009925309532664269
+        },
+        {
+          "nome": "MARCELL DE MAIM",
+          "numero": 55111,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 98,
+          "pond": 88.4543,
+          "pct_bruto": 0.011036036036036036,
+          "pct_pond": 0.009794876249775696
+        },
+        {
+          "nome": "ALAN DE MUNDINHO",
+          "numero": 40123,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 54,
+          "pond": 83.7026,
+          "pct_bruto": 0.006081081081081081,
+          "pct_pond": 0.009268702694888492
+        },
+        {
+          "nome": "NETINHO GUIMARÃES",
+          "numero": 44777,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 77,
+          "pond": 81.0226,
+          "pct_bruto": 0.008671171171171171,
+          "pct_pond": 0.00897193624770165
+        },
+        {
+          "nome": "ANDRE LUCAS",
+          "numero": 50079,
+          "partido": "PSOL",
+          "coligacao": "FEDERAÇÃO PSOL REDE(PSOL/REDE)",
+          "votos": 71,
+          "pond": 79.2516,
+          "pct_bruto": 0.007995495495495495,
+          "pct_pond": 0.008775826778310647
+        },
+        {
+          "nome": "PADRE INALDO",
+          "numero": 13555,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 81,
+          "pond": 77.6198,
+          "pct_bruto": 0.009121621621621622,
+          "pct_pond": 0.008595131446773525
+        },
+        {
+          "nome": "LINDA BRASIL",
+          "numero": 50180,
+          "partido": "PSOL",
+          "coligacao": "FEDERAÇÃO PSOL REDE(PSOL/REDE)",
+          "votos": 100,
+          "pond": 70.7122,
+          "pct_bruto": 0.01126126126126126,
+          "pct_pond": 0.00783022700252434
+        },
+        {
+          "nome": "MARCEL DA ENFERMAGEM",
+          "numero": 44321,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 66,
+          "pond": 68.3637,
+          "pct_bruto": 0.007432432432432433,
+          "pct_pond": 0.00757016879311453
+        },
+        {
+          "nome": "TIAGO RANGEL",
+          "numero": 20111,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 83,
+          "pond": 66.9253,
+          "pct_bruto": 0.009346846846846847,
+          "pct_pond": 0.0074108893686244
+        },
+        {
+          "nome": "EVERALDO VIEIRA",
+          "numero": 70123,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 69,
+          "pond": 56.1989,
+          "pct_bruto": 0.007770270270270271,
+          "pct_pond": 0.0062231148838837605
+        },
+        {
+          "nome": "GARIBALDE",
+          "numero": 15000,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 70,
+          "pond": 52.2621,
+          "pct_bruto": 0.007882882882882882,
+          "pct_pond": 0.005787178261016167
+        },
+        {
+          "nome": "ADROALDO ALVES",
+          "numero": 55888,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 54,
+          "pond": 41.0167,
+          "pct_bruto": 0.006081081081081081,
+          "pct_pond": 0.0045419329605703145
+        },
+        {
+          "nome": "PROFESSOR DUDU",
+          "numero": 13900,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 33,
+          "pond": 39.6139,
+          "pct_bruto": 0.0037162162162162164,
+          "pct_pond": 0.0043865956575428145
+        },
+        {
+          "nome": "SARGENTO M. FILHO",
+          "numero": 10190,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 51,
+          "pond": 37.7663,
+          "pct_bruto": 0.0057432432432432436,
+          "pct_pond": 0.004182003982982216
+        },
+        {
+          "nome": "ANDERSON DE TUCA",
+          "numero": 44123,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 53,
+          "pond": 36.0052,
+          "pct_bruto": 0.005968468468468468,
+          "pct_pond": 0.003986990777705819
+        },
+        {
+          "nome": "ZOMINHO",
+          "numero": 70222,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 30,
+          "pond": 35.1088,
+          "pct_bruto": 0.0033783783783783786,
+          "pct_pond": 0.0038877290451467587
+        },
+        {
+          "nome": "DELEGADO CLEVER FARIAS",
+          "numero": 40222,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 23,
+          "pond": 32.2048,
+          "pct_bruto": 0.00259009009009009,
+          "pct_pond": 0.0035661582381950486
+        },
+        {
+          "nome": "JÚNIOR LIMA",
+          "numero": 20222,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 11,
+          "pond": 31.0324,
+          "pct_bruto": 0.0012387387387387387,
+          "pct_pond": 0.0034363339909257015
+        },
+        {
+          "nome": "FLÁVIO DA DIREITA SERGIPANA",
+          "numero": 22100,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 24,
+          "pond": 29.882,
+          "pct_bruto": 0.002702702702702703,
+          "pct_pond": 0.003308945886133261
+        },
+        {
+          "nome": "GIVALDO GARÇÃO",
+          "numero": 15192,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 17,
+          "pond": 26.181,
+          "pct_bruto": 0.0019144144144144144,
+          "pct_pond": 0.002899120281268152
+        },
+        {
+          "nome": "PROFESSORA SÔNIA MEIRE",
+          "numero": 50123,
+          "partido": "PSOL",
+          "coligacao": "FEDERAÇÃO PSOL REDE(PSOL/REDE)",
+          "votos": 33,
+          "pond": 24.7566,
+          "pct_bruto": 0.0037162162162162164,
+          "pct_pond": 0.0027413911292633254
+        },
+        {
+          "nome": "SAMIRA DAUD",
+          "numero": 55200,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 22,
+          "pond": 22.2511,
+          "pct_bruto": 0.0024774774774774773,
+          "pct_pond": 0.0024639477212683157
+        },
+        {
+          "nome": "WENDELL OLIVEIRA",
+          "numero": 10999,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 28,
+          "pond": 20.3327,
+          "pct_bruto": 0.003153153153153153,
+          "pct_pond": 0.0022515160972820343
+        },
+        {
+          "nome": "ELI ACIOLE",
+          "numero": 11111,
+          "partido": "PP",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 25,
+          "pond": 18.5405,
+          "pct_bruto": 0.002815315315315315,
+          "pct_pond": 0.002053059072413283
+        },
+        {
+          "nome": "DELEGADO MARCELO PAES",
+          "numero": 22111,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 13,
+          "pond": 16.8374,
+          "pct_bruto": 0.001463963963963964,
+          "pct_pond": 0.0018644684245760045
+        },
+        {
+          "nome": "ENFERMEIRA GABRYELLA GARIBALDE",
+          "numero": 55444,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 22,
+          "pond": 15.9137,
+          "pct_bruto": 0.0024774774774774773,
+          "pct_pond": 0.0017621836606706003
+        },
+        {
+          "nome": "GIBRAN",
+          "numero": 11000,
+          "partido": "PP",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 11,
+          "pond": 15.7088,
+          "pct_bruto": 0.0012387387387387387,
+          "pct_pond": 0.001739494315510681
+        },
+        {
+          "nome": "DR SARMENTO",
+          "numero": 40040,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 24,
+          "pond": 15.3669,
+          "pct_bruto": 0.002702702702702703,
+          "pct_pond": 0.001701634446744569
+        },
+        {
+          "nome": "JOSIVALDO DA EQUOTERAPIA",
+          "numero": 22789,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 11,
+          "pond": 15.0921,
+          "pct_bruto": 0.0012387387387387387,
+          "pct_pond": 0.001671204812533023
+        },
+        {
+          "nome": "EDUARDO DO TÊNIS",
+          "numero": 10222,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 11,
+          "pond": 13.7411,
+          "pct_bruto": 0.0012387387387387387,
+          "pct_pond": 0.0015216035177011496
+        },
+        {
+          "nome": "ZE NELSON",
+          "numero": 13133,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 10,
+          "pond": 12.6054,
+          "pct_bruto": 0.0011261261261261261,
+          "pct_pond": 0.0013958431990182788
+        },
+        {
+          "nome": "ALICE CAROLINE",
+          "numero": 55000,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 20,
+          "pond": 12.596,
+          "pct_bruto": 0.0022522522522522522,
+          "pct_pond": 0.001394802301778146
+        },
+        {
+          "nome": "FRANCISCO GUALBERTO",
+          "numero": 40300,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 14,
+          "pond": 10.7141,
+          "pct_bruto": 0.0015765765765765765,
+          "pct_pond": 0.0011864124596285513
+        },
+        {
+          "nome": "ATENILSON JOSÉ",
+          "numero": 50113,
+          "partido": "PSOL",
+          "coligacao": "FEDERAÇÃO PSOL REDE(PSOL/REDE)",
+          "votos": 11,
+          "pond": 10.3613,
+          "pct_bruto": 0.0012387387387387387,
+          "pct_pond": 0.0011473455929988808
+        },
+        {
+          "nome": "LÉA SOBRAL",
+          "numero": 40789,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 9,
+          "pond": 8.906,
+          "pct_bruto": 0.0010135135135135136,
+          "pct_pond": 0.00098619476815149
+        },
+        {
+          "nome": "PROFESSOR CHICAO",
+          "numero": 13123,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 8,
+          "pond": 7.7116,
+          "pct_bruto": 0.0009009009009009009,
+          "pct_pond": 0.0008539343784052357
+        },
+        {
+          "nome": "ANA PAULA",
+          "numero": 13003,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 4,
+          "pond": 7.2565,
+          "pct_bruto": 0.00045045045045045046,
+          "pct_pond": 0.0008035394492579483
+        },
+        {
+          "nome": "MESSIAS CAVALCANTE",
+          "numero": 70022,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 5,
+          "pond": 6.9464,
+          "pct_bruto": 0.0005630630630630631,
+          "pct_pond": 0.0007692009137084561
+        },
+        {
+          "nome": "EUQUIAS CORREIA PASTORZÃO",
+          "numero": 10300,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 7,
+          "pond": 6.4171,
+          "pct_bruto": 0.0007882882882882883,
+          "pct_pond": 0.0007105895403890552
+        },
+        {
+          "nome": "PROFESSOR OTÁVIO SALES",
+          "numero": 50500,
+          "partido": "PSOL",
+          "coligacao": "FEDERAÇÃO PSOL REDE(PSOL/REDE)",
+          "votos": 7,
+          "pond": 6.0933,
+          "pct_bruto": 0.0007882882882882883,
+          "pct_pond": 0.0006747339524789439
+        },
+        {
+          "nome": "SERGIO SAMPAIO",
+          "numero": 50000,
+          "partido": "PSOL",
+          "coligacao": "FEDERAÇÃO PSOL REDE(PSOL/REDE)",
+          "votos": 4,
+          "pond": 5.3324,
+          "pct_bruto": 0.00045045045045045046,
+          "pct_pond": 0.0005904766429026504
+        },
+        {
+          "nome": "DRA. CATARINA",
+          "numero": 22555,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 5,
+          "pond": 5.2953,
+          "pct_bruto": 0.0005630630630630631,
+          "pct_pond": 0.0005863684208165939
+        },
+        {
+          "nome": "TARCÍSIO DA NCT",
+          "numero": 22000,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 4,
+          "pond": 4.9832,
+          "pct_bruto": 0.00045045045045045046,
+          "pct_pond": 0.0005518084177692011
+        },
+        {
+          "nome": "NEGO DO MATUTO",
+          "numero": 10888,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 4,
+          "pond": 4.8197,
+          "pct_bruto": 0.00045045045045045046,
+          "pct_pond": 0.0005337034498158248
+        },
+        {
+          "nome": "GAGUINHA DE ILHÉUS",
+          "numero": 70170,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 5,
+          "pond": 4.7255,
+          "pct_bruto": 0.0005630630630630631,
+          "pct_pond": 0.0005232723306647053
+        },
+        {
+          "nome": "DR SANDRO ANDRÉ",
+          "numero": 20777,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 5,
+          "pond": 4.7185,
+          "pct_bruto": 0.0005630630630630631,
+          "pct_pond": 0.0005224971944220531
+        },
+        {
+          "nome": "JEFERSON SOUZA",
+          "numero": 20000,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 7,
+          "pond": 4.6684,
+          "pct_bruto": 0.0007882882882882883,
+          "pct_pond": 0.0005169494335996425
+        },
+        {
+          "nome": "LARISSA TRINDADE",
+          "numero": 13600,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 6,
+          "pond": 4.3368,
+          "pct_bruto": 0.0006756756756756757,
+          "pct_pond": 0.0004802301224477186
+        },
+        {
+          "nome": "VAL SERRA",
+          "numero": 44789,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 6,
+          "pond": 4.2037,
+          "pct_bruto": 0.0006756756756756757,
+          "pct_pond": 0.0004654914604624319
+        },
+        {
+          "nome": "DRA. TERESA NEUMA",
+          "numero": 20555,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 4,
+          "pond": 4.0582,
+          "pct_bruto": 0.00045045045045045046,
+          "pct_pond": 0.00044937969999016134
+        },
+        {
+          "nome": "MAURA DE BIBI",
+          "numero": 13800,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 3,
+          "pond": 3.9431,
+          "pct_bruto": 0.00033783783783783786,
+          "pct_pond": 0.0004366342454859802
+        },
+        {
+          "nome": "LUCIANA DÉDA",
+          "numero": 10013,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 6,
+          "pond": 3.9083,
+          "pct_bruto": 0.0006756756756756757,
+          "pct_pond": 0.00043278071102250933
+        },
+        {
+          "nome": "PR. ZÉ CARLOS VIEIRA",
+          "numero": 20123,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 6,
+          "pond": 3.9083,
+          "pct_bruto": 0.0006756756756756757,
+          "pct_pond": 0.00043278071102250933
+        },
+        {
+          "nome": "CORONEL FABIO",
+          "numero": 22122,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 6,
+          "pond": 3.9083,
+          "pct_bruto": 0.0006756756756756757,
+          "pct_pond": 0.00043278071102250933
+        },
+        {
+          "nome": "APOSTOLA MARILEIDE",
+          "numero": 13773,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 5,
+          "pond": 3.8576,
+          "pct_bruto": 0.0005630630630630631,
+          "pct_pond": 0.0004271665099507285
+        },
+        {
+          "nome": "JOEL FERNANDES CANTOR CAMELÔ",
+          "numero": 20120,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 2,
+          "pond": 3.8001,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00042079931938608547
+        },
+        {
+          "nome": "JUAREZ VETERINÁRIO",
+          "numero": 70000,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 6,
+          "pond": 3.6129,
+          "pct_bruto": 0.0006756756756756757,
+          "pct_pond": 0.0004000699615825868
+        },
+        {
+          "nome": "LAYSE SANTIAGO",
+          "numero": 44044,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 4,
+          "pond": 3.1326,
+          "pct_bruto": 0.00045045045045045046,
+          "pct_pond": 0.00034688454196175135
+        },
+        {
+          "nome": "MARCOS COUTO REPÓRTER",
+          "numero": 70999,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 5,
+          "pond": 3.0107,
+          "pct_bruto": 0.0005630630630630631,
+          "pct_pond": 0.00033338609796470815
+        },
+        {
+          "nome": "TENENTE CORONEL MANUELA",
+          "numero": 70789,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 5,
+          "pond": 3.0107,
+          "pct_bruto": 0.0005630630630630631,
+          "pct_pond": 0.00033338609796470815
+        },
+        {
+          "nome": "PROFESSOR BISPO",
+          "numero": 13111,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 3,
+          "pond": 2.8949,
+          "pct_bruto": 0.00033783783783783786,
+          "pct_pond": 0.00032056312983626186
+        },
+        {
+          "nome": "PETER COSTA",
+          "numero": 22007,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 3,
+          "pond": 2.7997,
+          "pct_bruto": 0.00033783783783783786,
+          "pct_pond": 0.0003100212769361921
+        },
+        {
+          "nome": "VF - VANILTON FRANCISCO",
+          "numero": 22444,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 4,
+          "pond": 2.6952,
+          "pct_bruto": 0.00045045045045045046,
+          "pct_pond": 0.0002984496001708843
+        },
+        {
+          "nome": "MAGNA MOURA",
+          "numero": 40192,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 2,
+          "pond": 2.6522,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00029368804896602087
+        },
+        {
+          "nome": "VALÉRIA DA CABANA",
+          "numero": 40100,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 3,
+          "pond": 2.6385,
+          "pct_bruto": 0.00033783783783783786,
+          "pct_pond": 0.0002921709966054016
+        },
+        {
+          "nome": "DRA RAYZA",
+          "numero": 22777,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 1,
+          "pond": 2.6134,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.0002893915795067487
+        },
+        {
+          "nome": "ROSA DE TEIÚ",
+          "numero": 10223,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 2,
+          "pond": 2.5151,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00027850645198493286
+        },
+        {
+          "nome": "CATIA MODESTO",
+          "numero": 10789,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 4,
+          "pond": 2.4086,
+          "pct_bruto": 0.00045045045045045046,
+          "pct_pond": 0.00026671330772172453
+        },
+        {
+          "nome": "FIRMO",
+          "numero": 65123,
+          "partido": "PCDOB",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 4,
+          "pond": 2.4086,
+          "pct_bruto": 0.00045045045045045046,
+          "pct_pond": 0.00026671330772172453
+        },
+        {
+          "nome": "SGT ALEX LIMA",
+          "numero": 70190,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 3,
+          "pond": 2.3943,
+          "pct_bruto": 0.00033783783783783786,
+          "pct_pond": 0.000265129815111735
+        },
+        {
+          "nome": "LUIZ SANTANA",
+          "numero": 40800,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 1,
+          "pond": 2.208,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00024450011768229173
+        },
+        {
+          "nome": "NÚBIA LOPES",
+          "numero": 40555,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 3,
+          "pond": 2.1019,
+          "pct_bruto": 0.00033783783783783786,
+          "pct_pond": 0.00023275126691866348
+        },
+        {
+          "nome": "ITAMAR ALVES",
+          "numero": 22522,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 2,
+          "pond": 2.0511,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00022712599247198752
+        },
+        {
+          "nome": "LUCAS MENESES",
+          "numero": 11333,
+          "partido": "PP",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 2,
+          "pond": 1.903,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00021072632425244616
+        },
+        {
+          "nome": "CORONEL LINO",
+          "numero": 70888,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 3,
+          "pond": 1.8064,
+          "pct_bruto": 0.00033783783783783786,
+          "pct_pond": 0.00020002944410384588
+        },
+        {
+          "nome": "GUGU LIBERATO",
+          "numero": 70280,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 2,
+          "pond": 1.7952,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00019878922611560237
+        },
+        {
+          "nome": "CORONEL PONTUAL",
+          "numero": 22190,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 2,
+          "pond": 1.7952,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00019878922611560237
+        },
+        {
+          "nome": "DONA ANNA",
+          "numero": 15398,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 2,
+          "pond": 1.7952,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00019878922611560237
+        },
+        {
+          "nome": "PROF. DAVID SOARES",
+          "numero": 10166,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 2,
+          "pond": 1.7507,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00019386157428731343
+        },
+        {
+          "nome": "BENÁRIA DE BOCÃO",
+          "numero": 22022,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 2,
+          "pond": 1.7009,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00018834703358958785
+        },
+        {
+          "nome": "MARIANA SERVENTE",
+          "numero": 20190,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 2,
+          "pond": 1.5397,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00017049675325879734
+        },
+        {
+          "nome": "PROFESSORA AVILETE",
+          "numero": 22221,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 1,
+          "pond": 1.3144,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00014554843962029176
+        },
+        {
+          "nome": "FELIPE DUARTE",
+          "numero": 11079,
+          "partido": "PP",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 2,
+          "pond": 1.2043,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00013335665386086227
+        },
+        {
+          "nome": "GABRIEL DÉDA",
+          "numero": 22456,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 2,
+          "pond": 1.2043,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00013335665386086227
+        },
+        {
+          "nome": "PROFESSOR BONFIM",
+          "numero": 10010,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 2,
+          "pond": 1.2043,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00013335665386086227
+        },
+        {
+          "nome": "CLEDSON LIMA",
+          "numero": 40888,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 2,
+          "pond": 1.2043,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00013335665386086227
+        },
+        {
+          "nome": "DA LUZ",
+          "numero": 40999,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 2,
+          "pond": 1.2043,
+          "pct_bruto": 0.00022522522522522523,
+          "pct_pond": 0.00013335665386086227
+        },
+        {
+          "nome": "EDSON JUNIOR",
+          "numero": 13777,
+          "partido": "PT",
+          "coligacao": "FEDERAÇÃO BRASIL DA ESPERANÇA - FE BRASIL(PT/PC do B/PV)",
+          "votos": 1,
+          "pond": 1.0988,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00012167424334660422
+        },
+        {
+          "nome": "ROSE DO MLB",
+          "numero": 80123,
+          "partido": "UP",
+          "coligacao": "UP",
+          "votos": 1,
+          "pond": 1.0988,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00012167424334660422
+        },
+        {
+          "nome": "ROBÉRIO BATISTA",
+          "numero": 20192,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 1,
+          "pond": 1.008,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00011161961894191578
+        },
+        {
+          "nome": "CRISTINA BRANDÃO",
+          "numero": 10001,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 1,
+          "pond": 1.008,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00011161961894191578
+        },
+        {
+          "nome": "CESAR PRADO",
+          "numero": 40444,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 1,
+          "pond": 0.8976,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00009939461305780118
+        },
+        {
+          "nome": "GLEITON MEDEIROS",
+          "numero": 10456,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 1,
+          "pond": 0.6527,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00007227591793986947
+        },
+        {
+          "nome": "DRA LEYLA PAIXÃO",
+          "numero": 40777,
+          "partido": "PSB",
+          "coligacao": "PSB",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00006667279024298361
+        },
+        {
+          "nome": "KENO ALMEIDA",
+          "numero": 70500,
+          "partido": "AVANTE",
+          "coligacao": "AVANTE",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00006667279024298361
+        },
+        {
+          "nome": "MARCINHA DA SAÚDE",
+          "numero": 20019,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00006667279024298361
+        },
+        {
+          "nome": "BOLSONARO SERGIPANO",
+          "numero": 22322,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00006667279024298361
+        },
+        {
+          "nome": "DR. GILMÁRCIO",
+          "numero": 20999,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00006667279024298361
+        },
+        {
+          "nome": "BETH DA SAÚDE",
+          "numero": 10100,
+          "partido": "REPUBLICANOS",
+          "coligacao": "REPUBLICANOS",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00006667279024298361
+        },
+        {
+          "nome": "BRUNO  VASCONCELOS",
+          "numero": 55456,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00006667279024298361
+        },
+        {
+          "nome": "SANDRA CIGANINHA",
+          "numero": 55713,
+          "partido": "PSD",
+          "coligacao": "PSD",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00006667279024298361
+        },
+        {
+          "nome": "IDALINO",
+          "numero": 15300,
+          "partido": "MDB",
+          "coligacao": "MDB",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00006667279024298361
+        },
+        {
+          "nome": "PRIPRI DO POVO",
+          "numero": 22300,
+          "partido": "PL",
+          "coligacao": "PL",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00006667279024298361
+        },
+        {
+          "nome": "SIMONE LINHARES",
+          "numero": 20456,
+          "partido": "PODE",
+          "coligacao": "PODE",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00006667279024298361
+        },
+        {
+          "nome": "VIVI DOCINHO",
+          "numero": 44177,
+          "partido": "UNIÃO",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00006667279024298361
+        },
+        {
+          "nome": "ENFERMEIRO MÁRCIO",
+          "numero": 11123,
+          "partido": "PP",
+          "coligacao": "FEDERAÇÃO UNIÃO PROGRESSISTA(UNIÃO/PP)",
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011261261261261261,
+          "pct_pond": 0.00006667279024298361
+        }
+      ],
+      "base_nominal_bruta": 8880,
+      "base_nominal_pond": 9030.6705,
+      "legendas": [
+        {
+          "sigla": "PSD",
+          "numero": 55,
+          "votos": 2166,
+          "pond": 2197.8811,
+          "pct_bruto": 0.24061319706731837,
+          "pct_pond": 0.24063831287432066
+        },
+        {
+          "sigla": "UNIÃO",
+          "numero": 44,
+          "votos": 1986,
+          "pond": 1882.0365,
+          "pct_bruto": 0.22061764052432792,
+          "pct_pond": 0.20605759252759004
+        },
+        {
+          "sigla": "PSB",
+          "numero": 40,
+          "votos": 898,
+          "pond": 985.4114,
+          "pct_bruto": 0.09975560986447456,
+          "pct_pond": 0.10788924695841023
+        },
+        {
+          "sigla": "REPUBLICANOS",
+          "numero": 10,
+          "votos": 855,
+          "pond": 934.7735,
+          "pct_bruto": 0.09497889357920462,
+          "pct_pond": 0.10234508043206877
+        },
+        {
+          "sigla": "MDB",
+          "numero": 15,
+          "votos": 802,
+          "pond": 780.4662,
+          "pct_bruto": 0.08909131304154633,
+          "pct_pond": 0.0854505139624851
+        },
+        {
+          "sigla": "PT",
+          "numero": 13,
+          "votos": 567,
+          "pond": 542.9555,
+          "pct_bruto": 0.06298600311041991,
+          "pct_pond": 0.059446298294222204
+        },
+        {
+          "sigla": "PL",
+          "numero": 22,
+          "votos": 506,
+          "pond": 512.6876,
+          "pct_bruto": 0.05620973117085092,
+          "pct_pond": 0.05613237180827687
+        },
+        {
+          "sigla": "AVANTE",
+          "numero": 70,
+          "votos": 340,
+          "pond": 377.0682,
+          "pct_bruto": 0.03776938458120418,
+          "pct_pond": 0.04128387813451643
+        },
+        {
+          "sigla": "PV",
+          "numero": 43,
+          "votos": 318,
+          "pond": 368.3793,
+          "pct_bruto": 0.03532548322594979,
+          "pct_pond": 0.040332560869568074
+        },
+        {
+          "sigla": "PSOL",
+          "numero": 50,
+          "votos": 233,
+          "pond": 201.5145,
+          "pct_bruto": 0.025883137080648745,
+          "pct_pond": 0.02206311765441374
+        },
+        {
+          "sigla": "PP",
+          "numero": 11,
+          "votos": 158,
+          "pond": 178.2217,
+          "pct_bruto": 0.01755165518773606,
+          "pct_pond": 0.019512870466738767
+        },
+        {
+          "sigla": "PODE",
+          "numero": 20,
+          "votos": 124,
+          "pond": 123.4655,
+          "pct_bruto": 0.013774716729615642,
+          "pct_pond": 0.013517805680291093
+        },
+        {
+          "sigla": "MISSÃO",
+          "numero": 14,
+          "votos": 14,
+          "pond": 13.8209,
+          "pct_bruto": 0.0015552099533437014,
+          "pct_pond": 0.0015132019918660288
+        },
+        {
+          "sigla": "PDT",
+          "numero": 12,
+          "votos": 10,
+          "pond": 7.8688,
+          "pct_bruto": 0.001110864252388358,
+          "pct_pond": 0.0008615273848733012
+        },
+        {
+          "sigla": "SOLIDARIEDADE",
+          "numero": 77,
+          "votos": 1,
+          "pond": 7.2314,
+          "pct_bruto": 0.00011108642523883582,
+          "pct_pond": 0.0007917406886657164
+        },
+        {
+          "sigla": "PCDOB",
+          "numero": 65,
+          "votos": 6,
+          "pond": 4.2837,
+          "pct_bruto": 0.0006665185514330149,
+          "pct_pond": 0.00046900732749361525
+        },
+        {
+          "sigla": "PRTB",
+          "numero": 28,
+          "votos": 1,
+          "pond": 3.6515,
+          "pct_bruto": 0.00011108642523883582,
+          "pct_pond": 0.00039978996109506644
+        },
+        {
+          "sigla": "CIDADANIA",
+          "numero": 23,
+          "votos": 3,
+          "pond": 2.4659,
+          "pct_bruto": 0.00033325927571650743,
+          "pct_pond": 0.00026998276463489646
+        },
+        {
+          "sigla": "PSDB",
+          "numero": 45,
+          "votos": 3,
+          "pond": 1.8064,
+          "pct_bruto": 0.00033325927571650743,
+          "pct_pond": 0.0001977764167389095
+        },
+        {
+          "sigla": "PCB",
+          "numero": 21,
+          "votos": 1,
+          "pond": 1.3093,
+          "pct_bruto": 0.00011108642523883582,
+          "pct_pond": 0.00014335067672511858
+        },
+        {
+          "sigla": "PSL",
+          "numero": 17,
+          "votos": 2,
+          "pond": 1.2043,
+          "pct_bruto": 0.00022217285047767163,
+          "pct_pond": 0.00013185459404266425
+        },
+        {
+          "sigla": "PSTU",
+          "numero": 16,
+          "votos": 2,
+          "pond": 1.2043,
+          "pct_bruto": 0.00022217285047767163,
+          "pct_pond": 0.00013185459404266425
+        },
+        {
+          "sigla": "UP",
+          "numero": 80,
+          "votos": 1,
+          "pond": 1.0988,
+          "pct_bruto": 0.00011108642523883582,
+          "pct_pond": 0.0001203037681093411
+        },
+        {
+          "sigla": "DEM_HIST",
+          "numero": 25,
+          "votos": 2,
+          "pond": 0.9334,
+          "pct_bruto": 0.00022217285047767163,
+          "pct_pond": 0.00010219470072193209
+        },
+        {
+          "sigla": "DC",
+          "numero": 27,
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011108642523883582,
+          "pct_pond": 0.00006592182269624524
+        },
+        {
+          "sigla": "NOVO",
+          "numero": 30,
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011108642523883582,
+          "pct_pond": 0.00006592182269624524
+        },
+        {
+          "sigla": "CONSERVADORES",
+          "numero": 54,
+          "votos": 1,
+          "pond": 0.6021,
+          "pct_bruto": 0.00011108642523883582,
+          "pct_pond": 0.00006592182269624524
+        }
+      ],
+      "base_partido_bruta": 9002,
+      "base_partido_pond": 9133.546,
+      "branco": {
+        "votos": 398,
+        "pond": 356.9165,
+        "pct_bruto": 0.04084145715751668,
+        "pct_pond": 0.0364839198449457
+      },
+      "nao_sabe": {
+        "votos": 345,
+        "pond": 292.3816,
+        "pct_bruto": 0.03540277065161621,
+        "pct_pond": 0.029887177697127974
+      },
+      "respostas_total": 9745,
+      "respondentes": 9745,
+      "votos_numero": 9002,
+      "votos_branco": 398,
+      "votos_nao_sabe": 345,
+      "votos_legenda_pura": 122
+    }
+  },
+  "linha_do_tempo": {
+    "dias": [
+      {
+        "dia": "01/09/2026",
+        "cadastros": 7396,
+        "validados": 6677,
+        "respondentes": 6552,
+        "votos": 38250
+      },
+      {
+        "dia": "02/09/2026",
+        "cadastros": 1457,
+        "validados": 1336,
+        "respondentes": 1348,
+        "votos": 7912
+      },
+      {
+        "dia": "03/09/2026",
+        "cadastros": 2473,
+        "validados": 2293,
+        "respondentes": 2271,
+        "votos": 13403
+      },
+      {
+        "dia": "04/09/2026",
+        "cadastros": 0,
+        "validados": 0,
+        "respondentes": 6,
+        "votos": 29
+      }
+    ],
+    "primeiro_cadastro": "2026-09-01T03:06:43.84832+00:00",
+    "ultimo_cadastro": "2026-09-04T02:59:38.259405+00:00",
+    "ultima_hora_voto": "2026-09-04T09:00:00+00:00",
+    "votos_apos_fim": 29,
+    "sessoes_apos_fim": 6
+  },
+  "whatsapp_resultado": {
+    "optin": 8900,
+    "enviados": 8050,
+    "primeiro_envio": "2026-09-04T12:15:10.411+00:00",
+    "ultimo_envio": "2026-09-04T14:15:48.762+00:00"
+  },
+  "auditoria": [
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T00:09:04.414587+00:00",
+      "brt": "31/08/2026, 21:09:04",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T03:12:16.032908+00:00",
+      "brt": "01/09/2026, 00:12:16",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T03:19:26.571642+00:00",
+      "brt": "01/09/2026, 00:19:26",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T03:19:32.748265+00:00",
+      "brt": "01/09/2026, 00:19:32",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T08:49:08.90666+00:00",
+      "brt": "01/09/2026, 05:49:08",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T10:45:39.192087+00:00",
+      "brt": "01/09/2026, 07:45:39",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T11:39:30.280841+00:00",
+      "brt": "01/09/2026, 08:39:30",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T12:05:26.284018+00:00",
+      "brt": "01/09/2026, 09:05:26",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T12:07:12.883254+00:00",
+      "brt": "01/09/2026, 09:07:12",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T12:08:07.162978+00:00",
+      "brt": "01/09/2026, 09:08:07",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T13:06:13.492049+00:00",
+      "brt": "01/09/2026, 10:06:13",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T13:06:35.739208+00:00",
+      "brt": "01/09/2026, 10:06:35",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T13:32:17.322377+00:00",
+      "brt": "01/09/2026, 10:32:17",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T13:32:49.436683+00:00",
+      "brt": "01/09/2026, 10:32:49",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T13:35:20.035604+00:00",
+      "brt": "01/09/2026, 10:35:20",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T14:00:23.392245+00:00",
+      "brt": "01/09/2026, 11:00:23",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T15:07:29.260658+00:00",
+      "brt": "01/09/2026, 12:07:29",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T16:54:10.171162+00:00",
+      "brt": "01/09/2026, 13:54:10",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T16:56:49.182855+00:00",
+      "brt": "01/09/2026, 13:56:49",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T17:10:06.198261+00:00",
+      "brt": "01/09/2026, 14:10:06",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T17:11:26.146724+00:00",
+      "brt": "01/09/2026, 14:11:26",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T18:11:03.78801+00:00",
+      "brt": "01/09/2026, 15:11:03",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T21:09:52.002619+00:00",
+      "brt": "01/09/2026, 18:09:52",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T21:17:02.644212+00:00",
+      "brt": "01/09/2026, 18:17:02",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T21:19:29.51539+00:00",
+      "brt": "01/09/2026, 18:19:29",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T21:55:21.580871+00:00",
+      "brt": "01/09/2026, 18:55:21",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "gerar_snapshot_tv",
+      "criado_em": "2026-09-01T21:58:23.525439+00:00",
+      "brt": "01/09/2026, 18:58:23",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "ja_divulgada": false,
+        "registro_tre": "SE-09441/2026 · BR-04041/2026"
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T22:36:56.696903+00:00",
+      "brt": "01/09/2026, 19:36:56",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T22:37:27.421314+00:00",
+      "brt": "01/09/2026, 19:37:27",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T22:37:50.441042+00:00",
+      "brt": "01/09/2026, 19:37:50",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T22:37:58.800329+00:00",
+      "brt": "01/09/2026, 19:37:58",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T23:36:16.200431+00:00",
+      "brt": "01/09/2026, 20:36:16",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-01T23:39:01.883186+00:00",
+      "brt": "01/09/2026, 20:39:01",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-02T09:49:01.376902+00:00",
+      "brt": "02/09/2026, 06:49:01",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-02T09:49:46.15502+00:00",
+      "brt": "02/09/2026, 06:49:46",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-02T09:51:13.055283+00:00",
+      "brt": "02/09/2026, 06:51:13",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-02T09:54:31.062131+00:00",
+      "brt": "02/09/2026, 06:54:31",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-02T10:18:23.555153+00:00",
+      "brt": "02/09/2026, 07:18:23",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "gerar_snapshot_tv",
+      "criado_em": "2026-09-02T10:18:27.174465+00:00",
+      "brt": "02/09/2026, 07:18:27",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "ja_divulgada": false,
+        "registro_tre": "SE-09441/2026 · BR-04041/2026"
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-02T12:45:17.550618+00:00",
+      "brt": "02/09/2026, 09:45:17",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-02T13:12:04.872654+00:00",
+      "brt": "02/09/2026, 10:12:04",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-02T13:12:20.635801+00:00",
+      "brt": "02/09/2026, 10:12:20",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-02T13:22:09.960697+00:00",
+      "brt": "02/09/2026, 10:22:09",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-02T19:15:42.867881+00:00",
+      "brt": "02/09/2026, 16:15:42",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-02T22:25:17.479636+00:00",
+      "brt": "02/09/2026, 19:25:17",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T01:05:54.145479+00:00",
+      "brt": "02/09/2026, 22:05:54",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T01:06:05.932435+00:00",
+      "brt": "02/09/2026, 22:06:05",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T01:07:19.80593+00:00",
+      "brt": "02/09/2026, 22:07:19",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T01:09:30.579022+00:00",
+      "brt": "02/09/2026, 22:09:30",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T01:10:18.500527+00:00",
+      "brt": "02/09/2026, 22:10:18",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "gerar_snapshot_tv",
+      "criado_em": "2026-09-03T01:10:34.625009+00:00",
+      "brt": "02/09/2026, 22:10:34",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "ja_divulgada": false,
+        "registro_tre": "SE-09441/2026 · BR-04041/2026"
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T02:08:01.029439+00:00",
+      "brt": "02/09/2026, 23:08:01",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T02:08:28.464881+00:00",
+      "brt": "02/09/2026, 23:08:28",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T02:10:52.237487+00:00",
+      "brt": "02/09/2026, 23:10:52",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T02:25:08.60937+00:00",
+      "brt": "02/09/2026, 23:25:08",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "gerar_snapshot_tv",
+      "criado_em": "2026-09-03T02:25:17.453829+00:00",
+      "brt": "02/09/2026, 23:25:17",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "ja_divulgada": false,
+        "registro_tre": "SE-09441/2026 · BR-04041/2026"
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T04:22:04.798228+00:00",
+      "brt": "03/09/2026, 01:22:04",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T04:22:45.980688+00:00",
+      "brt": "03/09/2026, 01:22:45",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T13:11:59.885997+00:00",
+      "brt": "03/09/2026, 10:11:59",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T19:32:28.495096+00:00",
+      "brt": "03/09/2026, 16:32:28",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T19:32:48.751778+00:00",
+      "brt": "03/09/2026, 16:32:48",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T19:33:36.730932+00:00",
+      "brt": "03/09/2026, 16:33:36",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T19:38:48.881136+00:00",
+      "brt": "03/09/2026, 16:38:48",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T22:19:35.112764+00:00",
+      "brt": "03/09/2026, 19:19:35",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-03T22:19:53.001343+00:00",
+      "brt": "03/09/2026, 19:19:53",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-04T01:33:45.431195+00:00",
+      "brt": "03/09/2026, 22:33:45",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-04T02:28:16.339769+00:00",
+      "brt": "03/09/2026, 23:28:16",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-04T10:50:14.08262+00:00",
+      "brt": "04/09/2026, 07:50:14",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-04T10:50:59.031315+00:00",
+      "brt": "04/09/2026, 07:50:59",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-04T11:04:03.967032+00:00",
+      "brt": "04/09/2026, 08:04:03",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-04T11:41:22.281601+00:00",
+      "brt": "04/09/2026, 08:41:22",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-04T12:05:17.207142+00:00",
+      "brt": "04/09/2026, 09:05:17",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "view_resultados_pre_divulgacao",
+      "criado_em": "2026-09-04T12:13:56.636969+00:00",
+      "brt": "04/09/2026, 09:13:56",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": null
+      }
+    },
+    {
+      "acao": "marcar_divulgacao",
+      "criado_em": "2026-09-04T12:14:54.983093+00:00",
+      "brt": "04/09/2026, 09:14:54",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "divulgada_em": "2026-09-04T12:14:54.904Z",
+        "registro_tre": "SE-09441/2026 · BR-04041/2026"
+      }
+    },
+    {
+      "acao": "view_resultados_pos_divulgacao",
+      "criado_em": "2026-09-04T12:15:53.386496+00:00",
+      "brt": "04/09/2026, 09:15:53",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": "2026-09-04T12:14:54.904+00:00"
+      }
+    },
+    {
+      "acao": "view_resultados_pos_divulgacao",
+      "criado_em": "2026-09-04T12:43:30.273508+00:00",
+      "brt": "04/09/2026, 09:43:30",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": "2026-09-04T12:14:54.904+00:00"
+      }
+    },
+    {
+      "acao": "view_resultados_pos_divulgacao",
+      "criado_em": "2026-09-04T12:56:49.632434+00:00",
+      "brt": "04/09/2026, 09:56:49",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": "2026-09-04T12:14:54.904+00:00"
+      }
+    },
+    {
+      "acao": "view_resultados_pos_divulgacao",
+      "criado_em": "2026-09-05T14:41:00.15743+00:00",
+      "brt": "05/09/2026, 11:41:00",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": "2026-09-04T12:14:54.904+00:00"
+      }
+    },
+    {
+      "acao": "view_resultados_pos_divulgacao",
+      "criado_em": "2026-09-05T21:16:37.323942+00:00",
+      "brt": "05/09/2026, 18:16:37",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": "2026-09-04T12:14:54.904+00:00"
+      }
+    },
+    {
+      "acao": "view_resultados_pos_divulgacao",
+      "criado_em": "2026-09-06T15:04:47.296585+00:00",
+      "brt": "06/09/2026, 12:04:47",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": "2026-09-04T12:14:54.904+00:00"
+      }
+    },
+    {
+      "acao": "view_resultados_pos_divulgacao",
+      "criado_em": "2026-09-06T16:01:43.457652+00:00",
+      "brt": "06/09/2026, 13:01:43",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": "2026-09-04T12:14:54.904+00:00"
+      }
+    },
+    {
+      "acao": "view_resultados_pos_divulgacao",
+      "criado_em": "2026-09-06T17:16:14.05468+00:00",
+      "brt": "06/09/2026, 14:16:14",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": "2026-09-04T12:14:54.904+00:00"
+      }
+    },
+    {
+      "acao": "view_resultados_pos_divulgacao",
+      "criado_em": "2026-09-06T17:43:10.319844+00:00",
+      "brt": "06/09/2026, 14:43:10",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": "2026-09-04T12:14:54.904+00:00"
+      }
+    },
+    {
+      "acao": "view_resultados_pos_divulgacao",
+      "criado_em": "2026-09-06T17:43:15.313371+00:00",
+      "brt": "06/09/2026, 14:43:15",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": "2026-09-04T12:14:54.904+00:00"
+      }
+    },
+    {
+      "acao": "view_resultados_pos_divulgacao",
+      "criado_em": "2026-09-06T18:10:15.807184+00:00",
+      "brt": "06/09/2026, 15:10:15",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": "2026-09-04T12:14:54.904+00:00"
+      }
+    },
+    {
+      "acao": "view_resultados_pos_divulgacao",
+      "criado_em": "2026-09-06T18:11:10.430365+00:00",
+      "brt": "06/09/2026, 15:11:10",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": "2026-09-04T12:14:54.904+00:00"
+      }
+    },
+    {
+      "acao": "view_resultados_pos_divulgacao",
+      "criado_em": "2026-09-07T15:18:23.657097+00:00",
+      "brt": "07/09/2026, 12:18:23",
+      "detalhe": {
+        "edicao_id": "2c9211d1-6fd2-476d-8872-5952c12db5e9",
+        "edicao_nome": "Pesquisa Sergipe 2026 — 1ª edição (1º turno)",
+        "divulgada_em": "2026-09-04T12:14:54.904+00:00"
+      }
+    }
+  ]
+}

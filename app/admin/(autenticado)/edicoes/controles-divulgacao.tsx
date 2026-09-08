@@ -8,7 +8,9 @@ import {
   atualizarTurno,
   divulgarEdicao,
   retirarDivulgacao,
+  retomarDivulgacao,
   salvarMetadadosDivulgacao,
+  suspenderDivulgacao,
   type EdicaoState,
 } from './actions'
 
@@ -24,6 +26,9 @@ type Props = {
   turno: number
   consultaZonaAtiva: boolean
   exigirLocalizacao: boolean
+  /** Ordem judicial: divulgação suspensa desde (null = não suspensa). */
+  suspensaEm: string | null
+  suspensaoMotivo: string | null
 }
 
 /**
@@ -42,6 +47,8 @@ export function ControlesDivulgacao({
   turno,
   consultaZonaAtiva,
   exigirLocalizacao,
+  suspensaEm,
+  suspensaoMotivo,
 }: Props) {
   const [editando, setEditando] = useState(false)
   const [estadoMeta, salvarMeta, salvandoMeta] = useActionState(
@@ -53,7 +60,17 @@ export function ControlesDivulgacao({
     initial,
   )
 
+  const [estadoSuspender, suspender, suspendendo] = useActionState(
+    (_prev: EdicaoState, fd: FormData) => suspenderDivulgacao(fd),
+    initial,
+  )
+  const [estadoRetomar, retomar, retomando] = useActionState(
+    (_prev: EdicaoState, fd: FormData) => retomarDivulgacao(fd),
+    initial,
+  )
+
   const divulgada = Boolean(divulgadaEm)
+  const suspensa = Boolean(suspensaEm)
 
   // Bloco do turno, sempre visivel acima dos demais controles.
   const blocoTurno = (
@@ -234,6 +251,100 @@ export function ControlesDivulgacao({
                 </button>
               </form>
             </div>
+          </div>
+
+          {/* Chave de emergência — ordem judicial (Rp 0601015-42.2026.6.25.0000).
+              Não apaga divulgada_em; só esconde os números do público. */}
+          <div
+            className={`rounded-md border px-3 py-3 flex flex-col gap-2 ${
+              suspensa ? 'border-error/50 bg-error/5' : 'border-border bg-muted/30'
+            }`}
+          >
+            <div className="flex items-center gap-2 flex-wrap text-xs">
+              {suspensa ? (
+                <span className="text-[10px] uppercase tracking-widest text-error bg-error/10 border border-error/40 rounded-full px-2 py-0.5 font-semibold">
+                  suspensa · ordem judicial
+                </span>
+              ) : (
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+                  Suspensão judicial
+                </span>
+              )}
+              {suspensa ? (
+                <span className="text-muted-foreground">
+                  desde{' '}
+                  <span className="font-medium text-foreground">
+                    {formatarPrevista(suspensaEm!)}
+                  </span>
+                  {suspensaoMotivo ? ` · ${suspensaoMotivo}` : ''}
+                </span>
+              ) : (
+                <span className="text-muted-foreground">
+                  Esconde todos os números do público (/resultados, /tv, mapa e
+                  pop-up do site da CDL) sem apagar a data da divulgação.
+                </span>
+              )}
+            </div>
+            <form
+              action={suspensa ? retomar : suspender}
+              className="flex flex-col sm:flex-row sm:items-end gap-2"
+            >
+              <input type="hidden" name="id" value={edicaoId} />
+              {!suspensa && (
+                <label className="flex flex-col gap-1 flex-1">
+                  <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                    Motivo (decisão)
+                  </span>
+                  <input
+                    name="motivo"
+                    maxLength={300}
+                    defaultValue="Decisão TRE-SE — Rp 0601015-42.2026.6.25.0000 (tutela de urgência, 07/09/2026)"
+                    className="h-8 px-2 rounded-md border border-border bg-background text-xs"
+                  />
+                </label>
+              )}
+              <label className="flex flex-col gap-1">
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                  Código TOTP
+                </span>
+                <input
+                  name="totp"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  required
+                  placeholder="000000"
+                  className="h-8 w-28 px-2 rounded-md border border-border bg-background text-xs font-mono tracking-widest"
+                />
+              </label>
+              <button
+                type="submit"
+                disabled={suspendendo || retomando}
+                className={
+                  suspensa
+                    ? 'h-8 px-3 rounded-md bg-primary text-primary-foreground text-[11px] font-medium hover:opacity-90 transition disabled:opacity-50'
+                    : 'h-8 px-3 rounded-md bg-error text-white text-[11px] font-medium hover:opacity-90 transition disabled:opacity-50'
+                }
+              >
+                {suspensa
+                  ? retomando
+                    ? 'Retomando…'
+                    : 'Retomar divulgação'
+                  : suspendendo
+                    ? 'Suspendendo…'
+                    : '⛔ Suspender (ordem judicial)'}
+              </button>
+            </form>
+            {[estadoSuspender, estadoRetomar].map((st, i) =>
+              st.message ? (
+                <p
+                  key={i}
+                  className={`text-xs ${st.ok ? 'text-emerald-700' : 'text-error'}`}
+                >
+                  {st.message}
+                </p>
+              ) : null,
+            )}
           </div>
         </div>
       </>

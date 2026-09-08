@@ -69,9 +69,9 @@ export default async function CargoResultadoPage({
   if (!cargoKey) notFound()
 
   const r = await carregarResultados()
-  if (r.status === 'aguardando') {
-    // Edição não divulgada — não expõe cargo isolado, volta pro hub
-    // (que mostra "em breve").
+  if (r.status !== 'ok') {
+    // Edição não divulgada, ou divulgação suspensa por ordem judicial —
+    // não expõe cargo isolado, volta pro hub (que mostra o aviso).
     redirect('/resultados')
   }
 

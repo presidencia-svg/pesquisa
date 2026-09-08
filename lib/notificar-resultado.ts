@@ -54,7 +54,7 @@ export async function processarLoteNotificacao(): Promise<ProcessarResultado> {
 
   const { data: edicao } = await db
     .from('edicao')
-    .select('id, nome, divulgada_em')
+    .select('id, nome, divulgada_em, suspensa_em')
     .eq('ativa', true)
     .maybeSingle()
 
@@ -76,6 +76,16 @@ export async function processarLoteNotificacao(): Promise<ProcessarResultado> {
       ok: true,
       message:
         'Skip: edição ativa ainda não divulgada (no-op silencioso). Quando divulgar em /admin/edicoes, o cron processa o lote no próximo tick.',
+      resumo: { processados: 0, enviados: 0, falhas: 0, pendentes_restantes: 0 },
+    }
+  }
+  if (edicao.suspensa_em) {
+    // Ordem judicial (TRE-SE, Rp 0601015-42.2026.6.25.0000): divulgação
+    // suspensa — nenhuma mensagem de resultado sai enquanto durar.
+    return {
+      ok: true,
+      message:
+        'Skip: divulgação suspensa por ordem judicial (edicao.suspensa_em preenchido). Nenhuma notificação enviada.',
       resumo: { processados: 0, enviados: 0, falhas: 0, pendentes_restantes: 0 },
     }
   }

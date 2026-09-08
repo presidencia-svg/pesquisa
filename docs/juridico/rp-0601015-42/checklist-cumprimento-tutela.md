@@ -1,0 +1,35 @@
+# Checklist — cumprimento da tutela (24 h a partir da intimação)
+
+**Multa: R$ 20.000,00 por ato de descumprimento.** Faça na ordem; anote data e hora de cada item; guarde capturas de tela com relógio visível. Nada disto usa dado pessoal.
+
+## 1. Acionar a suspensão na plataforma (5 minutos)
+
+1. Entrar em https://pesquisa.cdlaju.com.br/admin/edicoes (login de administrador).
+2. Na edição ativa ("Pesquisa Sergipe 2026 — 1ª edição (1º turno)"), no bloco **Suspensão judicial**, conferir o motivo pré-preenchido ("Decisão TRE-SE — Rp 0601015-42.2026.6.25.0000 (tutela de urgência, 07/09/2026)"), digitar o código do **Google Authenticator** e clicar em **⛔ Suspender (ordem judicial)**.
+3. A mensagem de confirmação aparece na própria página; a ação fica gravada na auditoria (`suspender_divulgacao`, com data/hora) e a data de divulgação original (04/09/2026 09h14) **não é apagada** — ela é prova a favor da CDL.
+4. Conferir em janela anônima, em até 5 minutos (cache): https://pesquisa.cdlaju.com.br/resultados (aviso "Divulgação temporariamente suspensa"), /resultados/governador (redireciona), /resultados/mapa (redireciona), /tv (aviso), https://pesquisa.cdlaju.com.br/api/divulgacao (deve mostrar `"suspensa":true` e `"divulgada":false`). Capturar tela de cada uma.
+5. Site institucional: abrir https://cdlaju.com.br e https://cdlaju.com.br/sergipe.html — o pop-up deve mostrar "Divulgação temporariamente suspensa" com botão "Entendi" (sem link para o resultado). Capturar.
+
+**Para retomar** (só depois de decisão judicial revogando a medida): mesmo bloco → **Retomar divulgação** + código do Authenticator. Também fica na auditoria (`retomar_divulgacao`).
+
+## 2. Canais manuais (o mecanismo não alcança)
+
+| Canal | O que fazer | Feito em |
+| --- | --- | --- |
+| Instagram da CDL | Arquivar posts/stories/reels com resultados (não apagar: arquivar preserva prova). Anotar quais. | [ ] |
+| Facebook da CDL | Idem (ocultar da linha do tempo). | [ ] |
+| WhatsApp (grupos/listas da CDL) | Não reenviar nada; se houver mensagem fixada, desafixar. As 8.050 notificações de 04/09 já foram entregues e não podem ser revogadas — registrar isso. | [ ] |
+| TV Atalaia | Enviar e-mail/ofício comunicando a suspensão e pedindo que não reexiba os quadros; guardar o protocolo. | [ ] |
+| Anúncios Meta/Google | Confirmar que não há campanha ativa sobre a pesquisa (não deve haver — sem autorização SIEP nunca houve). Capturar a tela do gerenciador. | [ ] |
+| Menu "Pesquisas" do site da CDL | O link aponta para /resultados, que já exibe o aviso; nada a fazer além de conferir. | [ ] |
+| Imprensa que reproduziu | Fora do controle da CDL (a ordem fala em canais "sob seu controle"), mas vale comunicar por e-mail e guardar cópia. | [ ] |
+
+## 3. Provas para os autos
+
+- Exportar a trilha de auditoria da edição (o Anexo Técnico, seção 6, já traz a tabela; após a suspensão, regerar com `node --env-file=.env.local scripts/anexo-rp-0601015.mjs` para incluir a linha `suspender_divulgacao`).
+- Capturas do item 1.4 e 1.5, com data/hora.
+- Lista do item 2 preenchida, com data/hora.
+
+## 4. Complementação no PesqEle (condição para a reapreciação da tutela)
+
+Seguir `complementacao-pesqele-2026-09-08.md` (blocos A e B prontos para colar) nos **dois** registros — SE-09441/2026 e BR-04041/2026 —, reanexando `docs/Tabela-Estratos-Ponderacao.pdf` e `anexo-tecnico-numeros.pdf`; salvar recibo e espelho de cada um; entregar ao(à) advogado(a) para juntar nos autos com a defesa.

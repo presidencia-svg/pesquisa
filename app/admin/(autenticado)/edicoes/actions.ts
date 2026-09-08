@@ -319,3 +319,117 @@ export async function salvarMetadadosDivulgacao(
   revalidatePath('/resultados')
   return { ok: true }
 }
+
+// ---------------------------------------------------------------------------
+// Chave de emergência — ORDEM JUDICIAL
+// Rp 0601015-42.2026.6.25.0000 (TRE-SE, tutela de urgência, 07/09/2026):
+// "suspender a divulgação, replicação e utilização pública dos resultados"
+// em 24 h, sob pena de multa de R$ 20.000,00 por ato.
+//
+// Desenho: NÃO apaga divulgada_em (prova da data real da divulgação,
+// 04/09/2026 09h14 BRT). Preenche suspensa_em; com isso /resultados,
+// /resultados/[cargo], /resultados/mapa, /tv e /api/divulgacao (pop-up do
+// site da CDL) deixam de mostrar qualquer número, e o cron de WhatsApp não
+// envia resultado. Liga/desliga só com TOTP; tudo vai pro admin_audit_log.
+// ---------------------------------------------------------------------------
+
+function validarTotp(formData: FormData): EdicaoState | null {
+  const totpSecret = SERVER_ENV.ADMIN_TOTP_SECRET
+  if (!totpSecret) {
+    return {
+      ok: false,
+      message:
+        'TOTP do responsável não configurado (ADMIN_TOTP_SECRET). A operação exige o código.',
+    }
+  }
+  const totp = String(formData.get('totp') ?? '').replace(/\s/g, '')
+  if (!verifyTotp(totpSecret, totp)) {
+    return {
+      ok: false,
+      message: 'Código do Google Authenticator inválido ou vazio.',
+    }
+  }
+  return null
+}
+
+function revalidarSuperficiesPublicas() {
+  revalidatePath('/admin/edicoes')
+  revalidatePath('/admin')
+  revalidatePath('/resultados')
+  revalidatePath('/resultados/[cargo]', 'page')
+  revalidatePath('/resultados/mapa')
+  revalidatePath('/tv')
+  revalidatePath('/api/divulgacao')
+}
+
+export async function suspenderDivulgacao(formData: FormData): Promise<EdicaoState> {
+  await requireAdmin()
+  const erroTotp = validarTotp(formData)
+  if (erroTotp) return erroTotp
+
+  const id = String(formData.get('id') ?? '')
+  if (!id) return { ok: false, message: 'ID inválido.' }
+  const motivo =
+    String(formData.get('motivo') ?? '').trim().slice(0, 300) ||
+    'Decisão TRE-SE — Rp 0601015-42.2026.6.25.0000 (tutela de urgência, 07/09/2026)'
+  const suspensaEm = new Date().toISOString()
+
+  const db = supabaseAdmin()
+  const { data: ed } = await db
+    .from('edicao')
+    .select('id, divulgada_em, suspensa_em')
+    .eq('id', id)
+    .maybeSingle()
+  if (!ed) return { ok: false, message: 'Edição não encontrada.' }
+  if (ed.suspensa_em) return { ok: false, message: 'Divulgação já está suspensa.' }
+
+  const { error } = await db
+    .from('edicao')
+    .update({ suspensa_em: suspensaEm, suspensao_motivo: motivo })
+    .eq('id', id)
+  if (error) return { ok: false, message: error.message }
+
+  await registrarAcessoAdmin(
+    'suspender_divulgacao',
+    { edicao_id: id, suspensa_em: suspensaEm, motivo, divulgada_em: ed.divulgada_em },
+    `edicao:${id}`,
+  )
+  revalidarSuperficiesPublicas()
+  return { ok: true, message: `Divulgação suspensa (${suspensaEm}). Confira /resultados, /tv e o pop-up do site.` }
+}
+
+export async function retomarDivulgacao(formData: FormData): Promise<EdicaoState> {
+  await requireAdmin()
+  const erroTotp = validarTotp(formData)
+  if (erroTotp) return erroTotp
+
+  const id = String(formData.get('id') ?? '')
+  if (!id) return { ok: false, message: 'ID inválido.' }
+
+  const db = supabaseAdmin()
+  const { data: ed } = await db
+    .from('edicao')
+    .select('id, suspensa_em, suspensao_motivo')
+    .eq('id', id)
+    .maybeSingle()
+  if (!ed) return { ok: false, message: 'Edição não encontrada.' }
+  if (!ed.suspensa_em) return { ok: false, message: 'Divulgação não está suspensa.' }
+
+  const { error } = await db
+    .from('edicao')
+    .update({ suspensa_em: null, suspensao_motivo: null })
+    .eq('id', id)
+  if (error) return { ok: false, message: error.message }
+
+  await registrarAcessoAdmin(
+    'retomar_divulgacao',
+    {
+      edicao_id: id,
+      suspensa_em_anterior: ed.suspensa_em,
+      motivo_anterior: ed.suspensao_motivo,
+    },
+    `edicao:${id}`,
+  )
+  revalidarSuperficiesPublicas()
+  return { ok: true, message: 'Divulgação pública retomada.' }
+}

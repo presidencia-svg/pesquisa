@@ -66,11 +66,18 @@ export default async function MapaPublicoPage({
 
   const { data: edicao } = await db
     .from('edicao')
-    .select('id, nome, divulgada_em')
+    .select('id, nome, divulgada_em, suspensa_em')
     .eq('ativa', true)
-    .maybeSingle<{ id: string; nome: string; divulgada_em: string | null }>()
+    .maybeSingle<{
+      id: string
+      nome: string
+      divulgada_em: string | null
+      suspensa_em: string | null
+    }>()
 
-  if (!edicao || !edicao.divulgada_em) {
+  // Mesma regra do /resultados: sem divulgação, ou com divulgação suspensa
+  // por ordem judicial, volta pro hub (que mostra o aviso, sem números).
+  if (!edicao || !edicao.divulgada_em || edicao.suspensa_em) {
     redirect('/resultados')
   }
 

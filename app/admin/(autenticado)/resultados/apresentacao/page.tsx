@@ -16,7 +16,7 @@ export const dynamic = 'force-dynamic'
 export default async function ApresentacaoPage() {
   const r = await carregarResultados({ ignorarDivulgacao: true })
 
-  if (r.status === 'aguardando') {
+  if (r.status !== 'ok') {
     return (
       <main style={{ padding: 48, color: '#fff', background: '#05102e', minHeight: '100vh' }}>
         <h1>Sem edição ativa</h1>

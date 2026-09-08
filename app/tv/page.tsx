@@ -24,7 +24,9 @@ export const revalidate = 60
 export default async function TvPage() {
   const r = await carregarResultados()
 
-  if (r.status === 'aguardando') {
+  if (r.status !== 'ok') {
+    // 'suspensa' = ordem judicial (TRE-SE, Rp 0601015-42.2026.6.25.0000).
+    const suspensa = r.status === 'suspensa'
     return (
       <main
         style={{
@@ -45,7 +47,9 @@ export default async function TvPage() {
           Pesquisa Eleitoral Sergipe 2026
         </div>
         <div style={{ fontSize: 22, color: '#9fb0d8', maxWidth: 640 }}>
-          Resultados em breve — aguardando a divulgação oficial (registro no TRE/SE).
+          {suspensa
+            ? 'Divulgação temporariamente suspensa por decisão judicial (TRE-SE). Aguarde nova ordem.'
+            : 'Resultados em breve — aguardando a divulgação oficial (registro no TRE/SE).'}
         </div>
       </main>
     )
