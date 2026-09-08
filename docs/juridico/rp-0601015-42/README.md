@@ -4,9 +4,10 @@ Tudo nesta pasta é **agregado**: nenhum arquivo contém CPF, telefone, IP ou qu
 
 | Arquivo | O que é | Estado |
 | --- | --- | --- |
-| `minuta-defesa.md` | Minuta da defesa (art. 18 da Res.-TSE 23.608/2019) com pedidos, lista de documentos e notas para o(a) advogado(a) | Preencher os campos entre colchetes antes de protocolar |
+| `minuta-defesa.md` | Minuta da defesa (art. 18 da Res.-TSE 23.608/2019) com pedidos, lista de documentos e notas para o(a) advogado(a) | Versão para protocolo (08/09/2026): só nome/OAB e assinatura do(a) advogado(a) |
 | `anexo-tecnico-numeros.md` / `.json` | "Números solicitados": tabela por município (§7º, III), composição da amostra (§7º, IV), pesos, Kish, margens, bruto × ponderado por cargo, linha do tempo da coleta, trilha de auditoria | Gerado do banco; precisa da assinatura do estatístico (CONRE 8223) |
-| `complementacao-pesqele-2026-09-08.md` | Textos prontos para colar no PesqEle (bloco A = §7º III; bloco B = §7º IV) e o passo a passo, para os dois registros | Lançar no PesqEle e guardar recibo/espelho |
+| `complementacao-pesqele-2026-09-08.md` | Textos prontos para colar no PesqEle (bloco A = §7º III; bloco B = §7º IV) e o passo a passo, para os dois registros | Lançado nos dois registros em 08/09/2026 (~14h15); guardar telas de confirmação e espelhos |
+| `pesqele-texto-campo-bairro-municipio.txt`, `scripts/pesqele-complementacao-pdf.py`, `scripts/pesqele-relatorio-resultados-pdf.py` | Texto do campo de municípios/bairros e geradores dos dois PDFs do PesqEle (§ 7º-C): detalhamento geográfico + complementação, e relatório completo com os resultados (saídas .pdf/.html ignoradas pelo git) | Gerados em 08/09/2026 |
 | `memoria-de-calculo-sql.md` | Definições das views e fórmulas (peso, Kish, margens, percentuais) com consulta de conferência | Colar o resultado da consulta da seção 6 |
 | `linha-do-tempo.md` | Eventos com prova (banco, auditoria, commits) de 22/08 a 08/09 e a tabela de commits | Preencher intimação/suspensão/complementação |
 | `checklist-cumprimento-tutela.md` | O que fazer nas 24 h: site já fora do ar (08/09 10h47), acionar a suspensão (TOTP), canais manuais, provas, como religar | Executar e anotar data/hora |

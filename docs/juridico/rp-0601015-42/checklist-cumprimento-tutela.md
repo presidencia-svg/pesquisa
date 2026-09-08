@@ -36,6 +36,12 @@ Por decisão do presidente, o sítio pesquisa.cdlaju.com.br foi retirado do ar p
 - Capturas do item 1.4 e 1.5, com data/hora.
 - Lista do item 2 preenchida, com data/hora.
 
-## 4. Complementação no PesqEle (condição para a reapreciação da tutela)
+## 4. Complementação no PesqEle — FEITO em 08/09/2026 (~14h15–14h17, BRT)
 
-Seguir `complementacao-pesqele-2026-09-08.md` (blocos A e B prontos para colar) nos **dois** registros — SE-09441/2026 e BR-04041/2026 —, reanexando `docs/Tabela-Estratos-Ponderacao.pdf` e `anexo-tecnico-numeros.pdf`; salvar recibo e espelho de cada um; entregar ao(à) advogado(a) para juntar nos autos com a defesa.
+Texto de complementação (`pesqele-texto-campo-bairro-municipio.txt`) e PDF de detalhamento (`pesqele-anexo-detalhamento-e-complementacao-art2-par7.pdf`) lançados nos dois registros pela tela "Editar bairro/município e/ou resultado da pesquisa"; sistema: "Dados alterados com sucesso" / "As informações foram incluídas fora do prazo Legal".
+
+Falta:
+
+1. Salvar as telas de confirmação dos dois registros (doc. 06) e os espelhos atualizados (doc. 07) — Gerenciar Pesquisas Eleitorais → visualizar/imprimir.
+2. Decidir com o(a) advogado(a) e anexar `pesqele-relatorio-completo-resultados.pdf` no slot "Arquivo do relatório completo com os resultados da pesquisa" (estava vazio) — nos dois registros.
+3. Entregar telas, espelhos e o aviso do TRE-SE de 22/08/2026 (`aviso-tre-se-registro-SE-09441-2026-08-22.pdf`, doc. 15) ao(à) advogado(a) para juntar com a defesa.
