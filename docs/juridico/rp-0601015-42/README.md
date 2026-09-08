@@ -9,7 +9,7 @@ Tudo nesta pasta é **agregado**: nenhum arquivo contém CPF, telefone, IP ou qu
 | `complementacao-pesqele-2026-09-08.md` | Textos prontos para colar no PesqEle (bloco A = §7º III; bloco B = §7º IV) e o passo a passo, para os dois registros | Lançar no PesqEle e guardar recibo/espelho |
 | `memoria-de-calculo-sql.md` | Definições das views e fórmulas (peso, Kish, margens, percentuais) com consulta de conferência | Colar o resultado da consulta da seção 6 |
 | `linha-do-tempo.md` | Eventos com prova (banco, auditoria, commits) de 22/08 a 08/09 e a tabela de commits | Preencher intimação/suspensão/complementação |
-| `checklist-cumprimento-tutela.md` | O que fazer nas 24 h: acionar a suspensão (TOTP), canais manuais, provas | Executar e anotar data/hora |
+| `checklist-cumprimento-tutela.md` | O que fazer nas 24 h: site já fora do ar (08/09 10h47), acionar a suspensão (TOTP), canais manuais, provas, como religar | Executar e anotar data/hora |
 
 ## Regerar os números
 

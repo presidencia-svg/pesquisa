@@ -2,7 +2,13 @@
 
 **Multa: R$ 20.000,00 por ato de descumprimento.** Faça na ordem; anote data e hora de cada item; guarde capturas de tela com relógio visível. Nada disto usa dado pessoal.
 
-## 1. Acionar a suspensão na plataforma (5 minutos)
+## 0. FEITO em 08/09/2026, 10h47 — site inteiro fora do ar
+
+Por decisão do presidente, o sítio pesquisa.cdlaju.com.br foi retirado do ar por completo (commit `b59a662`): toda página pública responde "Site temporariamente indisponível" (HTTP 503), sem números; `/api/divulgacao` informa `"suspensa":true` e o pop-up de cdlaju.com.br mostra "Divulgação temporariamente suspensa". Só `/admin` continua acessível (para o passo 1 e para os anexos). **Capturar agora**, com relógio visível: https://pesquisa.cdlaju.com.br , /resultados , /tv e o pop-up de https://cdlaju.com.br .
+
+**Para religar o site** (só depois de decisão judicial revogando a medida): em `lib/site-desabilitado.ts`, trocar `SITE_DESABILITADO_NO_CODIGO = true` por `false`, commit e push (o deploy é automático, ~1 min). Conferir que a variável `SITE_DESABILITADO` não existe na Vercel. O commit datado é a prova do momento da retomada.
+
+## 1. Acionar a suspensão na plataforma (5 minutos) — ainda vale a pena, pela trilha de auditoria
 
 1. Entrar em https://pesquisa.cdlaju.com.br/admin/edicoes (login de administrador).
 2. Na edição ativa ("Pesquisa Sergipe 2026 — 1ª edição (1º turno)"), no bloco **Suspensão judicial**, conferir o motivo pré-preenchido ("Decisão TRE-SE — Rp 0601015-42.2026.6.25.0000 (tutela de urgência, 07/09/2026)"), digitar o código do **Google Authenticator** e clicar em **⛔ Suspender (ordem judicial)**.
