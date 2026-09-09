@@ -1,6 +1,6 @@
 # Minuta de Resposta — Ofício nº 203/2026/GABPR13-VRLS (PP Eleitoral nº 1.35.000.000906/2026-09)
 
-> **Minuta técnica** para revisão, preenchimento e assinatura antes do protocolo. Os campos entre colchetes **[ ]** devem ser conferidos ou completados — em especial o item 1 (finalidade do evento) e as datas. Prazo: **10 (dez) dias úteis** contados do primeiro recebimento do ofício. Protocolo pela plataforma de serviços eletrônicos do MPF (http://www.mpf.mp.br/mpfservicos), mencionando o número do procedimento e o do ofício.
+> **Minuta técnica** para revisão, preenchimento e assinatura antes do protocolo. Os campos entre colchetes **[ ]** devem ser conferidos ou completados — em especial o item 1 (finalidade do evento) e as datas. Prazo: **10 (dez) dias úteis** contados do primeiro recebimento, ocorrido em **28/08/2026** (sexta-feira) — vencimento em **11/09/2026**, na contagem que inclui o dia do recebimento, ou em **14/09/2026**, se contado do dia útil seguinte (feriado de 07/09 excluído). **Adotar 11/09/2026.** Protocolo pela plataforma de serviços eletrônicos do MPF (http://www.mpf.mp.br/mpfservicos), mencionando o número do procedimento e o do ofício.
 >
 > Esta minuta está redigida na **primeira pessoa da destinatária do ofício** (a responsável legal do restaurante). Caso a resposta venha a ser subscrita também, ou apenas, pela pessoa que organizou o encontro, basta ajustar a qualificação e o fecho.
 
@@ -9,7 +9,7 @@ AO EXCELENTÍSSIMO SENHOR PROCURADOR REGIONAL ELEITORAL EM SERGIPE
 **Referência:** Ofício nº 203/2026/GABPR13-VRLS
 **Procedimento Preparatório Eleitoral nº** 1.35.000.000906/2026-09
 
-**MARIA JOSÉ SANTOS SANTANA**, responsável legal do **Restaurante "Tabuará"**, CNPJ nº 33.159.574/0002-47, com estabelecimento na Praça de Eventos da Orla de Atalaia, Aracaju/SE, [telefone ___ / e-mail ___], em atenção ao ofício em epígrafe, recebido em **[dd/mm/2026]**, vem, tempestivamente e com toda a consideração, prestar os esclarecimentos requisitados, nos seguintes termos.
+**MARIA JOSÉ SANTOS SANTANA**, responsável legal do **Restaurante "Tabuará"**, CNPJ nº 33.159.574/0002-47, com estabelecimento na Praça de Eventos da Orla de Atalaia, Aracaju/SE, [telefone ___ / e-mail ___], em atenção ao ofício em epígrafe, recebido em **28/08/2026**, vem, tempestivamente e com toda a consideração, prestar os esclarecimentos requisitados, nos seguintes termos.
 
 ## 1. Da finalidade do encontro realizado em 26/08/2026
 
@@ -102,7 +102,7 @@ Extraído do relatório de conferência de caixa do Restaurante "Tabuará" (sist
 
 ### Conferência antes do protocolo
 
-- [ ] Data do primeiro recebimento do ofício preenchida e prazo de 10 dias úteis conferido
+- [x] Recebimento em 28/08/2026; prazo até **11/09/2026** (contagem conservadora)
 - [ ] Item 1 revisado — manter **apenas** afirmações que o estabelecimento possa sustentar por conhecimento próprio
 - [ ] Verificado nos controles do restaurante se existe qualquer registro de reserva em 26/08/2026 (agenda, aplicativo, WhatsApp, caderno de reservas)
 - [x] **Anexo I contém só as entradas.** O extrato da adquirente lista exclusivamente vendas (pagamentos recebidos de clientes). **Não anexar o relatório interno de conferência de caixa**, que traz também a seção "Entradas/saídas da gaveta" com movimentações internas nominais (retirada para cofre, entregas, frete), estranhas ao objeto do ofício
