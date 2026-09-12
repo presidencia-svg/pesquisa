@@ -1,4 +1,8 @@
 #!/bin/zsh
+# *** RESERVA, NÃO AGENDADO. O disparo oficial roda no cron da Vercel
+# *** (/api/cron/convite-pesquisa, lib/convite-pesquisa.ts). Só rode este script
+# *** se o cron da Vercel estiver DESLIGADO — os dois juntos podem mandar em dobro.
+#
 # Disparo do convite da 2ª edição — domingo 13/09/2026, 08h00–15h00 (America/Recife).
 # Autorizado pela presidência da CDL em 12/09/2026 ("a partir de 8h mandar zap até as 15h
 # para todos do nosso banco de dados"). Roda pelo launchd (scripts/launchd/
