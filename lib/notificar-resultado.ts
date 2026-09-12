@@ -4,6 +4,7 @@ import {
   enviarResultadoWhatsApp,
   metaWhatsappConfigurada,
 } from './meta-whatsapp'
+import { suspensaoJudicial } from './ordem-judicial'
 import { supabaseAdmin } from './supabase/admin'
 
 /**
@@ -79,13 +80,13 @@ export async function processarLoteNotificacao(): Promise<ProcessarResultado> {
       resumo: { processados: 0, enviados: 0, falhas: 0, pendentes_restantes: 0 },
     }
   }
-  if (edicao.suspensa_em) {
+  if (suspensaoJudicial(edicao)) {
     // Ordem judicial (TRE-SE, Rp 0601015-42.2026.6.25.0000): divulgação
     // suspensa — nenhuma mensagem de resultado sai enquanto durar.
     return {
       ok: true,
       message:
-        'Skip: divulgação suspensa por ordem judicial (edicao.suspensa_em preenchido). Nenhuma notificação enviada.',
+        'Skip: divulgação suspensa por ordem judicial (edicao.suspensa_em ou lib/ordem-judicial.ts). Nenhuma notificação enviada.',
       resumo: { processados: 0, enviados: 0, falhas: 0, pendentes_restantes: 0 },
     }
   }

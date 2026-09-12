@@ -48,7 +48,8 @@ export function mdToHtml(md) {
       out.push('</ul>'); continue
     }
     if (/^\s*\d+[.)]\s+/.test(line)) {
-      out.push('<ol>')
+      const olStart = Number((lines[i].match(/^\s*(\d+)[.)]\s+/) ?? [0, '1'])[1])
+      out.push(olStart === 1 ? '<ol>' : `<ol start="${olStart}">`)
       while (i < lines.length && /^\s*\d+[.)]\s+/.test(lines[i])) { out.push(`<li>${inline(lines[i].replace(/^\s*\d+[.)]\s+/, ''))}</li>`); i++ }
       out.push('</ol>'); continue
     }

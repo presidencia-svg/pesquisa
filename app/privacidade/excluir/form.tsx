@@ -104,8 +104,8 @@ export function ExcluirForm() {
       </button>
 
       <p className="text-xs text-muted-foreground leading-relaxed">
-        Limite: 3 solicitações por IP a cada hora (anti-abuso). Em caso
-        de problemas, contate o Encarregado de Dados da CDL Aracaju em{' '}
+        Em caso de problemas, contate a Encarregada de Dados da CDL
+        Aracaju em{' '}
         <span className="font-mono">dpo@cdlaju.com.br</span>.
       </p>
     </form>

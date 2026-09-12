@@ -1,5 +1,6 @@
 'use server'
 
+import { registrarAcessoAdmin } from '@/lib/admin-audit'
 import { hashCpf } from '@/lib/crypto'
 import { checarRateLimit } from '@/lib/rate-limit'
 import { supabaseAdmin } from '@/lib/supabase/admin'
@@ -18,7 +19,8 @@ export type ExclusaoState = {
  *   2. Sistema valida formato do CPF.
  *   3. Hash do CPF e' usado pra apagar (anonimizar) em TODAS as bases:
  *      - eleitores_pesquisa (Sala 1)  — apaga linha completa
- *      - cdl_base                     — apaga registro
+ *      - cdl_base                     — apaga registro (cadastro unificado,
+ *                                        inclui o retorno integral do SPC)
  *      - whatsapp_codigos             — apaga historico de OTPs
  *   4. NOTA: votos_pesquisa (Sala 2) e tokens_emitidos NAO sao tocados.
  *      Eles ja' nao tem ligacao com o CPF (arquitetura duas salas).
@@ -68,7 +70,10 @@ export async function solicitarExclusao(
   const db = supabaseAdmin()
 
   // 4a. Apaga whatsapp_codigos primeiro (FK reference em eleitores_pesquisa)
-  await db.from('whatsapp_codigos').delete().eq('cpf_hash', cpfHash)
+  const { count: otpsApagados } = await db
+    .from('whatsapp_codigos')
+    .delete({ count: 'exact' })
+    .eq('cpf_hash', cpfHash)
 
   // 4b. Apaga eleitores_pesquisa (Sala 1)
   const { count: eleitoresApagados } = await db
@@ -77,10 +82,28 @@ export async function solicitarExclusao(
     .eq('cpf_hash', cpfHash)
 
   // 4c. Apaga cdl_base
-  await db.from('cdl_base').delete().eq('cpf_hash', cpfHash)
+  const { count: cdlApagados } = await db
+    .from('cdl_base')
+    .delete({ count: 'exact' })
+    .eq('cpf_hash', cpfHash)
 
   // 5. Nada acontece com votos_pesquisa nem tokens_emitidos:
   //    eles nao tem cpf_hash. Os votos permanecem anonimos no agregado.
+
+  // 6. Trilha (LGPD art. 37 + Res.-TSE art. 2º VII "sistema interno de
+  //    controle"): registra QUE houve exclusão e quantas linhas saíram —
+  //    sem CPF, sem hash, sem telefone. Antes disso a exclusão não deixava
+  //    rastro e a contagem de respondentes (n) podia cair sem explicação
+  //    numa auditoria.
+  await registrarAcessoAdmin(
+    'lgpd_exclusao',
+    {
+      eleitores_apagados: eleitoresApagados ?? 0,
+      otps_apagados: otpsApagados ?? 0,
+      cdl_base_apagados: cdlApagados ?? 0,
+    },
+    'lgpd:exclusao',
+  )
 
   return {
     ok: true,

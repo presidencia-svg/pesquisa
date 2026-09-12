@@ -10,6 +10,7 @@ import { redirect } from 'next/navigation'
 import { MapaSergipe, type PinturaMunicipio } from '@/components/mapa-sergipe'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { suspensaoJudicial } from '@/lib/ordem-judicial'
 
 import './mapa-publico.css'
 
@@ -77,7 +78,7 @@ export default async function MapaPublicoPage({
 
   // Mesma regra do /resultados: sem divulgação, ou com divulgação suspensa
   // por ordem judicial, volta pro hub (que mostra o aviso, sem números).
-  if (!edicao || !edicao.divulgada_em || edicao.suspensa_em) {
+  if (!edicao || !edicao.divulgada_em || suspensaoJudicial(edicao)) {
     redirect('/resultados')
   }
 

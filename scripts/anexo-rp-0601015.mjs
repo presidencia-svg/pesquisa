@@ -15,6 +15,10 @@
  *
  * Uso:  node --env-file=.env.local scripts/anexo-rp-0601015.mjs
  *       META_AMOSTRA=20000 node --env-file=.env.local scripts/anexo-rp-0601015.mjs   (20.000 = entrevistas previstas no registro)
+ *
+ * Edição: `--edicao <uuid>` (ou env EDICAO_ID); sem isso, usa a ativa. Desde
+ * 12/09/2026 a ativa é a 2ª edição — pra regerar material da Rp use --edicao
+ * 2c9211d1-6fd2-476d-8872-5952c12db5e9 (1ª edição).
  */
 import { createClient } from '@supabase/supabase-js'
 import { mkdirSync, writeFileSync } from 'node:fs'
@@ -91,10 +95,12 @@ const CARGOS = [
 ]
 
 // ------------------------------------------------------------------ dados
-const { data: edicao, error: eEd } = await db.from('edicao').select('*').eq('ativa', true).maybeSingle()
-if (eEd || !edicao) throw new Error('edição ativa não encontrada: ' + (eEd?.message ?? ''))
+const EDICAO_ARG = process.argv.includes('--edicao') ? process.argv[process.argv.indexOf('--edicao') + 1] : (process.env.EDICAO_ID || null)
+const qEd = db.from('edicao').select('*')
+const { data: edicao, error: eEd } = EDICAO_ARG ? await qEd.eq('id', EDICAO_ARG).maybeSingle() : await qEd.eq('ativa', true).maybeSingle()
+if (eEd || !edicao) throw new Error('edição não encontrada: ' + (EDICAO_ARG ?? 'ativa') + ' ' + (eEd?.message ?? ''))
 const eid = edicao.id
-console.log('edição ativa:', edicao.nome, eid)
+console.log('edição:', edicao.nome, eid)
 
 const municipios = await all('municipios_se', 'ibge_codigo, nome, regiao, eleitorado, cota_pesquisa, zona_expansao', { order: 'ibge_codigo' })
 const pesos = await all('v_peso_municipio', '*', { eq: { edicao_id: eid }, order: 'municipio_ibge' })
@@ -335,11 +341,11 @@ L.push(tab(['Medida', 'Valor'], [
   ['Maior peso', `${fmtNum(pesoMax.peso, 4)} (${pesoMax.nome})`],
 ]))
 L.push('')
-L.push('Nível econômico não é ponderado por inexistência de parâmetro oficial no eleitorado (conforme o plano amostral registrado). Sexo, faixa etária e grau de instrução foram coletados (seção 4) e as tabelas de estratos do plano acompanham o documento "Tabela de Estratos e Ponderação"; os resultados foram divulgados em 04/09/2026 pela contagem direta; a pós-estratificação por município acima descrita foi calculada e publicada ao lado dos valores brutos em 06/09/2026, e os cruzamentos por sexo × faixa etária × instrução ficam à disposição para a ponderação completa a critério do estatístico responsável e da perícia.')
+L.push('Nível econômico não é ponderado por inexistência de parâmetro oficial no eleitorado (conforme o plano amostral registrado). Sexo, faixa etária e grau de instrução foram coletados (seção 4) e as tabelas de estratos do plano acompanham o documento "Tabela de Estratos e Ponderação"; os resultados foram divulgados em 04/09/2026 pela contagem direta; a pós-estratificação por município acima descrita foi calculada e publicada ao lado dos valores brutos em 06/09/2026, e a ponderação completa por sexo × faixa etária × grau de instrução, calculada com o arquivo oficial do TSE, consta da memória de cálculo "Ponderação completa do plano registrado" (09/09/2026, doc. 16), submetida ao estatístico responsável.')
 L.push('')
 L.push('## 4. Art. 2º, §7º, IV — composição da amostra final')
 L.push('')
-L.push(`Base: ${fmtInt(val.length)} participantes com identidade verificada (CPF + WhatsApp), conforme cadastro respondido pelo próprio participante. "Não informado" corresponde ao campo deixado em branco.`)
+L.push(`Base: ${fmtInt(val.length)} participantes com identidade verificada (CPF + WhatsApp), Faixa etária, grau de instrução e nível econômico são declarados pelo próprio participante no cadastro; o sexo não é perguntado no formulário — vem da consulta cadastral por CPF (base da CDL ou SPC) que autentica o eleitor. "Não informado" em sexo corresponde aos casos em que a consulta cadastral não devolveu o campo; em nível econômico, à opção de não declarar.`)
 L.push('')
 for (const [d, titulo] of [['sexo', 'Sexo'], ['faixa_etaria', 'Faixa etária'], ['escolaridade', 'Grau de instrução'], ['nivel_economico', 'Nível econômico (autodeclarado)'], ['regiao', 'Região de Sergipe']]) {
   const m = comp[d]
@@ -429,11 +435,11 @@ L.push(tab(['Data/hora (BRT)', 'Ação', 'Detalhe'], auditoria.map((a) => [dataH
 L.push('')
 L.push('## 7. Notas de conciliação')
 L.push('')
-L.push(`- A composição demográfica registrada na complementação de 04/09/2026 somava 10.310 participantes; a base atual soma ${fmtInt(val.length)}. A diferença de 4 participantes será conciliada pelo estatístico responsável [confirmar a causa antes de protocolar]; além disso, em 06/09/2026 foi corrigido um erro de paginação na leitura das views (limite de 1.000 linhas por consulta) que afetava a tabela de composição publicada. Os totais deste anexo, recalculados diretamente sobre os registros, substituem os anteriores.`)
+L.push(`- A composição demográfica registrada na complementação de 04/09/2026 somava 10.310 participantes; a base atual soma ${fmtInt(val.length)}. A diferença de 4 participantes decorre de quatro exclusões de cadastro a pedido dos titulares (LGPD) entre 04/09/2026, 09h47, e 06/09/2026, 18h34, posteriores à extração das 09h18 de 04/09 (conciliação de totais, seção 6); além disso, em 06/09/2026 foi corrigido um erro de paginação na leitura das views (limite de 1.000 linhas por consulta) que afetava a tabela de composição publicada. Os totais deste anexo, recalculados diretamente sobre os registros, substituem os anteriores.`)
 L.push(`- ${fmtInt(partFora)} participantes validados (${fmtInt(respFora)} respondentes) informaram município de outra UF; recebem peso 0 e não integram os percentuais ponderados. Ficam listados por transparência.`)
 L.push(`- Sexo é o único campo com "não informado" em volume relevante (${fmtInt(comp.sexo.get('nao_informado') ?? 0)}); faixa etária e instrução eram obrigatórios. Nível econômico "não informado": ${fmtInt(comp.nivel_economico.get('nao_informado') ?? 0)}.`)
 L.push(`- Conferência: a view \`v_amostra_composicao\` (usada em /transparencia) reporta sexo F = ${fmtInt(viewSexo.F ?? 0)} e M = ${fmtInt(viewSexo.M ?? 0)}; este anexo, calculado sobre os mesmos registros, reporta F = ${fmtInt(comp.sexo.get('F') ?? 0)} e M = ${fmtInt(comp.sexo.get('M') ?? 0)}.`)
-L.push('- O TSE não publica o eleitorado por sexo × faixa etária × instrução por município em formato aberto acessível a esta plataforma na data de geração; a pós-estratificação por município usa o eleitorado municipal total (Estatísticas do Eleitorado, TSE) carregado no cadastro `municipios_se`.')
+L.push('- A pós-estratificação por município usa o eleitorado municipal total (Estatísticas do Eleitorado, TSE) carregado no cadastro `municipios_se` (1.731.960 eleitores). O eleitorado por município × sexo × faixa etária × grau de instrução, publicado pelo TSE no Portal de Dados Abertos (arquivo "perfil do eleitorado por seção", geração de 14/07/2026, 1.740.124 eleitores), não havia sido carregado na plataforma até a divulgação; foi obtido em 09/09/2026 e aplicado na memória de cálculo da ponderação completa (doc. 16).')
 L.push('')
 L.push('## 8. Reprodutibilidade')
 L.push('')

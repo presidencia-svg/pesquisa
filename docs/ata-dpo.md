@@ -49,7 +49,7 @@ A Diretoria da Câmara de Dirigentes Lojistas de Aracaju, por **unanimidade**, c
 
 ### Art. 1º — Designação
 
-Fica designada **Sra. Claudimara Fontes Carvalho**, inscrita no CPF sob o nº **936.060.105-59**, com vínculo institucional de **Diretora Secretária (1ª Secretária)** da CDL Aracaju, como **Encarregada pelo Tratamento de Dados Pessoais (DPO)**, na forma do art. 41 da Lei nº 13.709/2018 (LGPD).
+Fica designada **Sra. Claudimara Fontes Carvalho**, inscrita no CPF: [redigido — versão íntegra em docs/confidencial], com vínculo institucional de **Diretora Secretária (1ª Secretária)** da CDL Aracaju, como **Encarregada pelo Tratamento de Dados Pessoais (DPO)**, na forma do art. 41 da Lei nº 13.709/2018 (LGPD).
 
 ### Art. 2º — Canal de comunicação
 
@@ -90,7 +90,7 @@ A presente designação produz efeitos a partir da data de sua aprovação, com 
 
 ### Art. 6º — Substituição temporária
 
-Em caso de impedimento temporário da Encarregada titular (férias, licença, viagem, vacância), fica designada como suplente a **Sra. Verônica Castro Pedreira Peixoto**, inscrita no CPF sob o nº **791.134.195-87**, Diretora Administrativa e Financeira da CDL Aracaju.
+Em caso de impedimento temporário da Encarregada titular (férias, licença, viagem, vacância), fica designada como suplente a **Sra. Verônica Castro Pedreira Peixoto**, inscrita no CPF: [redigido — versão íntegra em docs/confidencial], Diretora Administrativa e Financeira da CDL Aracaju.
 
 ### Art. 7º — Publicidade
 
@@ -117,7 +117,7 @@ Aracaju, 26 de maio de 2026.
 **_________________________________________________________**
 **ELISON VIEIRA SANTOS DO BOMFIM**
 Presidente da CDL Aracaju (triênio 2026–2028)
-CPF 776.463.555-34
+CPF: [redigido — versão íntegra em docs/confidencial]
 
 \
 
@@ -126,7 +126,7 @@ CPF 776.463.555-34
 **_________________________________________________________**
 **CLAUDIMARA FONTES CARVALHO**
 1ª Secretária da Diretoria · Secretária ad hoc desta reunião
-CPF 936.060.105-59
+CPF: [redigido — versão íntegra em docs/confidencial]
 
 \
 
@@ -135,7 +135,7 @@ CPF 936.060.105-59
 **_________________________________________________________**
 **CLAUDIMARA FONTES CARVALHO**
 Encarregada pelo Tratamento de Dados Pessoais (DPO)
-CPF 936.060.105-59
+CPF: [redigido — versão íntegra em docs/confidencial]
 *declara ciência e aceite da designação*
 
 ---

@@ -1,7 +1,10 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 import { ativarEdicao, desativarEdicao } from './actions'
-import { ControlesDivulgacao } from './controles-divulgacao'
+import {
+  ControlesDivulgacao,
+  type PonderacaoExecucaoResumo,
+} from './controles-divulgacao'
 import { NovaEdicaoForm } from './nova-edicao-form'
 
 export const metadata = { title: 'Edições · Admin' }
@@ -15,6 +18,7 @@ type Edicao = {
   registro_tre: string | null
   numero_conre_responsavel: string | null
   data_registro_pesqele: string | null
+  meta_amostra: number | null
   divulgada_em: string | null
   divulgacao_prevista: string | null
   turno: number
@@ -22,6 +26,11 @@ type Edicao = {
   exigir_localizacao: boolean | null
   suspensa_em: string | null
   suspensao_motivo: string | null
+  ponderacao_metodo: 'municipio' | 'estratos_raking' | null
+  ponderacao_execucao_id: string | null
+  ponderacao_aprovada_em: string | null
+  ponderacao_aprovada_por: string | null
+  complementacao_pesqele_em: string | null
   criado_em: string
 }
 
@@ -32,6 +41,36 @@ export default async function EdicoesPage() {
     .select('*')
     .order('criado_em', { ascending: false })
     .returns<Edicao[]>()
+
+  // Execuções de ponderação apontadas pelas edições (diagnósticos pro bloco
+  // de ponderação: n efetivo, deff, margem efetiva, convergência).
+  const execIds = (edicoes ?? [])
+    .map((e) => e.ponderacao_execucao_id)
+    .filter((x): x is string => Boolean(x))
+  const execPorId = new Map<string, PonderacaoExecucaoResumo>()
+  if (execIds.length > 0) {
+    const { data: execs } = await db
+      .from('ponderacao_execucao')
+      .select(
+        'id, executado_em, executado_por, iteracoes, convergiu, n_peso_positivo, n_eff, deff, peso_max, margem_nominal, margem_efetiva',
+      )
+      .in('id', execIds)
+    for (const x of execs ?? []) {
+      execPorId.set(x.id as string, {
+        id: x.id as string,
+        executado_em: x.executado_em as string,
+        executado_por: (x.executado_por as string | null) ?? null,
+        iteracoes: x.iteracoes == null ? null : Number(x.iteracoes),
+        convergiu: x.convergiu == null ? null : Boolean(x.convergiu),
+        n_peso_positivo: x.n_peso_positivo == null ? null : Number(x.n_peso_positivo),
+        n_eff: x.n_eff == null ? null : Number(x.n_eff),
+        deff: x.deff == null ? null : Number(x.deff),
+        peso_max: x.peso_max == null ? null : Number(x.peso_max),
+        margem_nominal: x.margem_nominal == null ? null : Number(x.margem_nominal),
+        margem_efetiva: x.margem_efetiva == null ? null : Number(x.margem_efetiva),
+      })
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -84,6 +123,15 @@ export default async function EdicoesPage() {
                       Registro TRE/SE:{' '}
                       <span className="font-mono">{e.registro_tre}</span>
                     </p>
+                  ) : (
+                    <p className="text-[11px] text-amber-700">
+                      Sem registro no PesqEle ainda — divulgação bloqueada até registrar (≥5 dias antes).
+                    </p>
+                  )}
+                  {e.meta_amostra ? (
+                    <p className="text-[11px] text-muted-foreground">
+                      Meta mínima: {e.meta_amostra.toLocaleString('pt-BR')} respondentes validados
+                    </p>
                   ) : null}
                 </div>
 
@@ -118,12 +166,23 @@ export default async function EdicoesPage() {
                 registroTre={e.registro_tre}
                 conreResponsavel={e.numero_conre_responsavel}
                 dataRegistroPesqele={e.data_registro_pesqele}
+                metaAmostra={e.meta_amostra ?? null}
                 divulgacaoPrevista={e.divulgacao_prevista}
                 turno={e.turno ?? 1}
                 consultaZonaAtiva={e.consulta_zona_ativa ?? true}
                 exigirLocalizacao={e.exigir_localizacao ?? false}
                 suspensaEm={e.suspensa_em ?? null}
                 suspensaoMotivo={e.suspensao_motivo ?? null}
+                ponderacaoMetodo={e.ponderacao_metodo ?? 'municipio'}
+                ponderacaoExecucao={
+                  e.ponderacao_execucao_id
+                    ? (execPorId.get(e.ponderacao_execucao_id) ?? null)
+                    : null
+                }
+                ponderacaoAprovadaEm={e.ponderacao_aprovada_em ?? null}
+                ponderacaoAprovadaPor={e.ponderacao_aprovada_por ?? null}
+                complementacaoPesqeleEm={e.complementacao_pesqele_em ?? null}
+                fim={e.fim}
               />
             </div>
           ))

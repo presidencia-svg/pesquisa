@@ -165,7 +165,7 @@ Testar cada erro com CPFs específicos via stub (precisa `SPC_MOCK=true` em prod
 2. Continuar
 
 **Critérios de aceite:**
-- [ ] Mensagem amarela: "Seu CPF não está ativo na Receita Federal (suspenso, cancelado ou nulo)..."
+- [ ] Mensagem amarela informando que o CPF não está ativo na consulta cadastral (suspenso, cancelado ou nulo) — texto exato conforme a tela atual
 
 ### 4.3 — CPF irregular
 
@@ -181,7 +181,7 @@ Testar cada erro com CPFs específicos via stub (precisa `SPC_MOCK=true` em prod
 1. CPF qualquer válido terminado em **`000`**
 
 **Critérios de aceite:**
-- [ ] Mensagem amarela: "A Receita Federal indica óbito... Em respeito ao titular..."
+- [ ] Mensagem amarela informando que a consulta cadastral indica óbito ("Em respeito ao titular...") — texto exato conforme a tela atual
 - [ ] Tom respeitoso (não erro vermelho)
 
 ### 4.5 — Erro técnico do SPC

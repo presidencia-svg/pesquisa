@@ -25,6 +25,7 @@ import {
   type RegiaoKey,
 } from '@/lib/regional'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { suspensaoJudicial } from '@/lib/ordem-judicial'
 
 const VAGAS = { federal: 8, estadual: 24 } as const
 
@@ -56,6 +57,56 @@ export type EdicaoRow = {
   /** Ordem judicial: divulgação pública suspensa desde (null = não suspensa). */
   suspensa_em: string | null
   suspensao_motivo: string | null
+  /** Método de ponderação vigente (migration 048): 'municipio' | 'estratos_raking'. */
+  ponderacao_metodo: PonderacaoMetodo | null
+  /** Execução de raking vigente (ponderacao_execucao.id) quando o método é estratos. */
+  ponderacao_execucao_id: string | null
+  /** Aprovação do estatístico CONRE sobre a execução vigente. */
+  ponderacao_aprovada_em: string | null
+  ponderacao_aprovada_por: string | null
+}
+
+export type PonderacaoMetodo = 'municipio' | 'estratos_raking'
+
+/**
+ * Diagnósticos da execução de ponderação (ponderacao_execucao). Alimentam a
+ * ficha técnica pública: margem efetiva (Kish), n efetivo e deff.
+ */
+export type PonderacaoExecucaoRow = {
+  id: string
+  executado_em: string
+  importacao_id: string | null
+  iteracoes: number | null
+  convergiu: boolean | null
+  n_peso_positivo: number | null
+  n_eff: number | string | null
+  deff: number | string | null
+  peso_min: number | string | null
+  peso_mediana: number | string | null
+  peso_p95: number | string | null
+  peso_p99: number | string | null
+  peso_max: number | string | null
+  margem_nominal: number | string | null
+  margem_efetiva: number | string | null
+}
+
+/** Texto público da ponderação por método (ficha técnica e notas). */
+export const PONDERACAO_TEXTO: Record<
+  PonderacaoMetodo,
+  { curto: string; sub: string; descricao: string }
+> = {
+  municipio: {
+    curto: 'Por município',
+    sub: 'Eleitorado TSE ÷ amostra · bruto ao lado',
+    descricao:
+      'Ponderação por município: peso = participação do município no eleitorado (TSE) ÷ participação na amostra',
+  },
+  estratos_raking: {
+    curto: 'Município × sexo × idade × instrução',
+    sub: 'Raking nas marginais do eleitorado TSE · bruto ao lado',
+    descricao:
+      'Ponderação por raking (ajuste proporcional iterativo) nas marginais do eleitorado TSE: município, sexo, faixa etária e grau de instrução — plano amostral registrado no PesqEle',
+  },
 }
 
 export type PatroPorCota = {
@@ -103,7 +154,7 @@ export async function carregarResultados(
   const { data: edicao } = await db
     .from('edicao')
     .select(
-      'id, nome, divulgada_em, divulgacao_prevista, registro_tre, turno, consulta_zona_ativa, suspensa_em, suspensao_motivo',
+      'id, nome, divulgada_em, divulgacao_prevista, registro_tre, turno, consulta_zona_ativa, suspensa_em, suspensao_motivo, ponderacao_metodo, ponderacao_execucao_id, ponderacao_aprovada_em, ponderacao_aprovada_por',
     )
     .eq('ativa', true)
     .maybeSingle<EdicaoRow>()
@@ -120,8 +171,10 @@ export async function carregarResultados(
   // apagar divulgada_em, que é a prova da data real da divulgação.
   // Ferramentas internas (ignorarDivulgacao) seguem funcionando pra
   // preparar defesa/perícia.
-  if (edicao.suspensa_em && !opts?.ignorarDivulgacao) {
-    return { status: 'suspensa', edicao }
+  // A trava do codigo (lib/ordem-judicial.ts) vale mesmo com o campo vazio.
+  const suspensao = suspensaoJudicial(edicao)
+  if (suspensao && !opts?.ignorarDivulgacao) {
+    return { status: 'suspensa', edicao: { ...edicao, ...suspensao } }
   }
 
   // Patrocinadores REMOVIDOS da exibição pública da pesquisa (decisão 25/08):
@@ -131,6 +184,23 @@ export async function carregarResultados(
   // (status='firmado', mostrar_publico=true, logo_url não nulo) e distribuir
   // por cota como antes.
   const patroPorCota: PatroPorCota = { diamante: [], ouro: [], prata: [] }
+
+  // ----- Método de ponderação (migration 048) -----
+  // 'municipio'       → views *_pond (pós-estratificação por município, 045)
+  // 'estratos_raking' → views *_pond_estratos (raking município × sexo × faixa
+  //                     × instrução, pesos da execução em ponderacao_execucao_id)
+  // Estratos SEM execução apontada é erro de configuração: falha em vez de
+  // publicar número sem peso.
+  const metodo: PonderacaoMetodo =
+    edicao.ponderacao_metodo === 'estratos_raking' ? 'estratos_raking' : 'municipio'
+  if (metodo === 'estratos_raking' && !edicao.ponderacao_execucao_id) {
+    throw new Error(
+      'resultados: edição com ponderacao_metodo=estratos_raking sem ponderacao_execucao_id — rode a ponderação antes',
+    )
+  }
+  const viewCand = metodo === 'estratos_raking' ? 'v_resultados_candidato_pond_estratos' : 'v_resultados_candidato_pond'
+  const viewLeg = metodo === 'estratos_raking' ? 'v_resultados_legenda_pond_estratos' : 'v_resultados_legenda_pond'
+  const viewBns = metodo === 'estratos_raking' ? 'v_votos_branco_nao_sabe_pond_estratos' : 'v_votos_branco_nao_sabe_pond'
 
   // ----- Carrega tudo em paralelo -----
   const [
@@ -148,6 +218,7 @@ export async function carregarResultados(
     { data: candPondData },
     { data: legendaPondData },
     { data: bnsPondData },
+    { data: execucaoData },
   ] = await Promise.all([
     db
       .from('candidatos_pesquisa')
@@ -225,19 +296,41 @@ export async function carregarResultados(
     // amostra. As views devolvem o resultado já ponderado por candidato /
     // partido / branco — poucas centenas de linhas, sem paginação.
     db
-      .from('v_resultados_candidato_pond')
+      .from(viewCand)
       .select('cargo, candidato_id, votos, votos_pond')
       .eq('edicao_id', edicao.id),
     db
-      .from('v_resultados_legenda_pond')
+      .from(viewLeg)
       .select('cargo, partido_id, votos, votos_pond')
       .eq('edicao_id', edicao.id)
       .in('cargo', ['federal', 'estadual']),
     db
-      .from('v_votos_branco_nao_sabe_pond')
+      .from(viewBns)
       .select('cargo, metodo, votos, votos_pond')
       .eq('edicao_id', edicao.id),
+    // Diagnósticos da execução vigente (n efetivo, deff, margem efetiva).
+    // Só existe no método por estratos; no método por município vem null.
+    edicao.ponderacao_execucao_id
+      ? db
+          .from('ponderacao_execucao')
+          .select(
+            'id, executado_em, importacao_id, iteracoes, convergiu, n_peso_positivo, n_eff, deff, peso_min, peso_mediana, peso_p95, peso_p99, peso_max, margem_nominal, margem_efetiva',
+          )
+          .eq('id', edicao.ponderacao_execucao_id)
+          .maybeSingle<PonderacaoExecucaoRow>()
+      : Promise.resolve({ data: null as PonderacaoExecucaoRow | null }),
   ])
+
+  // Trava: método por estratos exige execução gravada E convergida. Sem
+  // isso os *_pond_estratos devolveriam votos_pond=0 (left join sem peso).
+  if (metodo === 'estratos_raking') {
+    if (!execucaoData) {
+      throw new Error('resultados: ponderacao_execucao_id aponta pra execução inexistente')
+    }
+    if (execucaoData.convergiu === false) {
+      throw new Error('resultados: execução de raking vigente não convergiu — não publicar')
+    }
+  }
 
   // Trava: as views agregadas têm que caber numa resposta (limite 1.000 do
   // PostgREST). Se um dia passar, é pra FALHAR, não pra publicar parcial.
@@ -275,8 +368,7 @@ export async function carregarResultados(
     if (r.metodo === 'branco') bnsPond[r.cargo].branco += Number(r.votos_pond)
     if (r.metodo === 'nao_sabe') bnsPond[r.cargo].nao_sabe += Number(r.votos_pond)
   }
-  const PONDERACAO =
-    'Ponderação por município: peso = participação do município no eleitorado (TSE) ÷ participação na amostra'
+  const PONDERACAO = PONDERACAO_TEXTO[metodo].descricao
 
   // ----- Branco / Não sei -----
   const brancoNaoSei: Record<string, { branco: number; nao_sabe: number }> = {}
@@ -646,10 +738,24 @@ export async function carregarResultados(
   const n = eleitoresCount ?? 0
   const margem = calcularMargem(n)
 
+  // Margem EFETIVA (Kish): com pesos desiguais a margem nominal 1,96·√(0,25/n)
+  // subestima a incerteza. n_eff = (Σw)²/Σw² e margem_efetiva = 1,96·√(0,25/n_eff).
+  // No método por estratos vem da execução gravada; no método por município
+  // não há execução e a ficha mostra só a nominal.
+  const nEff = execucaoData?.n_eff != null ? Number(execucaoData.n_eff) : undefined
+  const deff = execucaoData?.deff != null ? Number(execucaoData.deff) : undefined
+  const margemEfetiva =
+    execucaoData?.margem_efetiva != null
+      ? `±${(Number(execucaoData.margem_efetiva) * 100).toFixed(1)}pp`
+      : undefined
+
   const pesquisa: Pesquisa = {
     meta: {
       n,
       margem,
+      margem_efetiva: margemEfetiva,
+      n_eff: nEff,
+      deff,
       confianca: '95%',
       divulgada_em: formatarData(edicao.divulgada_em),
       registro_tre: edicao.registro_tre ?? '—',
@@ -657,6 +763,10 @@ export async function carregarResultados(
       turno: (edicao.turno === 2 ? 2 : 1) as 1 | 2,
       contratante: CONTRATANTE,
       ponderacao: PONDERACAO,
+      ponderacao_metodo: metodo,
+      ponderacao_curta: PONDERACAO_TEXTO[metodo].curto,
+      ponderacao_sub: PONDERACAO_TEXTO[metodo].sub,
+      ponderacao_aprovada_por: edicao.ponderacao_aprovada_por ?? undefined,
     },
     governador: montaCargoCandidato('governador'),
     senador: montaCargoCandidato('senador'),

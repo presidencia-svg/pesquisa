@@ -2,6 +2,15 @@
 
 import { useActionState, useEffect, useState } from 'react'
 
+import {
+  ESCOLARIDADE_DETALHES,
+  ESCOLARIDADE_DETALHE_ROTULO,
+  NIVEIS_ECONOMICOS,
+  NIVEL_ECONOMICO_ROTULO,
+  type EscolaridadeDetalhe,
+  type NivelEconomico,
+} from '@/lib/demograficos'
+
 import { confirmarDados, type ConfirmaState } from './actions'
 
 /**
@@ -11,7 +20,9 @@ import { confirmarDados, type ConfirmaState } from './actions'
  *
  * NÃO é identificador de pessoa — é identificador de browser+device.
  * Mudança de browser, modo anônimo, ou atualização significativa do
- * SO geram fingerprints diferentes. Suficiente como anti-multivoto.
+ * SO geram fingerprints diferentes. É só ARMAZENADO para auditoria
+ * pós-coleta: o servidor não trava cadastro por aparelho (ver
+ * app/votar/confirma/actions.ts, passo 2b).
  *
  * Roda só client-side (typeof window !== undefined).
  */
@@ -21,8 +32,8 @@ async function gerarDeviceFingerprint(): Promise<string | null> {
     // Detecta iOS. Safari iOS 17+ aplica anti-fingerprint no canvas
     // (adiciona ruído por sessão), o que torna o canvas instável.
     // Em iOS, omitimos o canvas pra ter fingerprint estável — perde
-    // alguma unicidade mas mantém o objetivo (1 voto por aparelho na
-    // mesma sessão funciona; aparelho diferente = fingerprint diferente).
+    // alguma unicidade mas mantém o objetivo (sinal comparável entre
+    // sessões pra análise de clusters na auditoria).
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent)
 
     let canvasData = ''
@@ -97,8 +108,6 @@ const formatarWhatsappInput = (raw: string): string => {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
 }
 
-type Escolaridade = 'fundamental' | 'medio' | 'superior'
-
 // 27 UFs. SE primeiro (público-alvo); as demais em ordem alfabética.
 const UFS: ReadonlyArray<[string, string]> = [
   ['SE', 'Sergipe'],
@@ -117,16 +126,38 @@ export function DadosForm({
   prefilledMunicipio,
   prefilledWhatsapp,
   prefilledEscolaridade,
+  prefilledNivelEconomico,
   algumPrefill,
   exigirTitulo = false,
+  perguntarSexo = false,
+  prefilledSexo,
 }: {
   municipios: Municipio[]
   prefilledMunicipio?: number
   prefilledWhatsapp?: string
-  prefilledEscolaridade?: Escolaridade
+  /**
+   * Opção de escolaridade marcada numa edição anterior (cdl_base). Quem
+   * só tem o estrato 'fundamental' da 1ª edição chega sem seleção — a
+   * opção era ambígua (ver lib/demograficos.ts).
+   */
+  prefilledEscolaridade?: EscolaridadeDetalhe
+  /**
+   * Renda informada em edição anterior (cdl_base) — editável. Só os
+   * valores da 2ª edição (salários mínimos) são pré-preenchidos.
+   */
+  prefilledNivelEconomico?: NivelEconomico
   algumPrefill: boolean
   /** true quando o eleitor tem 16-17: voto facultativo, exige título. */
   exigirTitulo?: boolean
+  /**
+   * true quando a consulta cadastral (cdl_base/SPC) NÃO trouxe o sexo, ou
+   * quando o valor existente é autodeclarado (nesta sessão ou em edição
+   * anterior) e por isso pode ser corrigido. A fonte cadastral, quando
+   * existe, tem prioridade e não é editável.
+   */
+  perguntarSexo?: boolean
+  /** Valor autodeclarado anterior, pré-preenchido no select (editável). */
+  prefilledSexo?: 'M' | 'F'
 }) {
   const [state, formAction, pending] = useActionState(
     confirmarDados,
@@ -298,9 +329,36 @@ export function DadosForm({
         </label>
       ) : null}
 
-      {/* Sexo e faixa etária NÃO são perguntados — vêm da Receita Federal
-          (via SPC) no passo anterior e ficam em cache em cdl_base. Tirar
-          essas perguntas reduz fricção e elimina autodeclaração incorreta. */}
+      {/* Faixa etária NUNCA é perguntada — vem da consulta cadastral por CPF
+          (cdl_base/SPC) no passo anterior. Sexo também vem de lá, mas a
+          consulta ao SPC devolve o campo vazio para parte dos eleitores
+          (sobretudo jovens sem histórico cadastral: na 1ª edição, 22% dos
+          respondentes ficaram sem sexo). Nesses casos, e só neles, a
+          pergunta aparece aqui — a Resolução TSE 23.747/2026 exige sexo na
+          ponderação da amostra. */}
+      {perguntarSexo ? (
+        <label className="flex flex-col gap-2">
+          <span className="text-sm font-medium text-foreground">Sexo</span>
+          <select
+            name="sexo"
+            required
+            defaultValue={prefilledSexo ?? ''}
+            aria-invalid={state.field === 'sexo'}
+            className="h-12 px-3 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <option value="" disabled>
+              Selecione…
+            </option>
+            <option value="F">Feminino</option>
+            <option value="M">Masculino</option>
+          </select>
+          <span className="text-xs text-muted-foreground">
+            {prefilledSexo
+              ? 'A consulta cadastral do seu CPF não trouxe essa informação; você a informou nesta pesquisa. Confira e corrija se necessário.'
+              : 'A consulta cadastral do seu CPF não trouxe essa informação. Informe o sexo do seu registro civil (o mesmo do cadastro eleitoral) — é exigido pela Resolução TSE 23.747/2026 para a ponderação da amostra.'}
+          </span>
+        </label>
+      ) : null}
 
       <label className="flex flex-col gap-2">
         <span className="text-sm font-medium text-foreground">Escolaridade</span>
@@ -314,36 +372,43 @@ export function DadosForm({
           <option value="" disabled>
             Selecione…
           </option>
-          <option value="fundamental">Ensino fundamental</option>
-          <option value="medio">Ensino médio</option>
-          <option value="superior">Ensino superior</option>
+          {ESCOLARIDADE_DETALHES.map((v) => (
+            <option key={v} value={v}>
+              {ESCOLARIDADE_DETALHE_ROTULO[v]}
+            </option>
+          ))}
         </select>
+        <span className="text-xs text-muted-foreground">
+          Marque a opção que mais se parece com o seu caso, mesmo que não
+          tenha terminado.
+        </span>
       </label>
 
       <label className="flex flex-col gap-2">
         <span className="text-sm font-medium text-foreground">
-          Renda familiar mensal
+          Somando o que todos da sua casa ganham por mês, dá quanto?
         </span>
         <select
           name="nivel_economico"
           required
-          defaultValue=""
+          defaultValue={prefilledNivelEconomico ?? ''}
           aria-invalid={state.field === 'nivel_economico'}
           className="h-12 px-3 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
         >
           <option value="" disabled>
             Selecione…
           </option>
-          <option value="A">Mais de R$ 25.000</option>
-          <option value="B">De R$ 7.000 a R$ 25.000</option>
-          <option value="C">De R$ 2.800 a R$ 7.000</option>
-          <option value="D_E">Até R$ 2.800</option>
-          <option value="nao_informado">Prefiro não informar</option>
+          {NIVEIS_ECONOMICOS.map((v) => (
+            <option key={v} value={v}>
+              {NIVEL_ECONOMICO_ROTULO[v]}
+            </option>
+          ))}
         </select>
         <span className="text-xs text-muted-foreground">
-          Exigido pelo TRE/SE (Resolução 23.747/2026) para a composição da
-          amostra. Você pode optar por não informar — os dados são tratados
-          apenas em agregados estatísticos.
+          Conte salários, aposentadoria, pensão, benefícios e bicos de todas
+          as pessoas da casa. A resposta só entra em totais estatísticos da
+          amostra e não altera o resultado da pesquisa. Se preferir, marque
+          &ldquo;Prefiro não informar&rdquo;.
         </span>
       </label>
 
@@ -389,15 +454,28 @@ export function DadosForm({
         />
         <span className="leading-relaxed">
           <strong>Quero receber os resultados em primeira mão</strong> no meu
-          WhatsApp, logo que a CDL Aracaju divulgar a pesquisa no telejornal
-          da TV Atalaia. Envio único por edição, sem campanha ou propaganda. Posso
-          cancelar a qualquer momento solicitando exclusão dos meus dados.
+          WhatsApp, quando a CDL Aracaju divulgar os resultados. Envio único
+          por edição, sem campanha ou propaganda. Posso cancelar a qualquer
+          momento solicitando exclusão dos meus dados.
         </span>
       </label>
 
-      {/* Identificador antifraude do dispositivo (gerado client-side
-          via canvas + UA + screen + timezone, hash SHA-256). Server
-          usa pra travar 1 voto por aparelho por edição. */}
+      {/* Identificador do dispositivo (gerado client-side via canvas +
+          UA + screen + timezone, hash SHA-256). O servidor só ARMAZENA
+          pra auditoria pós-coleta — não trava cadastro por aparelho. */}
+      <p className="text-xs text-muted-foreground leading-relaxed border-t border-border pt-4">
+        Ao enviar, você confirma que leu a{' '}
+        <a href="/privacidade" target="_blank" rel="noreferrer" className="text-primary hover:underline">
+          Política de Privacidade
+        </a>
+        . Guardamos no cadastro: CPF em hash, nome, WhatsApp, UF e município
+        do título, sexo (informado por você só quando o cadastro não traz),
+        faixa etária, escolaridade, faixa de renda e os dados devolvidos pela
+        consulta cadastral ao SPC Brasil. O número do título (16–17 anos) é
+        conferido e não é guardado. Endereço IP, navegador e uma impressão do
+        dispositivo ficam registrados só para auditoria, sem bloquear ninguém.
+        Seus votos ficam em tabela separada, sem ligação com o CPF.
+      </p>
       {deviceFingerprint ? (
         <input
           type="hidden"

@@ -5,8 +5,11 @@ import { useActionState, useState } from 'react'
 import {
   alternarConsultaZona,
   alternarExigirLocalizacao,
+  aprovarPonderacao,
   atualizarTurno,
+  definirMetodoPonderacao,
   divulgarEdicao,
+  registrarComplementacaoPesqele,
   retirarDivulgacao,
   retomarDivulgacao,
   salvarMetadadosDivulgacao,
@@ -23,12 +26,36 @@ type Props = {
   conreResponsavel: string | null
   dataRegistroPesqele: string | null
   divulgacaoPrevista: string | null
+  /** Meta mínima de respondentes validados (migration 049) — só monitor. */
+  metaAmostra: number | null
   turno: number
   consultaZonaAtiva: boolean
   exigirLocalizacao: boolean
   /** Ordem judicial: divulgação suspensa desde (null = não suspensa). */
   suspensaEm: string | null
   suspensaoMotivo: string | null
+  /** Ponderação (migration 048). */
+  ponderacaoMetodo: 'municipio' | 'estratos_raking'
+  ponderacaoExecucao: PonderacaoExecucaoResumo | null
+  ponderacaoAprovadaEm: string | null
+  ponderacaoAprovadaPor: string | null
+  complementacaoPesqeleEm: string | null
+  /** Fim da coleta — pra avisar se a execução é anterior ao encerramento. */
+  fim: string
+}
+
+export type PonderacaoExecucaoResumo = {
+  id: string
+  executado_em: string
+  executado_por: string | null
+  iteracoes: number | null
+  convergiu: boolean | null
+  n_peso_positivo: number | null
+  n_eff: number | null
+  deff: number | null
+  peso_max: number | null
+  margem_nominal: number | null
+  margem_efetiva: number | null
 }
 
 /**
@@ -43,14 +70,34 @@ export function ControlesDivulgacao({
   registroTre,
   conreResponsavel,
   dataRegistroPesqele,
+  metaAmostra,
   divulgacaoPrevista,
   turno,
   consultaZonaAtiva,
   exigirLocalizacao,
   suspensaEm,
   suspensaoMotivo,
+  ponderacaoMetodo,
+  ponderacaoExecucao,
+  ponderacaoAprovadaEm,
+  ponderacaoAprovadaPor,
+  complementacaoPesqeleEm,
+  fim,
 }: Props) {
   const [editando, setEditando] = useState(false)
+  const [estadoMetodo, definirMetodo, definindoMetodo] = useActionState(
+    (_prev: EdicaoState, fd: FormData) => definirMetodoPonderacao(fd),
+    initial,
+  )
+  const [estadoAprovar, aprovar, aprovando] = useActionState(
+    (_prev: EdicaoState, fd: FormData) => aprovarPonderacao(fd),
+    initial,
+  )
+  const [estadoComplementacao, registrarComplementacao, registrandoComplementacao] =
+    useActionState(
+      (_prev: EdicaoState, fd: FormData) => registrarComplementacaoPesqele(fd),
+      initial,
+    )
   const [estadoMeta, salvarMeta, salvandoMeta] = useActionState(
     salvarMetadadosDivulgacao,
     initial,
@@ -174,11 +221,218 @@ export function ControlesDivulgacao({
     </form>
   )
 
+  // ---- Ponderação: método, execução vigente, aprovação CONRE, complementação ----
+  const execAntesDoFim =
+    ponderacaoExecucao != null &&
+    new Date(ponderacaoExecucao.executado_em).getTime() < new Date(fim).getTime()
+  const aprovacaoDesatualizada =
+    ponderacaoAprovadaEm != null &&
+    ponderacaoExecucao != null &&
+    new Date(ponderacaoAprovadaEm).getTime() <
+      new Date(ponderacaoExecucao.executado_em).getTime()
+  const pct = (x: number | null) => (x == null ? '—' : `±${(x * 100).toFixed(2)}pp`)
+  const num = (x: number | null, d = 2) =>
+    x == null ? '—' : x.toLocaleString('pt-BR', { maximumFractionDigits: d })
+
+  const blocoPonderacao = (
+    <div className="flex flex-col gap-3 pt-3 mt-2 border-t border-dashed border-border">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+          Ponderação (plano amostral registrado)
+        </span>
+        <span className="text-[11px]">
+          método vigente:{' '}
+          <span className="font-mono font-medium text-foreground">{ponderacaoMetodo}</span>
+          {' · '}
+          {ponderacaoAprovadaEm && !aprovacaoDesatualizada ? (
+            <span className="text-accent font-medium">
+              aprovada por {ponderacaoAprovadaPor} em {formatarPrevista(ponderacaoAprovadaEm)}
+            </span>
+          ) : (
+            <span className="text-error font-medium">
+              {aprovacaoDesatualizada
+                ? 'aprovação anterior à execução vigente — aprovar de novo'
+                : 'sem aprovação do estatístico'}
+            </span>
+          )}
+        </span>
+      </div>
+
+      <div className="rounded-md border border-border bg-muted/30 px-3 py-2 text-[11px] text-muted-foreground leading-relaxed">
+        {ponderacaoExecucao ? (
+          <>
+            Execução vigente{' '}
+            <span className="font-mono text-foreground">{ponderacaoExecucao.id.slice(0, 8)}</span>{' '}
+            em {formatarPrevista(ponderacaoExecucao.executado_em)}
+            {ponderacaoExecucao.executado_por ? ` por ${ponderacaoExecucao.executado_por}` : ''}
+            {' · '}
+            {ponderacaoExecucao.convergiu ? (
+              <span className="text-accent">convergiu</span>
+            ) : (
+              <span className="text-error">NÃO convergiu</span>
+            )}{' '}
+            em {ponderacaoExecucao.iteracoes ?? '—'} iterações · n com peso{' '}
+            {num(ponderacaoExecucao.n_peso_positivo, 0)} · n efetivo (Kish){' '}
+            {num(ponderacaoExecucao.n_eff, 0)} · deff {num(ponderacaoExecucao.deff, 2)} · peso
+            máx {num(ponderacaoExecucao.peso_max, 2)} · margem nominal{' '}
+            {pct(ponderacaoExecucao.margem_nominal)} · margem efetiva{' '}
+            <strong className="text-foreground">{pct(ponderacaoExecucao.margem_efetiva)}</strong>
+            {execAntesDoFim && (
+              <>
+                {' '}
+                <span className="text-error font-medium">
+                  · executada ANTES do fim da coleta — reexecutar com a base final
+                </span>
+              </>
+            )}
+          </>
+        ) : (
+          <>
+            Nenhuma execução de raking gravada pra esta edição. O método por estratos exige
+            uma: <span className="font-mono">node --env-file=.env.local scripts/ponderar-estratos.mjs</span>
+            {' '}(depois do fim da coleta).
+          </>
+        )}
+      </div>
+
+      <div className="grid sm:grid-cols-3 gap-3">
+        {/* Método */}
+        <form action={definirMetodo} className="flex flex-col gap-1.5 rounded-md border border-border p-3">
+          <input type="hidden" name="id" value={edicaoId} />
+          <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+            Método
+          </span>
+          <select
+            name="metodo"
+            defaultValue={ponderacaoMetodo}
+            className="h-8 px-2 rounded-md border border-border bg-background text-xs"
+          >
+            <option value="estratos_raking">
+              Estratos — município × sexo × faixa × instrução (registrado)
+            </option>
+            <option value="municipio">Só município (pós-estratificação)</option>
+          </select>
+          <input
+            name="totp"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={6}
+            required
+            placeholder="TOTP"
+            className="h-8 px-2 rounded-md border border-border bg-background text-xs font-mono tracking-widest"
+          />
+          <button
+            type="submit"
+            disabled={definindoMetodo}
+            className="h-8 px-3 rounded-md border border-border text-[11px] hover:bg-muted transition disabled:opacity-50"
+          >
+            {definindoMetodo ? 'Salvando…' : 'Definir método'}
+          </button>
+          {estadoMetodo.message && (
+            <p className={`text-[11px] ${estadoMetodo.ok ? 'text-emerald-700' : 'text-error'}`}>
+              {estadoMetodo.message}
+            </p>
+          )}
+        </form>
+
+        {/* Aprovação do estatístico */}
+        <form action={aprovar} className="flex flex-col gap-1.5 rounded-md border border-border p-3">
+          <input type="hidden" name="id" value={edicaoId} />
+          <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+            Aprovação do estatístico (CONRE)
+          </span>
+          <input
+            name="aprovador"
+            maxLength={120}
+            required
+            defaultValue={ponderacaoAprovadaPor ?? ''}
+            placeholder="Nome — CONRE nº"
+            className="h-8 px-2 rounded-md border border-border bg-background text-xs"
+          />
+          <input
+            name="totp"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={6}
+            required
+            placeholder="TOTP"
+            className="h-8 px-2 rounded-md border border-border bg-background text-xs font-mono tracking-widest"
+          />
+          <button
+            type="submit"
+            disabled={aprovando}
+            className="h-8 px-3 rounded-md border border-accent/40 text-accent text-[11px] hover:bg-accent/5 transition disabled:opacity-50"
+          >
+            {aprovando ? 'Registrando…' : 'Registrar aprovação'}
+          </button>
+          {estadoAprovar.message && (
+            <p className={`text-[11px] ${estadoAprovar.ok ? 'text-emerald-700' : 'text-error'}`}>
+              {estadoAprovar.message}
+            </p>
+          )}
+        </form>
+
+        {/* Complementação PesqEle */}
+        <form
+          action={registrarComplementacao}
+          className="flex flex-col gap-1.5 rounded-md border border-border p-3"
+        >
+          <input type="hidden" name="id" value={edicaoId} />
+          <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+            Complementação PesqEle (art. 2º §7º III/IV)
+          </span>
+          <span className="text-[11px] text-muted-foreground">
+            {complementacaoPesqeleEm ? (
+              <>
+                lançada em{' '}
+                <span className="font-medium text-foreground">
+                  {formatarPrevista(complementacaoPesqeleEm)}
+                </span>
+              </>
+            ) : (
+              <span className="text-error font-medium">não registrada</span>
+            )}
+          </span>
+          <input
+            name="quando"
+            type="datetime-local"
+            defaultValue={complementacaoPesqeleEm ? toDatetimeLocal(complementacaoPesqeleEm) : ''}
+            className="h-8 px-2 rounded-md border border-border bg-background text-xs"
+          />
+          <input
+            name="totp"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={6}
+            required
+            placeholder="TOTP"
+            className="h-8 px-2 rounded-md border border-border bg-background text-xs font-mono tracking-widest"
+          />
+          <button
+            type="submit"
+            disabled={registrandoComplementacao}
+            className="h-8 px-3 rounded-md border border-border text-[11px] hover:bg-muted transition disabled:opacity-50"
+          >
+            {registrandoComplementacao ? 'Registrando…' : 'Registrar complementação'}
+          </button>
+          {estadoComplementacao.message && (
+            <p
+              className={`text-[11px] ${estadoComplementacao.ok ? 'text-emerald-700' : 'text-error'}`}
+            >
+              {estadoComplementacao.message}
+            </p>
+          )}
+        </form>
+      </div>
+    </div>
+  )
+
   const blocosConfig = (
     <>
       {blocoTurno}
       {blocoZona}
       {blocoLocalizacao}
+      {blocoPonderacao}
     </>
   )
 
@@ -393,6 +647,21 @@ export function ControlesDivulgacao({
         </label>
         <label className="flex flex-col gap-1">
           <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+            Meta mínima de respondentes validados (só orienta /admin/amostra)
+          </span>
+          <input
+            name="meta_amostra"
+            type="number"
+            min={1}
+            step={1}
+            inputMode="numeric"
+            defaultValue={metaAmostra ?? ''}
+            placeholder="ex.: 50000"
+            className="h-9 px-3 rounded-md border border-border bg-background text-sm"
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
             Data prevista pra divulgação (opcional — aparece pública)
           </span>
           <input
@@ -431,7 +700,10 @@ export function ControlesDivulgacao({
           <p className="text-[11px] text-muted-foreground leading-relaxed">
             Divulgar agora torna a página{' '}
             <span className="font-mono">/resultados</span> pública pra
-            qualquer pessoa. Confira o registro TRE/SE antes.
+            qualquer pessoa. O sistema só libera com: registro PesqEle válido,
+            CONRE, ≥5 dias do registro, método de ponderação com execução
+            posterior ao fim da coleta, aprovação do estatístico e
+            complementação do art. 2º §7º lançada.
           </p>
           <label className="flex flex-col gap-1">
             <span className="text-[11px] font-medium text-foreground">

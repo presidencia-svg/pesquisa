@@ -25,6 +25,9 @@ const secoes = [
   { id: 'cdl', label: 'Quem executa' },
 ]
 
+// O aviso de registro lê a edição ativa no banco; revalida a cada 5 min.
+export const revalidate = 300
+
 export default function TransparenciaPage() {
   return (
     <>
@@ -94,15 +97,19 @@ export default function TransparenciaPage() {
               <p className="text-foreground leading-relaxed">
                 Formato padrão que institutos como Datafolha, Quaest e
                 Paraná Pesquisas usam ao divulgar resultados, adaptado ao
-                nosso modelo (online + identidade verificada + allowlist).
-                Esta ficha acompanha toda divulgação pública e vai anexa
-                ao registro no PesqEle do TRE/SE.
+                nosso modelo (online, amostra por adesão com identidade
+                verificada e ponderação pós-coleta). Esta ficha acompanha
+                toda divulgação pública e vai anexa ao registro no PesqEle
+                (TSE e TRE-SE).
               </p>
 
               <div className="grid sm:grid-cols-2 gap-3">
                 <LinhaFicha titulo="Contratante" valor="CDL Aracaju" />
                 <LinhaFicha titulo="Executor" valor="CDL Aracaju (execução direta)" />
-                <LinhaFicha titulo="Universo" valor="1.731.960 eleitores aptos em SE (TSE)" />
+                <LinhaFicha
+                  titulo="Universo"
+                  valor="1.740.124 eleitores de Sergipe (TSE 2026, perfil_eleitor_secao_2026_SE, geração 14/07/2026); 1.740.116 mapeados nos estratos — 8 registros excluídos por idade inválida"
+                />
                 <LinhaFicha titulo="Abrangência" valor="75 municípios de Sergipe" />
                 <LinhaFicha
                   titulo="Forma de coleta"
@@ -114,31 +121,35 @@ export default function TransparenciaPage() {
                 />
                 <LinhaFicha
                   titulo="Amostragem"
-                  valor="Não-probabilística com identidade verificada (post-stratification)"
+                  valor="Não probabilística, por adesão, com identidade verificada (sem cota); ponderação pós-coleta"
                 />
                 <LinhaFicha
-                  titulo="Ponderação geográfica"
-                  valor="Pós-coleta, proporcional ao eleitorado TSE de cada município"
+                  titulo="Ponderação"
+                  valor="Raking (ajuste iterativo proporcional) nas marginais município × sexo × faixa etária × grau de instrução, parâmetro TSE 2026; renda não pondera"
                 />
                 <LinhaFicha
-                  titulo="Ponderação pós-coleta"
-                  valor="Sexo, faixa etária, escolaridade"
+                  titulo="Nível econômico"
+                  valor="Faixa de renda em salários mínimos (SM 2026 = R$ 1.621), com 'não sei' e 'prefiro não informar' — descreve a amostra, não pondera"
                 />
                 <LinhaFicha
                   titulo="Nível de confiança"
                   valor="95%"
                 />
                 <LinhaFicha
-                  titulo="Base potencial"
-                  valor="44.545 CPFs CDL pré-validados + qualquer eleitor SE via SPC"
+                  titulo="Recrutamento"
+                  valor="Autosseleção: convite por WhatsApp às bases da CDL Aracaju e divulgação aberta; qualquer eleitor pode participar (validação por consulta cadastral ao SPC Brasil quando não está na base)"
                 />
                 <LinhaFicha
-                  titulo="n projetado"
-                  valor="5.000–15.000 respondentes (margem ±1,4pp a ±0,8pp)"
+                  titulo="Margem de erro"
+                  valor="Nominal (1,96·√(0,25/n)) e efetiva (n efetivo de Kish), ambas publicadas"
                 />
                 <LinhaFicha
-                  titulo="Período de coleta"
-                  valor="Setembro/2026 (a confirmar)"
+                  titulo="Período de coleta (2ª edição)"
+                  valor="13/09/2026 00h00 a 20/09/2026 23h59 (horário de Aracaju)"
+                />
+                <LinhaFicha
+                  titulo="Registro no PesqEle"
+                  valor="Pendente — será feito quando a amostra alcançar 20 mil eleitores e sempre antes de qualquer divulgação (Lei 9.504/97, art. 33)"
                 />
               </div>
 
@@ -200,7 +211,7 @@ export default function TransparenciaPage() {
                     <tr>
                       <td className="py-1 pr-3 font-medium">Amostragem</td>
                       <td className="py-1 pr-3">Sorteio probabilístico</td>
-                      <td className="py-1">Allowlist verificada + ponderação pós-coleta</td>
+                      <td className="py-1">Adesão com identidade verificada + ponderação pós-coleta (raking)</td>
                     </tr>
                     <tr>
                       <td className="py-1 pr-3 font-medium">Entrevistador</td>
@@ -363,9 +374,11 @@ export default function TransparenciaPage() {
                   <li>
                     <strong>Página de resultados com trava de divulgação.</strong>{' '}
                     Antes da CDL Aracaju marcar a edição como divulgada
-                    (após o telejornal da TV Atalaia, conforme convênio com a
-                    emissora), a página exibe apenas &quot;Aguardando
-                    divulgação&quot;. Os números não saem do servidor.
+                    (só depois do registro no PesqEle), a página exibe
+                    apenas &quot;Aguardando divulgação&quot;. Os números não
+                    saem do servidor. A divulgação acontece nesta página
+                    (pesquisa.cdlaju.com.br/resultados) e nos canais da CDL
+                    Aracaju.
                   </li>
                   <li>
                     <strong>Auditoria de acessos administrativos.</strong>{' '}
@@ -382,12 +395,12 @@ export default function TransparenciaPage() {
                   audite COMO os votos são contados. Os <strong>dados</strong>{' '}
                   ficam privados até o momento autorizado da divulgação.
                   Após a divulgação, tornam-se públicos em{' '}
-                  <a
+                  <Link
                     href="/resultados"
                     className="text-primary hover:underline font-medium"
                   >
                     /resultados
-                  </a>{' '}
+                  </Link>{' '}
                   — automaticamente.
                 </p>
                 <p className="text-xs text-muted-foreground leading-relaxed">
@@ -441,11 +454,17 @@ export default function TransparenciaPage() {
                 Plano amostral
               </h2>
               <p className="text-foreground leading-relaxed">
-                Universo: eleitorado oficial de Sergipe segundo o TSE,
-                aproximadamente <strong>1,42 milhão de eleitores</strong>{' '}
-                distribuídos em 75 municípios. Cargos em disputa: Presidente
-                da República, Governador, 2 Senadores, 8 Deputados Federais,
-                24 Deputados Estaduais.
+                Universo: eleitorado oficial de Sergipe segundo o TSE 2026
+                (arquivo perfil_eleitor_secao_2026_SE, geração 14/07/2026):{' '}
+                <strong>1.740.124 eleitores</strong> distribuídos em 75
+                municípios, dos quais 1.740.116 mapeados nos estratos de
+                ponderação (8 registros excluídos por idade inválida). Cargos
+                em disputa: Presidente da República, Governador, 2 Senadores,
+                8 Deputados Federais, 24 Deputados Estaduais. Eleitor com
+                título em outra UF informa a UF e o município do título,
+                responde apenas sobre Presidente e recebe peso zero nos
+                recortes estaduais; eleitor de 16–17 anos informa o número do
+                título de eleitor (conferido, não armazenado).
               </p>
 
               <BaseEleitoralSe />
@@ -453,13 +472,13 @@ export default function TransparenciaPage() {
               <div className="grid sm:grid-cols-3 gap-3">
                 <FichaCampo
                   rotulo="Tamanho amostral (n)"
-                  valor="a definir"
-                  nota="Definido pelo estatístico CONRE antes do registro. Referência: 1.067 pra ±3pp."
+                  valor="Amostra final da coleta"
+                  nota="Por adesão, sem cota: n é o total de respondentes com CPF e WhatsApp validados ao fim da coleta. Publicado na ficha técnica de cada edição."
                 />
                 <FichaCampo
                   rotulo="Margem de erro"
-                  valor="±3 p.p."
-                  nota="Pra n = 1.067 com IC 95%."
+                  valor="Nominal e efetiva"
+                  nota="Nominal = 1,96·√(0,25/n). Efetiva = a mesma fórmula sobre o n efetivo de Kish (Σw)²/Σw², que desconta o custo da ponderação. As duas saem na ficha técnica."
                 />
                 <FichaCampo
                   rotulo="Nível de confiança"
@@ -469,70 +488,105 @@ export default function TransparenciaPage() {
               </div>
 
               <h3 className="text-base font-semibold uppercase tracking-wide text-foreground pt-3">
-                Ponderação por município (pós-coleta)
+                Ponderação por estratos (pós-coleta)
               </h3>
               <p className="text-foreground leading-relaxed">
                 A pesquisa <strong>não bloqueia respostas por cota</strong>:
                 qualquer eleitor de Sergipe pode participar enquanto a
-                coleta estiver aberta. A distorção de adesão geográfica
-                (capital responde mais, interior responde menos) é
-                corrigida <strong>após a coleta</strong> por ponderação
-                pós-estratificação, técnica padrão de institutos digitais
-                (DataFolha online, Quaest, Genial/Quaest).
+                coleta estiver aberta. O desequilíbrio de adesão (capital
+                responde mais, interior menos; alguns perfis de sexo, idade e
+                instrução respondem mais que outros) é corrigido{' '}
+                <strong>após a coleta</strong> por ponderação nas quatro
+                variáveis do plano amostral registrado no PesqEle:{' '}
+                <strong>município, sexo, faixa etária e grau de instrução</strong>,
+                tendo por parâmetro o perfil oficial do eleitorado publicado
+                pelo TSE.
               </p>
               <p className="text-foreground leading-relaxed">
-                Cada resposta recebe um peso proporcional à
-                sub-representação do seu município na amostra:
+                O método é o <em>raking</em> (ajuste proporcional iterativo):
+                os pesos são ajustados, alternadamente, até que a amostra
+                ponderada reproduza a distribuição do eleitorado em cada uma
+                das quatro marginais ao mesmo tempo. Quem não informa o sexo
+                é ajustado nas demais. O cálculo roda inteiro no banco de
+                dados, sobre a base completa, e cada execução fica gravada
+                com seus diagnósticos:
               </p>
               <pre className="text-xs font-mono bg-muted rounded-md px-4 py-3 overflow-x-auto leading-relaxed">
-                <code>w(M) = (N(M) / N_total) / (n(M) / n_total)</code>
+                <code>{`n_eff = (Σw)² / Σw²      (amostra efetiva de Kish)
+deff  = n / n_eff          (efeito de desenho)
+margem efetiva = 1,96 · √(0,25 / n_eff)`}</code>
               </pre>
               <p className="text-foreground leading-relaxed">
-                Onde <code className="font-mono text-xs">N(M)</code> é o
-                eleitorado oficial do município (TSE 2024) e{' '}
-                <code className="font-mono text-xs">n(M)</code> é o número
-                de respostas validadas vindas dele. Município com peso
-                maior que 1 estava sub-representado; menor que 1, super.
-                Tamanho amostral total não muda — só o peso de cada
-                resposta. Tabela completa com pesos por município fica
-                pública após o registro no TRE/SE.
+                A margem efetiva é a que vale: ponderar corrige o viés de
+                adesão mas custa precisão, e esse custo é publicado na ficha
+                técnica ao lado da margem nominal. O resultado só é
+                divulgado depois que o estatístico responsável (CONRE)
+                confere e aprova a execução e a composição final da amostra
+                é lançada no registro do TSE (art. 2º, §7º, III e IV).
+              </p>
+              <p className="text-foreground leading-relaxed">
+                Peso maior que 1 indica estrato sub-representado na adesão;
+                menor que 1, super-representado. O tamanho amostral total
+                não muda — só o peso de cada resposta. Como a amostra é por
+                adesão, a margem de erro publicada é indicativa, calculada
+                como se a amostra fosse probabilística. Os diagnósticos da
+                execução (n efetivo, deff, pesos extremos) ficam públicos
+                após o registro no PesqEle.
               </p>
 
               <h3 className="text-base font-semibold uppercase tracking-wide text-foreground pt-3">
-                Outras ponderações
+                Variáveis do plano amostral
               </h3>
               <p className="text-foreground leading-relaxed">
-                Além de município, a amostra também é ponderada contra a
-                distribuição TSE de <strong>sexo, faixa etária e
-                escolaridade</strong> — coletadas no cadastro, exigência
-                da Resolução TSE 23.747/2026 art. 2 §3.
+                Município, sexo, faixa etária e grau de instrução vêm do
+                cadastro: sexo e data de nascimento da base cadastral
+                (base CDL ou consulta ao SPC Brasil) — o sexo é perguntado
+                só quando o cadastro não traz, e a origem fica registrada;
+                a faixa etária nunca é perguntada. A escolaridade é
+                informada em 4 opções (não estudei/só sei ler e escrever;
+                fundamental; médio; superior) e agregada em 3 estratos como
+                no TSE. A <strong>faixa de renda</strong> (salários mínimos;
+                com &ldquo;não sei&rdquo; e &ldquo;prefiro não informar&rdquo;)
+                descreve a composição da amostra por nível econômico e{' '}
+                <strong>não entra na ponderação</strong> — conforme a
+                Res.-TSE 23.600/2019 (red. Res.-TSE 23.747/2026), art. 2º,
+                § 7º, III e IV.
               </p>
 
               <h3 className="text-base font-semibold uppercase tracking-wide text-foreground pt-3">
                 Recrutamento
               </h3>
               <p className="text-foreground leading-relaxed">
-                Há duas portas de entrada na pesquisa, ambas validadas:
+                A amostra é por <strong>autosseleção</strong>: participa quem
+                quer, dentro da janela de coleta. Duas origens de
+                convite/entrada, ambas validadas:
               </p>
               <ul className="text-foreground leading-relaxed list-disc pl-5 flex flex-col gap-2">
                 <li>
-                  <strong>Base CDL:</strong> ~50 mil consumidores que votaram
-                  na premiação popular Melhores do Ano da CDL Aracaju —
-                  CPFs já conhecidos, dispensa nova consulta ao SPC. Dá
-                  perfil largo de consumidor (não só associados); o viés
-                  geográfico (Aracaju concentra Melhores do Ano) é
-                  corrigido pela ponderação pós-coleta descrita acima.
+                  <strong>Convite por WhatsApp às bases da CDL Aracaju</strong>{' '}
+                  (participantes da premiação Melhores do Ano e da 1ª
+                  edição), com base no legítimo interesse (LGPD, art. 7º,
+                  IX) e opção de saída (&ldquo;responda SAIR&rdquo;). Quem
+                  já consta na base CDL dispensa nova consulta ao SPC. O
+                  viés de adesão (Aracaju concentra a base) é corrigido pela
+                  ponderação pós-coleta descrita acima.
                 </li>
                 <li>
-                  <strong>Validação SPC Brasil:</strong> qualquer eleitor
-                  fora da base CDL é validado em consulta ao SPC pra
-                  confirmar que o CPF é real e regular.
+                  <strong>Divulgação aberta:</strong> qualquer eleitor fora
+                  da base CDL entra pelo link público e é validado em
+                  consulta cadastral ao SPC Brasil, que confirma que o CPF
+                  existe e está regular e devolve data de nascimento e sexo
+                  (quando disponível).
                 </li>
               </ul>
               <p className="text-foreground leading-relaxed">
-                Ambas as portas exigem em seguida a confirmação por código
-                de 6 dígitos via WhatsApp — garante que o respondente é
-                titular do CPF informado.
+                Em qualquer origem o cadastro exige verificação humana
+                (Cloudflare Turnstile) e confirmação por código de 6 dígitos
+                via WhatsApp — garante que o respondente é titular do número
+                informado. O cadastro não é permitido em navegação anônima /
+                privada do navegador. Eleitor com título em outra UF responde
+                só sobre Presidente; eleitor de 16–17 anos informa o título
+                de eleitor.
               </p>
             </section>
 
@@ -548,11 +602,12 @@ export default function TransparenciaPage() {
               <ul className="text-foreground leading-relaxed list-disc pl-5 flex flex-col gap-1">
                 <li>Hash do CPF (HMAC-SHA256, jamais o número original).</li>
                 <li>CPF mascarado (***.***.789-XX) para auditoria.</li>
-                <li>Município (IBGE).</li>
-                <li>Sexo, faixa etária, escolaridade.</li>
-                <li>Flags: validado pelo SPC, validado pelo WhatsApp.</li>
-                <li>Origem da validação: base CDL ou SPC.</li>
-                <li>Metadados antifraude: IP, user-agent, fingerprint do dispositivo.</li>
+                <li>Nome, WhatsApp, UF e município do título (IBGE).</li>
+                <li>Sexo (com a origem: cadastro ou informado), faixa etária, escolaridade, faixa de renda.</li>
+                <li>Dados devolvidos pela consulta cadastral ao SPC Brasil (situação do CPF, data de nascimento, nome da mãe, estado civil, endereço, payload bruto).</li>
+                <li>Flags: validado pelo SPC, validado pelo WhatsApp; origem: base CDL ou SPC.</li>
+                <li>Opt-in para receber os resultados por WhatsApp.</li>
+                <li>Metadados para auditoria: IP, user-agent, fingerprint do dispositivo — apenas registrados (não bloqueiam), apagados após 6 meses.</li>
               </ul>
 
               <h3 className="text-base font-semibold uppercase tracking-wide text-foreground pt-2">
@@ -572,8 +627,9 @@ export default function TransparenciaPage() {
               </ul>
 
               <p className="text-foreground leading-relaxed pt-2">
-                Pra atender o relatório complementar exigido pelo Art. 2º
-                § 7º, IV da Resolução TSE 23.747/2026 e permitir narrativa
+                Pra atender o relatório complementar exigido pelo art. 2º,
+                § 7º, III e IV da Res.-TSE 23.600/2019 (red. Res.-TSE
+                23.747/2026) e permitir narrativa
                 tipo &ldquo;intenção entre mulheres de 25-34 em Aracaju&rdquo;,
                 a Sala 2 carrega uma <strong>cópia controlada</strong> dos
                 atributos demográficos (sexo, faixa etária, escolaridade,
@@ -620,11 +676,19 @@ export default function TransparenciaPage() {
                 titulo="LGPD — Lei nº 13.709/2018"
                 url="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm"
               >
-                Base legal pra coleta: &ldquo;execução de pesquisa de opinião&rdquo;
-                (Art. 7º, IV). Princípios aplicados: finalidade exclusiva
-                (sem reuso comercial), minimização (só o necessário pra a
-                pesquisa), adequação técnica (CPF nunca em texto, arquitetura
-                de duas salas).
+                Bases legais: consentimento (art. 7º, I) e, para a opinião
+                política, consentimento específico (art. 11, I); cumprimento
+                de obrigação legal (art. 7º, II) para o que a legislação
+                eleitoral exige guardar; legítimo interesse (art. 7º, IX)
+                para o convite por WhatsApp às bases da CDL, com opção de
+                saída. Princípios aplicados: finalidade exclusiva (sem reuso
+                comercial), minimização (só o necessário pra a pesquisa),
+                adequação técnica (CPF nunca em texto, arquitetura de duas
+                salas). Detalhes em{' '}
+                <Link href="/privacidade" className="text-primary hover:underline">
+                  /privacidade
+                </Link>
+                .
               </ItemLegal>
             </section>
 
@@ -642,9 +706,9 @@ export default function TransparenciaPage() {
               <ul className="text-foreground leading-relaxed list-disc pl-5 flex flex-col gap-2">
                 <li>
                   <strong>Validação documental:</strong> CPF tem que existir
-                  na base CDL ou na consulta cadastral à Receita Federal
-                  (via SPC Brasil), com situação regular e idade mínima de
-                  16 anos. Sem isso, o cadastro nem começa.
+                  na base CDL ou na consulta cadastral ao SPC Brasil (que
+                  devolve a situação cadastral do CPF), com situação regular
+                  e idade mínima de 16 anos. Sem isso, o cadastro nem começa.
                 </li>
                 <li>
                   <strong>Validação de propriedade do número:</strong>{' '}
@@ -652,21 +716,29 @@ export default function TransparenciaPage() {
                   não emite token de voto.
                 </li>
                 <li>
-                  <strong>Voto único por CPF, WhatsApp e dispositivo:</strong>{' '}
-                  trava em três dimensões independentes. Quem repete em
+                  <strong>Voto único por CPF e por WhatsApp:</strong>{' '}
+                  duas travas independentes no banco de dados (hash
+                  irreversível do CPF e número confirmado). Quem repete em
                   qualquer uma é bloqueado.
                 </li>
                 <li>
-                  <strong>Ponderação geográfica:</strong> a projeção final
-                  aplica peso proporcional ao eleitorado de cada município,
-                  evitando que excesso de adesão de uma região distorça o
-                  resultado.
+                  <strong>Ponderação por estratos:</strong> a projeção final
+                  aplica pesos por município, sexo, faixa etária e instrução
+                  contra o eleitorado do TSE, evitando que excesso de adesão
+                  de uma região ou de um perfil distorça o resultado; o
+                  custo em precisão sai na margem efetiva.
                 </li>
                 <li>
-                  <strong>Limites de taxa por endereço de rede:</strong>{' '}
-                  tentativas repetidas são contidas em janelas curtas. Os
-                  parâmetros operacionais são revistos periodicamente —
-                  publicá-los daria orçamento de ataque a quem tente burlar.
+                  <strong>Registro de tentativas por endereço de rede:</strong>{' '}
+                  cada tentativa de cadastro fica registrada com IP,
+                  user-agent e fingerprint do dispositivo — sem bloqueio
+                  automático e sem limite de CPFs por aparelho. Esses
+                  sinais alimentam a análise pós-coleta.
+                </li>
+                <li>
+                  <strong>Sem navegação anônima no cadastro:</strong>{' '}
+                  o servidor recusa o cadastro em janela anônima/privada do
+                  navegador.
                 </li>
                 <li>
                   <strong>Anti-bot externo:</strong> verificação humana via
@@ -674,9 +746,10 @@ export default function TransparenciaPage() {
                   formulário.
                 </li>
                 <li>
-                  <strong>Bloqueio de navegação anônima/incógnita:</strong>{' '}
-                  modo privado impede a trava por dispositivo, então
-                  rejeitamos o cadastro nessas condições.
+                  <strong>Janela de coleta:</strong> fora do período da
+                  edição (13/09/2026 00h00 a 20/09/2026 23h59, horário de
+                  Aracaju) nenhum código é enviado nem voto é gravado — a
+                  trava é no servidor, não na tela.
                 </li>
                 <li>
                   <strong>Análise pós-coleta:</strong> rotinas internas
@@ -685,11 +758,10 @@ export default function TransparenciaPage() {
                 </li>
               </ul>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Pode parecer pouco transparente não citar números exatos
-                (quantas tentativas em quanto tempo). É proposital: em
-                segurança, divulgar o limite exato vira receita de bolo
-                pra fraude. O auditor formal com credencial pode ver tudo
-                em detalhe — ver{' '}
+                Os critérios da análise pós-coleta (quais padrões marcam um
+                cluster pra revisão) não são publicados: divulgá-los viraria
+                receita pra fraude. O auditor formal com credencial pode ver
+                tudo em detalhe — ver{' '}
                 <a href="#auditar" className="text-primary hover:underline">
                   Como auditar
                 </a>{' '}
@@ -731,9 +803,13 @@ export default function TransparenciaPage() {
                   ['mai–jul/2026', 'Desenvolvimento. Integrações reais (SPC, Meta WhatsApp, Turnstile). Contratação do estatístico CONRE.'],
                   ['ago/2026', 'Piloto fechado, com código de convite. ~50 testers. Estressa o sistema sem divulgação pública.'],
                   ['ago/2026 (após piloto)', 'Reunião com advogado eleitoral. Trava material divulgável e questionário.'],
-                  ['22/ago/2026', 'Registro no PesqEle: BR-04041/2026 (TSE) e SE-09441/2026 (TRE-SE).'],
-                  ['01–03/set/2026', 'Coleta da pesquisa principal.'],
-                  ['04/set/2026', 'Divulgação dos resultados.'],
+                  ['22/ago/2026', '1ª edição — registro no PesqEle (TSE e TRE-SE).'],
+                  ['01–03/set/2026', '1ª edição — coleta.'],
+                  ['04/set/2026', '1ª edição — divulgação dos resultados.'],
+                  ['07/set/2026', '1ª edição — divulgação suspensa por decisão judicial (TRE-SE).'],
+                  ['13–20/set/2026', '2ª edição — coleta (13/09 00h00 a 20/09 23h59, horário de Aracaju).'],
+                  ['Registro PesqEle', '2ª edição — pendente: será feito quando a amostra alcançar 20 mil eleitores e sempre antes de qualquer divulgação (TSE e TRE-SE).'],
+                  ['Divulgação', '2ª edição — após o registro e o prazo legal, nesta página (pesquisa.cdlaju.com.br/resultados) e nos canais da CDL Aracaju.'],
                   ['04/out/2026', '1º turno das eleições.'],
                 ].map(([when, what]) => (
                   <li key={when} className="flex flex-col sm:flex-row gap-1 sm:gap-4">
@@ -870,10 +946,11 @@ export default function TransparenciaPage() {
                   {' '}(RFC 9116).
                 </li>
                 <li>
-                  <strong>Registro no PesqEle (TSE e TRE-SE).</strong> Feito em
-                  22/08/2026 sob os números BR-04041/2026 (TSE, presidente) e
-                  SE-09441/2026 (TRE-SE, demais cargos). O aviso oficial da
-                  Justiça Eleitoral e o caminho pra conferir estão logo abaixo.
+                  <strong>Registro no PesqEle (TSE e TRE-SE).</strong> Toda
+                  edição é registrada na Justiça Eleitoral antes de qualquer
+                  divulgação (Lei 9.504/97, art. 33: ao menos 5 dias antes). Os
+                  números, a data do registro, o período de coleta da edição em
+                  curso e o caminho pra conferir estão logo abaixo.
                   <div className="mt-3">
                     <AvisoRegistro />
                   </div>

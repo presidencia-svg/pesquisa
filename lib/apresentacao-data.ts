@@ -30,6 +30,7 @@ import {
 } from '@/lib/resultados-data'
 import { CARGO_CONFIG, type Cargo } from '@/lib/cargos'
 import { coligacaoCurta } from '@/lib/federacoes'
+import { extrairRegistros } from '@/lib/registro-pesqele'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 /** Número como digitado na urna — preserva zeros à esquerda ("01", "010"). */
@@ -295,18 +296,24 @@ export async function construirApresData(
 
   return {
     edicaoLabel: meta.edicao,
+    registros: extrairRegistros(meta.registro_tre),
     turno: meta.turno,
-    resumo: `A maior pesquisa eleitoral já feita em Sergipe ouviu <b>${meta.n.toLocaleString('pt-BR')} eleitores</b> com identidade verificada por CPF e WhatsApp nos 75 municípios. Coleta espontânea, estilo urna.`,
+    resumo: `A Pesquisa Eleitoral Sergipe 2026 ouviu <b>${meta.n.toLocaleString('pt-BR')} eleitores</b> com identidade verificada por CPF e WhatsApp nos 75 municípios. Coleta espontânea, estilo urna.`,
     stats: [
       { label: 'AMOSTRA', value: meta.n.toLocaleString('pt-BR'), sub: 'CPF + WhatsApp' },
-      { label: 'MARGEM', value: meta.margem, sub: 'Erro amostral' },
+      {
+        label: 'MARGEM',
+        value: meta.margem_efetiva ?? meta.margem,
+        sub: meta.margem_efetiva ? `Efetiva · nominal ${meta.margem}` : 'Erro amostral',
+      },
       { label: 'CONFIANÇA', value: meta.confianca, sub: 'Intervalo' },
       { label: 'DIVULGADA', value: meta.divulgada_em, sub: `TRE: ${meta.registro_tre}` },
     ],
     cargos,
     amostra: meta.n.toLocaleString('pt-BR'),
-    margem: meta.margem,
+    margem: meta.margem_efetiva ?? meta.margem,
     ponderacao: meta.ponderacao,
+    ponderacaoCurta: meta.ponderacao_curta,
     oferecimento: sponsors(patroPorCota.diamante),
     patrocinio: sponsors(patroPorCota.ouro),
     apoio: sponsors(patroPorCota.prata),

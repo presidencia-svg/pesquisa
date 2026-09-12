@@ -14,6 +14,7 @@
  * admin_audit_log com ação 'gerar_snapshot_tv' + timestamp + edicao_id.
  */
 import { registrarAcessoAdmin } from '@/lib/admin-audit'
+import { NIVEL_ECONOMICO_ROTULO_CURTO } from '@/lib/demograficos'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import QRCode from 'qrcode'
 
@@ -602,11 +603,8 @@ const ROTULO_VALOR: Record<string, string> = {
   fundamental: 'Fundamental',
   medio: 'Médio',
   superior: 'Superior',
-  A: 'Classe A (> R$ 25.000)',
-  B: 'Classe B (R$ 7.000 – 25.000)',
-  C: 'Classe C (R$ 2.800 – 7.000)',
-  D_E: 'Classe D-E (até R$ 2.800)',
-  nao_informado: 'Não declarado',
+  // Renda: vocabulário da 2ª edição (salários mínimos) + o da 1ª (classes).
+  ...NIVEL_ECONOMICO_ROTULO_CURTO,
 }
 
 function SecaoComposicao({

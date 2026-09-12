@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 
 import { compararHashes, hashTokenVoto } from '@/lib/crypto'
 import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
+import { janelaColeta, mensagemJanela } from '@/lib/edicao-janela'
 import {
   cargoPermitidoParaMunicipio,
   CARGO_CONFIG,
@@ -114,6 +115,14 @@ export async function submeterVoto(
       message:
         'Sua cápsula era de uma edição anterior da pesquisa. Volte ao início e recomece.',
     }
+  }
+
+  // Janela de coleta (período declarado no PesqEle): cápsula emitida no
+  // último minuto não vota depois do encerramento. A cápsula continua
+  // marcada como não usada — nada é gravado fora da janela.
+  const janela = janelaColeta(alvoEdicao)
+  if (janela !== 'aberta') {
+    return { ok: false, message: mensagemJanela(janela) }
   }
 
   // Flag de admin: consulta Zona de Expansão pode estar desligada nesta

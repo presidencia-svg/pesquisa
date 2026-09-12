@@ -16,6 +16,7 @@ const NAV = [
   { href: '/admin/resultados', label: 'Resultados' },
   { href: '/admin/projecao', label: 'Projeção' },
   { href: '/admin/edicoes', label: 'Edições' },
+  { href: '/admin/amostra', label: 'Amostra × eleitorado' },
   { href: '/admin/candidatos', label: 'Candidatos' },
   { href: '/admin/notificar-resultado', label: 'Notificar resultados' },
   { href: '/admin/patrocinios', label: 'Patrocínios' },

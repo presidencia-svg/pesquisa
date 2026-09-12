@@ -9,11 +9,20 @@
  * site saiu e voltou ao ar. A variável de ambiente SITE_DESABILITADO=1 também
  * liga o modo, para o caso de precisar desligar o site sem commit.
  *
+ * Religado em 13/09/2026 (2ª edição, coleta 13–20/09/2026): a divulgação da
+ * 1ª edição segue suspensa por lib/ordem-judicial.ts e edicao.suspensa_em.
+ *
  * Para reativar o site: SITE_DESABILITADO_NO_CODIGO = false, commit, push
  * (e conferir que a env SITE_DESABILITADO não está definida na Vercel).
  */
-export const SITE_DESABILITADO_NO_CODIGO = true
+export const SITE_DESABILITADO_NO_CODIGO = false
 
 export function siteDesabilitado(): boolean {
+  // Só no `next dev` (NODE_ENV=development): SITE_DESABILITADO=0 no .env.local
+  // libera o fluxo pra testar o formulário na máquina local sem mexer na
+  // chave do código. Na Vercel (NODE_ENV=production) o override é ignorado.
+  if (process.env.NODE_ENV === 'development' && process.env.SITE_DESABILITADO === '0') {
+    return false
+  }
   return SITE_DESABILITADO_NO_CODIGO || process.env.SITE_DESABILITADO === '1'
 }

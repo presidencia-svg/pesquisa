@@ -13,6 +13,14 @@ const LABELS: Record<string, string> = {
   editar_candidato: '✏️ Editou candidato',
   notificar_resultado: '📲 Disparou notificação WhatsApp',
   view_diagnostico_spc: '🔎 Diagnóstico SPC',
+  lgpd_exclusao: '🗑️ Exclusão LGPD (titular)',
+  definir_metodo_ponderacao: '⚖️ Definiu método de ponderação',
+  executar_ponderacao: '🧮 Executou ponderação (raking)',
+  aprovar_ponderacao: '✅ Estatístico aprovou ponderação',
+  registrar_complementacao_pesqele: '📎 Complementação PesqEle (art. 2º §7º)',
+  view_amostra: '📊 Monitor de amostra',
+  suspender_divulgacao: '⛔ Suspendeu divulgação',
+  retomar_divulgacao: '▶️ Retomou divulgação',
 }
 
 export default async function AuditoriaPage() {

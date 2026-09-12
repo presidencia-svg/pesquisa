@@ -5,12 +5,17 @@ import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
 import { gerarOtp, hashOtp } from '@/lib/crypto'
+import {
+  ESCOLARIDADE_DETALHES,
+  NIVEIS_ECONOMICOS,
+  estratoEscolaridade,
+} from '@/lib/demograficos'
 import { DEV_MODE } from '@/lib/env'
 import { obterIpCliente } from '@/lib/ip'
 import { enviarOtpWhatsApp, metaWhatsappConfigurada } from '@/lib/meta-whatsapp'
 import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
-import { checarRateLimit } from '@/lib/rate-limit'
-import { clearPreVoto, getPreVoto, setPreVoto } from '@/lib/sessao'
+import { registrarTentativaIp } from '@/lib/rate-limit'
+import { clearPreVoto, getPreVoto, setPreVoto, type FonteDado } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { validarTituloEleitor } from '@/lib/titulo-eleitor'
 
@@ -51,16 +56,24 @@ const schema = z.object({
     .number()
     .int()
     .positive({ message: 'Selecione seu município.' }),
-  // Sexo NÃO está no schema — vem do draft (cdl_base ou SPC), não é
-  // perguntado no formulário. Eleitor que chegou aqui já tem sexo
-  // resolvido em /votar.
-  escolaridade: z.enum(['fundamental', 'medio', 'superior'], {
+  // Sexo: a fonte primária é o draft (cdl_base ou SPC, resolvido em
+  // /votar). O formulário só pergunta quando a consulta cadastral não
+  // trouxe o dado — e o servidor só aceita o valor do form nesse caso
+  // (o draft, quando existe, tem prioridade e não pode ser alterado).
+  sexo: z
+    .union([z.literal('M'), z.literal('F'), z.literal(''), z.undefined()])
+    .optional(),
+  // Escolaridade: o formulário oferece 4 opções em linguagem corrente
+  // (lib/demograficos.ts); o estrato de ponderação (3 níveis, o mesmo
+  // agregado do TSE) é derivado no servidor — sem_estudo → fundamental.
+  escolaridade: z.enum(ESCOLARIDADE_DETALHES, {
     message: 'Selecione sua escolaridade.',
   }),
-  // Nível econômico (ABEP) — exigido pela Resolução TSE 23.747/2026
-  // Art. 2º §7º, IV. Inclui 'nao_informado' pra respeitar LGPD: renda
-  // é dado sensível, eleitor pode optar por não declarar.
-  nivel_economico: z.enum(['A', 'B', 'C', 'D_E', 'nao_informado'], {
+  // Renda familiar em salários mínimos (2ª edição; migration 053) —
+  // composição da amostra exigida pela Resolução TSE 23.747/2026 art. 2º
+  // §7º, IV. Não pondera. 'nao_informado' respeita a LGPD (renda é dado
+  // sensível); 'nao_sei' é quem não soube estimar.
+  nivel_economico: z.enum(NIVEIS_ECONOMICOS, {
     message: 'Selecione sua renda familiar.',
   }),
   whatsapp: z.string().min(11, { message: 'Informe seu número com DDD.' }),
@@ -122,15 +135,38 @@ export async function confirmarDados(
 
   const {
     municipio_ibge,
-    escolaridade,
+    escolaridade: escolaridade_detalhe,
     nivel_economico,
     whatsapp,
     device_fingerprint,
   } = parsed.data
-  // Sexo vem da Sala 1 (cdl_base ou SPC), não do form. Eleitor que chegou
-  // aqui tem sexo resolvido em draft.sexo. Cai como null se SPC não trouxe
-  // — voto vai pros cruzamentos sem corte por gênero, mas continua válido.
-  const sexo: 'M' | 'F' | null = draft.sexo ?? null
+  const escolaridade = estratoEscolaridade(escolaridade_detalhe)
+  // Sexo: prioridade para a fonte cadastral (cdl_base ou SPC — draft.sexo
+  // com sexoOrigem mda/spc_mda/spc), que o formulário NÃO pode alterar. Quando
+  // a consulta cadastral não trouxe o dado — na 1ª edição, 22% dos
+  // respondentes, sobretudo jovens —, o formulário pergunta e o valor
+  // autodeclarado é obrigatório: a ponderação registrada usa sexo. Um valor
+  // autodeclarado (nesta sessão, via "← Voltar" do OTP, ou cacheado em
+  // edição anterior) volta pré-preenchido e pode ser corrigido pelo eleitor.
+  // A proveniência segue em eleitores_pesquisa.sexo_fonte (migrations 047/051).
+  const sexoForm = parsed.data.sexo === 'M' || parsed.data.sexo === 'F' ? parsed.data.sexo : null
+  const sexoCadastral: 'M' | 'F' | null =
+    draft.sexo && draft.sexoOrigem !== 'eleitor' ? draft.sexo : null
+  const sexoAutodeclarado: 'M' | 'F' | null = sexoCadastral
+    ? null
+    : (sexoForm ??
+      (draft.sexoOrigem === 'eleitor' ? (draft.sexo ?? null) : null))
+  const sexo: 'M' | 'F' | null = sexoCadastral ?? sexoAutodeclarado
+  const sexoFonte: FonteDado = sexoCadastral
+    ? (draft.sexoOrigem ?? 'spc')
+    : 'eleitor'
+  if (!sexo) {
+    return {
+      ok: false,
+      field: 'sexo',
+      message: 'Informe seu sexo (a consulta do CPF não trouxe essa informação).',
+    }
+  }
   // Checkbox de opt-in vem como "1" ou "on" quando marcado; ausente quando não.
   const optInResultadosWa =
     parsed.data.opt_in_resultados_wa === '1' ||
@@ -191,19 +227,31 @@ export async function confirmarDados(
   const ip = obterIpCliente(h)
   const userAgent = h.get('user-agent') ?? null
 
-  // Rate limit: max 5 envios de OTP por IP / 15min. Protege contra
-  // bot que tentaria spammear WhatsApps de CPFs reais (custo Meta +
-  // incomodo ao eleitor titular).
-  const rl = await checarRateLimit({
-    acao: 'otp_enviar',
-    max: 20, // por IP — rede compartilhada (casa/loja) tem várias pessoas votando
-    janelaMin: 15,
-  })
-  if (!rl.ok) {
-    return { ok: false, message: rl.message }
-  }
+  // Sem bloqueio por IP (CGNAT reúne milhares de eleitores num IP).
+  // Só registra pra auditoria; o teto que protege o WhatsApp do titular
+  // e a cota da Meta é POR CPF, logo abaixo.
+  await registrarTentativaIp('otp_enviar')
 
   const db = supabaseAdmin()
+
+  // Teto por CPF (independe do IP): no máx 3 códigos / 15 min pra este
+  // CPF nesta edição, contando primeiro envio e reenvios.
+  {
+    const desde15 = new Date(Date.now() - 15 * 60_000).toISOString()
+    const { count: enviadosRecentes } = await db
+      .from('whatsapp_codigos')
+      .select('id', { count: 'exact', head: true })
+      .eq('edicao_id', draft.edicaoId)
+      .eq('cpf_hash', draft.cpfHash)
+      .gte('criado_em', desde15)
+    if ((enviadosRecentes ?? 0) >= 3) {
+      return {
+        ok: false,
+        message:
+          'Já enviamos 3 códigos pra este CPF nos últimos minutos. Aguarde 15 minutos e tente de novo.',
+      }
+    }
+  }
 
   // 1. Valida o município. SE (IBGE 28xxxxx): tabela municipios_se, com
   //    checagem de cota. Fora de SE: municipios_br (5.571 do IBGE), sem
@@ -313,8 +361,10 @@ export async function confirmarDados(
       .update({
         municipio_ibge,
         sexo,
+        sexo_fonte: sexoFonte,
         faixa_etaria,
         escolaridade,
+        escolaridade_detalhe,
         nivel_economico,
         whatsapp_e164: whatsappE164,
         ip,
@@ -340,8 +390,10 @@ export async function confirmarDados(
       nome_mascarado: draft.nomeMascarado ?? null,
       municipio_ibge,
       sexo,
+      sexo_fonte: sexoFonte,
       faixa_etaria,
       escolaridade,
+      escolaridade_detalhe,
       nivel_economico,
       whatsapp_e164: whatsappE164,
       spc_validado: draft.spcValidado,
@@ -369,42 +421,61 @@ export async function confirmarDados(
   //       (municipio, whatsapp, demograficos), origem inalterada.
   //       Falha aqui nao bloqueia o eleitor — so loga.
   try {
-    if (draft.fonte === 'spc') {
-      // CPF novo: insert com origem nova. ON CONFLICT (race condition
-      // hipotetica) ignora duplicado.
-      const { error: errCdl } = await db.from('cdl_base').upsert(
+    // O eleitor confirmou (ou corrigiu) estes campos no formulário — a
+    // partir daqui a fonte é ele, mesmo que viessem pré-preenchidos.
+    const camposForm = {
+      municipio_ibge,
+      municipio_fonte: 'eleitor',
+      whatsapp_e164: whatsappE164,
+      whatsapp_fonte: 'eleitor',
+      // Sexo: só o cadastral entra aqui (pré-OTP). O informado pelo
+      // eleitor é gravado em otp/actions.ts, depois de ele provar o
+      // WhatsApp — antes disso qualquer pessoa com o CPF poderia
+      // "envenenar" o cache.
+      ...(sexoCadastral ? { sexo: sexoCadastral, sexo_fonte: sexoFonte } : {}),
+      faixa_etaria,
+      escolaridade,
+      escolaridade_detalhe,
+      escolaridade_fonte: 'eleitor',
+      nivel_economico,
+      nivel_economico_fonte: 'eleitor',
+      atualizado_em: new Date().toISOString(),
+    }
+    // UPDATE primeiro, sempre: na 1ª edição o caminho fonte==='spc' fazia
+    // upsert com ignoreDuplicates, mas /votar já tinha criado a linha
+    // (origem 'spc_lookup') — o "insert" era ignorado e os ~9 mil
+    // eleitores validados pelo SPC ficaram sem whatsapp/município/etc. em
+    // cdl_base (constatado em 12/09/2026). Só insere se não existir linha.
+    const { data: atualizada, error: errUpd } = await db
+      .from('cdl_base')
+      .update(camposForm)
+      .eq('cpf_hash', draft.cpfHash)
+      .select('cpf_hash')
+    if (errUpd) console.error('[confirma] erro update cdl_base:', errUpd)
+    if (!errUpd && (atualizada?.length ?? 0) === 0) {
+      const { error: errIns } = await db.from('cdl_base').upsert(
         {
           cpf_hash: draft.cpfHash,
-          municipio_ibge,
-          whatsapp_e164: whatsappE164,
+          ...camposForm,
           nome_mascarado: draft.nomeMascarado ?? null,
-          sexo,
-          faixa_etaria,
-          escolaridade,
-          nivel_economico,
+          nome_fonte: draft.nomeMascarado ? 'spc' : null,
+          faixa_etaria_fonte: faixa_etaria ? 'spc' : null,
           origem: 'spc_pesquisa_2026',
         },
-        { onConflict: 'cpf_hash', ignoreDuplicates: true },
+        { onConflict: 'cpf_hash', ignoreDuplicates: true }, // corrida hipotética
       )
-      if (errCdl) console.error('[confirma] erro upsert cdl_base:', errCdl)
-    } else {
-      // Ja' estava em cdl_base: enriquece dados sem mudar origem.
-      const { error: errCdl } = await db
-        .from('cdl_base')
-        .update({
-          municipio_ibge,
-          whatsapp_e164: whatsappE164,
-          sexo,
-          faixa_etaria,
-          escolaridade,
-          nivel_economico,
-        })
-        .eq('cpf_hash', draft.cpfHash)
-      if (errCdl) console.error('[confirma] erro update cdl_base:', errCdl)
+      if (errIns) console.error('[confirma] erro insert cdl_base:', errIns)
     }
   } catch (errCdl) {
     console.error('[confirma] excecao cdl_base:', errCdl)
   }
+
+  // 2.6 — Sexo autodeclarado NÃO entra em cdl_base aqui: quem chega a este
+  //       ponto só provou ter um CPF válido, não a titularidade. A gravação
+  //       no cache (só onde não há valor cadastral) acontece em
+  //       otp/actions.ts, depois da validação do OTP. Até lá o valor vive
+  //       no rascunho (sexoOrigem = 'eleitor') e em eleitores_pesquisa
+  //       (linha ainda wa_validado=false, como os demais dados do form).
 
   // 3. Gerar e salvar OTP
   const codigo = gerarOtp()
@@ -471,8 +542,10 @@ export async function confirmarDados(
     ...draft,
     municipioIbge: municipio_ibge,
     whatsappE164,
-    ...(sexo ? { sexo } : {}),
+    sexo,
+    sexoOrigem: sexoFonte,
     escolaridade,
+    escolaridadeDetalhe: escolaridade_detalhe,
     nivelEconomico: nivel_economico,
   })
 

@@ -22,6 +22,7 @@ export function CargoDetalheScreen({
   kind,
   cargoCandidato,
   amostra,
+  ponderacaoCurta,
   cargoZona,
   edicaoLabel,
   turno,
@@ -33,6 +34,8 @@ export function CargoDetalheScreen({
   turno: 1 | 2
   /** n da pesquisa (eleitores com identidade verificada) — mesmo número do hub e da TV. */
   amostra?: number
+  /** Rótulo curto do método de ponderação (meta.ponderacao_curta). */
+  ponderacaoCurta?: string
 }) {
   const router = useRouter()
   const voltar = () => router.push('/resultados')
@@ -59,7 +62,12 @@ export function CargoDetalheScreen({
           {kind === 'zona' && cargoZona ? (
             <DetalheZona cargo={cargoZona} onClose={voltar} />
           ) : cargoCandidato ? (
-            <Detalhe cargo={cargoCandidato} onClose={voltar} amostra={amostra} />
+            <Detalhe
+              cargo={cargoCandidato}
+              onClose={voltar}
+              amostra={amostra}
+              ponderacaoCurta={ponderacaoCurta}
+            />
           ) : null}
 
           <div className="rs-cargoscreen-foot">

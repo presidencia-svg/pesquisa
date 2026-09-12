@@ -43,7 +43,7 @@ export function validarTituloEleitor(raw: string): TituloResultado {
   if (d1 !== dv1) return { ok: false, motivo: 'Dígito verificador do título não confere.' }
 
   // DV2 sobre UF + DV1
-  let soma2 = Number(ufStr[0]) * 7 + Number(ufStr[1]) * 8 + d1 * 9
+  const soma2 = Number(ufStr[0]) * 7 + Number(ufStr[1]) * 8 + d1 * 9
   let d2 = soma2 % 11
   if (d2 === 10) d2 = 0
   if (d2 === 0 && spMg) d2 = 1
@@ -62,7 +62,7 @@ export function _gerarTituloValido(seqNum: number, uf: number): string {
   let d1 = soma1 % 11
   if (d1 === 10) d1 = 0
   if (d1 === 0 && spMg) d1 = 1
-  let soma2 = Number(ufStr[0]) * 7 + Number(ufStr[1]) * 8 + d1 * 9
+  const soma2 = Number(ufStr[0]) * 7 + Number(ufStr[1]) * 8 + d1 * 9
   let d2 = soma2 % 11
   if (d2 === 10) d2 = 0
   if (d2 === 0 && spMg) d2 = 1

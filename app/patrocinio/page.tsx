@@ -7,9 +7,9 @@ import { PatrocinioForm } from './form'
 
 export const metadata = {
   title:
-    'A maior pesquisa política já realizada no Brasil · Patrocínio Sergipe 2026',
+    'Pesquisa Eleitoral Sergipe 2026 · Patrocínio institucional · CDL Aracaju',
   description:
-    'Meta de 200.000 respondentes em pesquisa eleitoral estadual — 100× maior que Datafolha, IBOPE ou Quaest. Patrocínio institucional CDL Aracaju com 3 cotas (Diamante R$ 100k / Ouro R$ 70k / Prata R$ 30k). Sem ingerência editorial.',
+    'Pesquisa eleitoral estadual com identidade verificada por CPF e WhatsApp nos 75 municípios de Sergipe. Patrocínio institucional CDL Aracaju com 3 cotas (Diamante R$ 100k / Ouro R$ 70k / Prata R$ 30k). Sem ingerência editorial.',
 }
 
 const COTAS = [
@@ -22,7 +22,7 @@ const COTAS = [
     beneficios: [
       'Exclusividade na categoria — nenhum concorrente direto pode patrocinar nesta edição',
       'Logo em destaque máximo (topo) na página pública /resultados',
-      'Painel dedicado nos créditos de abertura do telejornal da TV Atalaia (3/set/2026)',
+      'Painel dedicado na apresentação dos resultados, quando houver veiculação em TV parceira',
       'Entrevista exclusiva do Presidente da CDL Aracaju para o veículo de comunicação do patrocinador',
       'Relatório premium customizado com cortes demográficos × voto (gênero, idade, escolaridade, renda, município, região)',
       'Reunião privada com Presidente da CDL + estatístico responsável + análise customizada do segmento de interesse do patrocinador',
@@ -75,22 +75,22 @@ export default function PatrocinioPage() {
               Patrocínio institucional · Pesquisa Eleitoral Sergipe 2026
             </p>
             <h1 className="text-3xl sm:text-5xl font-bold leading-[1.05]">
-              A maior pesquisa política já realizada no Brasil
-              <span className="text-cyan-300 text-base align-top ml-1">*</span>
+              Pesquisa eleitoral com identidade verificada em todo Sergipe
             </h1>
             <p className="text-base sm:text-lg text-white/90 leading-relaxed max-w-2xl">
-              Meta de <strong>200.000 respondentes</strong> nos 75 municípios
-              sergipanos, com identidade verificada por CPF + WhatsApp —{' '}
-              <strong>100× maior</strong> que Datafolha, IBOPE ou Quaest.
-              Divulgação ao vivo no telejornal da TV Atalaia em{' '}
-              <strong>3 de setembro de 2026</strong>, registrada no
-              PesqEle/TRE-SE, independente e transparente.
+              Amostra por adesão nos 75 municípios sergipanos, com identidade
+              verificada por CPF + WhatsApp e ponderação pelo eleitorado
+              oficial do TSE. <strong>2ª edição</strong>: coleta de 13 a 20 de
+              setembro de 2026; registro no PesqEle (TSE e TRE-SE) antes de
+              qualquer divulgação, que acontece nesta plataforma
+              (pesquisa.cdlaju.com.br/resultados) e nos canais da CDL Aracaju
+              — independente e transparente.
             </p>
             <p className="text-[11px] text-white/60 leading-relaxed max-w-2xl pt-2 border-t border-white/20">
-              <span className="text-cyan-300">*</span> Por critério de amostra
-              com identidade verificada em pesquisa eleitoral estadual. Datafolha,
-              IBOPE, Quaest, AtlasIntel e Paraná Pesquisas operam com amostras
-              de 1.500 a 2.500 respondentes por estado.
+              Datafolha, IBOPE, Quaest, AtlasIntel e Paraná Pesquisas operam
+              com amostras de 1.500 a 2.500 respondentes por estado. Aqui o
+              tamanho da amostra é o total de eleitores que aderem dentro da
+              janela de coleta — não há meta nem cota.
             </p>
           </div>
         </section>
@@ -102,7 +102,7 @@ export default function PatrocinioPage() {
               Por que esta pesquisa é única
             </p>
             <h2 className="text-2xl sm:text-3xl font-semibold leading-tight">
-              200.000 votantes vs. 2.000 dos institutos tradicionais
+              Amostra por adesão vs. 2.000 dos institutos tradicionais
             </h2>
           </header>
           <div className="overflow-x-auto">
@@ -140,10 +140,10 @@ export default function PatrocinioPage() {
                     Pesquisa Eleitoral Sergipe 2026 — CDL Aracaju
                   </td>
                   <td className="p-3 text-right tabular-nums text-accent">
-                    200.000
+                    definida ao fim da coleta
                   </td>
                   <td className="p-3 text-right tabular-nums text-accent">
-                    ±0,22 pp
+                    nominal e efetiva (Kish), publicadas na ficha técnica
                   </td>
                 </tr>
               </tbody>
@@ -152,10 +152,11 @@ export default function PatrocinioPage() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             Em pesquisa de intenção de voto, <strong>menor margem de erro</strong>
             {' '}significa que o número divulgado é mais próximo da realidade.
-            Atingida a meta de 200 mil respondentes, a Pesquisa Eleitoral
-            Sergipe 2026 entrega <strong>10× mais precisão</strong> que os
-            maiores institutos do país — e, já com a base de 44.545 CPFs
-            validados, 5× mais precisão.
+            A amostra da Pesquisa Eleitoral Sergipe 2026 é por adesão: o n
+            final é o total de eleitores com CPF e WhatsApp validados ao fim
+            da coleta, e a margem publicada é indicativa (calculada como se a
+            amostra fosse probabilística, nominal e efetiva de Kish). Nenhum
+            número de participantes é divulgado antes do registro no PesqEle.
           </p>
         </section>
 
@@ -305,15 +306,15 @@ export default function PatrocinioPage() {
             <ul className="list-disc pl-6 text-sm leading-relaxed text-muted-foreground flex flex-col gap-1">
               <li>Metodologia, plano amostral ou questionário da pesquisa;</li>
               <li>Contratação dos colaboradores (entrevistadores, estatístico, equipe de TI, DPO);</li>
-              <li>Resultados divulgados ou narrativa da apresentação no telejornal;</li>
-              <li>Edição editorial da reportagem da TV Atalaia.</li>
+              <li>Resultados divulgados ou narrativa da apresentação;</li>
+              <li>Edição editorial de eventual reportagem em veículo parceiro.</li>
             </ul>
             <p className="text-sm leading-relaxed text-muted-foreground">
               A relação é formalizada em <strong>contrato de patrocínio institucional</strong>
-              {' '}com cláusula expressa de independência (espelhando a Cláusula 5ª
-              do Convênio CDL × TV Atalaia v1.4). Conforme exige a{' '}
-              <strong>Lei 9.504/1997, art. 33, §1º</strong>, a relação de
-              patrocinadores é informada ao TRE/SE no registro PesqEle e
+              {' '}com cláusula expressa de independência editorial. Conforme
+              exige a <strong>Lei 9.504/1997, art. 33, §1º</strong>, a relação
+              de patrocinadores é informada no registro no PesqEle (TSE e
+              TRE-SE) e
               divulgada publicamente em{' '}
               <Link
                 href="/transparencia"

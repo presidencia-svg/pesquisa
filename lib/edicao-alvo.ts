@@ -11,6 +11,7 @@
 import 'server-only'
 
 import { cookies } from 'next/headers'
+import { cache } from 'react'
 
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
@@ -22,9 +23,12 @@ export type EdicaoAlvo = {
   fim: string
   teste: boolean
   exigirLocalizacao: boolean
+  /** Campo `registro_tre` (registros PesqEle) — null enquanto nao registrada. */
+  registro: string | null
 }
 
-export async function resolverEdicaoAlvo(): Promise<EdicaoAlvo | null> {
+// `cache()`: uma unica consulta por request, mesmo que pagina e rodape chamem.
+export const resolverEdicaoAlvo = cache(async (): Promise<EdicaoAlvo | null> => {
   const db = supabaseAdmin()
   const jar = await cookies()
   const testeId = jar.get(COOKIE_EDICAO_TESTE)?.value
@@ -38,7 +42,7 @@ export async function resolverEdicaoAlvo(): Promise<EdicaoAlvo | null> {
   if (testeId && testeHabilitado) {
     const { data } = await db
       .from('edicao')
-      .select('id, inicio, fim, exigir_localizacao')
+      .select('id, inicio, fim, exigir_localizacao, registro_tre')
       .eq('id', testeId)
       .maybeSingle()
     if (data) {
@@ -48,13 +52,14 @@ export async function resolverEdicaoAlvo(): Promise<EdicaoAlvo | null> {
         fim: data.fim as string,
         teste: true,
         exigirLocalizacao: Boolean(data.exigir_localizacao),
+        registro: (data.registro_tre as string | null) ?? null,
       }
     }
   }
 
   const { data } = await db
     .from('edicao')
-    .select('id, inicio, fim, exigir_localizacao')
+    .select('id, inicio, fim, exigir_localizacao, registro_tre')
     .eq('ativa', true)
     .maybeSingle()
   if (!data) return null
@@ -64,5 +69,6 @@ export async function resolverEdicaoAlvo(): Promise<EdicaoAlvo | null> {
     fim: data.fim as string,
     teste: false,
     exigirLocalizacao: Boolean(data.exigir_localizacao),
+    registro: (data.registro_tre as string | null) ?? null,
   }
-}
+})

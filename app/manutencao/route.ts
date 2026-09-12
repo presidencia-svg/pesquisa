@@ -25,7 +25,7 @@ const HTML = `<!doctype html>
   <h1>Site temporariamente indisponível</h1>
   <p>A divulgação dos resultados da Pesquisa Eleitoral Sergipe 2026 está suspensa, sob apreciação judicial (TRE-SE), até nova ordem.</p>
   <p>Nenhum resultado está sendo exibido nesta página ou em qualquer outra deste endereço.</p>
-  <small>Pesquisa registrada na Justiça Eleitoral · TRE-SE SE-09441/2026 · TSE BR-04041/2026 · CDL Aracaju</small>
+  <small>Pesquisa Eleitoral Sergipe 2026 · CDL Aracaju</small>
 </main>
 </body>
 </html>`

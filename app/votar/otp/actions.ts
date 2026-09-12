@@ -10,9 +10,10 @@ import {
   hashOtp,
   hashTokenVoto,
 } from '@/lib/crypto'
+import { janelaColeta, mensagemJanela } from '@/lib/edicao-janela'
 import { DEV_MODE } from '@/lib/env'
 import { enviarOtpWhatsApp, metaWhatsappConfigurada } from '@/lib/meta-whatsapp'
-import { checarRateLimit } from '@/lib/rate-limit'
+import { registrarTentativaIp } from '@/lib/rate-limit'
 import {
   clearPreVoto,
   getPreVoto,
@@ -68,20 +69,19 @@ export async function validarOtp(
     }
   }
 
-  // Rate limit: max 15 validacoes de OTP por IP / 15min.
-  // O bruteforce ja' tem TENTATIVAS_MAX=3 por codigo; isso eh defesa
-  // adicional contra rotacao de CPF/codigos por bot.
-  const rl = await checarRateLimit({
-    acao: 'otp_validar',
-    max: 40, // por IP — rede compartilhada; o bruteforce real é segurado por código
-    janelaMin: 15,
-  })
-  if (!rl.ok) {
-    return { ok: false, message: rl.message }
-  }
+  // Sem bloqueio por IP (CGNAT). O bruteforce é segurado por
+  // TENTATIVAS_MAX=3 por código; aqui só fica o rastro pra auditoria.
+  await registrarTentativaIp('otp_validar')
 
   const codigoDigitado = parsed.data
   const db = supabaseAdmin()
+
+  // 0. Janela de coleta declarada no PesqEle: fora dela não se emite
+  //    cápsula (antes só a etapa do CPF conferia `fim`).
+  const janela = await checarJanela(db, draft.edicaoId)
+  if (janela !== 'aberta') {
+    return { ok: false, message: mensagemJanela(janela) }
+  }
 
   // 1. Pega o ultimo OTP emitido pra esse CPF nesta edicao.
   const { data: otp, error: errOtp } = await db
@@ -220,6 +220,27 @@ export async function validarOtp(
     }
   }
 
+  // 3b'. Sexo autodeclarado entra no cache cdl_base SÓ AGORA — depois de o
+  //      eleitor provar a posse do WhatsApp (OTP) — e só onde não há valor
+  //      cadastral: sexo nulo, ou marcado 'eleitor' em edição
+  //      anterior (correção permitida). Um valor cadastral (cdl_base/SPC)
+  //      nunca é sobrescrito aqui. Sem isto a próxima edição perguntaria
+  //      de novo. Falha só loga — cache é otimização, não pré-requisito.
+  if (draft.sexo && draft.sexoOrigem === 'eleitor') {
+    const { error: errSexo } = await db
+      .from('cdl_base')
+      .update({
+        sexo: draft.sexo,
+        sexo_fonte: 'eleitor',
+        atualizado_em: new Date().toISOString(),
+      })
+      .eq('cpf_hash', draft.cpfHash)
+      .or('sexo.is.null,sexo_fonte.eq.eleitor')
+    if (errSexo) {
+      console.error('[otp] erro ao gravar sexo autodeclarado em cdl_base:', errSexo)
+    }
+  }
+
   // 3c. Gera token de voto. Hash entra em tokens_emitidos SEM nenhuma
   //     ligacao ao CPF. criado_hora truncado pra hora cheia (analise
   //     temporal sem permitir cruzamento minuto-a-minuto).
@@ -273,6 +294,13 @@ export async function reenviarOtp(): Promise<OtpState> {
 
   const db = supabaseAdmin()
 
+  // Janela de coleta: encerrada → não dispara mensagem paga nem reabre
+  // caminho pra cápsula fora do período registrado.
+  const janela = await checarJanela(db, draft.edicaoId)
+  if (janela !== 'aberta') {
+    return { ok: false, message: mensagemJanela(janela) }
+  }
+
   // Se este CPF já emitiu token (já votou/atravessou a ponte), não reenvia.
   const { data: jaEleitor } = await db
     .from('eleitores_pesquisa')
@@ -287,17 +315,9 @@ export async function reenviarOtp(): Promise<OtpState> {
     }
   }
 
-  // Rate limit por IP: no máx 3 reenvios / 15 min. Sem isso, o reenvio
-  // dispara mensagem paga na Meta a cada chamada — OTP-bombing na vítima,
-  // queima de cota e risco de ban do número (derruba TODA a coleta).
-  const rlIp = await checarRateLimit({
-    acao: 'otp_reenviar',
-    max: 10, // por IP — rede compartilhada; o limite por CPF segue apertado abaixo
-    janelaMin: 15,
-  })
-  if (!rlIp.ok) {
-    return { ok: false, message: rlIp.message }
-  }
+  // Sem bloqueio por IP (CGNAT). O que segura OTP-bombing, cota da Meta
+  // e ban do número é o teto por CPF logo abaixo; o IP fica só no rastro.
+  await registrarTentativaIp('otp_reenviar')
 
   // Teto por CPF (independe do IP): no máx 3 códigos / 15 min pra este CPF.
   const desde15 = new Date(Date.now() - 15 * 60_000).toISOString()
@@ -375,4 +395,21 @@ export async function reenviarOtp(): Promise<OtpState> {
 const mascarar = (e164: string): string => {
   const ultimos = e164.slice(-4)
   return `+55 ** ****-${ultimos}`
+}
+
+/**
+ * Lê inicio/fim da edição do draft e classifica a janela. Edição inexistente
+ * conta como encerrada (não emite cápsula pra edição fantasma).
+ */
+async function checarJanela(
+  db: ReturnType<typeof supabaseAdmin>,
+  edicaoId: string,
+): Promise<ReturnType<typeof janelaColeta>> {
+  const { data } = await db
+    .from('edicao')
+    .select('inicio, fim')
+    .eq('id', edicaoId)
+    .maybeSingle<{ inicio: string; fim: string }>()
+  if (!data) return 'encerrada'
+  return janelaColeta(data)
 }

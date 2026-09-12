@@ -103,6 +103,19 @@ export type Meta = {
   contratante: string
   /** Descrição da ponderação aplicada aos percentuais (registro PesqEle). */
   ponderacao?: string
+  /** Método vigente: 'municipio' (pós-estratificação) ou 'estratos_raking' (raking 4 marginais). */
+  ponderacao_metodo?: 'municipio' | 'estratos_raking'
+  /** Rótulo curto pra ficha técnica ("Por município" / "Município × sexo × idade × instrução"). */
+  ponderacao_curta?: string
+  ponderacao_sub?: string
+  /** Estatístico CONRE que aprovou a execução vigente (quando houver). */
+  ponderacao_aprovada_por?: string
+  /** Margem de erro EFETIVA (Kish), considerando a dispersão dos pesos. */
+  margem_efetiva?: string
+  /** n efetivo = (Σw)²/Σw². */
+  n_eff?: number
+  /** Efeito de desenho = n / n_eff. */
+  deff?: number
 }
 
 export type Pesquisa = {
@@ -217,11 +230,14 @@ export function Detalhe({
   cargo,
   onClose,
   amostra,
+  ponderacaoCurta,
 }: {
   cargo: CargoCandidato
   onClose: () => void
   /** n da pesquisa (eleitores com identidade verificada) — o mesmo do hub e da TV. */
   amostra?: number
+  /** Rótulo curto do método de ponderação (meta.ponderacao_curta). */
+  ponderacaoCurta?: string
 }) {
   const t = totalsFor(cargo)
   // Ordem e percentuais principais pelo PONDERADO (resultado oficial,
@@ -260,8 +276,10 @@ export function Detalhe({
             {cargo.vagas ? ` · ${cargo.vagas} cadeiras em disputa` : ''}
           </p>
           <p className="rs-detail-meta" style={{ marginTop: 4 }}>
-            Percentual <strong>ponderado por município</strong> (eleitorado TSE ÷ amostra),
-            conforme o registro no PesqEle · ao lado, o <strong>bruto</strong> (contagem simples).
+            Percentual <strong>ponderado</strong>
+            {ponderacaoCurta ? ` (${ponderacaoCurta.toLowerCase()})` : ' por município'},
+            conforme o plano amostral registrado no PesqEle · ao lado, o{' '}
+            <strong>bruto</strong> (contagem simples).
           </p>
         </div>
         <button className="rs-close" onClick={onClose} aria-label="Fechar">
@@ -501,7 +519,7 @@ function LinhaCandidato({
           {c.impedimento && (
             <span className="rs-tag rs-tag-warn">sub judice</span>
           )}
-          <span className="rs-row-pct" title="Ponderado por município">
+          <span className="rs-row-pct" title="Ponderado (raking município × sexo × faixa etária × instrução)">
             {p.toFixed(1).replace('.', ',')}%
           </span>
           <span

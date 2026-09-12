@@ -44,7 +44,9 @@ export default async function ResultadosHubPage() {
   }
   if (r.status === 'suspensa') {
     // Ordem judicial (TRE-SE, Rp 0601015-42.2026.6.25.0000): nenhum número.
-    return <SuspensaJudicial edicao={r.edicao} />
+    // Ao público, a mesma tela neutra de "Em breve" (sem cronômetro nem
+    // data prevista) — decisão de 12/09: não expor a suspensão na página.
+    return <AguardandoDivulgacao edicao={{ ...r.edicao, divulgacao_prevista: null }} />
   }
 
   const { pesquisa, patroPorCota } = r
@@ -101,12 +103,13 @@ export default async function ResultadosHubPage() {
             </p>
             <h1 className="rs-hub-title">Eleições Sergipe 2026</h1>
             <p className="rs-hub-resumo">
-              A maior pesquisa eleitoral já realizada em Sergipe ouviu{' '}
+              A Pesquisa Eleitoral Sergipe 2026 ouviu{' '}
               <strong>{meta.n.toLocaleString('pt-BR')} eleitores</strong> com
               identidade verificada por CPF e WhatsApp nos 75 municípios do
-              estado. Metodologia espontânea — o eleitor digita o número como
+              estado. Amostra por adesão, ponderada pelo eleitorado oficial do
+              TSE. Metodologia espontânea — o eleitor digita o número como
               na urna, sem ver lista de candidatos.
-              {!ehDemo && ' Registrada no PesqEle/TRE-SE conforme a Lei 9.504/97.'}
+              {!ehDemo && ' Registrada no PesqEle (TSE e TRE-SE) conforme a Lei 9.504/97.'}
             </p>
             <div className="rs-hub-destaques">
               <span>Identidade verificada por CPF + WhatsApp</span>
@@ -123,12 +126,20 @@ export default async function ResultadosHubPage() {
               valor={meta.n.toLocaleString('pt-BR')}
               sub="CPF + WhatsApp"
             />
-            <FichaCard rotulo="Margem" valor={meta.margem} sub="Erro amostral" />
+            <FichaCard
+              rotulo="Margem"
+              valor={meta.margem_efetiva ?? meta.margem}
+              sub={
+                meta.margem_efetiva
+                  ? `Efetiva (Kish) · nominal ${meta.margem} · amostra por adesão; margem indicativa, calculada como se probabilística`
+                  : 'Amostra por adesão; margem indicativa, calculada como se probabilística'
+              }
+            />
             <FichaCard rotulo="Confiança" valor={meta.confianca} sub="Intervalo" />
             <FichaCard
               rotulo="Ponderação"
-              valor="Por município"
-              sub="Eleitorado TSE ÷ amostra · bruto ao lado"
+              valor={meta.ponderacao_curta ?? 'Por município'}
+              sub={meta.ponderacao_sub ?? 'Eleitorado TSE ÷ amostra · bruto ao lado'}
             />
             <FichaCard
               rotulo="Divulgada"
@@ -145,11 +156,29 @@ export default async function ResultadosHubPage() {
             className="rs-hub-lead"
             style={{ fontSize: 13, color: '#52525b', marginTop: 8 }}
           >
-            <strong>Nota metodológica (06/09/2026):</strong> os percentuais passam a ser
-            apresentados <strong>ponderados por município</strong> (peso = participação do
-            município no eleitorado TSE ÷ participação na amostra), como previsto no plano
-            amostral registrado no PesqEle. Ao lado de cada percentual está o resultado{' '}
-            <strong>bruto</strong> (contagem simples), que era o exibido até esta data.
+            <strong>Nota metodológica:</strong>{' '}
+            {meta.ponderacao_metodo === 'estratos_raking' ? (
+              <>
+                os percentuais são <strong>ponderados por município, sexo, faixa etária e
+                grau de instrução</strong> (raking sobre as marginais do eleitorado TSE),
+                conforme o plano amostral registrado no PesqEle
+                {meta.ponderacao_aprovada_por
+                  ? `, com pesos aprovados pelo estatístico responsável (${meta.ponderacao_aprovada_por})`
+                  : ''}
+                . A margem informada é a <strong>efetiva</strong>, que considera a dispersão
+                dos pesos (n efetivo de Kish
+                {meta.n_eff ? ` ≈ ${Math.round(meta.n_eff).toLocaleString('pt-BR')}` : ''}
+                {meta.deff ? `, efeito de desenho ${meta.deff.toFixed(1)}` : ''}).
+              </>
+            ) : (
+              <>
+                os percentuais são apresentados <strong>ponderados por município</strong>{' '}
+                (peso = participação do município no eleitorado TSE ÷ participação na
+                amostra), como previsto no plano amostral registrado no PesqEle.
+              </>
+            )}{' '}
+            Ao lado de cada percentual está o resultado <strong>bruto</strong> (contagem
+            simples).
           </p>
 
           {/* Patrocinador Diamante — apresentada por */}
@@ -370,82 +399,13 @@ function AguardandoDivulgacao({ edicao }: { edicao: EdicaoRow | null }) {
               </p>
             ) : (
               <p className="text-base text-muted-foreground leading-relaxed">
-                A Pesquisa Eleitoral Sergipe 2026 da CDL Aracaju ainda não foi divulgada.
+                Os resultados da Pesquisa Eleitoral Sergipe 2026 da CDL Aracaju serão
+                publicados nesta página.
               </p>
             )}
           </div>
 
           {prevista && <CronometroDivulgacao ateISO={prevista} />}
-
-          <AvisoRegistro compacto />
-
-          <div className="flex flex-col sm:flex-row gap-3 w-full">
-            <Link
-              href="/"
-              className="flex-1 inline-flex justify-center items-center h-11 px-5 rounded-md border border-border text-foreground text-sm font-medium hover:bg-muted transition"
-            >
-              ← Voltar ao início
-            </Link>
-            <Link
-              href="/transparencia"
-              className="flex-1 inline-flex justify-center items-center h-11 px-5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition"
-            >
-              Ver metodologia
-            </Link>
-          </div>
-        </div>
-      </main>
-      <RodapeInstitucional />
-    </>
-  )
-}
-
-/**
- * Tela exibida enquanto edicao.suspensa_em estiver preenchido — ordem
- * judicial (Rp 0601015-42.2026.6.25.0000, TRE-SE, 07/09/2026). Não mostra
- * número nenhum, nem cronômetro, nem link pra página de resultado.
- */
-function SuspensaJudicial({ edicao }: { edicao: EdicaoRow }) {
-  const desde = edicao.suspensa_em
-    ? new Date(edicao.suspensa_em).toLocaleString('pt-BR', {
-        timeZone: 'America/Recife',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      })
-    : null
-  return (
-    <>
-      <main className="flex flex-col flex-1 bg-background items-center justify-center px-5 py-16">
-        <div className="w-full max-w-md flex flex-col gap-8 items-start">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/cdl-pesquisas-logo.png"
-            alt="CDL Pesquisas"
-            className="h-12 w-auto"
-          />
-          <div className="flex flex-col gap-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">
-              Resultados
-            </p>
-            <h1 className="text-3xl sm:text-4xl font-semibold leading-tight">
-              Divulgação temporariamente suspensa
-            </h1>
-            <p className="text-base text-muted-foreground leading-relaxed">
-              Em cumprimento a decisão judicial do Tribunal Regional Eleitoral
-              de Sergipe (Representação nº 0601015-42.2026.6.25.0000), a
-              divulgação dos resultados da Pesquisa Eleitoral Sergipe 2026 está
-              suspensa até nova ordem{desde ? ` desde ${desde}` : ''}.
-            </p>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              A pesquisa permanece registrada na Justiça Eleitoral (TRE-SE
-              SE-09441/2026 e TSE BR-04041/2026). A CDL Aracaju está prestando
-              ao Tribunal os esclarecimentos e a documentação complementar
-              requeridos.
-            </p>
-          </div>
 
           <AvisoRegistro compacto />
 

@@ -12,7 +12,7 @@
  *          = (N(M) * n_total) / (n(M) * N_total)
  *
  * onde:
- *     N(M)     = eleitorado oficial do municipio (TSE 2024)
+ *     N(M)     = eleitorado oficial do municipio (TSE 2026)
  *     N_total  = soma dos eleitorados (Sergipe inteiro)
  *     n(M)     = numero de respostas validas que vieram desse municipio
  *     n_total  = total de respostas

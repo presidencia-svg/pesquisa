@@ -327,7 +327,7 @@ function TelaBuscando() {
           Consultando seu CPF…
         </p>
         <p className="text-sm text-muted-foreground max-w-xs">
-          Estamos validando seus dados na Receita Federal. Pode levar
+          Estamos fazendo a consulta cadastral do seu CPF no SPC Brasil. Pode levar
           alguns segundos — <strong>não feche esta tela</strong>.
         </p>
       </div>

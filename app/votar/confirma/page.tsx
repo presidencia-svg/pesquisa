@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { RodapeInstitucional } from '@/components/rodape-institucional'
+import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
 import { getPreVoto, getVotoToken } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
@@ -18,6 +19,7 @@ export default async function ConfirmaPage() {
 
   const draft = await getPreVoto()
   if (!draft) redirect('/votar')
+  const edicao = await resolverEdicaoAlvo()
 
   // Carrega lista de municipios pra popular o select.
   const db = supabaseAdmin()
@@ -51,21 +53,27 @@ export default async function ConfirmaPage() {
             </h1>
             <p className="text-base text-muted-foreground">
               CPF identificado:{' '}
-              <span className="font-mono">{draft.cpfMascarado}</span>.
-              Confirmamos sexo e idade direto na Receita Federal — agora só
-              precisamos do seu município, escolaridade, renda (exigência da
-              Resolução TSE 23.747/2026 pra ponderar a amostra) e WhatsApp pra
-              confirmar o cadastro.
+              <span className="font-mono">{draft.cpfMascarado}</span>.{' '}
+              {draft.sexo && draft.sexoOrigem !== 'eleitor'
+                ? 'Confirmamos sexo e idade na consulta cadastral do CPF — agora só precisamos do seu município, escolaridade, faixa de renda (a Resolução TSE pede a composição da amostra por nível econômico; a renda não entra na ponderação) e WhatsApp pra confirmar o cadastro.'
+                : draft.sexoOrigem === 'eleitor'
+                  ? 'Confirmamos sua idade na consulta cadastral do CPF; o sexo foi informado por você (confira abaixo). Precisamos também do seu município, escolaridade, faixa de renda (a Resolução TSE pede a composição da amostra por nível econômico; a renda não entra na ponderação) e WhatsApp pra confirmar o cadastro.'
+                  : 'Confirmamos sua idade na consulta cadastral do CPF — agora precisamos do seu município, sexo (a consulta cadastral não informou), escolaridade, faixa de renda (a Resolução TSE pede a composição da amostra por nível econômico; a renda não entra na ponderação) e WhatsApp pra confirmar o cadastro.'}
             </p>
           </div>
 
           <DadosForm
             municipios={municipios ?? []}
             exigirTitulo={draft.faixaEtaria === '16-17'}
+            perguntarSexo={!draft.sexo || draft.sexoOrigem === 'eleitor'}
+            {...(draft.sexo && draft.sexoOrigem === 'eleitor'
+              ? { prefilledSexo: draft.sexo }
+              : {})}
             algumPrefill={Boolean(
               draft.municipioIbge ||
                 draft.whatsappE164 ||
-                draft.escolaridade,
+                draft.escolaridadeDetalhe ||
+                draft.nivelEconomico,
             )}
             {...(draft.municipioIbge !== undefined
               ? { prefilledMunicipio: draft.municipioIbge }
@@ -73,8 +81,11 @@ export default async function ConfirmaPage() {
             {...(draft.whatsappE164 !== undefined
               ? { prefilledWhatsapp: draft.whatsappE164 }
               : {})}
-            {...(draft.escolaridade !== undefined
-              ? { prefilledEscolaridade: draft.escolaridade }
+            {...(draft.escolaridadeDetalhe !== undefined
+              ? { prefilledEscolaridade: draft.escolaridadeDetalhe }
+              : {})}
+            {...(draft.nivelEconomico !== undefined
+              ? { prefilledNivelEconomico: draft.nivelEconomico }
               : {})}
           />
 
@@ -84,9 +95,21 @@ export default async function ConfirmaPage() {
             </summary>
             <div className="pt-3 flex flex-col gap-2">
               <p>
-                Sexo, faixa etária e escolaridade são exigidos pela Resolução
-                TSE 23.747/2026 pra ponderar a amostra contra o eleitorado
-                oficial do TSE.
+                Município, sexo, faixa etária e escolaridade são as variáveis
+                do plano amostral: a amostra é ponderada por elas contra o
+                eleitorado oficial do TSE (Res.-TSE 23.600/2019, com a redação
+                da Res.-TSE 23.747/2026). A faixa de renda <strong>não entra
+                na ponderação</strong> — só descreve a composição da amostra
+                por nível econômico, como a Resolução exige.
+              </p>
+              <p>
+                Também registramos, para auditoria, o endereço IP, o
+                navegador e uma impressão do dispositivo — apenas registrados,
+                sem bloquear ninguém. Detalhes em{' '}
+                <Link href="/privacidade" className="text-primary hover:underline">
+                  /privacidade
+                </Link>
+                .
               </p>
               <p>
                 Esses dados ficam só na <strong>Sala 1</strong> (validação) —
@@ -101,7 +124,7 @@ export default async function ConfirmaPage() {
         </div>
       </section>
     </main>
-    <RodapeInstitucional />
+    <RodapeInstitucional registro={edicao?.registro} />
     </>
   )
 }

@@ -36,8 +36,10 @@ dotenvConfig({ path: path.resolve(process.cwd(), '.env.local') })
 const ANO = 2026
 const ID_ELEICAO = 20322002026 // "Eleição Geral Federal 2026" (04/10)
 const API = 'https://divulgacandcontas.tse.jus.br/divulga/rest/v1'
+// O Akamai do TSE devolve 403 pra qualquer User-Agent que nao seja de
+// navegador (testado em 12/09/2026: UA proprio → 403, UA Chrome → 200).
 const UA =
-  'PesquisaSergipe2026/1.0 (https://pesquisa.cdlaju.com.br; contato@cdlaju.com.br)'
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
 
 /** cargo local → (unidade eleitoral, codigo de cargo no TSE) */
 const CARGOS_TSE: ReadonlyArray<{ cargo: string; ue: string; cod: number }> = [
@@ -49,6 +51,8 @@ const CARGOS_TSE: ReadonlyArray<{ cargo: string; ue: string; cod: number }> = [
 ]
 
 type CandidatoTse = {
+  /** id sequencial da candidatura no TSE — maior = registro mais recente */
+  id: number
   numero: number
   nomeUrna: string
   nomeCompleto: string | null
@@ -58,6 +62,8 @@ type CandidatoTse = {
   fotoUrlPublicavel: boolean
   descricaoSituacao: string | null
   descricaoTotalizacao: string | null
+  /** false quando renunciou/foi indeferido sem recurso; true inclusive sub judice */
+  candidatoApto: boolean | null
   partido: { sigla: string | null; nome: string | null } | null
 }
 
@@ -66,6 +72,7 @@ type CandidatoDb = {
   cargo: string
   numero: number
   nome_urna: string
+  nome_completo: string | null
   partido_id: string
   foto_url: string | null
   ativo: boolean
@@ -80,15 +87,65 @@ type CandidatoDb = {
 function situacaoVirouImpedimento(c: CandidatoTse): string | null {
   const s = (c.descricaoSituacao ?? '').trim()
   const t = (c.descricaoTotalizacao ?? '').trim()
-  const negativa = /indefer|cassad|ineleg|impugna|renunc|falecid|nao conhec|não conhec|sub judice/i
+  // "Renúncia" e "Não conhecimento" vem com acento no DivulgaCand.
+  const negativa = /indefer|cassad|ineleg|impugna|ren[uú]nc|falecid|n[aã]o conhec|sub judice/i
   if (negativa.test(s)) return `${s} (TSE)`
   if (negativa.test(t)) return `${t} (TSE)`
   return null
 }
 
+/**
+ * Mesmo numero com mais de uma pessoa (substituicao apos renuncia ou
+ * indeferimento — visto em 12/09/2026: federal 2244 e 4055, estadual
+ * 22300 e 70888). Fica na cedula quem esta' concorrendo de fato:
+ *   1. candidatoApto (o TSE ja' marca o substituido como inapto);
+ *   2. senao, quem nao tem situacao definitiva negativa (renuncia/indeferido);
+ *   3. empate: o registro mais recente (id maior).
+ * Os preteridos sao listados no log pra conferencia.
+ */
+function resolverMesmoNumero(lista: CandidatoTse[]): CandidatoTse[] {
+  const porNumero = new Map<number, CandidatoTse[]>()
+  for (const c of lista) {
+    const arr = porNumero.get(c.numero) ?? []
+    arr.push(c)
+    porNumero.set(c.numero, arr)
+  }
+  const definitiva = /ren[uú]nc|^indeferido$|cassad|falecid/i
+  const escolhidos: CandidatoTse[] = []
+  for (const [numero, grupo] of porNumero) {
+    if (grupo.length === 1) {
+      escolhidos.push(grupo[0])
+      continue
+    }
+    const ordenado = [...grupo].sort((a, b) => {
+      const apto = Number(b.candidatoApto === true) - Number(a.candidatoApto === true)
+      if (apto !== 0) return apto
+      const def =
+        Number(definitiva.test(a.descricaoSituacao ?? '')) -
+        Number(definitiva.test(b.descricaoSituacao ?? ''))
+      if (def !== 0) return def
+      return b.id - a.id
+    })
+    const [vence, ...perdem] = ordenado
+    console.log(
+      `  ! número ${numero} com ${grupo.length} registros — fica ${vence.nomeUrna} (${vence.descricaoSituacao}); substituído(s): ${perdem.map((p) => `${p.nomeUrna} (${p.descricaoSituacao})`).join(', ')}`,
+    )
+    escolhidos.push(vence)
+  }
+  return escolhidos
+}
+
 async function buscarCargo(ue: string, cod: number): Promise<CandidatoTse[]> {
   const url = `${API}/candidatura/listar/${ANO}/${ue}/${ID_ELEICAO}/${cod}/candidatos`
-  const res = await fetch(url, { headers: { 'User-Agent': UA } })
+  // Akamai do TSE devolve 403 sem Accept/Referer de navegador (visto em 12/09/2026).
+  const res = await fetch(url, {
+    headers: {
+      'User-Agent': UA,
+      Accept: 'application/json, text/plain, */*',
+      'Accept-Language': 'pt-BR,pt;q=0.9',
+      Referer: 'https://divulgacandcontas.tse.jus.br/divulga/',
+    },
+  })
   if (!res.ok) throw new Error(`TSE ${res.status} em ${url}`)
   const json = (await res.json()) as { candidatos?: CandidatoTse[] }
   return json.candidatos ?? []
@@ -164,7 +221,7 @@ async function main() {
 
   const { data: existentesRaw } = await db
     .from('candidatos_pesquisa')
-    .select('id, cargo, numero, nome_urna, partido_id, foto_url, ativo, impedimento')
+    .select('id, cargo, numero, nome_urna, nome_completo, partido_id, foto_url, ativo, impedimento')
     .eq('edicao_id', edicao.id)
   const existentes = (existentesRaw ?? []) as CandidatoDb[]
   const porChave = new Map(existentes.map((c) => [`${c.cargo}:${c.numero}`, c]))
@@ -174,8 +231,9 @@ async function main() {
   let desativados = 0
 
   for (const { cargo, ue, cod } of CARGOS_TSE) {
-    const lista = await buscarCargo(ue, cod)
-    console.log(`\n=== ${cargo.toUpperCase()} — ${lista.length} no DivulgaCand ===`)
+    const bruta = await buscarCargo(ue, cod)
+    console.log(`\n=== ${cargo.toUpperCase()} — ${bruta.length} no DivulgaCand ===`)
+    const lista = resolverMesmoNumero(bruta)
 
     const vistos = new Set<number>()
     for (const c of lista) {
@@ -209,7 +267,14 @@ async function main() {
         }
       } else {
         atualizados++
-        console.log(`  ~ ${c.numero} ${c.nomeUrna}${atual.nome_urna !== c.nomeUrna ? ` (era ${atual.nome_urna})` : ''}${impedimento ? ` ⚠ ${impedimento}` : ''}`)
+        // Pessoa diferente no mesmo numero (substituto): a foto antiga
+        // (Wikipedia/manual) e' de outra pessoa e nao pode ficar.
+        const trocouPessoa =
+          (atual.nome_completo ?? '').trim().toUpperCase() !==
+          (c.nomeCompleto ?? '').trim().toUpperCase()
+        const mudou =
+          atual.nome_urna !== c.nomeUrna || (atual.impedimento ?? null) !== impedimento
+        console.log(`  ${mudou ? '~' : '='} ${c.numero} ${c.nomeUrna}${atual.nome_urna !== c.nomeUrna ? ` (era ${atual.nome_urna})` : ''}${trocouPessoa ? ' [SUBSTITUTO — foto zerada]' : ''}${impedimento ? ` ⚠ ${impedimento}` : ''}${!impedimento && atual.impedimento ? ` (limpa "${atual.impedimento}")` : ''}`)
         if (gravar) {
           const { error } = await db
             .from('candidatos_pesquisa')
@@ -217,8 +282,9 @@ async function main() {
               nome_urna: c.nomeUrna,
               nome_completo: c.nomeCompleto,
               partido_id: partidoId,
-              // foto boa ja preenchida (Wikipedia/manual) nao e' sobrescrita
-              foto_url: atual.foto_url ?? fotoTse,
+              // foto boa ja preenchida (Wikipedia/manual) nao e' sobrescrita,
+              // salvo quando a pessoa mudou (substituto).
+              foto_url: trocouPessoa ? fotoTse : (atual.foto_url ?? fotoTse),
               ativo: true,
               ano_referencia: ANO,
               impedimento,

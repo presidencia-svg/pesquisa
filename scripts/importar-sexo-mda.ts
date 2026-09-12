@@ -194,7 +194,9 @@ async function main() {
     type LinhaUpsert = {
       cpf_hash: string
       sexo?: 'M' | 'F'
+      sexo_fonte?: 'spc_mda'
       faixa_etaria?: string
+      faixa_etaria_fonte?: 'spc_mda'
     }
     const upserts: LinhaUpsert[] = []
 
@@ -235,9 +237,11 @@ async function main() {
       }
       if (sexoRaw === 'MASCULINO') {
         linha.sexo = 'M'
+        linha.sexo_fonte = 'spc_mda'
         stats.com_sexo++
       } else if (sexoRaw === 'FEMININO') {
         linha.sexo = 'F'
+        linha.sexo_fonte = 'spc_mda'
         stats.com_sexo++
       }
 
@@ -245,6 +249,7 @@ async function main() {
       const faixa = idade !== null ? idadeParaFaixa(idade) : null
       if (faixa) {
         linha.faixa_etaria = faixa
+        linha.faixa_etaria_fonte = 'spc_mda'
         stats.com_faixa++
       }
 

@@ -3,8 +3,15 @@ import Link from 'next/link'
 import { InstalarAppButton } from '@/components/instalar-app-button'
 import { MarcaCdl } from '@/components/marca-cdl'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
+import { divulgacaoPublicaLiberada } from '@/lib/divulgacao-publica'
 
-export default function Home() {
+// Sem cookies: a home é cacheada e revalidada a cada 5 min (mesma janela
+// das páginas de resultado). O botão "Ver resultados" só aparece quando há
+// resultado público liberado (edição divulgada e sem suspensão judicial).
+export const revalidate = 300
+
+export default async function Home() {
+  const temResultados = await divulgacaoPublicaLiberada()
   return (
     <>
       <main className="flex flex-col flex-1 items-center bg-background px-5 sm:px-6 py-10 sm:py-24">
@@ -166,12 +173,14 @@ export default function Home() {
             >
               Quero participar
             </Link>
-            <Link
-              href="/resultados"
-              className="flex-1 inline-flex justify-center items-center h-12 px-6 rounded-md border border-border text-foreground font-medium hover:bg-muted transition"
-            >
-              Ver resultados
-            </Link>
+            {temResultados && (
+              <Link
+                href="/resultados"
+                className="flex-1 inline-flex justify-center items-center h-12 px-6 rounded-md border border-border text-foreground font-medium hover:bg-muted transition"
+              >
+                Ver resultados
+              </Link>
+            )}
             <Link
               href="/transparencia"
               className="flex-1 inline-flex justify-center items-center h-12 px-6 rounded-md border border-border text-foreground font-medium hover:bg-muted transition"
@@ -182,9 +191,10 @@ export default function Home() {
 
           <p className="text-xs text-muted-foreground border-t border-border pt-6 leading-relaxed">
             Pesquisa de abrangência estadual (75 municípios de Sergipe), com
-            cota proporcional ao eleitorado oficial do TSE em cada município.
-            Resultados serão divulgados após registro no TRE/SE conforme
-            Lei 9.504/97 e Resolução TSE 23.747/2026.
+            ponderação pelo eleitorado oficial do TSE (município, sexo, faixa
+            etária e grau de instrução). Resultados serão divulgados após
+            registro no PesqEle (TSE e TRE-SE) conforme a Lei 9.504/97 e a
+            Res.-TSE 23.600/2019, com a redação da Res.-TSE 23.747/2026.
           </p>
         </div>
       </main>

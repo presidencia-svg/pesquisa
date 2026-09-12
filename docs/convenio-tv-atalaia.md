@@ -1,5 +1,7 @@
 # Convênio de Cooperação Jornalística
 
+> **Documento histórico da 1ª edição** (coleta e divulgação de setembro/2026, suspensa por tutela do TRE-SE em 07/09/2026). Não se aplica à 2ª edição (13–20/09/2026), cuja divulgação será em pesquisa.cdlaju.com.br/resultados e nos canais da CDL Aracaju. Mantido sem alteração de cláusulas.
+
 **Pesquisa Sergipe 2026 — Divulgação Conjunta**
 Versão 1.4 · Aracaju/SE, 1º de junho de 2026
 
@@ -8,10 +10,10 @@ Versão 1.4 · Aracaju/SE, 1º de junho de 2026
 ## Partes
 
 **CONVENENTE 1 — Câmara de Dirigentes Lojistas de Aracaju (CDL Aracaju)**
-Associação civil sem fins lucrativos, fundada em 21 de dezembro de 1961, entidade de utilidade pública pela Lei Municipal nº 63, de 6 de dezembro de 1967, inscrita no CNPJ sob o nº 13.045.935/0001-36, com sede na Rua Santa Luzia, 570, São José, Aracaju/SE — CEP 49015-190, neste ato representada por seu Presidente do triênio 2026–2028, **Sr. Elison Vieira Santos do Bomfim**, inscrito no CPF sob o nº 776.463.555-34, doravante denominada **CDL ARACAJU**.
+Associação civil sem fins lucrativos, fundada em 21 de dezembro de 1961, entidade de utilidade pública pela Lei Municipal nº 63, de 6 de dezembro de 1967, inscrita no CNPJ sob o nº 13.045.935/0001-36, com sede na Rua Santa Luzia, 570, São José, Aracaju/SE — CEP 49015-190, neste ato representada por seu Presidente do triênio 2026–2028, **Sr. Elison Vieira Santos do Bomfim**, inscrito no CPF sob o nº [CPF redigido], doravante denominada **CDL ARACAJU**.
 
 **CONVENENTE 2 — Televisão Atalaia Ltda**
-Sociedade empresária limitada, inscrita no CNPJ sob o nº 13.079.397/0001-09, com sede na Rua Cláudio Batista, 122, Santo Antônio, Aracaju/SE — CEP 49.060-100, dedicada à atividade de televisão aberta (CNAE 6021-7/00), afiliada à Record TV no Estado de Sergipe, neste ato representada por seu Diretor-Geral, **Sr. Walter do Prado Franco**, inscrito no CPF sob o nº **003.685.395-04**, doravante denominada **TV ATALAIA**.
+Sociedade empresária limitada, inscrita no CNPJ sob o nº 13.079.397/0001-09, com sede na Rua Cláudio Batista, 122, Santo Antônio, Aracaju/SE — CEP 49.060-100, dedicada à atividade de televisão aberta (CNAE 6021-7/00), afiliada à Record TV no Estado de Sergipe, neste ato representada por seu Diretor-Geral, **Sr. Walter do Prado Franco**, inscrito no CPF sob o nº **[CPF redigido]**, doravante denominada **TV ATALAIA**.
 
 ---
 
@@ -201,7 +203,7 @@ Aracaju, 1º de junho de 2026.
 **_________________________________________________________**
 **ELISON VIEIRA SANTOS DO BOMFIM**
 Presidente da CDL Aracaju (triênio 2026–2028)
-CPF 776.463.555-34
+CPF [CPF redigido]
 
 \
 
@@ -210,7 +212,7 @@ CPF 776.463.555-34
 **_________________________________________________________**
 **WALTER DO PRADO FRANCO**
 Diretor-Geral · Televisão Atalaia Ltda
-CPF 003.685.395-04
+CPF [CPF redigido]
 
 \
 

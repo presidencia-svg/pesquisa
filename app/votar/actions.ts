@@ -5,12 +5,14 @@ import { redirect } from 'next/navigation'
 
 import { cpfValido, mascararCpf, normalizarCpf } from '@/lib/cpf'
 import { hashCpf } from '@/lib/crypto'
+import { detalheDeEstrato, isEscolaridadeDetalhe, isNivelEconomico } from '@/lib/demograficos'
 import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
 import { DEV_MODE } from '@/lib/env'
 import { dentroDeSergipe, ipEmSergipe } from '@/lib/geo-sergipe'
 import { obterIpCliente } from '@/lib/ip'
+import { registrarTentativaIp } from '@/lib/rate-limit'
 import { consultarSpc, type SpcDadosEleitor } from '@/lib/spc'
-import { setPreVoto, type PreVotoDraft } from '@/lib/sessao'
+import { setPreVoto, type FonteDado, type PreVotoDraft } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { verifyTurnstile } from '@/lib/turnstile'
 
@@ -45,20 +47,13 @@ export type VotarFormState = {
   code?: VotarErroCode
 }
 
-// Limite POR IP. Casa com Wi-Fi compartilhado ou loja com 10-15
-// funcionários na mesma rede dividem um único IP — com 5 em 5 min, a 6ª
-// pessoa da mesma rede era barrada sem nunca ter tentado. 20 cobre o grupo
-// realista; robô enumerando CPF já esbarra no Turnstile antes daqui.
-const RATE_LIMIT_WINDOW_MIN = 5
-const RATE_LIMIT_MAX = 20
-
 /**
  * Server Action chamada pelo form de /votar.
  *
  * Fluxo:
  *  1. Valida formato + checksum do CPF.
  *  2. Busca edicao ativa.
- *  3. Aplica rate limit por IP.
+ *  3. Registra a tentativa por IP (sem bloqueio).
  *  4. Hasheia CPF, busca em `cdl_base`. Hit -> fonte='cdl_base', skip SPC,
  *     puxa pre-preenchimento do que estiver na cdl_base.
  *  5. Miss em cdl_base -> consulta SPC. Sucesso -> fonte='spc', spc_validado=true,
@@ -188,34 +183,16 @@ export async function entrarComCpf(
     return {
       ok: false,
       code: 'ainda_nao_abriu',
-      message: 'A votação ainda não começou. Ela abre em 01/09.',
+      message: `A votação ainda não começou. Ela abre em ${new Date(edicao.inicio).toLocaleDateString('pt-BR', { timeZone: 'America/Recife', day: '2-digit', month: '2-digit' })}.`,
     }
   }
 
-  // 2. Rate limit por IP
-  const headersList = await headers()
-  const ip = obterIpCliente(headersList)
-
-  if (ip) {
-    const desde = new Date(
-      Date.now() - RATE_LIMIT_WINDOW_MIN * 60_000,
-    ).toISOString()
-    const { count } = await db
-      .from('rate_limit_ip')
-      .select('id', { count: 'exact', head: true })
-      .eq('ip', ip)
-      .eq('acao', 'votar_cpf')
-      .gte('criado_em', desde)
-    if ((count ?? 0) >= RATE_LIMIT_MAX) {
-      return {
-        ok: false,
-        code: 'rate_limit',
-        message:
-          'Muitas tentativas vindas da sua rede (outras pessoas no mesmo Wi-Fi podem ter acabado de votar). Aguarde 5 minutos ou desligue o Wi-Fi e use os dados móveis (4G/5G) pra tentar agora.',
-      }
-    }
-    await db.from('rate_limit_ip').insert({ ip, acao: 'votar_cpf' })
-  }
+  // 2. IP: só registro pra auditoria. O bloqueio por IP foi retirado em
+  //    12/09/2026 — com CGNAT das operadoras móveis, milhares de eleitores
+  //    saem pelo mesmo IP e o teto derrubava gente legítima. Robô enumerando
+  //    CPF esbarra no Turnstile (passo 0); o custo do SPC é contido pela
+  //    própria verificação anti-bot e pelo cache em cdl_base.
+  await registrarTentativaIp('votar_cpf')
 
   // 3. Hash + lookup cdl_base
   const cpfHash = hashCpf(cpf)
@@ -223,7 +200,7 @@ export async function entrarComCpf(
   const { data: cdl } = await db
     .from('cdl_base')
     .select(
-      'municipio_ibge, whatsapp_e164, nome_mascarado, sexo, faixa_etaria, escolaridade',
+      'municipio_ibge, whatsapp_e164, nome_mascarado, sexo, sexo_fonte, faixa_etaria, escolaridade, escolaridade_detalhe, nivel_economico',
     )
     .eq('cpf_hash', cpfHash)
     .maybeSingle()
@@ -241,9 +218,12 @@ export async function entrarComCpf(
   let spcValidado: boolean
   let prefillSpc: SpcDadosEleitor = {}
   // Sexo na regra: a partir da Pesquisa Eleitoral Sergipe 2026, tiramos a pergunta
-  // de gênero do formulário e passamos a confiar na Receita Federal (via
-  // SPC). Pra eleitores cujo cdl_base já tem faixa mas não tem sexo
-  // (legado importado do Melhores do Ano), consultamos SPC pra preencher.
+  // de gênero do formulário e passamos a confiar na consulta cadastral por
+  // CPF (SPC, produto "Confirme PF"). Pra eleitores cujo cdl_base já tem
+  // faixa mas não tem sexo (legado importado do Melhores do Ano), consultamos
+  // SPC pra preencher. Quando nem o SPC devolve o sexo (na 1ª edição, 22%
+  // dos respondentes, sobretudo jovens), /votar/confirma pergunta ao eleitor
+  // e grava o valor autodeclarado no cache — ver confirma/actions.ts.
   const precisaSpc = !cdl || !cdl.faixa_etaria || !cdl.sexo
 
   if (!precisaSpc) {
@@ -268,21 +248,21 @@ export async function entrarComCpf(
             ok: false,
             code: 'cpf_irregular',
             message:
-              'Seu CPF está com pendência de regularização na Receita Federal. Acesse gov.br/receitafederal para regularizar e tente novamente.',
+              'A situação cadastral do seu CPF consta como pendente de regularização (fonte: SPC Brasil). Acesse gov.br/receitafederal para regularizar e tente novamente.',
           }
         case 'cpf_inativo':
           return {
             ok: false,
             code: 'cpf_inativo',
             message:
-              'Seu CPF não está ativo na Receita Federal (suspenso, cancelado ou nulo). Apenas eleitores com CPF regular podem participar desta pesquisa.',
+              'A situação cadastral do seu CPF não consta como regular (suspenso, cancelado ou nulo — fonte: SPC Brasil). Apenas eleitores com CPF regular podem participar desta pesquisa. Para regularizar, acesse gov.br/receitafederal.',
           }
         case 'cpf_falecido':
           return {
             ok: false,
             code: 'cpf_falecido',
             message:
-              'A Receita Federal indica óbito vinculado a este CPF. Em respeito ao titular, não é possível prosseguir.',
+              'A situação cadastral deste CPF indica óbito do titular (fonte: SPC Brasil). Em respeito ao titular, não é possível prosseguir.',
           }
         case 'idade_minima':
           return {
@@ -296,7 +276,7 @@ export async function entrarComCpf(
             ok: false,
             code: 'servico_indisponivel',
             message:
-              'Não foi possível confirmar sua data de nascimento na Receita Federal. Tente novamente em alguns minutos — se persistir, contate dpo@cdlaju.com.br.',
+              'A consulta cadastral ao SPC Brasil não devolveu sua data de nascimento. Tente novamente em alguns minutos — se persistir, contate dpo@cdlaju.com.br.',
           }
         case 'nao_integrado':
           return {
@@ -337,23 +317,67 @@ export async function entrarComCpf(
       }
     }
 
-    // Cache em cdl_base: UPDATE se hit incompleto, INSERT se miss.
-    // origem='spc_lookup' distingue do importado de Melhores do Ano.
+    // Cadastro unificado em cdl_base (migration 051): UPDATE se hit
+    // incompleto, INSERT se miss. origem='spc_lookup' distingue do importado
+    // de Melhores do Ano; cada campo leva a própria proveniência (*_fonte).
     // PK do cdl_base é cpf_hash, então .upsert() funciona limpo.
     const cacheRow: Record<string, unknown> = {
       cpf_hash: cpfHash,
       faixa_etaria: prefillSpc.faixaEtaria,
+      faixa_etaria_fonte: 'spc',
+      atualizado_em: new Date().toISOString(),
+    }
+    // Bloco integral do SPC: tudo que a consulta devolveu, inclusive o JSON
+    // bruto (decisão do contratante em 12/09/2026). Substitui o que houver
+    // (inclusive cópia do cache do Melhores do Ano — a consulta nova é mais
+    // recente).
+    if (prefillSpc.cadastro) {
+      const cad = prefillSpc.cadastro
+      Object.assign(cacheRow, {
+        nome_completo: cad.nomeCompleto,
+        nome_mae: cad.nomeMae,
+        data_nascimento: cad.dataNascimento,
+        idade_consulta: cad.idade,
+        estado_civil: cad.estadoCivil,
+        cpf_situacao: cad.cpfSituacao,
+        cpf_situacao_data: cad.cpfSituacaoData,
+        spc_produto: cad.produto,
+        spc_payload: cad.payload,
+        spc_consultado_em: new Date().toISOString(),
+        cadastro_spc_fonte: 'spc',
+      })
     }
     // Sexo: SEMPRE atualiza quando SPC retorna (mesmo se cdl row já
     // existe), pra completar registros legados do Melhores do Ano que
-    // entraram sem sexo. Conflito é impossível: SPC é fonte oficial.
-    if (prefillSpc.sexo) cacheRow.sexo = prefillSpc.sexo
+    // entraram sem sexo e pra substituir um valor autodeclarado por um
+    // cadastral (fonte oficial prevalece). Marca a proveniência.
+    // Atenção: o SPC só é consultado enquanto o cache está incompleto
+    // (precisaSpc acima). Um sexo autodeclarado gravado em cdl_base após
+    // o OTP (otp/actions.ts) NÃO dispara nova consulta ao SPC — a
+    // limitação é da fonte, e reconsultar custaria por CPF sem ganho
+    // esperado. A proveniência fica em sexo_fonte (migrations 047/051).
+    if (prefillSpc.sexo) {
+      cacheRow.sexo = prefillSpc.sexo
+      cacheRow.sexo_fonte = 'spc'
+    }
     if (!cdl) {
       cacheRow.origem = 'spc_lookup'
-      if (prefillSpc.nomeMascarado) cacheRow.nome_mascarado = prefillSpc.nomeMascarado
-      if (prefillSpc.escolaridade) cacheRow.escolaridade = prefillSpc.escolaridade
-      if (prefillSpc.municipioIbge) cacheRow.municipio_ibge = prefillSpc.municipioIbge
-      if (prefillSpc.whatsappE164) cacheRow.whatsapp_e164 = prefillSpc.whatsappE164
+      if (prefillSpc.nomeMascarado) {
+        cacheRow.nome_mascarado = prefillSpc.nomeMascarado
+        cacheRow.nome_fonte = 'spc'
+      }
+      if (prefillSpc.escolaridade) {
+        cacheRow.escolaridade = prefillSpc.escolaridade
+        cacheRow.escolaridade_fonte = 'spc'
+      }
+      if (prefillSpc.municipioIbge) {
+        cacheRow.municipio_ibge = prefillSpc.municipioIbge
+        cacheRow.municipio_fonte = 'spc'
+      }
+      if (prefillSpc.whatsappE164) {
+        cacheRow.whatsapp_e164 = prefillSpc.whatsappE164
+        cacheRow.whatsapp_fonte = 'spc'
+      }
     }
     const { error: errCache } = await db
       .from('cdl_base')
@@ -384,11 +408,27 @@ export async function entrarComCpf(
   const nome = cdl?.nome_mascarado ?? prefillSpc.nomeMascarado
   if (nome) draft.nomeMascarado = nome
 
-  const sexoPrefill = (cdl?.sexo ?? prefillSpc.sexo) as
-    | 'M'
-    | 'F'
-    | undefined
-  if (sexoPrefill) draft.sexo = sexoPrefill
+  // Sexo — prioridade: cadastral (cdl_base com fonte mda/spc_mda/spc, ou SPC
+  // agora) > informado pelo eleitor em edição anterior (cdl_base.sexo_fonte =
+  // 'eleitor'), que volta pré-preenchido e editável em /votar/confirma. Só o
+  // cadastral é imutável no formulário. A proveniência segue no rascunho.
+  const cdlSexo = (cdl?.sexo ?? undefined) as 'M' | 'F' | undefined
+  const cdlSexoFonte = (cdl?.sexo_fonte ?? null) as FonteDado | null
+  const cdlSexoAutodeclarado = Boolean(cdlSexo) && cdlSexoFonte === 'eleitor'
+  const spcSexo = prefillSpc.sexo as 'M' | 'F' | undefined
+  const sexoPrefill = cdlSexoAutodeclarado
+    ? (spcSexo ?? cdlSexo)
+    : (cdlSexo ?? spcSexo)
+  if (sexoPrefill) {
+    draft.sexo = sexoPrefill
+    draft.sexoOrigem = cdlSexoAutodeclarado
+      ? spcSexo
+        ? 'spc'
+        : 'eleitor'
+      : cdlSexo
+        ? (cdlSexoFonte ?? 'spc_mda') // linha anterior à 051 sem marca = cadastral
+        : 'spc'
+  }
 
   // Faixa etária: sempre presente neste ponto (cdl_base hit com faixa
   // OU SPC retornou faixaEtaria — caso contrário já teríamos abortado).
@@ -412,6 +452,20 @@ export async function entrarComCpf(
     | PreVotoDraft['escolaridade']
     | undefined
   if (escolPrefill) draft.escolaridade = escolPrefill
+  // Opção marcada no formulário (2ª edição em diante). Quem só tem o estrato
+  // da 1ª edição recebe o detalhe derivado quando não há ambiguidade
+  // (medio/superior); 'fundamental' volta sem seleção.
+  const detalheCdl: unknown = cdl?.escolaridade_detalhe
+  const detalhePrefill = isEscolaridadeDetalhe(detalheCdl)
+    ? detalheCdl
+    : detalheDeEstrato(escolPrefill)
+  if (detalhePrefill) draft.escolaridadeDetalhe = detalhePrefill
+
+  // Renda: quem ja' respondeu numa edicao anterior ve o valor pre-preenchido
+  // (editavel — pode ter mudado). Vem so do cache, o SPC nao devolve isso.
+  // Valores da 1ª edição (A/B/C/D_E) não são oferecidos mais — sem prefill.
+  const rendaCdl: unknown = cdl?.nivel_economico
+  if (isNivelEconomico(rendaCdl)) draft.nivelEconomico = rendaCdl
 
   await setPreVoto(draft)
 

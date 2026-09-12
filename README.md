@@ -22,7 +22,7 @@ Pesquisas de intenção de voto online costumam ter dois problemas:
 
 Aqui resolvemos os dois:
 
-- **Identidade verificada (1 voto/eleitor):** allowlist da `cdl_base` (votantes do Melhores do Ano da CDL Aracaju, ~50k CPFs) + SPC Brasil pra novos cadastros + OTP via WhatsApp + cota por município contra eleitorado oficial do TSE + ponderação por sexo, faixa etária e escolaridade conforme Resolução TSE 23.747/2026.
+- **Identidade verificada (1 voto/eleitor):** allowlist da `cdl_base` (votantes do Melhores do Ano da CDL Aracaju, ~50k CPFs) + SPC Brasil pra novos cadastros + OTP via WhatsApp + ponderação pós-coleta por raking em município × sexo × faixa etária × instrução contra o perfil do eleitorado do TSE (executada no banco, aprovada pelo estatístico CONRE antes da divulgação), conforme Resolução TSE 23.747/2026 e o plano amostral registrado.
 - **Voto realmente desvinculado:** após validação, eleitor entra em "sessão anônima" (cápsula). O servidor não armazena nenhuma ligação entre o CPF e o voto. Auditor que abrir o banco vê duas tabelas que não se conectam.
 
 ---
@@ -59,7 +59,7 @@ A única ponte entre as duas salas é um **cookie httpOnly + secure** no navegad
 ### Fluxo do eleitor
 
 1. **`/votar`** — digita CPF. Hash → busca em `cdl_base` (hit pula SPC). Miss chama SPC Brasil.
-2. **`/votar/confirma`** — confirma ou preenche município, WhatsApp, sexo, faixa etária, escolaridade. Cota do município é checada aqui.
+2. **`/votar/confirma`** — confirma ou preenche município, WhatsApp, sexo, faixa etária, escolaridade. Sem cota bloqueante por município (só se `municipios_se.cota_pesquisa` for preenchida).
 3. **`/votar/otp`** — digita o código de 6 dígitos enviado no WhatsApp.
 4. **`/votar/anonimo`** — *transição forte:* fundo muda, ícone de cadeado:
    > *"A partir daqui você está numa sessão anônima. Validamos seu CPF e ele foi descartado pra esta etapa. Nem o sistema nem a CDL conseguem ligar seus votos a você."*
@@ -103,10 +103,11 @@ A única ponte entre as duas salas é um **cookie httpOnly + secure** no navegad
 | CPF inválido (formato/checksum) | Sala 1, antes de hash | ✅ rejeita |
 | CPF não está em `cdl_base` nem passa SPC | Sala 1 | ✅ rejeita |
 | CPF já cadastrado nesta edição | Sala 1, lookup `eleitores_pesquisa` | ✅ rejeita |
-| Cota do município atingida | Sala 1, comparação com `municipios_se.cota_pesquisa` | ✅ rejeita |
+| Cota do município (`municipios_se.cota_pesquisa`) | Sala 1 | ⚠️ só se preenchida; sem cota por padrão |
+| Fora da janela de coleta | OTP e voto, no servidor | ✅ rejeita |
 | Cadastro sem OTP confirmado | `wa_validado = false` | ✅ não emite token |
-| Mais de 2 CPFs por dispositivo | `device_fingerprint` na Sala 1 | ✅ rejeita |
-| Rajada de cadastros do mesmo IP | rate limit (5/5min) na `rate_limit_ip` | ✅ throttle |
+| `device_fingerprint` | Sala 1 | ❌ só armazenado, não bloqueia |
+| Rajada de cadastros do mesmo IP | `rate_limit_ip` | ⚠️ só registra (CGNAT); teto é por CPF (3 códigos/15 min) |
 | Bot/scraping | Cloudflare Turnstile no `/votar` | ✅ bloqueia |
 | Análise pós-coleta (cluster suspeito) | view de risco | ⚠️ flag manual |
 

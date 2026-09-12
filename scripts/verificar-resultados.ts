@@ -35,18 +35,35 @@ async function main() {
   if (r.status !== 'ok') throw new Error(`carregarResultados: ${r.status}`)
   const P = r.pesquisa
 
-  const { data: ed } = await db.from('edicao').select('id').eq('ativa', true).single()
+  const { data: ed } = await db
+    .from('edicao')
+    .select('id, ponderacao_metodo, ponderacao_execucao_id')
+    .eq('ativa', true)
+    .single()
   const edicaoId = ed!.id as string
+  // Mesma regra de lib/resultados-data: o método da edição escolhe as views.
+  const metodo = ed!.ponderacao_metodo === 'estratos_raking' ? 'estratos_raking' : 'municipio'
+  const sufixo = metodo === 'estratos_raking' ? '_pond_estratos' : '_pond'
+  if (P.meta.ponderacao_metodo !== metodo) {
+    throw new Error(`método: app=${P.meta.ponderacao_metodo} banco=${metodo}`)
+  }
+  if (metodo === 'estratos_raking' && !ed!.ponderacao_execucao_id) {
+    throw new Error('edição em estratos_raking sem ponderacao_execucao_id')
+  }
 
-  const [{ data: brutoRef }, { data: pondRef }, { data: bnsRef }, { count: nRef }] = await Promise.all([
+  const [{ data: brutoRef }, { data: pondRef }, { data: bnsRef }, { count: nRef }, { data: execRef }] = await Promise.all([
     db.from('v_resultados_candidato').select('candidato_id, cargo, votos').eq('edicao_id', edicaoId),
-    db.from('v_resultados_candidato_pond').select('candidato_id, cargo, votos, votos_pond').eq('edicao_id', edicaoId),
-    db.from('v_votos_branco_nao_sabe_pond').select('cargo, metodo, votos, votos_pond').eq('edicao_id', edicaoId),
+    db.from(`v_resultados_candidato${sufixo}`).select('candidato_id, cargo, votos, votos_pond').eq('edicao_id', edicaoId),
+    db.from(`v_votos_branco_nao_sabe${sufixo}`).select('cargo, metodo, votos, votos_pond').eq('edicao_id', edicaoId),
     db.from('eleitores_pesquisa').select('id', { count: 'exact', head: true }).eq('edicao_id', edicaoId).eq('wa_validado', true),
+    ed!.ponderacao_execucao_id
+      ? db.from('ponderacao_execucao').select('id, convergiu, n_eff, deff, margem_efetiva').eq('id', ed!.ponderacao_execucao_id).maybeSingle()
+      : Promise.resolve({ data: null }),
   ])
-  for (const [nome, d] of [['v_resultados_candidato', brutoRef], ['v_resultados_candidato_pond', pondRef]] as const) {
+  for (const [nome, d] of [['v_resultados_candidato', brutoRef], [`v_resultados_candidato${sufixo}`, pondRef]] as const) {
     if ((d ?? []).length >= 1000) throw new Error(`${nome}: 1.000+ linhas — referência truncada, verificação inválida`)
   }
+  console.log(`Método de ponderação: ${metodo} (views *${sufixo})`)
 
   const bruto = new Map((brutoRef ?? []).map((x) => [x.candidato_id as string, Number(x.votos)]))
   const pond = new Map((pondRef ?? []).map((x) => [x.candidato_id as string, Number(x.votos_pond)]))
@@ -87,6 +104,20 @@ async function main() {
   }
   if (P.meta.n !== (nRef ?? -1)) erros.push(`amostra: app=${P.meta.n} ref=${nRef}`)
   conferidos++
+
+  // Margem efetiva (Kish) publicada tem que ser a da execução vigente e a
+  // soma dos pesos das views tem que fechar com o n com peso (raking
+  // preserva Σw = n de respondentes ponderáveis).
+  if (execRef) {
+    if (execRef.convergiu === false) erros.push('execução vigente NÃO convergiu')
+    const esperada = `±${(Number(execRef.margem_efetiva) * 100).toFixed(1)}pp`
+    if (P.meta.margem_efetiva !== esperada) erros.push(`margem efetiva: app=${P.meta.margem_efetiva} ref=${esperada}`)
+    const nEffEsperado = Math.round(Number(execRef.n_eff))
+    if (Math.round(Number(P.meta.n_eff ?? -1)) !== nEffEsperado) erros.push(`n_eff: app=${P.meta.n_eff} ref=${execRef.n_eff}`)
+    conferidos += 2
+  } else if (metodo === 'estratos_raking') {
+    erros.push('estratos_raking sem execução legível')
+  }
 
   console.log(`Resultados conferidos: ${conferidos} números · edição ${edicaoId}`)
   if (erros.length) {

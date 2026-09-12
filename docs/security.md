@@ -1,6 +1,6 @@
 # Modelo de ameaças · Pesquisa Sergipe 2026
 
-Documento técnico — anexo do registro PesqEle / auditoria.
+Documento técnico — anexo do registro PesqEle / auditoria. **Atualizado em 13/09/2026** (2ª edição, coleta 13–20/09/2026). Descreve só os controles que existem no código.
 
 ## Resumo
 
@@ -23,22 +23,23 @@ Brasil + Meta WhatsApp Business + Cloudflare Turnstile.
 
 ### Identidade verificada (1 voto/eleitor)
 
-- **CPF + dígito verificador validados** localmente (algoritmo da Receita).
+- **CPF + dígito verificador validados** localmente (checksum).
 - **CPF hash** com HMAC-SHA256 (`CPF_HASH_SECRET` no env, nunca em código).
-- **Allowlist `cdl_base`** ou validação via SPC Brasil (CPF não pode estar irregular).
+- **Cadastro `cdl_base`** ou **consulta cadastral ao SPC Brasil** (`lib/spc.ts`): devolve nome, situação cadastral do CPF, data de nascimento, nome da mãe, estado civil e endereço; o retorno fica em `cdl_base` (migrations 050/051). A consulta é feita ao SPC Brasil, não a órgão público.
 - **OTP de 6 dígitos via WhatsApp** (Meta Business Cloud API) — garante posse do número.
 - **TENTATIVAS_MAX = 3** por código emitido; expira em 10min.
-- **Rate limit por IP**:
-  - `votar_cpf`: 5 tentativas / 5min
-  - `otp_enviar`: 5 envios / 15min
-  - `otp_validar`: 15 validações / 15min
-- **`unique (edicao_id, cpf_hash)`** em `eleitores_pesquisa` — Postgres bloqueia duplicado.
+- **Teto por CPF:** 3 códigos OTP a cada 15 min.
+- **IP no fluxo do eleitor: só registro** (`registrarTentativaIp` em `lib/rate-limit.ts`) — **não há bloqueio por IP** (CGNAT reúne milhares de eleitores num IP; decisão de 12/09/2026). O rate limit bloqueante permanece apenas no login admin (`admin_login`) e na exclusão LGPD (`lgpd_excluir`).
+- **`unique (edicao_id, cpf_hash)`** em `eleitores_pesquisa` — **CPF único por edição**; Postgres bloqueia duplicado.
+- **Janela de coleta travada no servidor** (`lib/edicao-janela.ts`): OTP e voto recusados fora de `inicio`/`fim`.
+- **Localização por IP/GPS** (`lib/geo-sergipe.ts`) só quando `edicao.exigirLocalizacao` — **desligada na 2ª edição**.
 
 ### Anti-bot
 
 - **Cloudflare Turnstile** no `/votar` (substituto privacy-preserving do reCAPTCHA).
-- **Device fingerprint** colhido client-side (não bloqueia, mas marca pra análise pós-coleta).
-- **User-agent + IP** registrados em `eleitores_pesquisa` (auditoria).
+- **Bloqueio de navegação anônima/privativa** no cadastro (`app/votar/actions.ts`, código `navegador_anonimo`).
+- **Device fingerprint** colhido client-side — **só armazenado**; não há limite de CPFs por dispositivo.
+- **User-agent + IP** registrados em `eleitores_pesquisa` (auditoria; retenção de 6 meses após o fim da edição).
 
 ### Duas salas (anonimato arquitetural)
 
@@ -71,6 +72,13 @@ Brasil + Meta WhatsApp Business + Cloudflare Turnstile.
 - Toda mutação passa por **Server Action** (não tem REST API exposta).
 - TOTP usa janela ±1 step (30s) pra absorver clock skew — `timingSafeEqual` na comparação.
 
+### Retenção (`app/api/cron/retencao/route.ts`, diário)
+
+- Códigos OTP (`whatsapp_codigos`): 30 dias.
+- `rate_limit_ip`: 24 horas.
+- Sala 1 (`eleitores_pesquisa`, inclusive IP, user-agent e fingerprint): 6 meses após `edicao.fim`.
+- `cron_log` e `admin_audit_log`: 1 ano.
+
 ### Logs e dados sensíveis
 
 - **Nenhum log de CPF cru** (sempre hash).
@@ -84,7 +92,7 @@ Brasil + Meta WhatsApp Business + Cloudflare Turnstile.
 
 A `cdl_base` foi importada de `votantes` do Melhores do Ano (~44k CPFs validados). Se um atacante conseguir essa planilha e os respectivos WhatsApps, pode em tese tentar votar por essas pessoas.
 
-**Mitigações:** validação SPC (CPF tem que estar regular), OTP via WhatsApp do dono real (não do atacante), TENTATIVAS_MAX no OTP, rate limit por IP, device fingerprint.
+**Mitigações:** consulta cadastral ao SPC (CPF tem que estar regular), OTP via WhatsApp do dono real (não do atacante), TENTATIVAS_MAX no OTP, teto de 3 códigos por CPF a cada 15 min, bloqueio de navegação anônima, IP e device fingerprint apenas armazenados pra auditoria (não bloqueiam — CGNAT reúne milhares de eleitores num IP; decisão de 12/09/2026).
 
 **Aceito** — risco residual baixo dado custo de obter CPF+WhatsApp pareados em escala.
 
@@ -113,13 +121,13 @@ Mesmo com `criado_hora` truncado em `votos_pesquisa`, um atacante que tenha aces
 
 **Aceito** — atacante precisa ter SERVICE_ROLE_KEY + Vercel logs simultaneamente.
 
-### 5. Race condition em cota de município
+### 5. Ausência de bloqueio por IP e por dispositivo
 
-Hoje a checagem `if (count < cota_pesquisa)` seguida do `insert` não é transacional. Em altíssimo throughput podia teoricamente inserir 1 acima da cota.
+Um atacante com muitos pares CPF+WhatsApp válidos não é freado por IP nem por fingerprint — só pelo OTP no telefone do dono e pelo CPF único por edição.
 
-**Mitigações:** atualmente a cota está NULL (post-stratification pós-coleta, sem bloqueio).
+**Mitigações:** IP, user-agent e fingerprint ficam registrados e alimentam a análise pós-coleta (`/admin/amostra`, views de risco); clusters suspeitos vão a revisão manual antes da ponderação.
 
-**Aceito** — irrelevante enquanto não houver cota dura.
+**Aceito** — bloqueio por IP puniria eleitores legítimos atrás de CGNAT; não há cota.
 
 ## Pendências
 
@@ -143,4 +151,4 @@ Em caso de descoberta de vulnerabilidade, contatar **CDL Aracaju** via:
 - Email: presidencia@cdlaju.com.br
 - Telefone institucional: (79) 3212-7700
 
-Disclosure responsável: 90 dias entre report e divulgação pública. CDL compromete-se a corrigir vulnerabilidades críticas em até 48h.
+Disclosure responsável: três meses entre report e divulgação pública. CDL compromete-se a corrigir vulnerabilidades críticas em até 48h.

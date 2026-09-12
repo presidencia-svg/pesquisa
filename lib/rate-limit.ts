@@ -68,3 +68,23 @@ export async function checarRateLimit(
   await db.from('rate_limit_ip').insert({ ip, acao: opts.acao })
   return { ok: true, ip }
 }
+
+/**
+ * Registra a tentativa do IP nesta ação SEM bloquear. Usado no fluxo do
+ * eleitor (envio/validação/reenvio de OTP) desde 12/09/2026: no Brasil o
+ * celular sai pra internet por CGNAT, e um IP público reúne milhares de
+ * pessoas — um teto por IP barra eleitor legítimo em coleta de grande
+ * volume. A defesa fica nos tetos por CPF, no TENTATIVAS_MAX por código
+ * e no Turnstile; o rastro por IP continua gravado pra auditoria e pro
+ * painel de anomalias.
+ */
+export async function registrarTentativaIp(
+  acao: string,
+): Promise<{ ip: string | null }> {
+  const h = await headers()
+  const ip = obterIpCliente(h)
+  if (!ip) return { ip: null }
+  const db = supabaseAdmin()
+  await db.from('rate_limit_ip').insert({ ip, acao })
+  return { ip }
+}

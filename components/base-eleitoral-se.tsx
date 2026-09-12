@@ -1,5 +1,5 @@
 /**
- * Bloco "Base eleitoral SE 2024" — total + top 5 + bottom 5 municipios
+ * Bloco "Base eleitoral SE (TSE 2026)" — total + top 5 + bottom 5 municipios
  * por eleitorado. Le da tabela municipios_se.eleitorado (TSE/TRE-SE).
  *
  * Usado em /admin e /transparencia.
@@ -44,7 +44,7 @@ export async function BaseEleitoralSe({
               : 'text-xl font-semibold text-foreground'
           }
         >
-          Base eleitoral · Sergipe 2024
+          Base eleitoral · Sergipe (TSE 2026)
         </h2>
         <p className="text-xs text-muted-foreground">
           Fonte: TSE/TRE-SE · {lista.length} municípios
@@ -114,8 +114,9 @@ export async function BaseEleitoralSe({
 
       {!compacto && (
         <p className="text-xs text-muted-foreground leading-relaxed">
-          A pesquisa é proporcionalmente ponderada pelo eleitorado de cada
-          município. Uma resposta vinda de Aracaju (
+          O município é uma das quatro marginais do raking (município × sexo
+          × faixa etária × grau de instrução) que pondera a amostra pelo
+          eleitorado oficial do TSE 2026. Uma resposta vinda de Aracaju (
           {((top5[0]?.eleitorado ?? 0) / total * 100).toFixed(1)}% do
           eleitorado) tem peso diferente de uma vinda de{' '}
           {bottom5[0]?.nome ?? 'um município pequeno'} (

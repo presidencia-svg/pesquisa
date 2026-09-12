@@ -79,11 +79,15 @@ export type ApresData = {
   margem: string
   /** Descrição da ponderação aplicada aos percentuais (ficha técnica). */
   ponderacao?: string
+  /** Rótulo curto do método ("Por município" / "Município × sexo × idade × instrução"). */
+  ponderacaoCurta?: string
   oferecimento: ApresSponsor[]
   patrocinio: ApresSponsor[]
   apoio: ApresSponsor[]
   /** Quem contratou (Lei 9.504/97 art. 33 — obrigatório na divulgação) */
   contratante: string
+  /** Registros PesqEle da edição (lidos de edicao.registro_tre). */
+  registros: Array<{ orgao: string; numero: string }>
   mapas?: {
     presidente: ApresMapa | null
     governador: ApresMapa | null
@@ -547,7 +551,7 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
               {data.ponderacao && (
                 <div className="apres-ficha-row" title={data.ponderacao}>
                   <span>Ponderação</span>
-                  <b>Por município · bruto ao lado</b>
+                  <b>{data.ponderacaoCurta ?? 'Por município'} · bruto ao lado</b>
                 </div>
               )}
               <div className="apres-ficha-row">
@@ -578,7 +582,7 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
             <div className="apres-verif">
               <div className="apres-verif-item">
                 <i>1</i>
-                <p><b>CPF na Receita Federal</b><br />Cada eleitor é uma pessoa real</p>
+                <p><b>CPF validado no SPC Brasil</b><br />Cada eleitor é uma pessoa real</p>
               </div>
               <div className="apres-verif-item">
                 <i>2</i>
@@ -597,12 +601,11 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
             <div className="apres-spacer" />
 
             <div className="apres-registros">
-              <div className="apres-reg-linha">
-                <span>TRE-SE</span><b>SE-09441/2026</b>
-              </div>
-              <div className="apres-reg-linha">
-                <span>TSE</span><b>BR-04041/2026</b>
-              </div>
+              {data.registros.map((r) => (
+                <div key={r.numero} className="apres-reg-linha">
+                  <span>{r.orgao}</span><b>{r.numero}</b>
+                </div>
+              ))}
             </div>
             <div className="apres-pesqele">
               Contratante: <b>{data.contratante}</b> · Registrada no{' '}

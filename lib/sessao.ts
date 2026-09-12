@@ -26,6 +26,13 @@ import 'server-only'
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import { cookies } from 'next/headers'
 
+import {
+  isEscolaridade,
+  isNivelEconomico,
+  type Escolaridade,
+  type EscolaridadeDetalhe,
+  type NivelEconomico,
+} from './demograficos'
 import { SERVER_ENV } from './env'
 
 const COOKIE_PRE = 'pre_voto'
@@ -85,6 +92,16 @@ const fromBase64Url = (s: string): string => {
  * Rascunho do cadastro do eleitor antes da linha em `eleitores_pesquisa`
  * existir de fato. So vira linha real depois que OTP for confirmado.
  */
+/**
+ * Proveniência de um dado cadastral (migration 051 — vocabulário único em
+ * cdl_base.*_fonte e eleitores_pesquisa.sexo_fonte):
+ *   'mda'     — importado do Melhores do Ano (informado pelo eleitor lá);
+ *   'spc_mda' — consulta SPC feita pelo Melhores do Ano (cache copiado);
+ *   'spc'     — consulta SPC feita por esta pesquisa;
+ *   'eleitor' — informado/confirmado pelo eleitor no formulário desta pesquisa.
+ */
+export type FonteDado = 'mda' | 'spc_mda' | 'spc' | 'eleitor'
+
 export type PreVotoDraft = {
   cpfHash: string
   cpfMascarado: string
@@ -96,9 +113,19 @@ export type PreVotoDraft = {
   whatsappE164?: string
   nomeMascarado?: string
   sexo?: 'M' | 'F'
+  /**
+   * De onde veio `sexo` (ver FonteDado). Ausente quando `sexo` está
+   * ausente. Só 'eleitor' (informado em /votar/confirma porque a consulta
+   * cadastral não trouxe) é editável no fluxo; os demais são cadastrais e
+   * imutáveis no formulário.
+   */
+  sexoOrigem?: FonteDado
   faixaEtaria?: '16-17' | '18-24' | '25-34' | '35-44' | '45-59' | '60+'
-  escolaridade?: 'fundamental' | 'medio' | 'superior'
-  nivelEconomico?: 'A' | 'B' | 'C' | 'D_E' | 'nao_informado'
+  /** Estrato de ponderação (3 níveis) — o que vai pro cookie da cápsula. */
+  escolaridade?: Escolaridade
+  /** Opção marcada no formulário (4 opções) — só pra pré-preencher. */
+  escolaridadeDetalhe?: EscolaridadeDetalhe
+  nivelEconomico?: NivelEconomico
 }
 
 export const setPreVoto = async (draft: PreVotoDraft): Promise<void> => {
@@ -163,8 +190,8 @@ export type VotoCookieData = {
   municipioIbge?: number
   sexo?: 'M' | 'F'
   faixaEtaria?: '16-17' | '18-24' | '25-34' | '35-44' | '45-59' | '60+'
-  escolaridade?: 'fundamental' | 'medio' | 'superior'
-  nivelEconomico?: 'A' | 'B' | 'C' | 'D_E' | 'nao_informado'
+  escolaridade?: Escolaridade
+  nivelEconomico?: NivelEconomico
 }
 
 /**
@@ -221,19 +248,11 @@ export const getVotoData = async (): Promise<VotoCookieData | null> => {
       )
         ? { faixaEtaria: parsed.faixaEtaria as VotoCookieData['faixaEtaria'] }
         : {}),
-      ...(typeof parsed.escolaridade === 'string' &&
-      ['fundamental', 'medio', 'superior'].includes(parsed.escolaridade)
-        ? {
-            escolaridade:
-              parsed.escolaridade as VotoCookieData['escolaridade'],
-          }
+      ...(isEscolaridade(parsed.escolaridade)
+        ? { escolaridade: parsed.escolaridade }
         : {}),
-      ...(typeof parsed.nivelEconomico === 'string' &&
-      ['A', 'B', 'C', 'D_E', 'nao_informado'].includes(parsed.nivelEconomico)
-        ? {
-            nivelEconomico:
-              parsed.nivelEconomico as VotoCookieData['nivelEconomico'],
-          }
+      ...(isNivelEconomico(parsed.nivelEconomico)
+        ? { nivelEconomico: parsed.nivelEconomico }
         : {}),
     }
   } catch {

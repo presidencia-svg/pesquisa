@@ -17,8 +17,28 @@ import 'server-only'
 
 import { DEV_MODE, SERVER_ENV } from './env'
 
+/**
+ * Retorno integral da consulta, pra guardar em eleitores_cadastro_spc
+ * (decisão de 12/09/2026: nada do SPC é descartado). Campos ausentes na
+ * resposta ficam null; `payload` é o JSON bruto.
+ */
+export type SpcCadastro = {
+  produto: 'confirme_pf_11' | 'jud_legado'
+  nomeCompleto: string | null
+  nomeMae: string | null
+  dataNascimento: string | null // ISO yyyy-mm-dd
+  idade: number | null
+  sexoBruto: string | null
+  estadoCivil: string | null
+  cpfSituacao: string | null
+  cpfSituacaoData: string | null // ISO yyyy-mm-dd
+  payload: unknown
+}
+
 export type SpcDadosEleitor = {
   nomeMascarado?: string
+  /** Só vem de consulta real (não do stub de DEV). */
+  cadastro?: SpcCadastro
   municipioIbge?: number
   whatsappE164?: string
   sexo?: 'M' | 'F'
@@ -153,6 +173,13 @@ export async function consultarSpc(cpfDigits: string): Promise<SpcResult> {
     if (ultimos3 === '111') return { ok: false, razao: 'cpf_inativo' }
     if (ultimos3 === '222') return { ok: false, razao: 'cpf_irregular' }
     if (ultimos3 === '333') return { ok: false, razao: 'idade_minima' }
+    if (ultimos3 === '444') {
+      // Simula o caso real do SPC sem sexo (jovem sem histórico cadastral):
+      // /votar/confirma deve perguntar o sexo.
+      const semSexo: SpcDadosEleitor = { ...stubDevPrefill(cpfDigits) }
+      delete semSexo.sexo
+      return { ok: true, dados: semSexo }
+    }
     return { ok: true, dados: stubDevPrefill(cpfDigits) }
   }
 
@@ -265,8 +292,23 @@ async function consultarSpcJud(cpfDigits: string): Promise<SpcResult> {
     return { ok: false, razao: 'cpf_irregular', detalhe: statusReceita }
   }
 
+  const dtNascLegado = data.dataDeNascimento
+    ? parseDataDeNascimentoSpc(data.dataDeNascimento)
+    : null
   const dados: SpcDadosEleitor = {
     nomeMascarado: mascararNome(nome),
+    cadastro: {
+      produto: 'jud_legado',
+      nomeCompleto: nome,
+      nomeMae: data.nomeDaMae?.trim() || null,
+      dataNascimento: dtNascLegado ? isoData(dtNascLegado) : null,
+      idade: dtNascLegado ? calcularIdade(dtNascLegado) : null,
+      sexoBruto: null,
+      estadoCivil: null,
+      cpfSituacao: data.situacaoReceitaFederal ?? data.situacaoCadastral ?? null,
+      cpfSituacaoData: null,
+      payload: data,
+    },
   }
 
   // Quando dataDeNascimento vem, validamos idade mínima e derivamos faixa.
@@ -485,8 +527,29 @@ async function consultarSpcNovaUmaVez(cpfDigits: string): Promise<SpcResult> {
   }
 
   // 3. Monta dados de retorno
+  const dtNasc =
+    typeof pf.dataNascimento === 'number' && Number.isFinite(pf.dataNascimento)
+      ? new Date(pf.dataNascimento)
+      : null
+  const dtSit =
+    typeof pf.situacaoCpf?.dataSituacao === 'number' &&
+    Number.isFinite(pf.situacaoCpf.dataSituacao)
+      ? new Date(pf.situacaoCpf.dataSituacao)
+      : null
   const dados: SpcDadosEleitor = {
     nomeMascarado: mascararNome(pf.nome),
+    cadastro: {
+      produto: 'confirme_pf_11',
+      nomeCompleto: pf.nome.trim(),
+      nomeMae: pf.nomeMae?.trim() || null,
+      dataNascimento: dtNasc ? isoData(dtNasc) : null,
+      idade,
+      sexoBruto: pf.sexo ?? null,
+      estadoCivil: pf.estadoCivil ?? null,
+      cpfSituacao: pf.situacaoCpf?.descricaoSituacao ?? null,
+      cpfSituacaoData: dtSit ? isoData(dtSit) : null,
+      payload: data,
+    },
   }
   const faixa = idadeParaFaixa(idade)
   if (faixa) dados.faixaEtaria = faixa
@@ -570,6 +633,10 @@ function parseDataDeNascimentoSpc(raw: string): Date | null {
 
   return null
 }
+
+/** yyyy-mm-dd (UTC) ou null se a data for inválida. */
+const isoData = (d: Date): string | null =>
+  Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10)
 
 /**
  * Idade em anos completos a partir da data de nascimento.

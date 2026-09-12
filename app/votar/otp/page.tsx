@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { RodapeInstitucional } from '@/components/rodape-institucional'
+import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
 import { getPreVoto, getVotoToken } from '@/lib/sessao'
 
 import { OtpForm } from './otp-form'
@@ -17,6 +18,7 @@ export default async function OtpPage() {
 
   const draft = await getPreVoto()
   if (!draft) redirect('/votar')
+  const edicao = await resolverEdicaoAlvo()
   if (!draft.whatsappE164) redirect('/votar/confirma')
 
   const ultimos = draft.whatsappE164.slice(-4)
@@ -79,7 +81,7 @@ export default async function OtpPage() {
         </div>
       </section>
     </main>
-    <RodapeInstitucional />
+    <RodapeInstitucional registro={edicao?.registro} />
     </>
   )
 }

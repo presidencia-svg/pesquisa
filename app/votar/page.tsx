@@ -107,7 +107,7 @@ export default async function VotarPage({
           </div>
         </section>
       </main>
-      <RodapeInstitucional />
+      <RodapeInstitucional registro={edicao?.registro} />
     </>
   )
 }

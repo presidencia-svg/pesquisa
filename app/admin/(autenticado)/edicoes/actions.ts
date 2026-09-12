@@ -123,7 +123,7 @@ export async function divulgarEdicao(formData: FormData): Promise<EdicaoState> {
   const { data: ed } = await db
     .from('edicao')
     .select(
-      'id, registro_tre, divulgada_em, numero_conre_responsavel, data_registro_pesqele',
+      'id, registro_tre, divulgada_em, numero_conre_responsavel, data_registro_pesqele, fim, ponderacao_metodo, ponderacao_execucao_id, ponderacao_aprovada_em, ponderacao_aprovada_por, complementacao_pesqele_em',
     )
     .eq('id', id)
     .maybeSingle()
@@ -178,6 +178,80 @@ export async function divulgarEdicao(formData: FormData): Promise<EdicaoState> {
     }
   }
 
+  // --- Gate de ponderação (auditoria de conformidade, set/2026) ---
+  // Lição da Rp 0601015-42: o registro prometia ponderação por município ×
+  // sexo × faixa × instrução e o site publicou só por município. Agora a
+  // divulgação exige que o método vigente seja o registrado, que a execução
+  // exista e que o estatístico CONRE tenha aprovado os pesos.
+  const metodo = ed.ponderacao_metodo ?? 'municipio'
+  if (metodo === 'estratos_raking') {
+    if (!ed.ponderacao_execucao_id) {
+      return {
+        ok: false,
+        message:
+          'Método por estratos definido, mas nenhuma execução de ponderação foi gravada. Rode a ponderação (scripts/ponderar-estratos.mjs) antes de divulgar.',
+      }
+    }
+    const { data: exec } = await db
+      .from('ponderacao_execucao')
+      .select('id, convergiu, executado_em')
+      .eq('id', ed.ponderacao_execucao_id)
+      .maybeSingle()
+    if (!exec) {
+      return { ok: false, message: 'A execução de ponderação apontada não existe mais.' }
+    }
+    if (exec.convergiu === false) {
+      return {
+        ok: false,
+        message: 'A execução de ponderação vigente não convergiu. Reexecute antes de divulgar.',
+      }
+    }
+    // Pesos calculados ANTES do fim da coleta ficam desatualizados: novos
+    // respondentes entrariam sem célula/peso. Exige execução pós-encerramento.
+    if (ed.fim && new Date(exec.executado_em).getTime() < new Date(ed.fim).getTime()) {
+      return {
+        ok: false,
+        message:
+          'A execução de ponderação é anterior ao fim da coleta. Reexecute a ponderação com a base final antes de divulgar.',
+      }
+    }
+  }
+  if (!ed.ponderacao_aprovada_em || !ed.ponderacao_aprovada_por) {
+    return {
+      ok: false,
+      message:
+        'A ponderação vigente ainda não foi aprovada pelo estatístico responsável (Res. 23.747/2026 art. 2º IX). Registre a aprovação antes de divulgar.',
+    }
+  }
+  // Aprovação anterior à execução vigente não vale (aprovou outros pesos).
+  if (ed.ponderacao_execucao_id) {
+    const { data: exec2 } = await db
+      .from('ponderacao_execucao')
+      .select('executado_em')
+      .eq('id', ed.ponderacao_execucao_id)
+      .maybeSingle()
+    if (
+      exec2 &&
+      new Date(ed.ponderacao_aprovada_em).getTime() < new Date(exec2.executado_em).getTime()
+    ) {
+      return {
+        ok: false,
+        message:
+          'A aprovação do estatístico é anterior à execução de ponderação vigente. Aprove novamente os pesos atuais.',
+      }
+    }
+  }
+  // Art. 2º §7º III/IV (Res. 23.600 c/ 23.747): eleitores por unidade
+  // territorial e composição da amostra final vão pro PesqEle ANTES da
+  // divulgação. Sem o registro da complementação, não divulga.
+  if (!ed.complementacao_pesqele_em) {
+    return {
+      ok: false,
+      message:
+        'Registre a complementação do PesqEle (art. 2º §7º III/IV — pesquisados por município e composição final da amostra) antes de divulgar.',
+    }
+  }
+
   const divulgadaEm = new Date().toISOString()
   const { error } = await db
     .from('edicao')
@@ -189,7 +263,15 @@ export async function divulgarEdicao(formData: FormData): Promise<EdicaoState> {
 
   await registrarAcessoAdmin(
     'marcar_divulgacao',
-    { edicao_id: id, divulgada_em: divulgadaEm, registro_tre: ed.registro_tre },
+    {
+      edicao_id: id,
+      divulgada_em: divulgadaEm,
+      registro_tre: ed.registro_tre,
+      ponderacao_metodo: metodo,
+      ponderacao_execucao_id: ed.ponderacao_execucao_id,
+      ponderacao_aprovada_por: ed.ponderacao_aprovada_por,
+      complementacao_pesqele_em: ed.complementacao_pesqele_em,
+    },
     `edicao:${id}`,
   )
 
@@ -294,11 +376,24 @@ export async function salvarMetadadosDivulgacao(
   const previstaRaw = String(formData.get('divulgacao_prevista') ?? '').trim()
   const conre = String(formData.get('numero_conre_responsavel') ?? '').trim()
   const dataRegistroRaw = String(formData.get('data_registro_pesqele') ?? '').trim()
+  const metaRaw = String(formData.get('meta_amostra') ?? '').trim()
 
-  const update: Record<string, string | null> = {}
+  const update: Record<string, string | number | null> = {}
   update.registro_tre = registro.length > 0 ? registro : null
   update.numero_conre_responsavel = conre.length > 0 ? conre : null
   update.data_registro_pesqele = dataRegistroRaw.length > 0 ? dataRegistroRaw : null
+
+  // Meta mínima de respondentes validados (migration 049): só orienta o
+  // monitor /admin/amostra; não é cota nem trava de coleta.
+  if (metaRaw.length > 0) {
+    const meta = Number(metaRaw.replace(/\D/g, ''))
+    if (!Number.isInteger(meta) || meta <= 0) {
+      return { ok: false, message: 'Meta de amostra inválida (inteiro positivo).' }
+    }
+    update.meta_amostra = meta
+  } else {
+    update.meta_amostra = null
+  }
 
   if (previstaRaw.length > 0) {
     const dt = new Date(previstaRaw)
@@ -316,6 +411,7 @@ export async function salvarMetadadosDivulgacao(
 
   revalidatePath('/admin/edicoes')
   revalidatePath('/admin')
+  revalidatePath('/admin/amostra')
   revalidatePath('/resultados')
   return { ok: true }
 }
@@ -432,4 +528,163 @@ export async function retomarDivulgacao(formData: FormData): Promise<EdicaoState
   )
   revalidarSuperficiesPublicas()
   return { ok: true, message: 'Divulgação pública retomada.' }
+}
+
+// ---------------------------------------------------------------------------
+// Ponderação (migration 048) — método, execução, aprovação do estatístico
+// e complementação do PesqEle. Todas com TOTP e trilha de auditoria.
+// ---------------------------------------------------------------------------
+
+/**
+ * Define o método de ponderação vigente da edição. Muda o que o público vê
+ * em /resultados, /tv e /api/divulgacao → exige TOTP. Trocar de método
+ * INVALIDA a aprovação do estatístico (ele aprovou outros pesos).
+ */
+export async function definirMetodoPonderacao(formData: FormData): Promise<EdicaoState> {
+  await requireAdmin()
+  const erroTotp = validarTotp(formData)
+  if (erroTotp) return erroTotp
+
+  const id = String(formData.get('id') ?? '')
+  const metodoRaw = String(formData.get('metodo') ?? '')
+  if (!id) return { ok: false, message: 'ID inválido.' }
+  if (metodoRaw !== 'municipio' && metodoRaw !== 'estratos_raking') {
+    return { ok: false, message: 'Método inválido.' }
+  }
+
+  const db = supabaseAdmin()
+  const { data: ed } = await db
+    .from('edicao')
+    .select('id, ponderacao_metodo, ponderacao_execucao_id')
+    .eq('id', id)
+    .maybeSingle()
+  if (!ed) return { ok: false, message: 'Edição não encontrada.' }
+  if (ed.ponderacao_metodo === metodoRaw) {
+    return { ok: true, message: 'Método já era esse.' }
+  }
+  if (metodoRaw === 'estratos_raking' && !ed.ponderacao_execucao_id) {
+    return {
+      ok: false,
+      message:
+        'Antes de adotar o método por estratos, execute a ponderação (scripts/ponderar-estratos.mjs) — ela grava a execução e aponta a edição pra ela.',
+    }
+  }
+
+  const { error } = await db
+    .from('edicao')
+    .update({
+      ponderacao_metodo: metodoRaw,
+      ponderacao_aprovada_em: null,
+      ponderacao_aprovada_por: null,
+    })
+    .eq('id', id)
+  if (error) return { ok: false, message: error.message }
+
+  await registrarAcessoAdmin(
+    'definir_metodo_ponderacao',
+    { edicao_id: id, de: ed.ponderacao_metodo, para: metodoRaw },
+    `edicao:${id}`,
+  )
+  revalidarSuperficiesPublicas()
+  return {
+    ok: true,
+    message: `Método alterado para "${metodoRaw}". A aprovação do estatístico foi zerada — registre de novo.`,
+  }
+}
+
+/**
+ * Registra a aprovação do estatístico CONRE sobre a execução de ponderação
+ * vigente. É o "de acordo" técnico exigido antes de divulgar; fica gravado
+ * quem aprovou, quando e qual execução.
+ */
+export async function aprovarPonderacao(formData: FormData): Promise<EdicaoState> {
+  await requireAdmin()
+  const erroTotp = validarTotp(formData)
+  if (erroTotp) return erroTotp
+
+  const id = String(formData.get('id') ?? '')
+  const aprovador = String(formData.get('aprovador') ?? '').trim().slice(0, 120)
+  if (!id) return { ok: false, message: 'ID inválido.' }
+  if (aprovador.length < 5) {
+    return {
+      ok: false,
+      message: 'Informe nome e CONRE do estatístico que aprovou (ex.: "Danilio Silva Santos — CONRE 8223").',
+    }
+  }
+
+  const db = supabaseAdmin()
+  const { data: ed } = await db
+    .from('edicao')
+    .select('id, ponderacao_metodo, ponderacao_execucao_id')
+    .eq('id', id)
+    .maybeSingle()
+  if (!ed) return { ok: false, message: 'Edição não encontrada.' }
+  if (ed.ponderacao_metodo === 'estratos_raking' && !ed.ponderacao_execucao_id) {
+    return { ok: false, message: 'Não há execução de ponderação pra aprovar.' }
+  }
+
+  const aprovadaEm = new Date().toISOString()
+  const { error } = await db
+    .from('edicao')
+    .update({ ponderacao_aprovada_em: aprovadaEm, ponderacao_aprovada_por: aprovador })
+    .eq('id', id)
+  if (error) return { ok: false, message: error.message }
+
+  await registrarAcessoAdmin(
+    'aprovar_ponderacao',
+    {
+      edicao_id: id,
+      metodo: ed.ponderacao_metodo,
+      execucao_id: ed.ponderacao_execucao_id,
+      aprovado_por: aprovador,
+      aprovada_em: aprovadaEm,
+    },
+    `edicao:${id}`,
+  )
+  revalidatePath('/admin/edicoes')
+  return { ok: true, message: `Ponderação aprovada por ${aprovador}.` }
+}
+
+/**
+ * Marca que a complementação do art. 2º §7º III/IV (eleitores pesquisados
+ * por município + composição final da amostra) foi lançada no PesqEle.
+ * Sem esta marca a divulgação fica travada.
+ */
+export async function registrarComplementacaoPesqele(
+  formData: FormData,
+): Promise<EdicaoState> {
+  await requireAdmin()
+  const erroTotp = validarTotp(formData)
+  if (erroTotp) return erroTotp
+
+  const id = String(formData.get('id') ?? '')
+  if (!id) return { ok: false, message: 'ID inválido.' }
+  const quandoRaw = String(formData.get('quando') ?? '').trim()
+  const quando = quandoRaw ? new Date(quandoRaw) : new Date()
+  if (Number.isNaN(quando.getTime())) return { ok: false, message: 'Data inválida.' }
+  if (quando.getTime() > Date.now() + 5 * 60_000) {
+    return { ok: false, message: 'A data da complementação não pode ser futura.' }
+  }
+
+  const db = supabaseAdmin()
+  const { data: ed } = await db
+    .from('edicao')
+    .select('id, complementacao_pesqele_em')
+    .eq('id', id)
+    .maybeSingle()
+  if (!ed) return { ok: false, message: 'Edição não encontrada.' }
+
+  const { error } = await db
+    .from('edicao')
+    .update({ complementacao_pesqele_em: quando.toISOString() })
+    .eq('id', id)
+  if (error) return { ok: false, message: error.message }
+
+  await registrarAcessoAdmin(
+    'registrar_complementacao_pesqele',
+    { edicao_id: id, anterior: ed.complementacao_pesqele_em, complementacao_pesqele_em: quando.toISOString() },
+    `edicao:${id}`,
+  )
+  revalidatePath('/admin/edicoes')
+  return { ok: true, message: 'Complementação do PesqEle registrada.' }
 }

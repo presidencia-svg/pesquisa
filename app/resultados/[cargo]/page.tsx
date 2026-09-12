@@ -110,6 +110,7 @@ export default async function CargoResultadoPage({
         edicaoLabel={r.pesquisa.meta.edicao}
         turno={r.pesquisa.meta.turno}
         amostra={r.pesquisa.meta.n}
+        ponderacaoCurta={r.pesquisa.meta.ponderacao_curta}
       />
       <RodapeInstitucional />
     </>

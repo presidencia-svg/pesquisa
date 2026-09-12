@@ -166,7 +166,9 @@ async function main() {
     type LinhaCdl = {
       cpf_hash: string
       whatsapp_e164: string | null
+      whatsapp_fonte: 'mda' | null
       nome_mascarado: string
+      nome_fonte: 'mda'
       origem: string
     }
 
@@ -198,7 +200,9 @@ async function main() {
       lote.push({
         cpf_hash,
         whatsapp_e164: whatsapp,
+        whatsapp_fonte: whatsapp ? 'mda' : null,
         nome_mascarado: mascararNome(nome),
+        nome_fonte: 'mda',
         origem: 'melhores_do_ano',
       })
     }

@@ -4,6 +4,7 @@
 **Controlador:** Câmara de Dirigentes Lojistas de Aracaju (CDL Aracaju) — CNPJ 13.045.935/0001-36
 **Operação:** Pesquisa eleitoral de intenção de voto para Eleições 2026
 **Data do relatório:** 13 de maio de 2026 · Versão 1.0
+**Revisão:** 13 de setembro de 2026 · Versão 1.1 (2ª edição — coleta de 13 a 20/09/2026)
 **Elaborado por:** Encarregado pelo Tratamento de Dados Pessoais (DPO)
 **Aprovado por:** Diretoria da CDL Aracaju
 
@@ -30,10 +31,10 @@ Este documento segue o modelo de RIPD recomendado pela Autoridade Nacional de Pr
 ### 1.2 Identificação do Encarregado (DPO)
 
 - **Nome:** Claudimara Fontes Carvalho
-- **CPF:** 936.060.105-59
+- **CPF:** [redigido — versão íntegra em docs/confidencial]
 - **Vínculo:** Diretora Secretária (1ª Secretária) da CDL Aracaju, triênio 2026–2028
 - **Contato:** dpo@cdlaju.com.br · (79) 3212-7700 · WhatsApp 24/7 (79) 98115-5558
-- **Suplente:** Verônica Castro Pedreira Peixoto — CPF 791.134.195-87 — Diretora Administrativa e Financeira
+- **Suplente:** Verônica Castro Pedreira Peixoto — CPF: [redigido — versão íntegra em docs/confidencial] — Diretora Administrativa e Financeira
 - **Designação formal:** Ata de Reunião Extraordinária da Diretoria nº 001/2026-EXT, de 26 de maio de 2026 (ver `docs/ata-dpo.docx`)
 
 ### 1.3 Operadores (terceiros que tratam dados em nosso nome)
@@ -52,11 +53,16 @@ Este documento segue o modelo de RIPD recomendado pela Autoridade Nacional de Pr
 
 ### 2.1 Finalidade
 
-Realização de pesquisa de intenção de voto para as Eleições 2026 em Sergipe, registrada no Pesquisas Eleitorais (PesqEle) do TRE/SE, conforme:
+Realização de pesquisa de intenção de voto para as Eleições 2026 em Sergipe, com registro no Pesquisas Eleitorais (PesqEle) do TRE-SE e do TSE, conforme:
 
 - Lei nº 9.504/1997, art. 33 (Lei das Eleições)
 - Resolução TSE nº 23.747/2026 (regulamenta pesquisas eleitorais)
 - Lei nº 13.709/2018 (LGPD)
+
+**Edições:**
+
+- **2ª edição (vigente):** coleta de 13/09/2026 00h00 a 20/09/2026 23h59 (horário de Aracaju). Registro no PesqEle **pendente** — será feito quando a amostra atingir 20 mil eleitores e sempre antes de qualquer divulgação (art. 33 da Lei 9.504/97; Res.-TSE 23.600/2019, red. Res. 23.747/2026, art. 2º, § 7º, III e IV — amostra por adesão).
+- **1ª edição (histórico):** coleta de 01 a 03/09/2026; registros SE-09441/2026 (TRE-SE) e BR-04041/2026 (TSE) em 22/08/2026; divulgação em 04/09/2026, suspensa por tutela do TRE-SE em 07/09/2026 (Rp 0601015-42.2026.6.25.0000); site fora do ar de 08/09 até o religamento em 13/09/2026.
 
 ### 2.2 Necessidade
 
@@ -64,34 +70,40 @@ A pesquisa atende função institucional da CDL Aracaju de promover transparênc
 
 ### 2.3 Categorias de titulares
 
-Eleitores domiciliados em Sergipe (universo TSE ≈ 1,42 milhão de pessoas).
+Eleitores de Sergipe segundo o TSE 2026 (perfil do eleitorado por seção, geração de 14/07/2026): 1.740.124 eleitores; 1.740.116 mapeados nos estratos de ponderação (8 linhas excluídas por faixa etária inválida). Eleitores com título em outra UF podem participar apenas na cédula de Presidente e recebem peso zero nos recortes estaduais.
 
 ### 2.4 Categorias de dados pessoais tratados
 
 | Dado | Categoria LGPD | Forma de armazenamento |
 |---|---|---|
 | CPF | dado identificador | HMAC-SHA256 (nunca em claro) |
-| Nome | dado identificador | mascarado (`MARIA S. ***`) |
+| Nome | dado identificador | `cdl_base` (cadastro unificado) e mascarado em logs administrativos |
 | WhatsApp E.164 | dado de contato | texto em DB (TLS at rest) |
-| Município IBGE | dado demográfico | inteiro (código IBGE) |
-| Sexo | dado demográfico | enum (M/F) |
-| Faixa etária | dado demográfico | enum (6 faixas) |
-| Escolaridade | dado demográfico | enum (3 níveis) |
-| IP | dado técnico | texto |
-| User-Agent | dado técnico | texto |
-| Voto | dado anonimizado | sem ligação técnica com identidade |
+| Município e UF do título | dado demográfico | inteiro (código IBGE) + UF |
+| Sexo | dado demográfico | enum (M/F); cadastral, perguntado só quando a fonte não traz (`sexo_fonte`) |
+| Faixa etária | dado demográfico | enum (6 faixas), derivada da data de nascimento cadastral — nunca perguntada |
+| Escolaridade | dado demográfico | 4 opções no formulário (`escolaridade_detalhe`), agregadas em 3 estratos como o TSE |
+| Faixa de renda | dado demográfico | enum em salários mínimos (SM 2026 = R$ 1.621), com "não sei" e "prefiro não informar"; recorte descritivo, não pondera |
+| Título de eleitor (16–17 anos) | dado identificador | exigido só para voto facultativo |
+| Retorno do SPC Brasil (nome, situação cadastral do CPF, data de nascimento, nome da mãe, estado civil, endereço, payload bruto) | dado cadastral | bloco SPC de `cdl_base` com `cadastro_spc_fonte` (migrations 050/051) |
+| IP | dado técnico | texto — apenas registrado |
+| User-Agent | dado técnico | texto — apenas registrado |
+| Fingerprint do dispositivo | dado técnico | hash — apenas armazenado, não bloqueia |
+| Opt-in de resultados | preferência | booleano (consentimento) |
+| Voto | dado anonimizado | tabela sem identificador; cópia controlada de sexo, faixa, escolaridade, renda e município para recortes agregados |
 
 ### 2.5 Dados sensíveis (Art. 5 II LGPD)
 
 - **Convicção política:** NÃO coletada diretamente. Os votos são registrados anonimamente em tabela separada da identidade (arquitetura de duas salas — ver seção 3). Não há possibilidade técnica de ligar voto a indivíduo, mesmo com acesso direto ao banco de dados.
-- **Sexo:** coletado como enum binário (M/F) por exigência da Resolução TSE 23.747/2026 art. 2 §3 (ponderação amostral). Minimização aplicada: enum em vez de texto livre.
+- **Sexo:** enum binário (M/F) por exigência da Res.-TSE 23.600/2019 (red. 23.747/2026), art. 2º (ponderação amostral). Fonte cadastral (`cdl_base`/SPC); perguntado ao eleitor só quando ausente, com proveniência gravada em `sexo_fonte`. Minimização aplicada: enum em vez de texto livre.
 
 ### 2.6 Frequência e duração
 
-- **Coleta:** janela única de até 36 horas, prevista para setembro/2026.
-- **Retenção da identidade:** 6 meses após o término da coleta (auditoria TRE/SE).
+- **Coleta (2ª edição):** 13 a 20/09/2026, janela travada no servidor.
+- **Retenção da identidade (Sala 1, inclusive IP, user-agent e fingerprint):** 6 meses após o término da coleta (`app/api/cron/retencao/route.ts`).
+- **Retenção dos códigos OTP:** 30 dias.
 - **Retenção dos votos anônimos:** indefinida (já anonimizados na arquitetura).
-- **Retenção de logs técnicos (IP, UA):** 90 dias.
+- **`cdl_base`:** até exclusão a pedido ou fim do ciclo eleitoral 2026.
 
 ---
 
@@ -103,21 +115,23 @@ Eleitores domiciliados em Sergipe (universo TSE ≈ 1,42 milhão de pessoas).
 |---|---|---|---|
 | CPF | identidade única do eleitor (impede 1 pessoa votar 2×) | Email/telefone | Não-único; possibilita fraude por descartável |
 | WhatsApp | autenticação por OTP (posse do número) | SMS | SMS é mais caro e inseguro (SS7); WhatsApp já é universal no Brasil |
-| Município | ponderação por mesorregião + cota geográfica | Auto-declarado livre | Resolução TSE exige IBGE oficial |
+| Município | estrato de ponderação (raking município × sexo × faixa × instrução) | Auto-declarado livre | Resolução TSE exige IBGE oficial |
 | Sexo, idade, escolaridade | ponderação amostral exigida pela Res. TSE 23.747/2026 | Não coletar | Pesquisa seria não-conforme com TSE |
-| IP, User-Agent | antifraude (rate limit, device fingerprint) | Não coletar | Bots inflariam resultado |
+| IP, User-Agent, fingerprint | trilha de auditoria antifraude pós-coleta (apenas registrados; sem bloqueio por IP ou por dispositivo) | Não coletar | Perderia a capacidade de identificar clusters suspeitos na análise |
+| Retorno do SPC Brasil | validar CPF como pessoa física real e obter sexo/data de nascimento sem perguntar | Perguntar ao eleitor | Autodeclaração é fraudável; a Resolução exige controle de identidade |
+| Faixa de renda | composição da amostra (art. 2º, § 7º, IV); recorte descritivo | Não coletar | A Resolução pede nível econômico na composição da amostra |
 | Voto | objeto da pesquisa | — | — |
 
 ### 3.2 Proporcionalidade — princípios LGPD aplicados (Art. 6)
 
 - **Finalidade específica (I):** dados usados exclusivamente para pesquisa eleitoral. Sem venda, marketing, perfil de consumo.
 - **Adequação (II):** dados são proporcionais ao objetivo declarado.
-- **Necessidade (III):** mínimo possível. Idade em faixa (não data nascimento); sexo em enum binário; escolaridade em 3 níveis.
+- **Necessidade (III):** mínimo possível. Idade exposta em faixa; sexo em enum binário; escolaridade em 3 estratos; renda em faixa e opcional.
 - **Livre acesso (IV):** endpoint público `/privacidade/excluir` permite eliminação self-service. Acesso aos próprios dados via DPO.
 - **Qualidade (V):** validação SPC + checksum CPF + OTP WhatsApp.
 - **Transparência (VI):** código aberto + `/transparencia` + `/privacidade`.
 - **Segurança (VII):** ver seção 4.
-- **Prevenção (VIII):** pentest interno + rate limit + arquitetura de duas salas.
+- **Prevenção (VIII):** pentest interno + Turnstile + OTP + arquitetura de duas salas.
 - **Não-discriminação (IX):** pesquisa, não decisão automatizada que afete eleitor.
 - **Responsabilização (X):** este RIPD + documentação técnica completa.
 
@@ -141,8 +155,11 @@ Eleitores domiciliados em Sergipe (universo TSE ≈ 1,42 milhão de pessoas).
 
 #### Anti-fraude
 - Cloudflare Turnstile (anti-bot)
-- Rate limit por IP em 4 ações: `votar_cpf` (5/5min), `otp_enviar` (5/15min), `otp_validar` (15/15min), `admin_login` (5/15min), `lgpd_excluir` (3/h)
-- OTP de 6 dígitos via WhatsApp, expiração 10min, 3 tentativas máx por código
+- Bloqueio de cadastro em navegação anônima/privativa
+- OTP de 6 dígitos via WhatsApp, expiração 10min, 3 tentativas máx por código, teto de 3 códigos por CPF a cada 15 min
+- CPF único por edição (`unique (edicao_id, cpf_hash)`)
+- IP e fingerprint **apenas registrados** no fluxo do eleitor (sem bloqueio por IP — CGNAT — nem limite de CPFs por dispositivo); rate limit por IP permanece só no login admin e na exclusão LGPD
+- Localização por IP/GPS só quando a edição exige — desligada na 2ª edição
 
 #### Painel admin
 - Senha forte + TOTP (Google Authenticator)
@@ -176,7 +193,7 @@ Eleitores domiciliados em Sergipe (universo TSE ≈ 1,42 milhão de pessoas).
 
 #### Pendentes pré-lançamento (setembro/2026)
 - [ ] Treinamento LGPD dos administradores do painel
-- [ ] Cron jobs de descarte automático (retenção)
+- [x] Cron jobs de descarte automático (retenção) — `/api/cron/retencao`, diário
 - [ ] Auditoria de acesso admin (log de cada login)
 - [ ] Backup off-site (atualmente só Supabase 7 dias)
 - [ ] Upgrade Supabase Free → Pro ($25/mês — pool dedicado + backup 14d)
@@ -200,7 +217,7 @@ Risco total = combinação das duas (matriz NIST simplificada).
 | R1 | Vazamento de banco completo | Baixa | Crítico | TLS + criptografia disco + service role keys só em env; CPF em HMAC; voto sem ligação a CPF |
 | R2 | Bruteforce de CPFs via cdl_base | Baixa | Médio | `CPF_HASH_SECRET` server-only — sem secret, atacante não consegue gerar dicionário |
 | R3 | Acesso indevido ao painel admin | Baixa | Alto | Senha + TOTP + rate limit + cookie signed |
-| R4 | Bot inflando pesquisa | Média | Alto | Turnstile + OTP WhatsApp + rate limit + identidade CPF única |
+| R4 | Bot inflando pesquisa | Média | Alto | Turnstile + OTP WhatsApp + identidade CPF única + bloqueio de navegação anônima; IP/fingerprint registrados para análise pós-coleta |
 | R5 | Quebra do anonimato voto↔CPF | Muito baixa | Crítico | Arquitetura duas salas + truncamento temporal + token sem ligação persistida |
 | R6 | Ataque de phishing aos admins | Média | Alto | Treinamento LGPD (pendente) + TOTP obrigatório (mitiga senha roubada) |
 | R7 | Ransomware / perda de dados | Baixa | Médio | Backup Supabase 7d (14d após upgrade Pro). **Adicionar backup off-site (pendente).** |
@@ -208,6 +225,8 @@ Risco total = combinação das duas (matriz NIST simplificada).
 | R9 | DoS na divulgação dos resultados | Alta | Baixo | Cache 15s no /resultados — escala pra 1000+ req/s. Cloudflare anti-DDoS. |
 | R10 | Vulnerabilidade em dependência (CVE) | Média | Variável | `npm audit` periódico + monitoring Dependabot. Última atualização: Next 16.2.4→16.2.6. |
 | R11 | Race condition em validação OTP | Baixa | Médio | Corrigido: UPDATE atomico WHERE validado=false (ver pentest). |
+| R12 | Convite por WhatsApp percebido como indesejado | Média | Baixo | Legítimo interesse (art. 7º IX) com relação prévia; uma mensagem por edição; opt-out "SAIR" e lista de exclusão respeitada em todo envio |
+| R13 | Exposição do bloco SPC guardado em `cdl_base` | Baixa | Alto | Mesmas proteções de R1; acesso só por service role; exclusão a pedido remove o bloco inteiro |
 
 ### 5.2 Riscos residuais aceitos
 
@@ -223,7 +242,7 @@ Risco total = combinação das duas (matriz NIST simplificada).
 
 A operação de tratamento de dados pessoais conduzida pela Pesquisa Sergipe 2026:
 
-1. ✅ **Cumpre as bases legais** previstas no art. 7 da LGPD (consentimento + obrigação legal por força da Resolução TSE 23.747/2026).
+1. ✅ **Cumpre as bases legais** previstas no art. 7 da LGPD (execução de pesquisa de opinião, legítimo interesse para antifraude e convite, consentimento só para o opt-in de resultados).
 2. ✅ **Atende aos princípios** do art. 6 (finalidade, necessidade, transparência, segurança, livre acesso, etc).
 3. ✅ **Implementa medidas técnicas robustas** — criptografia, arquitetura de duas salas, anti-fraude, headers OWASP.
 4. ✅ **Garante os direitos do titular** (Art. 18) via endpoint self-service de exclusão, política pública e canal DPO.
@@ -247,7 +266,7 @@ A operação de tratamento de dados pessoais conduzida pela Pesquisa Sergipe 202
 | Versão | Data prevista | Motivo |
 |---|---|---|
 | 1.0 | 13/05/2026 | Versão inicial |
-| 1.1 | ago/2026 | Pré-lançamento — incorporar fixes pendentes |
+| 1.1 | 13/09/2026 | 2ª edição: SPC declarado, cadastro unificado, retenção 30 dias/6 meses, fingerprint só armazenado, sem bloqueio por IP, convite WhatsApp, CPFs de dirigentes movidos para `docs/confidencial/` |
 | 1.2 | jan/2027 | Pós-coleta — avaliar incidentes e lições aprendidas |
 | 2.0 | a definir | Próxima onda de pesquisa |
 

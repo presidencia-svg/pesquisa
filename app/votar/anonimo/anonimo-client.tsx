@@ -53,7 +53,9 @@ export function AnonimoClient({ token }: { token: string }) {
         <div className="pt-4 flex flex-col gap-4 text-sm text-capsule-foreground/85">
           <p>
             A janela anônima do seu navegador não compartilha cookies nem
-            histórico com esta janela. Pra entrar lá com seu voto:
+            histórico com esta janela. Ela vale só para esta etapa de voto —
+            o cadastro (CPF e WhatsApp), que você já concluiu, não é
+            permitido em navegação anônima. Pra entrar lá com seu voto:
           </p>
 
           <ol className="list-decimal list-outside pl-5 flex flex-col gap-2">

@@ -1,7 +1,7 @@
 # Plano de Resposta a Incidentes de Segurança da Informação
 
 **Pesquisa Sergipe 2026 · CDL Aracaju**
-Versão 1.0 · 13 de maio de 2026
+Versão 1.1 · 13 de setembro de 2026 (revisão para a 2ª edição — coleta 13–20/09/2026)
 
 ---
 
@@ -85,7 +85,7 @@ Composição **mínima** (todos com atribuições simultâneas):
 **Ações de contenção possíveis (escala conforme severidade):**
 
 #### Nível 1 — Reativo
-- Rotacionar secrets (`CPF_HASH_SECRET`, `JWT_SECRET`, `TOKEN_VOTO_SECRET`, `ADMIN_PASSWORD`, `ADMIN_TOTP_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`) na Vercel.
+- Rotacionar secrets (`CPF_HASH_SECRET`, `JWT_SECRET`, `TOKEN_VOTO_SECRET`, `ADMIN_PASSWORD`, `ADMIN_TOTP_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, credenciais do SPC Brasil, token da WhatsApp Cloud API e chave do Turnstile) na Vercel e junto aos operadores.
 - Forçar logout de todas as sessões admin: revogar cookie via mudança do `JWT_SECRET`.
 - Resetar `ADMIN_TOTP_SECRET` e re-cadastrar Authenticator.
 
@@ -176,6 +176,9 @@ Obrigatória quando o risco for **relevante** (Art. 48 LGPD).
 3. **Nota no site** `/incidente` (página criada ad hoc)
 4. **Comunicado público** se incidente afetar > 10.000 titulares
 
+### Canal de exclusão
+Em qualquer comunicação, informar que o titular pode eliminar seus dados em `https://pesquisa.cdlaju.com.br/privacidade/excluir` (self-service, CPF + OTP) ou pelo e-mail dpo@cdlaju.com.br.
+
 ### Conteúdo
 - O que aconteceu (em linguagem simples)
 - Quais dados podem ter sido afetados
@@ -262,6 +265,18 @@ Resultados dos drills atualizam este documento.
 
 ---
 
+## 11-A. Operadores e escopo dos dados (referência rápida)
+
+| Operador | Função | O que pode estar envolvido num incidente |
+|---|---|---|
+| Supabase (banco) | todas as tabelas | `cdl_base` (inclusive bloco SPC), `eleitores_pesquisa`, `votos_pesquisa` (anônimos), `whatsapp_codigos` |
+| Vercel (hospedagem e cron) | app, logs de aplicação, variáveis de ambiente | secrets; logs sem CPF/voto |
+| Cloudflare Turnstile | anti-bot | sinais técnicos do navegador |
+| Meta / WhatsApp Business | OTP e convite | número + código; número + primeiro nome |
+| SPC Brasil | consulta cadastral por CPF | CPF enviado e retorno cadastral guardado em `cdl_base` |
+
+**Retenção vigente** (`app/api/cron/retencao/route.ts`): OTP 30 dias; `rate_limit_ip` 24 h; Sala 1 (identidade, IP, user-agent, fingerprint) **6 meses** após o fim da edição; logs de cron/auditoria 1 ano. O escopo de um incidente é limitado por esses prazos.
+
 ## 12. Limitações conhecidas
 
 - **Não temos hoje** monitoramento ativo 24/7 (Sentry, PagerDuty, etc). Detecção depende de admin ver alerta ou titular comunicar. **Pendente**: instalar Sentry pra `app/votar/**` antes do lançamento.
@@ -278,6 +293,7 @@ Resultados dos drills atualizam este documento.
 | Versão | Data | Mudanças |
 |---|---|---|
 | 1.0 | 13/05/2026 | Versão inicial |
+| 1.1 | 13/09/2026 | Retenção de 6 meses (substitui o prazo anterior), operadores atualizados (SPC Brasil incluído), canal de exclusão nas comunicações, secrets dos operadores na contenção |
 
 ---
 

@@ -1,10 +1,10 @@
-# Ficha Técnica — Pesquisa Sergipe 2026
+# Ficha Técnica — Pesquisa Eleitoral Sergipe 2026 · 2ª edição
 
-> Formato padrão de divulgação adotado por institutos de pesquisa
-> eleitoral (Datafolha, Quaest, Paraná Pesquisas, AtlasIntel) adaptado
-> ao nosso modelo. Esta ficha acompanha **toda divulgação pública** de
-> resultados e é depositada no PesqEle do TRE/SE conforme Resolução
-> TSE 23.747/2026.
+> Esta ficha acompanha **toda divulgação pública** de resultados e é
+> depositada no PesqEle conforme a Res.-TSE 23.600/2019 (red. Res.
+> 23.747/2026). **Atualizada em 13/09/2026.** Os campos marcados
+> *a preencher* saem de `edicao` no painel admin e da complementação
+> pós-coleta. Nenhuma peça pública cita quantidade de participantes.
 
 ---
 
@@ -12,175 +12,110 @@
 
 | Item | Valor |
 |---|---|
+| **Edição** | 2ª edição |
 | **Contratante** | Câmara de Dirigentes Lojistas de Aracaju (CDL Aracaju) — CNPJ 13.045.935/0001-36 |
 | **Executor** | CDL Aracaju (execução direta, sem terceirização) |
-| **Estatístico responsável** | Danilio Silva Santos — CONRE nº 8223 (contratado; declaração assinada digitalmente em 22/08/2026 nos dois registros, conforme Art. 2º, IX da Resolução 23.747/2026) |
-| **Custo total** | *a declarar* |
+| **Estatístico responsável** | Estatístico responsável indicado no registro da edição (nome e CONRE em `edicao.estatistico_nome` / `edicao.conre`; declaração do art. 2º, IX assinada digitalmente no registro) |
+| **Custo total** | *a declarar no registro* |
 | **Origem dos recursos** | Recursos próprios da CDL Aracaju (associação civil sem fins lucrativos) |
-| **Nº de registro** | **SE-09441/2026** (TRE-SE — Governador, Senador, Dep. Federal, Dep. Estadual) e **BR-04041/2026** (TSE — Presidente), ambos registrados no PesqEle em 22/08/2026. Divulgação liberada a partir de 27/08/2026. |
+| **Nº de registro** | **Pendente — a ser efetuado antes da divulgação**, quando a amostra atingir 20 mil eleitores (Lei 9.504/97, art. 33; Res.-TSE 23.600/2019, art. 2º, § 7º, III e IV). Serão dois registros: TRE-SE (Governador, Senador, Dep. Federal, Dep. Estadual) e TSE (Presidente). |
+| **Histórico — 1ª edição** | Coleta 01–03/09/2026; registros SE-09441/2026 (TRE-SE) e BR-04041/2026 (TSE) em 22/08/2026; divulgação 04/09/2026, suspensa por tutela do TRE-SE em 07/09/2026 (Rp 0601015-42.2026.6.25.0000); site fora do ar de 08/09 a 13/09/2026. |
 
 ## Universo
 
 | Item | Valor |
 |---|---|
-| **População-alvo** | Eleitores oficiais do TSE residentes em Sergipe |
-| **Total estimado** | 1.731.960 eleitores aptos (estatística TSE; conferir contra o eleitorado congelado de 2026 antes do registro) |
-| **Abrangência** | 75 municípios de Sergipe (estadual) |
+| **População-alvo** | Eleitorado de Sergipe segundo o TSE 2026 (perfil do eleitorado por seção, geração 14/07/2026) |
+| **Total** | 1.740.124 eleitores; 1.740.116 mapeados nos estratos de ponderação (8 linhas excluídas por faixa etária inválida) |
+| **Abrangência** | 75 municípios de Sergipe |
+| **Eleitor de outra UF** | Informa UF e município do título; responde só à cédula de Presidente; peso zero nos recortes estaduais |
 
 ## Amostra
 
 | Item | Valor |
 |---|---|
-| **Base potencial** | 44.545 CPFs já validados (votantes do Melhores do Ano CDL Aracaju) + qualquer CPF brasileiro validado em tempo real no SPC Brasil |
-| **n projetado conservador** | 5.000 respondentes (≈ 11% da base CDL) — margem de erro ±1,4pp / IC 95% |
-| **n projetado realista** | 10.000–15.000 respondentes (efeito viral do Melhores do Ano) — margem ±0,98–±0,80pp / IC 95% |
-| **Tipo de amostragem** | **Não-probabilística por cotas com identidade verificada** (ver detalhe abaixo) |
+| **Tipo** | **Amostra por adesão** (autosseleção) com identidade verificada — não probabilística |
+| **Recrutamento** | Convite por WhatsApp às bases da CDL Aracaju (Melhores do Ano e participantes da 1ª edição, com opt-out) + divulgação aberta nos canais da CDL |
+| **n** | Total de respondentes com CPF e WhatsApp validados ao fim da coleta — informado no registro e na complementação do art. 2º, § 7º; não citado em peças de divulgação |
 | **Nível de confiança** | 95% |
-| **Cota geográfica** | Proporcional ao eleitorado TSE de cada um dos 75 municípios de SE |
-
-> **Por que a amostra pode ser muito maior do que institutos tradicionais:**
-> A coleta é digital, gratuita pra o respondente, sem entrevistadores
-> (custo marginal ≈ R$ 0,01 por respondente em servidor + WhatsApp). O
-> gargalo deixa de ser orçamento e passa a ser **adesão**. Com base
-> pré-validada de 44.545 CPFs + a possibilidade de qualquer eleitor de
-> SE entrar via SPC, o teto é o eleitorado verificável do estado, não
-> a verba da pesquisa.
->
-> **Margem de erro pra n grande (referência IC 95%, proporção 50%):**
-> | n      | Margem de erro |
-> |--------|----------------|
-> | 1.000  | ±3,1 pp        |
-> | 2.500  | ±1,96 pp       |
-> | 5.000  | ±1,39 pp       |
-> | 10.000 | ±0,98 pp       |
-> | 20.000 | ±0,69 pp       |
-> | 44.545 | ±0,46 pp       |
-> | 50.000 | ±0,44 pp       |
-> | 100.000| ±0,31 pp       |
-> | 200.000| ±0,22 pp       |
+| **Margem de erro** | **Indicativa**, calculada como se a amostra fosse probabilística: **nominal** `1,96·√(0,25/n)` e **efetiva** `1,96·√(0,25/n_eff)` (n efetivo de Kish, após a ponderação) — as duas publicadas |
+| **Cota** | Não há cota (nem geográfica nem por perfil); o desequilíbrio é corrigido na ponderação |
 
 ## Coleta
 
 | Item | Valor |
 |---|---|
-| **Forma** | Pesquisa **online com identidade verificada** (autopreenchimento via web/app, com validação prévia de CPF e confirmação por OTP de WhatsApp) |
-| **Período de coleta principal** | 01/09/2026 a 03/09/2026 (conforme declarado no PesqEle) |
+| **Forma** | Pesquisa **online com identidade verificada** (autopreenchimento no dispositivo do respondente; CPF validado por consulta cadastral ao SPC Brasil ou base da CDL; confirmação por OTP no WhatsApp) |
+| **Período** | **13/09/2026 00h00 a 20/09/2026 23h59** (horário de Aracaju), travado no servidor |
 | **Plataforma** | `pesquisa.cdlaju.com.br` (Next.js + Supabase, hospedado na Vercel — código aberto em `github.com/presidencia-svg/pesquisa`) |
 | **Idioma** | Português brasileiro |
+| **Divulgação** | `pesquisa.cdlaju.com.br/resultados` e canais da CDL Aracaju, após o registro e o prazo legal |
 
 ## Tipo de pesquisa
 
 | Cargo | Tipo |
 |---|---|
-| Presidente | **Espontânea** (eleitor digita número da urna; sistema mostra nome + foto pra confirmar; nenhuma lista exibida antes) |
+| Presidente | **Espontânea** (eleitor digita o número; sistema mostra nome + foto pra confirmar; nenhuma lista antes) |
 | Governador | **Espontânea** |
 | Senador (2 vagas) | **Espontânea** |
-| Deputado Federal | **Espontânea por legenda + candidato** (dupla contagem — legenda define cadeiras via Quociente Eleitoral; candidato individual define ordem dentro da legenda) |
-| Deputado Estadual | **Espontânea por legenda + candidato** (idem) |
-| Consulta extra: Zona de Expansão | **Estimulada de duas opções** (Aracaju × São Cristóvão) — aplicada apenas a eleitores residentes em Aracaju ou São Cristóvão |
+| Deputado Federal | **Espontânea por legenda + candidato** |
+| Deputado Estadual | **Espontânea por legenda + candidato** |
 
-> **Por que espontânea:** este modelo elimina o viés de menu apresentado pelo entrevistador. O respondente declara seu candidato pelo número que **lembra**, espelhando o que vai acontecer na urna. Pesquisas estimuladas tendem a inflar candidatos conhecidos.
+Cada cédula oferece: digitar número, **voto em branco**, ou **não sabe / não quis responder**.
 
 ## Estratificação e ponderação
 
-Conforme exigido pelo Art. 2º, § 7º, IV da Resolução TSE 23.747/2026:
+Conforme o art. 2º da Res.-TSE 23.600/2019 (red. Res. 23.747/2026):
 
-### Variáveis de cota (controladas durante coleta)
+| Variável | Categorias | Origem no cadastro | Parâmetro |
+|---|---|---|---|
+| **Município** | 75 municípios de SE (IBGE) | município do título | TSE 2026 |
+| **Sexo** | M, F (NI ajustado nas demais) | cadastral (base CDL ou SPC); perguntado ao eleitor só quando ausente, com proveniência gravada | TSE 2026 |
+| **Faixa etária** | 16–17, 18–24, 25–34, 35–44, 45–59, 60+ | cadastral (data de nascimento); nunca perguntada; 16–17 exige título | TSE 2026 |
+| **Grau de instrução** | Fundamental, Médio, Superior (3 estratos do TSE) | 4 opções no formulário (não estudei/só sei ler e escrever; fundamental; médio; superior), agregadas em 3 | TSE 2026 |
 
-| Variável | Categorias | Aplicação |
-|---|---|---|
-| **Município** | 75 municípios de SE | Cota proporcional ao eleitorado TSE de cada município. Quando a cota se esgota, novos cadastros do município são bloqueados. |
+**Método:** raking (ajuste iterativo proporcional) nas quatro marginais, calculado no banco (função SQL `ponderar_estratos_raking`), com execução gravada (n efetivo, deff, pesos, alvos), aprovada pelo estatístico responsável indicado no registro da edição antes da divulgação. Resultado divulgado = agregação ponderada, ao lado do bruto.
 
-### Variáveis de ponderação pós-coleta
+**Renda:** faixas em salários mínimos (SM 2026 = R$ 1.621), com "não sei" e "prefiro não informar" — **só recorte descritivo; não pondera** (não há parâmetro oficial do eleitorado por renda). Cor/raça e religião não são coletadas.
 
-| Variável | Categorias |
+## Identificação do respondente
+
+| Camada | Mecanismo |
 |---|---|
-| **Sexo** | M, F |
-| **Faixa etária** | 16–17, 18–24, 25–34, 35–44, 45–59, 60+ |
-| **Grau de instrução** | Fundamental (incompleto/completo), Médio (incompleto/completo), Superior (incompleto/completo) |
+| 1. Validação do CPF | Base da CDL Aracaju ou **consulta cadastral ao SPC Brasil** (devolve nome, situação do CPF, data de nascimento, entre outros) |
+| 2. Posse do WhatsApp | Código OTP de 6 dígitos |
+| 3. Antiautomação | Cloudflare Turnstile; bloqueio de navegação anônima/privativa; teto de códigos por CPF; janela de coleta no servidor |
+| 4. Unicidade | Hash HMAC-SHA256 do CPF + WhatsApp único — 1 participação por eleitor por edição |
 
-Fator de expansão por estrato:
+IP, user-agent e fingerprint do dispositivo são **apenas registrados** (não bloqueiam). Localização por IP/GPS está desligada nesta edição.
 
-```
-peso = proporção_TSE_estrato ÷ proporção_amostra_estrato
-```
+## Privacidade
 
-Resultado divulgado = média ponderada dos votos por estrato. A tabela cruzada vai anexa no PesqEle.
-
-### O que **não** é controlado (e por quê)
-
-- **Renda / nível econômico**: a Resolução pede como variável de ponderação, mas o TSE não publica recorte oficial por faixa de renda compatível com o cadastro eleitoral. Aplicamos proxy de escolaridade conforme aceito pela literatura (correlação ~0.7 com renda no Brasil — IBGE PNAD).
-- **Cor/raça**: não coletada. A Resolução não exige.
-- **Religião / orientação política prévia**: não coletada (LGPD — minimização).
-
-## Modelo de identificação do respondente
-
-Diferença central em relação a pesquisas presenciais ou telefônicas:
-
-| Camada | Mecanismo | Função |
-|---|---|---|
-| 1. Allowlist | CPF deve estar na **base CDL Aracaju** (44.545 votantes do Melhores do Ano) ou ser validado em tempo real no **SPC Brasil** | Garante que respondente é pessoa física real, não bot ou cadastro fabricado |
-| 2. Verificação posse do CPF | Código OTP de 6 dígitos enviado no **WhatsApp** vinculado ao CPF | Impede uso de CPF de terceiros |
-| 3. Antifraude técnico | Cloudflare Turnstile (anti-bot), rate-limit por IP, máximo 2 CPFs por device fingerprint, cota de município | Bloqueia automação |
-| 4. Unicidade | Hash HMAC-SHA256 do CPF — 1 voto por eleitor por edição | Evita voto duplicado |
-
-A "amostra" é **auto-selecionada dentro de allowlist verificada**. Não há sorteio aleatório de eleitores como em pesquisas probabilísticas. A ponderação demográfica pós-coleta corrige desequilíbrios em relação à distribuição TSE.
-
-## Cédulas (instrumento de coleta)
-
-Captura completa em PDF disponível no PesqEle. Cada eleitor responde:
-
-1. Presidente (1 número)
-2. Governador (1 número)
-3. Senador (até 2 números)
-4. Deputado Federal (1 número de 4 dígitos)
-5. Deputado Estadual (1 número de 5 dígitos)
-6. Consulta Zona de Expansão (somente eleitores de Aracaju ou São Cristóvão)
-
-Cada cédula oferece: digitar número, **voto em branco**, ou **não sabe / não quis responder**. Sem voto nulo (eleitor não pode "votar nulo de propósito" online — é tratado como branco pra fins de análise).
-
-## Privacidade e arquitetura
-
-A pesquisa adota **arquitetura de duas salas**:
-
-- **Sala 1** (`eleitores_pesquisa`): guarda hash do CPF + dados demográficos + verificações.
-- **Sala 2** (`votos_pesquisa`): guarda voto por token aleatório. Sem chave estrangeira pra Sala 1.
-
-Não existe coluna que ligue um CPF a um voto. O servidor não persiste essa ligação em nenhum momento. Cada timestamp é truncado pra hora cheia, impedindo correlação minuto-a-minuto entre cadastro e voto.
-
-Re-identificação por estrato raro é mitigada por **k-anonymity ≥ 30** em toda publicação cruzada: células com menos de 30 respondentes são suprimidas ou agregadas.
+Arquitetura de duas salas: identidade (hash do CPF + demográficos) e voto (token aleatório) em tabelas sem chave de ligação; timestamp do voto truncado pra hora cheia. Recortes demográficos publicados só com **no mínimo 30 respondentes por célula** (views do banco). Política: `/privacidade`; exclusão: `/privacidade/excluir`.
 
 ## Margem de erro — interpretação
 
-A margem de erro de ±N p.p. com IC 95% significa: se a pesquisa fosse repetida 100 vezes nas mesmas condições, em 95 delas o resultado verdadeiro estaria dentro do intervalo `(resultado − N, resultado + N)`.
+Por ser amostra por adesão, a margem é indicativa. Diferença entre dois candidatos **menor que 2× a margem efetiva** é tratada como empate técnico. Sub-amostras têm margem maior e recortes pequenos não são publicados.
 
-**Importante para o leitor:**
-
-- Diferença entre dois candidatos **menor que 2× a margem** é estatisticamente **empate técnico**.
-- Margem se aplica ao resultado geral. Sub-amostras (município específico, faixa etária específica) têm margem proporcionalmente **maior** e devem ser interpretadas com cautela. Não publicamos cortes com `n` insuficiente.
-
-## Diferenças em relação a institutos tradicionais — declaradas explicitamente
+## Diferenças em relação a institutos tradicionais
 
 | Item | Instituto tradicional | Pesquisa Sergipe 2026 |
 |---|---|---|
-| Sorteio probabilístico | Sim (PPS ou cluster sampling) | Não — allowlist com identidade verificada |
-| Forma | Presencial/telefone | Online (web/PWA) |
-| Local de coleta | Pontos físicos sorteados | Casa do eleitor, dispositivo próprio |
-| Entrevistador | Sim (pode introduzir viés) | Não — autopreenchimento sem mediação humana |
-| Tipo (estimulada/espontânea) | Geralmente estimulada | **Espontânea pura** |
-| Anonimato | Promessa operacional | **Garantia arquitetural** (duas salas + k-anonymity) |
-| Auditoria | Material físico arquivado | **Código aberto no GitHub** + banco auditável conforme Art. 13 da Resolução 23.747/2026 |
-| Custo | R$ 80k–R$ 300k por onda | Próximo de zero (infraestrutura própria da CDL, sem entrevistadores) |
+| Sorteio probabilístico | Sim | Não — adesão com identidade verificada, ponderada por raking |
+| Forma | Presencial/telefone | Online |
+| Entrevistador | Sim | Não — autopreenchimento |
+| Tipo | Geralmente estimulada | **Espontânea** |
+| Anonimato | Operacional | **Arquitetural** (duas salas) |
+| Auditoria | Material físico | **Código aberto** + banco auditável (art. 13, §§ 8º e 9º) |
 
-Cada diferença foi consciente e tem trade-offs documentados. Os ganhos: **transparência total** (código aberto, dados auditáveis), **anonimato arquitetural** (não-operacional), **fidelidade ao comportamento da urna** (espontânea pura). As perdas: **não-aleatoriedade da amostra** (corrigida via ponderação demográfica), **viés digital** (respondentes precisam de smartphone + WhatsApp). Esses limites estão na divulgação.
+Limites declarados: não aleatoriedade da amostra (custo declarado na margem efetiva) e viés digital (exige smartphone + WhatsApp).
 
 ## Auditoria e replicação
 
-- **Código-fonte**: público em `github.com/presidencia-svg/pesquisa`
-- **Banco de dados**: estrutura completa nas migrations do repositório
-- **Dados brutos**: disponibilizados conforme Art. 13, §§ 8º e 9º da Resolução 23.747/2026, mediante requerimento no prazo de 2 dias úteis
-- **Replicabilidade**: qualquer interessado pode rodar o sistema localmente, importar amostras simuladas e reproduzir a metodologia
+- **Código-fonte:** `github.com/presidencia-svg/pesquisa`
+- **Dados:** à disposição da Justiça Eleitoral e de interessados nos termos do art. 13, §§ 8º e 9º, por exportação sem CPF, telefone ou IP
+- **Verificação:** `npm run verificar:resultados` confere app × banco antes de cada divulgação
 
 ## Contato
 
-CDL Aracaju — `contato@cdlaju.com.br` | (79) 3212-7700
+CDL Aracaju — `contato@cdlaju.com.br` | (79) 3212-7700 · DPO: `dpo@cdlaju.com.br`

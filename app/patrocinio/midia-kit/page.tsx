@@ -5,7 +5,7 @@ import { BotaoImprimirKit } from './botao-imprimir'
 import './midia-kit.css'
 
 export const metadata = {
-  title: 'Mídia Kit · A maior pesquisa política já realizada no Brasil',
+  title: 'Mídia Kit · Pesquisa Eleitoral Sergipe 2026 · CDL Aracaju',
   robots: { index: false, follow: false },
 }
 
@@ -21,7 +21,7 @@ const COTAS = [
       'Exclusividade na categoria (nenhum concorrente patrocina)',
       'Maior destaque na faixa de patrocínio em toda a jornada do votante — entrada, cada cédula da cabine e encerramento',
       'Logo em destaque máximo no topo da página /resultados',
-      'Painel dedicado nos créditos de abertura do telejornal TV Atalaia',
+      'Painel dedicado na apresentação dos resultados, quando houver veiculação em TV parceira',
       'Entrevista exclusiva do Presidente da CDL para veículo do patrocinador',
       'Relatório premium customizado com cortes demográficos × voto',
       'Reunião privada com Presidente + estatístico responsável',
@@ -103,29 +103,30 @@ export default async function MidiaKitPage() {
           <p className="kit-kicker">Cotas de patrocínio institucional</p>
           <h2 className="kit-titulo">Pesquisa Eleitoral Sergipe 2026</h2>
           <p className="kit-edicao">
-            1ª edição · 1º turno das Eleições 2026
+            2ª edição · 1º turno das Eleições 2026
           </p>
         </div>
 
         {/* Hero argumento */}
         <section className="kit-hero">
           <p className="kit-hero-kicker">
-            A maior pesquisa política já realizada no Brasil*
+            Pesquisa eleitoral com identidade verificada em todo Sergipe
           </p>
-          <p className="kit-hero-numero">200.000</p>
+          <p className="kit-hero-numero">75</p>
           <p className="kit-hero-label">
-            respondentes com identidade verificada por CPF + WhatsApp — meta de
-            campo, partindo de 44.545 CPFs já validados
+            municípios · respondentes com identidade verificada por CPF +
+            WhatsApp · amostra por adesão, ponderada pelo eleitorado oficial
+            do TSE (município, sexo, faixa etária e grau de instrução)
           </p>
           <p className="kit-hero-comp">
-            <strong>100× maior</strong> que Datafolha, IBOPE ou Quaest —
-            margem de erro <strong>±0,22pp</strong> contra ±2,2pp dos
-            institutos tradicionais.
+            Coleta da 2ª edição de <strong>13 a 20 de setembro de 2026</strong>.
+            Registro no PesqEle (TSE e TRE-SE) antes de qualquer divulgação.
           </p>
           <p className="kit-hero-asterisco">
-            * Por critério de amostra com identidade verificada em pesquisa
-            eleitoral estadual. Margem de erro calculada por 1,96 × √(0,25/n),
-            IC 95%.
+            Margem de erro nominal (1,96 × √(0,25/n), IC 95%) e efetiva (n de
+            Kish) publicadas na ficha técnica; amostra por adesão, margem
+            indicativa. Nenhum número de participantes é divulgado antes do
+            registro.
           </p>
         </section>
 
@@ -156,24 +157,18 @@ export default async function MidiaKitPage() {
                 <td className="td-num">1.500 – 2.000</td>
                 <td className="td-num">±2,2 – 2,5 pp</td>
               </tr>
-              <tr>
-                <td>Pesquisa Sergipe 2026 — base já validada</td>
-                <td className="td-num">44.545</td>
-                <td className="td-num">±0,46 pp</td>
-              </tr>
               <tr className="kit-tr-destaque">
-                <td>Pesquisa Sergipe 2026 — meta de campo</td>
-                <td className="td-num">200.000</td>
-                <td className="td-num">±0,22 pp</td>
+                <td>Pesquisa Sergipe 2026 — amostra por adesão</td>
+                <td className="td-num">definida ao fim da coleta</td>
+                <td className="td-num">nominal e efetiva, na ficha técnica</td>
               </tr>
             </tbody>
           </table>
           <p className="kit-pequeno">
             Menor margem de erro significa que o número divulgado é mais
-            próximo da realidade. Já com a base validada de 44.545 CPFs a
-            precisão é <strong>5× maior</strong> que a de um instituto
-            tradicional; atingida a meta de 200 mil respondentes, chega a{' '}
-            <strong>10× maior</strong>.
+            próximo da realidade. O n final é o total de eleitores com CPF e
+            WhatsApp validados ao fim da coleta; a margem publicada é
+            indicativa, calculada como se a amostra fosse probabilística.
           </p>
         </section>
 
@@ -183,28 +178,27 @@ export default async function MidiaKitPage() {
           <table className="kit-tabela-crono">
             <tbody>
               <tr>
-                <td className="kit-crono-data">1 e 2 de setembro de 2026</td>
-                <td>Coleta de campo (votação online + WhatsApp)</td>
+                <td className="kit-crono-data">13 a 20 de setembro de 2026</td>
+                <td>Coleta de campo da 2ª edição (votação online + WhatsApp)</td>
               </tr>
               <tr>
-                <td className="kit-crono-data">3 de setembro · até 4h antes</td>
-                <td>Entrega de números ao patrocinador Diamante (NDA)</td>
-              </tr>
-              <tr>
-                <td className="kit-crono-data">3 de setembro de 2026</td>
+                <td className="kit-crono-data">Antes da divulgação</td>
                 <td>
-                  <strong>Divulgação ao vivo no telejornal TV Atalaia</strong>
+                  Registro no PesqEle (TSE e TRE-SE), com antecedência mínima
+                  de 5 dias — Lei 9.504/97, art. 33
                 </td>
               </tr>
               <tr>
-                <td className="kit-crono-data">Imediatamente após anúncio</td>
+                <td className="kit-crono-data">Após o registro</td>
                 <td>
-                  Publicação no portal pesquisa.cdlaju.com.br/resultados
+                  <strong>Divulgação dos resultados</strong> nesta plataforma
+                  (pesquisa.cdlaju.com.br/resultados) e nos canais da CDL
+                  Aracaju
                 </td>
               </tr>
               <tr>
-                <td className="kit-crono-data">Até 3 dias úteis após</td>
-                <td>Relatório complementar ao TRE/SE</td>
+                <td className="kit-crono-data">Após a divulgação</td>
+                <td>Relatório complementar no PesqEle</td>
               </tr>
             </tbody>
           </table>
@@ -222,7 +216,7 @@ export default async function MidiaKitPage() {
             Diferente de um anúncio visto uma vez, aqui a marca acompanha o
             eleitor em <strong>todas as telas</strong> da participação — da
             identificação ao encerramento. São <strong>5 a 6 telas por
-            votante</strong>, multiplicadas por 200 mil+ respondentes.
+            votante</strong>, multiplicadas por cada respondente da edição.
           </p>
           <table className="kit-tabela-crono">
             <tbody>
@@ -250,8 +244,8 @@ export default async function MidiaKitPage() {
               <tr>
                 <td className="kit-crono-data">Resultados</td>
                 <td>
-                  Página pública pesquisa.cdlaju.com.br/resultados e
-                  apresentação ao vivo no telejornal TV Atalaia
+                  Página pública pesquisa.cdlaju.com.br/resultados, canais da
+                  CDL Aracaju e eventual apresentação em TV parceira
                 </td>
               </tr>
             </tbody>
@@ -363,10 +357,10 @@ export default async function MidiaKitPage() {
             O patrocínio institucional é estritamente <strong>não
             eleitoral</strong> e não confere ao patrocinador poder de
             ingerência sobre metodologia, contratação de colaboradores,
-            resultados divulgados ou edição da reportagem. Cláusula
-            espelhada do Convênio CDL × TV Atalaia v1.4. Conforme exige a{' '}
-            <strong>Lei 9.504/1997, art. 33, §1º</strong>, a relação de
-            patrocinadores é informada ao TRE/SE no registro PesqEle.
+            resultados divulgados ou edição de eventual reportagem. Conforme
+            exige a <strong>Lei 9.504/1997, art. 33, §1º</strong>, a relação
+            de patrocinadores é informada no registro no PesqEle (TSE e
+            TRE-SE).
           </p>
         </section>
 
@@ -422,8 +416,9 @@ export default async function MidiaKitPage() {
             Lojistas de Aracaju · CNPJ 13.045.935/0001-36
           </p>
           <p>
-            Em conformidade com Lei 9.504/1997, Resolução TSE 23.747/2026 e
-            LGPD 13.709/2018. Registro PesqEle/TRE-SE.
+            Em conformidade com a Lei 9.504/1997, a Res.-TSE 23.600/2019
+            (red. Res.-TSE 23.747/2026) e a LGPD 13.709/2018. Registro no
+            PesqEle (TSE e TRE-SE) antes de qualquer divulgação.
           </p>
         </footer>
       </main>
