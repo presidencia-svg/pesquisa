@@ -964,9 +964,10 @@ margem efetiva = 1,96 · √(0,25 / n_eff)`}</code>
                   requerente.
                 </li>
                 <li>
-                  <strong>Estatístico responsável.</strong> Identificado no
-                  registro PesqEle, com número CONRE ativo e declaração
-                  assinada com certificado digital.
+                  <strong>Estatístico responsável.</strong> Danilio Silva
+                  Santos, CONRE 8223 (o mesmo da 1ª edição), identificado no
+                  registro PesqEle, com declaração assinada com certificado
+                  digital.
                 </li>
                 <li>
                   <strong>Encarregada de Dados (DPO).</strong> Claudimara

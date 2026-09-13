@@ -15,7 +15,7 @@
 | **Edição** | 2ª edição |
 | **Contratante** | Câmara de Dirigentes Lojistas de Aracaju (CDL Aracaju) — CNPJ 13.045.935/0001-36 |
 | **Executor** | CDL Aracaju (execução direta, sem terceirização) |
-| **Estatístico responsável** | Estatístico responsável indicado no registro da edição (nome e CONRE em `edicao.estatistico_nome` / `edicao.conre`; declaração do art. 2º, IX assinada digitalmente no registro) |
+| **Estatístico responsável** | Danilio Silva Santos — CONRE 8223 (o mesmo da 1ª edição; declaração do art. 2º, IX assinada digitalmente no registro) |
 | **Custo total** | *a declarar no registro* |
 | **Origem dos recursos** | Recursos próprios da CDL Aracaju (associação civil sem fins lucrativos) |
 | **Nº de registro** | **Pendente — a ser efetuado antes da divulgação**, quando a amostra atingir 20 mil eleitores (Lei 9.504/97, art. 33; Res.-TSE 23.600/2019, art. 2º, § 7º, III e IV). Serão dois registros: TRE-SE (Governador, Senador, Dep. Federal, Dep. Estadual) e TSE (Presidente). |
