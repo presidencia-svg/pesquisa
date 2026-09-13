@@ -35,7 +35,7 @@
 | Item | Valor |
 |---|---|
 | **Tipo** | **Amostra por adesão** (autosseleção) com identidade verificada — não probabilística |
-| **Recrutamento** | Convite por WhatsApp às bases da CDL Aracaju (Melhores do Ano e participantes da 1ª edição, com opt-out) + divulgação aberta nos canais da CDL |
+| **Recrutamento** | Convite por WhatsApp às bases da CDL Aracaju (Melhores do Ano e participantes da 1ª edição, com opt-out) + divulgação aberta nos canais da CDL + anúncios segmentados por município no Instagram e Facebook (Meta Ads, 18+, identificação "Paga por CDL Aracaju"), dirigidos ao interior (Centro-Sul, Sertão, Leste e Agreste) a partir de 14/09/2026 |
 | **n** | Total de respondentes com CPF e WhatsApp validados ao fim da coleta — informado no registro e na complementação do art. 2º, § 7º; não citado em peças de divulgação |
 | **Nível de confiança** | 95% |
 | **Margem de erro** | **Indicativa**, calculada como se a amostra fosse probabilística: **nominal** `1,96·√(0,25/n)` e **efetiva** `1,96·√(0,25/n_eff)` (n efetivo de Kish, após a ponderação) — as duas publicadas |

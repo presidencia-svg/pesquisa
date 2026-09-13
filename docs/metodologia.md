@@ -54,6 +54,7 @@ Eleitorado de Sergipe segundo o TSE 2026 — arquivo `perfil_eleitor_secao_2026_
 
 1. **Convite por WhatsApp** às bases da CDL Aracaju (Melhores do Ano e participantes da 1ª edição), com opt-out ("responda SAIR"); excluídos nunca recebem.
 2. **Divulgação aberta** nos canais da CDL Aracaju — qualquer eleitor com CPF validável participa.
+3. **Anúncios segmentados por município** no Instagram e no Facebook (Meta Ads, categoria "temas sociais, eleições ou política", com identificação "Paga por CDL Aracaju"), a partir de 14/09/2026, dirigidos ao público de 18 anos ou mais dos municípios fora da Grande Aracaju — Centro-Sul, Sertão, Leste e Agreste —, com verba maior onde a 1ª edição teve menor cobertura. As peças convidam a participar e não citam candidatos, resultados nem números de participação.
 
 Não há sorteio probabilístico nem cota bloqueante: `n` é o total de respondentes com CPF e WhatsApp validados ao fim da coleta. A ficha técnica não traz "n projetado"; o número que vale é o final, e ele não é citado em peças de divulgação antes do registro.
 
