@@ -1,11 +1,12 @@
 /**
  * GET /api/cron/convite-pesquisa
  *
- * Cron Vercel (vercel.json): a cada 5 min em 13/09/2026, 11h–17h55 UTC
- * (= 08h00–14h55 America/Recife). Cada tick envia até ~450 convites da 2ª
- * edição (base mda e depois cdl_base) e registra o resumo em cron_log.
+ * Cron Vercel (vercel.json): a cada 5 min em 13 e 14/09/2026, 11h–20h55 UTC
+ * (= 08h00–17h55 America/Recife). Cada tick envia por ~45 s (~160 convites)
+ * da 2ª edição (base mda e depois cdl_base) e registra o resumo em cron_log.
  *
- * Fora da janela autorizada (08h–15h de 13/09/2026) o tick NÃO envia:
+ * Fora das janelas autorizadas (JANELAS em lib/convite-pesquisa.ts:
+ * 13 e 14/09/2026, 08h00–17h30 Recife) o tick NÃO envia:
  * roda a pré-checagem (token, número, template, imagem, fila) e registra.
  * `?preflight=1` força a pré-checagem mesmo dentro da janela. A rota
  * ./preflight faz só a pré-checagem, de hora em hora.

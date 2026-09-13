@@ -10,10 +10,12 @@ import { supabaseAdmin } from './supabase/admin'
  * como cron da Vercel — não depende de máquina local ligada.
  *
  * Autorização: presidência da CDL, 12/09/2026 — "a partir de 8h mandar
- * zap até as 15h para todos do nosso banco de dados". Por isso a janela é
- * FIXA no código: só envia em 13/09/2026 entre 08h00 e 15h00
- * (America/Recife). Fora dela, o cron só faz a pré-checagem (token,
- * número, template, fila) e registra em cron_log.
+ * zap até as 15h para todos do nosso banco de dados"; ampliada em
+ * 13/09/2026 às 11h50 (fila não esvaziaria até as 15h): "aumentar para
+ * 17:30 de hoje e continuar amanhã a partir das 8h". Por isso as janelas
+ * são FIXAS no código (JANELAS): 13/09/2026 08h00–17h30 e 14/09/2026
+ * 08h00–17h30 (America/Recife). Fora delas, o cron só faz a pré-checagem
+ * (token, número, template, fila) e registra em cron_log.
  *
  * Bases (mesma regra de scripts/disparar-convite-pesquisa.mjs):
  *   1. mda — votantes do Melhores do Ano (banco MELHORES_*), marca
@@ -43,11 +45,21 @@ export const CONVITE = {
     process.env.CONVITE_IMAGEM ??
     'https://pesquisa.cdlaju.com.br/convite-whatsapp.png',
   coluna: 'convite_pesquisa2_enviado_em',
-  dia: '2026-09-13',
-  inicioMin: 8 * 60,
-  fimMin: 15 * 60,
   fuso: 'America/Recife',
 } as const
+
+/** Janelas autorizadas de envio (dia e minutos do dia, America/Recife). */
+export const JANELAS: ReadonlyArray<{ dia: string; inicioMin: number; fimMin: number }> = [
+  { dia: '2026-09-13', inicioMin: 8 * 60, fimMin: 17 * 60 + 30 },
+  { dia: '2026-09-14', inicioMin: 8 * 60, fimMin: 17 * 60 + 30 },
+]
+
+const hhmm = (min: number) =>
+  `${String(Math.floor(min / 60)).padStart(2, '0')}h${String(min % 60).padStart(2, '0')}`
+
+export const descreverJanelas = () =>
+  JANELAS.map((j) => `${j.dia} ${hhmm(j.inicioMin)}–${hhmm(j.fimMin)}`).join('; ') +
+  ` ${CONVITE.fuso}`
 
 const PARAMS = (nome: string) => [
   nome,
@@ -88,10 +100,8 @@ export function agoraRecife(d = new Date()): Agora {
 }
 
 export function dentroDaJanela(a = agoraRecife()): boolean {
-  return (
-    a.data === CONVITE.dia &&
-    a.minutos >= CONVITE.inicioMin &&
-    a.minutos < CONVITE.fimMin
+  return JANELAS.some(
+    (j) => a.data === j.dia && a.minutos >= j.inicioMin && a.minutos < j.fimMin,
   )
 }
 
@@ -522,7 +532,7 @@ export async function preflightConvite() {
   const api = SERVER_ENV.META_API_VERSION
   const out: Record<string, unknown> = {
     agora: agoraRecife(),
-    janela: `${CONVITE.dia} ${CONVITE.inicioMin / 60}h–${CONVITE.fimMin / 60}h ${CONVITE.fuso}`,
+    janela: descreverJanelas(),
     dentroDaJanela: dentroDaJanela(),
     pausado: process.env.CONVITE_PAUSADO === '1',
     template: CONVITE.template,
