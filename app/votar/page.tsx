@@ -11,7 +11,10 @@ import { getPreVoto, getVotoToken } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export const metadata = {
-  title: 'Identifique-se · Pesquisa Eleitoral Sergipe 2026',
+  title: 'Participe · Pesquisa CDL Aracaju · Sergipe 2026',
+  description:
+    'Participe da 2ª edição da pesquisa eleitoral da CDL Aracaju: informe o CPF, confirme o código no WhatsApp e vote de forma anônima.',
+  alternates: { canonical: '/votar' },
 }
 
 // Sempre dinâmica — a janela de votação depende do relógio.

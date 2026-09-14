@@ -10,10 +10,40 @@ import { divulgacaoPublicaLiberada } from '@/lib/divulgacao-publica'
 // resultado público liberado (edição divulgada e sem suspensão judicial).
 export const revalidate = 300
 
+export const metadata = {
+  title: 'Pesquisa CDL Aracaju · Pesquisa Eleitoral Sergipe 2026 · 2ª edição',
+  description:
+    'Pesquisa CDL Aracaju, 2ª edição: pesquisa eleitoral de intenção de voto para Sergipe 2026 (presidente, governador, senador, deputados). Participe pelo celular com CPF e WhatsApp; o voto é anônimo.',
+  alternates: { canonical: '/' },
+}
+
+// Dados estruturados (schema.org) — ajudam o Google a ligar o site à
+// entidade "CDL Aracaju" e a mostrar o nome certo no resultado da busca.
+const JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Pesquisa CDL Aracaju · Sergipe 2026',
+  alternateName: ['Pesquisa CDL', 'CDL Pesquisas'],
+  url: 'https://pesquisa.cdlaju.com.br/',
+  inLanguage: 'pt-BR',
+  description:
+    'Pesquisa eleitoral de intenção de voto para Sergipe 2026, realizada pela CDL Aracaju.',
+  publisher: {
+    '@type': 'Organization',
+    name: 'CDL Aracaju — Câmara de Dirigentes Lojistas de Aracaju',
+    url: 'https://cdlaju.com.br/',
+    logo: 'https://pesquisa.cdlaju.com.br/icon-512.png',
+  },
+}
+
 export default async function Home() {
   const temResultados = await divulgacaoPublicaLiberada()
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+      />
       <main className="flex flex-col flex-1 items-center bg-background px-5 sm:px-6 py-10 sm:py-24">
         <div className="w-full max-w-2xl flex flex-col gap-10 sm:gap-12">
           <header className="flex flex-col gap-6 sm:gap-8">
@@ -24,10 +54,10 @@ export default async function Home() {
 
             <div className="flex flex-col gap-3 pt-4 border-t border-border">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">
-                Pesquisa Eleitoral · Intenção de voto
+                CDL Aracaju · Intenção de voto · 2ª edição
               </p>
               <h1 className="text-3xl sm:text-5xl font-semibold leading-[1.05] tracking-tight text-foreground">
-                Sergipe 2026
+                Pesquisa Eleitoral Sergipe 2026
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed pt-2">
                 Pesquisa eleitoral via internet, com identidade verificada e

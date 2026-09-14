@@ -6,7 +6,8 @@ import { MarcaCdl } from '@/components/marca-cdl'
 import { RodapeInstitucional } from '@/components/rodape-institucional'
 
 export const metadata = {
-  title: 'Transparência · Pesquisa Eleitoral Sergipe 2026',
+  title: 'Transparência · Pesquisa CDL Aracaju · Sergipe 2026',
+  alternates: { canonical: '/transparencia' },
   description:
     'Como a Pesquisa Eleitoral Sergipe 2026 funciona: arquitetura de anonimato, plano amostral, base legal, anti-fraude e como auditar.',
 }

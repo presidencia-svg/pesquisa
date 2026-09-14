@@ -65,12 +65,6 @@ const securityHeaders = [
       'xr-spatial-tracking=()',
     ].join(', '),
   },
-  // Robots: a pesquisa nao deve ser indexada antes do registro PesqEle
-  // (Resolucao 23.747/2026 — divulgacao controlada).
-  {
-    key: 'X-Robots-Tag',
-    value: 'noindex, nofollow',
-  },
   // X-XSS-Protection: legado (era pro IE), mas alguns scanners ainda
   // checam. Browsers modernos ignoram. Posto pra reduzir ruído.
   {
@@ -156,6 +150,24 @@ const nextConfig: NextConfig = {
         source: '/:path*',
         headers: securityHeaders,
       },
+      // Robots: só as páginas públicas (home, /votar, /transparencia,
+      // /privacidade, /patrocinio) são indexáveis. Admin, API, TV, fluxo
+      // interno do voto e RESULTADOS (trancados até a divulgação e sob a
+      // tutela da Rp 0601015-42) ficam fora do Google. Os metadados das
+      // páginas repetem o noindex; o header garante mesmo sem HTML.
+      ...[
+        '/admin/:path*',
+        '/api/:path*',
+        '/dev/:path*',
+        '/tv/:path*',
+        '/resultados/:path*',
+        '/manutencao/:path*',
+        '/teste-ficticio/:path*',
+        '/votar/:path+',
+      ].map((source) => ({
+        source,
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      })),
       // /.well-known/security.txt deve ser servido como text/plain
       // (RFC 9116 §3.4) e ser cacheável publicamente.
       {

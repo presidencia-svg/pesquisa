@@ -16,9 +16,33 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Pesquisa Eleitoral Sergipe 2026',
+  // Base pra URLs absolutas (Open Graph, canonical, sitemap).
+  metadataBase: new URL('https://pesquisa.cdlaju.com.br'),
+  title: 'Pesquisa CDL Aracaju · Pesquisa Eleitoral Sergipe 2026',
   description:
-    'Pesquisa de intenção de voto para Sergipe 2026. Realizada pela CDL Aracaju, com identidade verificada e voto desvinculado do eleitor.',
+    'Pesquisa eleitoral da CDL Aracaju para Sergipe 2026 (2ª edição): intenção de voto para presidente, governador, senador e deputados. Identidade verificada e voto desvinculado do eleitor.',
+  keywords: [
+    'Pesquisa CDL',
+    'Pesquisa CDL Aracaju',
+    'CDL Pesquisas',
+    'pesquisa eleitoral Sergipe 2026',
+    'pesquisa eleitoral Aracaju',
+    'intenção de voto Sergipe',
+    'eleições 2026 Sergipe',
+    'segunda edição',
+  ],
+  openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    siteName: 'CDL Pesquisas',
+    title: 'Pesquisa CDL Aracaju · Sergipe 2026 · 2ª edição',
+    description:
+      'Participe da pesquisa eleitoral da CDL Aracaju. Vale pra todo sergipano com título de eleitor: CPF, código no WhatsApp e voto anônimo.',
+    images: [{ url: '/convite-whatsapp.png', width: 1080, height: 566 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
   applicationName: 'Pesquisa SE 2026',
   manifest: '/manifest.webmanifest',
   appleWebApp: {
@@ -28,9 +52,12 @@ export const metadata: Metadata = {
   },
   // icons auto-detectado por Next.js a partir de app/icon.png +
   // app/apple-icon.png + app/favicon.ico (convencao do app router).
+  // Indexável desde 14/09/2026 (2ª edição em coleta). Antes era noindex
+  // global; hoje só admin, API, TV, resultados e o fluxo interno do voto
+  // ficam fora do Google (metadata das páginas + header no next.config).
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
   },
 }
 
