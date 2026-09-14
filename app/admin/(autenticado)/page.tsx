@@ -12,6 +12,10 @@ type Resumo = {
   eleitores_cadastrados: number | null
   via_cdl_base: number | null
   via_spc: number | null
+  via_melhores_do_ano: number | null
+  via_mda_votou_ed1: number | null
+  via_base_1a_edicao: number | null
+  via_spc_novo: number | null
   com_wa: number | null
   tokens_emitidos: number | null
   tokens_usados: number | null
@@ -107,10 +111,17 @@ export default async function DashboardPage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Card titulo="Eleitores cadastrados" valor={resumo.eleitores_cadastrados ?? 0} />
-            <Card titulo="Via base CDL" valor={resumo.via_cdl_base ?? 0} />
-            <Card titulo="Via SPC" valor={resumo.via_spc ?? 0} />
-            <Card titulo="Com WhatsApp validado" valor={resumo.com_wa ?? 0} />
+            <Card titulo="Melhores do Ano" valor={resumo.via_melhores_do_ano ?? 0} />
+            <Card titulo="Base da 1ª edição" valor={resumo.via_base_1a_edicao ?? 0} />
+            <Card titulo="SPC (novos)" valor={resumo.via_spc_novo ?? 0} />
           </div>
+          <p className="text-xs text-muted-foreground -mt-2">
+            Melhores do Ano = lista própria da CDL (inclui{' '}
+            {(resumo.via_mda_votou_ed1 ?? 0).toLocaleString('pt-BR')} que também
+            votaram na 1ª edição). Base da 1ª edição = fora da lista, mas já
+            participou de edição anterior. SPC = consultado na hora, sem histórico.
+            {' '}Com WhatsApp validado: {(resumo.com_wa ?? 0).toLocaleString('pt-BR')}.
+          </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Card titulo="Tokens emitidos" valor={resumo.tokens_emitidos ?? 0} />
