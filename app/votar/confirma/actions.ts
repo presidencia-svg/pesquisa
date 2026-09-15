@@ -10,10 +10,12 @@ import {
   NIVEIS_ECONOMICOS,
   estratoEscolaridade,
 } from '@/lib/demograficos'
-import { DEV_MODE } from '@/lib/env'
+import { DEV_MODE, OTP_DESATIVADO } from '@/lib/env'
 import { obterIpCliente } from '@/lib/ip'
 import { enviarOtpWhatsApp, metaWhatsappConfigurada } from '@/lib/meta-whatsapp'
+import { atravessarPonte, checarJanela } from '@/lib/ponte-voto'
 import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
+import { mensagemJanela } from '@/lib/edicao-janela'
 import { registrarTentativaIp } from '@/lib/rate-limit'
 import { clearPreVoto, getPreVoto, setPreVoto, type FonteDado } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
@@ -476,6 +478,35 @@ export async function confirmarDados(
   //       otp/actions.ts, depois da validação do OTP. Até lá o valor vive
   //       no rascunho (sexoOrigem = 'eleitor') e em eleitores_pesquisa
   //       (linha ainda wa_validado=false, como os demais dados do form).
+
+  // 2.7 — CONTINGÊNCIA (OTP_DESATIVADO): sem código por WhatsApp. O
+  //       eleitor já provou CPF válido (SPC/cdl_base) e preencheu o
+  //       formulário; atravessa a ponte aqui mesmo e vai pra cápsula.
+  //       Mantém todas as travas (token único por CPF, WhatsApp único,
+  //       cotas, janela de coleta) — só a prova de posse do número fica
+  //       de fora. Ver lib/env.ts.
+  if (OTP_DESATIVADO) {
+    const janela = await checarJanela(db, draft.edicaoId)
+    if (janela !== 'aberta') {
+      return { ok: false, message: mensagemJanela(janela) }
+    }
+    const ponte = await atravessarPonte(
+      db,
+      {
+        ...draft,
+        municipioIbge: municipio_ibge,
+        whatsappE164,
+        sexo,
+        sexoOrigem: sexoFonte,
+        escolaridade,
+        escolaridadeDetalhe: escolaridade_detalhe,
+        nivelEconomico: nivel_economico,
+      },
+      '[confirma/sem-otp]',
+    )
+    if (!ponte.ok) return { ok: false, message: ponte.message }
+    redirect('/votar/anonimo')
+  }
 
   // 3. Gerar e salvar OTP
   const codigo = gerarOtp()

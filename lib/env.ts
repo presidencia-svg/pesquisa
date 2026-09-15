@@ -31,6 +31,15 @@ const optional = (name: string, fallback = ''): string =>
 export const DEV_MODE = process.env.DEV_MODE === 'true'
 
 /**
+ * `OTP_DESATIVADO=true` (contingência, 15/09/2026): pula a confirmação por
+ * código no WhatsApp. O eleitor vai de /votar/confirma direto pra cápsula
+ * depois de CPF validado (SPC/cdl_base) e formulário preenchido. Usar só
+ * enquanto a conta WhatsApp Business (WABA) da CDL estiver banida pela
+ * Meta; remover a variável na Vercel pra voltar ao fluxo normal.
+ */
+export const OTP_DESATIVADO = process.env.OTP_DESATIVADO === 'true'
+
+/**
  * Variaveis publicas — disponiveis no bundle do navegador.
  */
 export const PUBLIC_ENV = {

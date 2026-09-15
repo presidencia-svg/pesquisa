@@ -3,23 +3,13 @@
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
-import {
-  compararHashes,
-  gerarOtp,
-  gerarTokenVoto,
-  hashOtp,
-  hashTokenVoto,
-} from '@/lib/crypto'
-import { janelaColeta, mensagemJanela } from '@/lib/edicao-janela'
-import { DEV_MODE } from '@/lib/env'
+import { compararHashes, gerarOtp, hashOtp } from '@/lib/crypto'
+import { mensagemJanela } from '@/lib/edicao-janela'
+import { DEV_MODE, OTP_DESATIVADO } from '@/lib/env'
 import { enviarOtpWhatsApp, metaWhatsappConfigurada } from '@/lib/meta-whatsapp'
+import { atravessarPonte, checarJanela } from '@/lib/ponte-voto'
 import { registrarTentativaIp } from '@/lib/rate-limit'
-import {
-  clearPreVoto,
-  getPreVoto,
-  setPreVoto,
-  setVotoToken,
-} from '@/lib/sessao'
+import { getPreVoto, setPreVoto } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export type OtpState = {
@@ -59,6 +49,20 @@ export async function validarOtp(
       ok: false,
       message: 'Sua sessão expirou. Volte ao início.',
     }
+  }
+
+  // CONTINGÊNCIA (OTP_DESATIVADO): quem ainda tem o rascunho da etapa
+  // anterior no cookie (chegou a /votar/otp antes do deploy) atravessa a
+  // ponte sem código. Ver lib/env.ts.
+  if (OTP_DESATIVADO) {
+    const dbSemOtp = supabaseAdmin()
+    const janelaSemOtp = await checarJanela(dbSemOtp, draft.edicaoId)
+    if (janelaSemOtp !== 'aberta') {
+      return { ok: false, message: mensagemJanela(janelaSemOtp) }
+    }
+    const ponte = await atravessarPonte(dbSemOtp, draft, '[otp/sem-otp]')
+    if (!ponte.ok) return { ok: false, message: ponte.message }
+    redirect('/votar/anonimo')
   }
 
   const parsed = codigoSchema.safeParse(formData.get('codigo'))
@@ -171,112 +175,10 @@ export async function validarOtp(
     }
   }
 
-  // 3b. Marca o eleitor como WhatsApp-validado.
-  //     Defesa em profundidade: os índices UNIQUE parciais
-  //     eleitores_wa_unico_validado_idx e eleitores_device_unico_validado_idx
-  //     (migration 020) garantem que mesmo numa race condition entre
-  //     dois eleitores validando ao mesmo tempo, só um vai conseguir.
-  //     O outro recebe constraint violation (Postgres 23505).
-  //     TRAVA DE TOKEN ÚNICO POR CPF (compare-and-swap atômico):
-  //     o UPDATE só afeta a linha se token_emitido ainda for false. Assim
-  //     um CPF gera NO MÁXIMO um token por edição — mesmo que o atacante
-  //     rode o laço reenviarOtp -> validarOtp várias vezes (o índice UNIQUE
-  //     por token não pega esse caso porque cada token é distinto).
-  const { data: claimed, error: errEleitor } = await db
-    .from('eleitores_pesquisa')
-    .update({ wa_validado: true, token_emitido: true })
-    .eq('edicao_id', draft.edicaoId)
-    .eq('cpf_hash', draft.cpfHash)
-    .eq('token_emitido', false)
-    .select('id')
-  if (errEleitor) {
-    console.error('[otp] erro marcando eleitor wa_validado:', errEleitor)
-    if (errEleitor.code === '23505') {
-      const msg = (errEleitor.message ?? '').toLowerCase()
-      if (msg.includes('whatsapp') || msg.includes('wa_unico')) {
-        return {
-          ok: false,
-          message:
-            'Este número de WhatsApp acabou de ser validado por outro CPF. Cada número participa uma única vez.',
-        }
-      }
-      if (msg.includes('device')) {
-        return {
-          ok: false,
-          message:
-            'Este dispositivo acabou de ser validado por outro CPF. Cada aparelho participa uma única vez.',
-        }
-      }
-    }
-    return { ok: false, message: 'Erro de sistema. Tente novamente.' }
-  }
-  if (!claimed || claimed.length === 0) {
-    // token_emitido já era true: este CPF já atravessou a ponte nesta
-    // edição. Aborta antes de gerar um segundo token (anti vote-stuffing).
-    return {
-      ok: false,
-      message:
-        'Este CPF já participou desta edição. Cada CPF vota uma única vez.',
-    }
-  }
-
-  // 3b'. Sexo autodeclarado entra no cache cdl_base SÓ AGORA — depois de o
-  //      eleitor provar a posse do WhatsApp (OTP) — e só onde não há valor
-  //      cadastral: sexo nulo, ou marcado 'eleitor' em edição
-  //      anterior (correção permitida). Um valor cadastral (cdl_base/SPC)
-  //      nunca é sobrescrito aqui. Sem isto a próxima edição perguntaria
-  //      de novo. Falha só loga — cache é otimização, não pré-requisito.
-  if (draft.sexo && draft.sexoOrigem === 'eleitor') {
-    const { error: errSexo } = await db
-      .from('cdl_base')
-      .update({
-        sexo: draft.sexo,
-        sexo_fonte: 'eleitor',
-        atualizado_em: new Date().toISOString(),
-      })
-      .eq('cpf_hash', draft.cpfHash)
-      .or('sexo.is.null,sexo_fonte.eq.eleitor')
-    if (errSexo) {
-      console.error('[otp] erro ao gravar sexo autodeclarado em cdl_base:', errSexo)
-    }
-  }
-
-  // 3c. Gera token de voto. Hash entra em tokens_emitidos SEM nenhuma
-  //     ligacao ao CPF. criado_hora truncado pra hora cheia (analise
-  //     temporal sem permitir cruzamento minuto-a-minuto).
-  const tokenClaro = gerarTokenVoto()
-  const tokenHash = hashTokenVoto(tokenClaro)
-  const horaCheia = new Date()
-  horaCheia.setMinutes(0, 0, 0)
-
-  const { error: errToken } = await db.from('tokens_emitidos').insert({
-    token_hash: tokenHash,
-    edicao_id: draft.edicaoId,
-    usado: false,
-    criado_hora: horaCheia.toISOString(),
-  })
-  if (errToken) {
-    console.error('[otp] erro gravando token:', errToken)
-    return { ok: false, message: 'Erro de sistema. Tente novamente.' }
-  }
-
-  // 3d. PONTE DESTRUIDA: limpa cookie da Sala 1, planta cookie da Sala 2.
-  //     Cookie da capsula carrega:
-  //       - token: identifica o voto em tokens_emitidos (sem CPF)
-  //       - municipioIbge: roteamento condicional de zona_expansao +
-  //         gravacao em votos_pesquisa.municipio_ibge (migration 011)
-  //       - demograficos: copia controlada (sexo/faixa/escol/nivel) que
-  //         entra em votos_pesquisa nas colunas da migration 026,
-  //         permitindo cruzamento demografico × voto pro relatorio TRE
-  //         e narrativa interna (com supressao N>=5 nas views).
-  await clearPreVoto()
-  await setVotoToken(tokenClaro, {
-    municipioIbge: draft.municipioIbge,
-    sexo: draft.sexo,
-    faixaEtaria: draft.faixaEtaria,
-    escolaridade: draft.escolaridade,
-    nivelEconomico: draft.nivelEconomico,
-  })
+  // 3b–3d. Marca eleitor validado, grava sexo autodeclarado no cache,
+  //        gera token anônimo e troca os cookies (lib/ponte-voto.ts).
+  const ponte = await atravessarPonte(db, draft, '[otp]')
+  if (!ponte.ok) return { ok: false, message: ponte.message }
 
   redirect('/votar/anonimo')
 }
@@ -293,6 +195,18 @@ export async function reenviarOtp(): Promise<OtpState> {
   }
 
   const db = supabaseAdmin()
+
+  // CONTINGÊNCIA (OTP_DESATIVADO): não há código pra reenviar; atravessa
+  // a ponte direto (mesmas travas do caminho normal).
+  if (OTP_DESATIVADO) {
+    const janelaSemOtp = await checarJanela(db, draft.edicaoId)
+    if (janelaSemOtp !== 'aberta') {
+      return { ok: false, message: mensagemJanela(janelaSemOtp) }
+    }
+    const ponte = await atravessarPonte(db, draft, '[otp-reenvio/sem-otp]')
+    if (!ponte.ok) return { ok: false, message: ponte.message }
+    redirect('/votar/anonimo')
+  }
 
   // Janela de coleta: encerrada → não dispara mensagem paga nem reabre
   // caminho pra cápsula fora do período registrado.
@@ -395,21 +309,4 @@ export async function reenviarOtp(): Promise<OtpState> {
 const mascarar = (e164: string): string => {
   const ultimos = e164.slice(-4)
   return `+55 ** ****-${ultimos}`
-}
-
-/**
- * Lê inicio/fim da edição do draft e classifica a janela. Edição inexistente
- * conta como encerrada (não emite cápsula pra edição fantasma).
- */
-async function checarJanela(
-  db: ReturnType<typeof supabaseAdmin>,
-  edicaoId: string,
-): Promise<ReturnType<typeof janelaColeta>> {
-  const { data } = await db
-    .from('edicao')
-    .select('inicio, fim')
-    .eq('id', edicaoId)
-    .maybeSingle<{ inicio: string; fim: string }>()
-  if (!data) return 'encerrada'
-  return janelaColeta(data)
 }
