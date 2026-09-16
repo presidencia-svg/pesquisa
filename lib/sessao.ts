@@ -34,6 +34,7 @@ import {
   type NivelEconomico,
 } from './demograficos'
 import { SERVER_ENV } from './env'
+import type { OrigemUtm } from './origem-utm'
 
 const COOKIE_PRE = 'pre_voto'
 const COOKIE_VOTO = 'voto'
@@ -126,6 +127,12 @@ export type PreVotoDraft = {
   /** Opção marcada no formulário (4 opções) — só pra pré-preencher. */
   escolaridadeDetalhe?: EscolaridadeDetalhe
   nivelEconomico?: NivelEconomico
+  /**
+   * Origem de tráfego (utm_* do link que trouxe o eleitor a /votar —
+   * migration 057). Só nomes de campanha/anúncio, nunca dado pessoal.
+   * Vai pra eleitores_pesquisa em /votar/confirma; não entra na cápsula.
+   */
+  origem?: OrigemUtm
 }
 
 export const setPreVoto = async (draft: PreVotoDraft): Promise<void> => {

@@ -10,6 +10,7 @@ import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
 import { DEV_MODE } from '@/lib/env'
 import { dentroDeSergipe, ipEmSergipe } from '@/lib/geo-sergipe'
 import { obterIpCliente } from '@/lib/ip'
+import { lerOrigemUtm } from '@/lib/origem-utm'
 import { registrarTentativaIp } from '@/lib/rate-limit'
 import { consultarSpc, type SpcDadosEleitor } from '@/lib/spc'
 import { setPreVoto, type FonteDado, type PreVotoDraft } from '@/lib/sessao'
@@ -466,6 +467,11 @@ export async function entrarComCpf(
   // Valores da 1ª edição (A/B/C/D_E) não são oferecidos mais — sem prefill.
   const rendaCdl: unknown = cdl?.nivel_economico
   if (isNivelEconomico(rendaCdl)) draft.nivelEconomico = rendaCdl
+
+  // Origem de tráfego (utm_* dos anúncios — migration 057). Campos
+  // escondidos do formulário, saneados aqui. Sem utm_source, nada.
+  const origem = lerOrigemUtm((campo) => formData.get(campo))
+  if (origem) draft.origem = origem
 
   await setPreVoto(draft)
 

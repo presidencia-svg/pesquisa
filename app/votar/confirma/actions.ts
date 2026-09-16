@@ -17,6 +17,7 @@ import { atravessarPonte, checarJanela } from '@/lib/ponte-voto'
 import { resolverEdicaoAlvo } from '@/lib/edicao-alvo'
 import { mensagemJanela } from '@/lib/edicao-janela'
 import { registrarTentativaIp } from '@/lib/rate-limit'
+import { colunasOrigemUtm } from '@/lib/origem-utm'
 import { clearPreVoto, getPreVoto, setPreVoto, type FonteDado } from '@/lib/sessao'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { validarTituloEleitor } from '@/lib/titulo-eleitor'
@@ -373,6 +374,9 @@ export async function confirmarDados(
         user_agent: userAgent,
         device_fingerprint: device_fingerprint ?? null,
         opt_in_resultados_wa: optInResultadosWa,
+        // Origem UTM (057): só sobrescreve se o rascunho trouxe uma —
+        // recadastro sem link de anúncio não apaga a origem anterior.
+        ...(draft.origem ? colunasOrigemUtm(draft.origem) : {}),
       })
       .eq('id', existing.id)
     if (errUpd) {
@@ -405,6 +409,7 @@ export async function confirmarDados(
       user_agent: userAgent,
       device_fingerprint: device_fingerprint ?? null,
       opt_in_resultados_wa: optInResultadosWa,
+      ...colunasOrigemUtm(draft.origem),
     })
     if (errIns) {
       console.error('[confirma] erro insert eleitores_pesquisa:', errIns)

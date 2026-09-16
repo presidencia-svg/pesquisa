@@ -2,7 +2,9 @@
 
 import Link from 'next/link'
 import Script from 'next/script'
-import { useActionState, useEffect, useState } from 'react'
+import { useActionState, useEffect, useState, useSyncExternalStore } from 'react'
+
+import { UTM_CAMPOS, type OrigemUtm } from '@/lib/origem-utm'
 
 import { entrarComCpf, type VotarFormState } from './actions'
 
@@ -81,6 +83,55 @@ const formatarCpfInput = (raw: string): string => {
 
 const initialState: VotarFormState = { ok: true }
 
+const UTM_STORAGE_KEY = 'pesquisa_origem_utm'
+
+/**
+ * utm_* da URL atual. Com utm_source na URL, guarda no sessionStorage
+ * (a aba pode recarregar sem os parâmetros); sem, tenta o que já estava
+ * guardado. Qualquer falha de storage (modo privado) vira objeto vazio.
+ */
+function lerOrigemDaUrl(): OrigemUtm {
+  if (typeof window === 'undefined') return {}
+  const sp = new URLSearchParams(window.location.search)
+  const daUrl: OrigemUtm = {}
+  for (const campo of UTM_CAMPOS) {
+    const v = sp.get(campo)
+    if (v) daUrl[campo] = v.slice(0, 120)
+  }
+  try {
+    if (daUrl.utm_source) {
+      window.sessionStorage.setItem(UTM_STORAGE_KEY, JSON.stringify(daUrl))
+      return daUrl
+    }
+    const salvo = window.sessionStorage.getItem(UTM_STORAGE_KEY)
+    if (salvo) {
+      const parsed = JSON.parse(salvo) as Record<string, unknown>
+      const out: OrigemUtm = {}
+      for (const campo of UTM_CAMPOS) {
+        const v = parsed[campo]
+        if (typeof v === 'string' && v) out[campo] = v.slice(0, 120)
+      }
+      return out.utm_source ? out : {}
+    }
+  } catch {
+    // sessionStorage indisponível — segue só com o que veio na URL.
+  }
+  return daUrl
+}
+
+// Snapshot estável pro useSyncExternalStore: calculado uma vez por
+// carregamento da página (a URL não muda dentro do formulário). No
+// servidor é sempre vazio; o React re-renderiza com o valor do cliente
+// logo após hidratar, sem mismatch.
+const ORIGEM_VAZIA: OrigemUtm = {}
+let origemCache: OrigemUtm | null = null
+const lerOrigemSnapshot = (): OrigemUtm => {
+  if (origemCache === null) origemCache = lerOrigemDaUrl()
+  return origemCache
+}
+const lerOrigemServidor = (): OrigemUtm => ORIGEM_VAZIA
+const assinarOrigem = () => () => {}
+
 export function CpfForm({
   turnstileSiteKey,
   lat,
@@ -105,6 +156,17 @@ export function CpfForm({
   useEffect(() => {
     detectarNavegadorAnonimo().then(setNavegadorAnonimo)
   }, [])
+
+  // Origem de tráfego (utm_* do link do anúncio). Lê da URL; se a página
+  // recarregou sem os parâmetros (Turnstile, GPS), recupera do
+  // sessionStorage da mesma aba. Input controlado: hidden espelha sempre
+  // o atributo value, então preencher via DOM seria desfeito no próximo
+  // render. O servidor saneia (lib/origem-utm.ts).
+  const origem = useSyncExternalStore(
+    assinarOrigem,
+    lerOrigemSnapshot,
+    lerOrigemServidor,
+  )
 
   const showTurnstile =
     typeof turnstileSiteKey === 'string' && turnstileSiteKey.length > 0
@@ -237,6 +299,11 @@ export function CpfForm({
             descartadas no servidor). Vazias enquanto não houver posição. */}
         <input type="hidden" name="geo_lat" value={lat != null ? String(lat) : ''} />
         <input type="hidden" name="geo_lng" value={lng != null ? String(lng) : ''} />
+
+        {/* Origem UTM (migration 057) — só quando o link trouxe utm_source. */}
+        {UTM_CAMPOS.map((campo) => (
+          <input key={campo} type="hidden" name={campo} value={origem[campo] ?? ''} readOnly />
+        ))}
 
 
         {bloqueadoPorAnonimato ? (
