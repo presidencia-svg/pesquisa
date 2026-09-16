@@ -104,7 +104,8 @@ export default async function CoberturaMunicipiosPage({
         <p className="text-sm text-muted-foreground">
           Edição <span className="font-medium text-foreground">{edicao.nome}</span>.
           O percentual é <strong>participantes ÷ eleitorado</strong> do município —
-          é ele que orienta a ponderação da amostra.
+          é ele que orienta a ponderação da amostra. Clique no município para ver os
+          mais votados ali.
         </p>
       </header>
 
@@ -179,7 +180,12 @@ export default async function CoberturaMunicipiosPage({
               >
                 <td className="px-3 py-2 tabular-nums text-muted-foreground">{i + 1}</td>
                 <td className="px-3 py-2">
-                  <span className="font-medium">{l.nome}</span>
+                  <Link
+                    href={`/admin/resultados/municipios/${l.ibge_codigo}`}
+                    className="font-medium text-accent underline-offset-2 hover:underline"
+                  >
+                    {l.nome}
+                  </Link>
                   {l.regiao ? (
                     <span className="ml-2 text-xs text-muted-foreground">{l.regiao}</span>
                   ) : null}
