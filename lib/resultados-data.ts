@@ -143,7 +143,7 @@ export function formatarData(iso: string | null): string {
  */
 export function calcularMargem(n: number): string {
   if (n <= 0) return '±—'
-  const margem = (1.96 * Math.sqrt(0.25 / n) * 100).toFixed(1)
+  const margem = (1.96 * Math.sqrt(0.25 / n) * 100).toFixed(1).replace('.', ',')
   return `±${margem}pp`
 }
 
@@ -332,6 +332,14 @@ export async function carregarResultados(
     }
   }
 
+  // Empate técnico usa a margem EFETIVA (plano amostral registrado): com
+  // pesos desiguais a margem binomial de cada candidato cresce √deff. Sem
+  // execução de raking (método por município) o fator é 1 = margem nominal.
+  const fatorDeff =
+    execucaoData?.deff != null && Number(execucaoData.deff) > 1
+      ? Math.sqrt(Number(execucaoData.deff))
+      : 1
+
   // Trava: as views agregadas têm que caber numa resposta (limite 1.000 do
   // PostgREST). Se um dia passar, é pra FALHAR, não pra publicar parcial.
   if ((candPondData ?? []).length >= 1000 || (legendaPondData ?? []).length >= 1000) {
@@ -487,11 +495,11 @@ export async function carregarResultados(
       if (totalCargo > 0) {
         const cutoff = candidatos[1]
         const pCut = vp(cutoff) / totalCargo
-        const meCut = 1.96 * Math.sqrt((pCut * (1 - pCut)) / totalCargo)
+        const meCut = fatorDeff * 1.96 * Math.sqrt((pCut * (1 - pCut)) / totalCargo)
         for (let i = 2; i < candidatos.length; i++) {
           const cand = candidatos[i]
           const p = vp(cand) / totalCargo
-          const me = 1.96 * Math.sqrt((p * (1 - p)) / totalCargo)
+          const me = fatorDeff * 1.96 * Math.sqrt((p * (1 - p)) / totalCargo)
           if (pCut - p <= meCut + me) {
             cand.empate = true
           } else {
@@ -673,10 +681,10 @@ export async function carregarResultados(
         const ultimoEleito = eleitosDaAg[eleitosDaAg.length - 1]
         if (!ultimoEleito || ultimoEleito.votos === 0) continue
         const pCut = ultimoEleito.votos / totalNominal
-        const meCut = 1.96 * Math.sqrt((pCut * (1 - pCut)) / totalNominal)
+        const meCut = fatorDeff * 1.96 * Math.sqrt((pCut * (1 - pCut)) / totalNominal)
         for (const c of naoEleitos) {
           const pC = c.votos / totalNominal
-          const meC = 1.96 * Math.sqrt((pC * (1 - pC)) / totalNominal)
+          const meC = fatorDeff * 1.96 * Math.sqrt((pC * (1 - pC)) / totalNominal)
           if (pCut - pC <= meCut + meC) {
             const found = candidatos.find((x) => x.id === c.candidatoId)
             if (found) found.empate = true
@@ -746,7 +754,7 @@ export async function carregarResultados(
   const deff = execucaoData?.deff != null ? Number(execucaoData.deff) : undefined
   const margemEfetiva =
     execucaoData?.margem_efetiva != null
-      ? `±${(Number(execucaoData.margem_efetiva) * 100).toFixed(1)}pp`
+      ? `±${(Number(execucaoData.margem_efetiva) * 100).toFixed(1).replace('.', ',')}pp`
       : undefined
 
   const pesquisa: Pesquisa = {

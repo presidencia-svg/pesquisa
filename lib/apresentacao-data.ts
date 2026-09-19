@@ -51,21 +51,29 @@ function f(x: number): string {
   return x.toFixed(1).replace('.', ',')
 }
 
-function curiosidade(cands: ApresRow[], marginPP: number): string {
+/**
+ * Destaque do cargo. Regra do plano amostral registrado: diferença menor que
+ * DUAS margens é empate técnico. `marginPP` é a margem que vale pra edição —
+ * a efetiva (Kish) quando há raking, a nominal quando não há — e `rotulo`
+ * diz qual das duas é, pra o texto nunca deixar dúvida.
+ */
+function curiosidade(cands: ApresRow[], marginPP: number, rotulo: string): string {
   if (cands.length < 2) return ''
   const a = cands[0]
   const b = cands[1]
   const diff = a.pct - b.pct
+  const limite = `2 × ${rotulo} de ±${f(marginPP)}pp = ${f(2 * marginPP)} pontos`
   if (diff > 2 * marginPP) {
-    return `${a.name} lidera fora da margem (±${f(marginPP)}pp): abre ${f(diff)} pontos sobre ${b.name}.`
+    return `${a.name} lidera fora do empate técnico: abre ${f(diff)} pontos sobre ${b.name} (limite: ${limite}).`
   }
-  return `Empate técnico no topo — ${a.name} e ${b.name} separados por apenas ${f(diff)} pontos.`
+  return `Empate técnico no topo — ${a.name} e ${b.name} separados por ${f(diff)} pontos (limite: ${limite}).`
 }
 
 function montaCargo(
   meta: { key: string; num: string; label: string; sub: string; top: number },
   cargo: CargoCandidato,
   marginPP: number,
+  margemRotulo: string,
 ): ApresCargo | null {
   const validos = cargo.candidatos.reduce((s, c) => s + c.votos, 0)
   const total = validos + cargo.branco + cargo.nao_sabe
@@ -149,7 +157,7 @@ function montaCargo(
     num: meta.num,
     label: meta.label,
     subtitle: meta.sub,
-    curiosity: curiosidade(candRows, marginPP),
+    curiosity: curiosidade(candRows, marginPP, margemRotulo),
     rows,
     rowsEleitos,
     vagas: cargo.vagas,
@@ -267,7 +275,12 @@ export async function construirApresData(
   patroPorCota: PatroPorCota,
 ): Promise<ApresData> {
   const { meta } = pesquisa
-  const marginPP = meta.n > 0 ? 1.96 * Math.sqrt(0.25 / meta.n) * 100 : 0
+  // Margem que vale pro destaque/empate técnico: a EFETIVA (n_eff de Kish)
+  // quando a edição tem raking; senão a nominal (n bruto).
+  const temEfetiva = meta.margem_efetiva != null && meta.n_eff != null && meta.n_eff > 0
+  const nBase = temEfetiva ? (meta.n_eff as number) : meta.n
+  const marginPP = nBase > 0 ? 1.96 * Math.sqrt(0.25 / nBase) * 100 : 0
+  const margemRotulo = temEfetiva ? 'margem efetiva' : 'margem nominal'
 
   // Mapa "quem venceu por cidade" — Presidente / Governador / Senador
   const db = supabaseAdmin()
@@ -285,7 +298,7 @@ export async function construirApresData(
   for (const c of CARGOS) {
     const cargo = pesquisa[c.key as keyof typeof pesquisa] as CargoCandidato | null
     if (cargo) {
-      const montado = montaCargo(c, cargo, marginPP)
+      const montado = montaCargo(c, cargo, marginPP, margemRotulo)
       if (montado) cargos.push(montado)
     }
   }
@@ -298,13 +311,13 @@ export async function construirApresData(
     edicaoLabel: meta.edicao,
     registros: extrairRegistros(meta.registro_tre),
     turno: meta.turno,
-    resumo: `A Pesquisa Eleitoral Sergipe 2026 ouviu <b>${meta.n.toLocaleString('pt-BR')} eleitores</b> com identidade verificada por CPF e WhatsApp nos 75 municípios. Coleta espontânea, estilo urna.`,
+    resumo: `A Pesquisa Eleitoral Sergipe 2026 ouviu <b>${meta.n.toLocaleString('pt-BR')} eleitores</b> com CPF validado no SPC Brasil nos 75 municípios. Coleta espontânea, estilo urna.`,
     stats: [
-      { label: 'AMOSTRA', value: meta.n.toLocaleString('pt-BR'), sub: 'CPF + WhatsApp' },
+      { label: 'AMOSTRA', value: meta.n.toLocaleString('pt-BR'), sub: 'CPF validado no SPC' },
       {
-        label: 'MARGEM',
+        label: meta.margem_efetiva ? 'MARGEM EFETIVA' : 'MARGEM NOMINAL',
         value: meta.margem_efetiva ?? meta.margem,
-        sub: meta.margem_efetiva ? `Efetiva · nominal ${meta.margem}` : 'Erro amostral',
+        sub: meta.margem_efetiva ? `Nominal ${meta.margem} · indicativa` : 'Indicativa',
       },
       { label: 'CONFIANÇA', value: meta.confianca, sub: 'Intervalo' },
       { label: 'DIVULGADA', value: meta.divulgada_em, sub: `TRE: ${meta.registro_tre}` },
@@ -312,6 +325,9 @@ export async function construirApresData(
     cargos,
     amostra: meta.n.toLocaleString('pt-BR'),
     margem: meta.margem_efetiva ?? meta.margem,
+    margemEfetiva: meta.margem_efetiva,
+    margemNominal: meta.margem,
+    deff: meta.deff != null ? meta.deff.toFixed(2).replace('.', ',') : undefined,
     ponderacao: meta.ponderacao,
     ponderacaoCurta: meta.ponderacao_curta,
     oferecimento: sponsors(patroPorCota.diamante),

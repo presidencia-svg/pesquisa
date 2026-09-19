@@ -105,14 +105,14 @@ export default async function ResultadosHubPage() {
             <p className="rs-hub-resumo">
               A Pesquisa Eleitoral Sergipe 2026 ouviu{' '}
               <strong>{meta.n.toLocaleString('pt-BR')} eleitores</strong> com
-              identidade verificada por CPF e WhatsApp nos 75 municípios do
+              CPF validado no SPC Brasil nos 75 municípios do
               estado. Amostra por adesão, ponderada pelo eleitorado oficial do
               TSE. Metodologia espontânea — o eleitor digita o número como
               na urna, sem ver lista de candidatos.
               {!ehDemo && ' Registrada no PesqEle (TSE e TRE-SE) conforme a Lei 9.504/97.'}
             </p>
             <div className="rs-hub-destaques">
-              <span>Identidade verificada por CPF + WhatsApp</span>
+              <span>CPF validado no SPC Brasil</span>
               <span>75 municípios de Sergipe</span>
               <span>Coleta espontânea, estilo urna</span>
               {!ehDemo && <span>Registro PesqEle/TRE-SE</span>}
@@ -124,14 +124,14 @@ export default async function ResultadosHubPage() {
             <FichaCard
               rotulo="Amostra"
               valor={meta.n.toLocaleString('pt-BR')}
-              sub="CPF + WhatsApp"
+              sub="CPF validado no SPC"
             />
             <FichaCard
-              rotulo="Margem"
+              rotulo={meta.margem_efetiva ? 'Margem efetiva' : 'Margem nominal'}
               valor={meta.margem_efetiva ?? meta.margem}
               sub={
                 meta.margem_efetiva
-                  ? `Efetiva (Kish) · nominal ${meta.margem} · amostra por adesão; margem indicativa, calculada como se probabilística`
+                  ? `Margem nominal ${meta.margem} · amostra por adesão; margem indicativa, calculada como se probabilística`
                   : 'Amostra por adesão; margem indicativa, calculada como se probabilística'
               }
             />
@@ -168,7 +168,7 @@ export default async function ResultadosHubPage() {
                 . A margem informada é a <strong>efetiva</strong>, que considera a dispersão
                 dos pesos (n efetivo de Kish
                 {meta.n_eff ? ` ≈ ${Math.round(meta.n_eff).toLocaleString('pt-BR')}` : ''}
-                {meta.deff ? `, efeito de desenho ${meta.deff.toFixed(1)}` : ''}).
+                {meta.deff ? `, efeito de desenho ${meta.deff.toFixed(2).replace('.', ',')}` : ''}).
               </>
             ) : (
               <>

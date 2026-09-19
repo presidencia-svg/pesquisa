@@ -11,7 +11,7 @@
  *   - OFERECIMENTO (cota Diamante)
  *   - PATROCÍNIO  (cota Ouro)
  *   - APOIO       (cota Prata)
- * E, no rodapé da trilha, a ASSINATURA fixa: CDL Pesquisas + TV Atalaia
+ * E, no topo da trilha, a ASSINATURA fixa: CDL Pesquisas, em destaque
  * (presente em todas as telas).
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -76,7 +76,14 @@ export type ApresData = {
   stats: Array<{ label: string; value: string; sub: string }>
   cargos: ApresCargo[]
   amostra: string
+  /** Margem que vale pra leitura: a efetiva quando há raking, senão a nominal. */
   margem: string
+  /** Margem efetiva (Kish) — só existe no método por estratos. */
+  margemEfetiva?: string
+  /** Margem nominal (n bruto) — publicada sempre ao lado da efetiva. */
+  margemNominal?: string
+  /** Efeito de desenho n/n_ef, já formatado. */
+  deff?: string
   /** Descrição da ponderação aplicada aos percentuais (ficha técnica). */
   ponderacao?: string
   /** Rótulo curto do método ("Por município" / "Município × sexo × idade × instrução"). */
@@ -265,7 +272,7 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
               </div>
 
               <div className="apres-pills">
-                <span>Identidade verificada · CPF + WhatsApp</span>
+                <span>CPF validado no SPC Brasil</span>
                 <span>75 municípios</span>
                 <span>Coleta espontânea</span>
                 <span>Registro PesqEle/TRE-SE</span>
@@ -424,7 +431,10 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
                             : ''
                         }`
                       : cur.subtitle}{' '}
-                    · Amostra {data.amostra} · Margem {data.margem}
+                    · Amostra {data.amostra} ·{' '}
+                    {data.margemEfetiva
+                      ? `Margem efetiva ${data.margemEfetiva} (nominal ${data.margemNominal})`
+                      : `Margem nominal ${data.margem}`}
                   </div>
                 </div>
                 {podeEleitos && (
@@ -529,16 +539,12 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
           <div className="apres-rail-accent" />
           <div className="apres-rail-inner">
             <div className="apres-rail-label apres-rail-label-of">
-              REALIZAÇÃO E TRANSMISSÃO
+              REALIZAÇÃO
             </div>
             <div className="apres-assinatura">
               <div className="apres-assina-card apres-assina-cdl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/cdl-pesquisas-logo.png" alt="CDL Pesquisas" />
-              </div>
-              <div className="apres-assina-card apres-assina-tv">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/tv-atalaia-logo.png" alt="TV Atalaia" />
               </div>
             </div>
 
@@ -554,10 +560,29 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
                   <b>{data.ponderacaoCurta ?? 'Por município'} · bruto ao lado</b>
                 </div>
               )}
-              <div className="apres-ficha-row">
-                <span>Margem de erro</span>
-                <b>{data.margem}</b>
-              </div>
+              {data.margemEfetiva ? (
+                <>
+                  <div className="apres-ficha-row" title="Margem efetiva (Kish): considera a dispersão dos pesos da ponderação. É a que vale para empate técnico.">
+                    <span>Margem efetiva</span>
+                    <b>{data.margemEfetiva}</b>
+                  </div>
+                  <div className="apres-ficha-row" title="Margem nominal: calculada sobre o número bruto de respondentes, sem o efeito da ponderação.">
+                    <span>Margem nominal</span>
+                    <b>{data.margemNominal}</b>
+                  </div>
+                  {data.deff && (
+                    <div className="apres-ficha-row" title="Efeito de desenho = n / n efetivo">
+                      <span>Efeito de desenho</span>
+                      <b>{data.deff}</b>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="apres-ficha-row">
+                  <span>Margem nominal</span>
+                  <b>{data.margem}</b>
+                </div>
+              )}
               <div className="apres-ficha-row">
                 <span>Confiança</span>
                 <b>95%</b>
@@ -586,14 +611,10 @@ export function ApresentacaoTV({ data }: { data: ApresData }) {
               </div>
               <div className="apres-verif-item">
                 <i>2</i>
-                <p><b>WhatsApp com código</b><br />Confirma que o número é dele</p>
+                <p><b>Um voto por eleitor</b><br />CPF e telefone únicos na edição</p>
               </div>
               <div className="apres-verif-item">
                 <i>3</i>
-                <p><b>Um voto por eleitor</b><br />CPF e telefone únicos</p>
-              </div>
-              <div className="apres-verif-item">
-                <i>4</i>
                 <p><b>Voto secreto</b><br />O sistema não liga voto a pessoa</p>
               </div>
             </div>
@@ -746,10 +767,9 @@ const CSS = `
 .apres-reg-linha span{font-family:'Archivo',sans-serif;font-weight:800;font-size:12px;letter-spacing:.16em;color:#f4b62c;}
 .apres-reg-linha b{font-family:'Archivo',sans-serif;font-weight:800;font-size:16px;color:#fff;}
 .apres-assinatura-label{font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;letter-spacing:.2em;color:#7f93c7;margin-bottom:10px;}
-.apres-assinatura{margin-top:11px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.apres-assina-card{border-radius:9px;height:64px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.apres-assina-cdl{background:#fff;padding:9px 11px;}
-.apres-assina-tv{background:#fff;padding:6px 10px;}
+.apres-assinatura{margin-top:11px;display:grid;grid-template-columns:1fr;}
+.apres-assina-card{border-radius:12px;height:156px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.apres-assina-cdl{background:#fff;padding:12px 16px;}
 .apres-assina-card img{max-width:100%;max-height:100%;object-fit:contain;display:block;}
 .apres-pesqele{margin-top:12px;font-size:11.5px;color:#7f8fbb;line-height:1.45;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:10px 12px;}
 .apres-pesqele b{color:#aebce6;}
