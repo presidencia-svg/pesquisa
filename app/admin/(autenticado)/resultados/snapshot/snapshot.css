@@ -491,3 +491,16 @@
     margin: 14mm;
   }
 }
+
+/* Percentual oficial (ponderado) em destaque; marcação de eleito/2º turno */
+.snapshot-secao td.td-pct-oficial {
+  color: #111827;
+  font-weight: 700;
+}
+
+.snapshot-tag {
+  font-size: 8pt;
+  font-weight: 600;
+  color: #047857;
+  white-space: nowrap;
+}

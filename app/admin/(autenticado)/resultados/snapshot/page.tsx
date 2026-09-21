@@ -12,9 +12,17 @@
  *
  * Trilha de auditoria: cada acesso a esta rota grava em
  * admin_audit_log com ação 'gerar_snapshot_tv' + timestamp + edicao_id.
+ *
+ * PADRÃO ÚNICO: os números de voto, o n e a margem saem de
+ * carregarResultados() — o mesmo carregador do /resultados público, da TV e
+ * da apresentação (percentual ponderado oficial, bruto ao lado). Esta página
+ * não consulta view de voto por conta própria: o PDF que vai pra emissora tem
+ * que bater com o que abre no site depois do anúncio.
  */
+import type { CargoCandidato, CargoZona } from '@/components/resultados-dashboard'
 import { registrarAcessoAdmin } from '@/lib/admin-audit'
 import { NIVEL_ECONOMICO_ROTULO_CURTO } from '@/lib/demograficos'
+import { carregarResultados } from '@/lib/resultados-data'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import QRCode from 'qrcode'
 
@@ -24,40 +32,15 @@ import './snapshot.css'
 export const metadata = { title: 'Snapshot embargado · Admin' }
 export const dynamic = 'force-dynamic'
 
-type CandLinha = {
-  id: string
-  numero: number
-  nome_urna: string
-  sigla: string | null
-  cor_hex: string | null
-  votos: number
-}
-
-type LegLinha = {
-  id: string
-  numero: number
-  sigla: string
-  nome: string
-  cor_hex: string | null
-  votos: number
-}
+const CARGOS = ['presidente', 'governador', 'senador', 'federal', 'estadual'] as const
 
 const ROTULO = {
   presidente: 'Presidente',
   governador: 'Governador',
   senador: 'Senador (2 vagas)',
-  federal: 'Deputado Federal (legenda)',
-  estadual: 'Deputado Estadual (legenda)',
+  federal: 'Deputado Federal',
+  estadual: 'Deputado Estadual',
 } as const
-
-/**
- * Margem de erro IC 95% via pior caso (p=0,5): 1,96 × √(0,25/n).
- * Mesma fórmula usada na página pública /resultados.
- */
-function calcMargem(n: number): string {
-  if (n <= 0) return '—'
-  return `±${(1.96 * Math.sqrt(0.25 / n) * 100).toFixed(1)}pp`
-}
 
 function formatarBR(d: Date): string {
   return d.toLocaleString('pt-BR', {
@@ -112,109 +95,23 @@ export default async function SnapshotPage() {
     `edicao:${edicao.id}`,
   )
 
-  // n = eleitores com WhatsApp validado (mesma def do /resultados público)
-  const { count: nCount } = await db
-    .from('eleitores_pesquisa')
-    .select('id', { count: 'exact', head: true })
-    .eq('edicao_id', edicao.id)
-    .eq('wa_validado', true)
-  const n = nCount ?? 0
-  const margem = calcMargem(n)
-
-  // Pres/Gov/Sen
-  const cargosCand = ['presidente', 'governador', 'senador'] as const
-  const candPorCargo: Record<string, CandLinha[]> = {
-    presidente: [],
-    governador: [],
-    senador: [],
+  // Fonte única: mesmo carregador do /resultados público (ponderado oficial).
+  const oficial = await carregarResultados({ ignorarDivulgacao: true })
+  if (oficial.status !== 'ok') {
+    return (
+      <main className="snapshot-msg">
+        <h1>Resultado indisponível</h1>
+        <p>
+          O carregador oficial de resultados respondeu{' '}
+          <strong>{oficial.status}</strong> para a edição ativa. Confira a
+          situação em <strong>/admin/edicoes</strong> antes de gerar o snapshot.
+        </p>
+      </main>
+    )
   }
-  {
-    const { data } = await db
-      .from('v_resultados_candidato')
-      .select('candidato_id, cargo, numero, nome_urna, sigla, cor_hex, votos')
-      .eq('edicao_id', edicao.id)
-      .in('cargo', cargosCand as unknown as string[])
-      .order('votos', { ascending: false })
-    for (const r of (data ?? []) as Array<{
-      candidato_id: string
-      cargo: (typeof cargosCand)[number]
-      numero: number
-      nome_urna: string
-      sigla: string | null
-      cor_hex: string | null
-      votos: number
-    }>) {
-      candPorCargo[r.cargo].push({
-        id: r.candidato_id,
-        numero: r.numero,
-        nome_urna: r.nome_urna,
-        sigla: r.sigla,
-        cor_hex: r.cor_hex,
-        votos: r.votos,
-      })
-    }
-  }
-
-  // Fed/Est
-  const cargosLeg = ['federal', 'estadual'] as const
-  const legPorCargo: Record<string, LegLinha[]> = {
-    federal: [],
-    estadual: [],
-  }
-  {
-    const { data } = await db
-      .from('v_resultados_legenda')
-      .select('partido_id, cargo, numero, sigla, nome, cor_hex, votos')
-      .eq('edicao_id', edicao.id)
-      .in('cargo', cargosLeg as unknown as string[])
-      .order('votos', { ascending: false })
-    for (const r of (data ?? []) as Array<{
-      partido_id: string
-      cargo: (typeof cargosLeg)[number]
-      numero: number
-      sigla: string
-      nome: string
-      cor_hex: string | null
-      votos: number
-    }>) {
-      legPorCargo[r.cargo].push({
-        id: r.partido_id,
-        numero: r.numero,
-        sigla: r.sigla,
-        nome: r.nome,
-        cor_hex: r.cor_hex,
-        votos: r.votos,
-      })
-    }
-  }
-
-  // Branco / Não sei por cargo
-  // View agregada — o fetch cru truncava em 1.000 linhas (PostgREST) e
-  // zerava os brancos/indecisos dos primeiros cargos.
-  const { data: bnsRows } = await db
-    .from('v_votos_branco_nao_sabe')
-    .select('cargo, metodo, votos')
-    .eq('edicao_id', edicao.id)
-  const bns: Record<string, { branco: number; nao_sabe: number }> = {}
-  for (const r of (bnsRows ?? []) as { cargo: string; metodo: string; votos: number }[]) {
-    if (!bns[r.cargo]) bns[r.cargo] = { branco: 0, nao_sabe: 0 }
-    if (r.metodo === 'branco') bns[r.cargo].branco += r.votos
-    if (r.metodo === 'nao_sabe') bns[r.cargo].nao_sabe += r.votos
-  }
-
-  // Zona expansão
-  const { data: zonaRows } = await db
-    .from('v_resultados_zona')
-    .select('resposta, votos')
-    .eq('edicao_id', edicao.id)
-  const aju =
-    (zonaRows ?? []).find(
-      (r: { resposta: string; votos: number }) => r.resposta === 'aracaju',
-    )?.votos ?? 0
-  const sc =
-    (zonaRows ?? []).find(
-      (r: { resposta: string; votos: number }) => r.resposta === 'sao_cristovao',
-    )?.votos ?? 0
+  const { pesquisa } = oficial
+  const n = pesquisa.meta.n
+  const margem = pesquisa.meta.margem_efetiva ?? pesquisa.meta.margem
 
   // Composição da amostra final (Resolução TSE 23.747/2026, Art. 2º §7º, IV).
   // Agrega da view v_amostra_composicao. 6 dimensões: sexo, faixa_etaria,
@@ -348,7 +245,19 @@ export default async function SnapshotPage() {
               <dd>
                 {margem}
                 <br />
-                <span className="snapshot-ficha-sub">IC 95%</span>
+                <span className="snapshot-ficha-sub">
+                  {pesquisa.meta.margem_efetiva ? 'efetiva · ' : ''}IC 95%
+                </span>
+              </dd>
+            </div>
+            <div>
+              <dt>Ponderação</dt>
+              <dd>
+                {pesquisa.meta.ponderacao_curta ?? '—'}
+                <br />
+                <span className="snapshot-ficha-sub">
+                  % oficial = ponderado · bruto ao lado
+                </span>
               </dd>
             </div>
             <div>
@@ -383,35 +292,16 @@ export default async function SnapshotPage() {
         {/* Composição da amostra final (Resolução TSE 23.747/2026 §7º IV) */}
         <SecaoComposicao composicao={composicao} n={n} />
 
-        {/* Pres/Gov/Sen */}
-        {cargosCand.map((cargo) => (
-          <SecaoCand
-            key={cargo}
-            titulo={ROTULO[cargo]}
-            linhas={candPorCargo[cargo]}
-            branco={bns[cargo]?.branco ?? 0}
-            naoSabe={bns[cargo]?.nao_sabe ?? 0}
-          />
-        ))}
-
-        {/* Fed/Est */}
-        {cargosLeg.map((cargo) => (
-          <SecaoLeg
-            key={cargo}
-            titulo={ROTULO[cargo]}
-            linhas={legPorCargo[cargo]}
-            branco={bns[cargo]?.branco ?? 0}
-            naoSabe={bns[cargo]?.nao_sabe ?? 0}
-          />
-        ))}
+        {/* Votos por cargo — resultado oficial (ponderado), bruto ao lado */}
+        {CARGOS.map((cargo) => {
+          const bloco = pesquisa[cargo]
+          return bloco ? (
+            <SecaoCand key={cargo} titulo={ROTULO[cargo]} cargo={bloco} />
+          ) : null
+        })}
 
         {/* Zona */}
-        <SecaoZona
-          aju={aju}
-          sc={sc}
-          branco={bns['zona_expansao']?.branco ?? 0}
-          naoSabe={bns['zona_expansao']?.nao_sabe ?? 0}
-        />
+        {pesquisa.zona_expansao && <SecaoZona zona={pesquisa.zona_expansao} />}
 
         {/* Rodapé */}
         <footer className="snapshot-footer">
@@ -433,19 +323,18 @@ export default async function SnapshotPage() {
   )
 }
 
-function SecaoCand({
-  titulo,
-  linhas,
-  branco,
-  naoSabe,
-}: {
-  titulo: string
-  linhas: CandLinha[]
-  branco: number
-  naoSabe: number
-}) {
-  const totalCand = linhas.reduce((acc, l) => acc + l.votos, 0)
-  const total = totalCand + branco + naoSabe
+const fmtPct = (parte: number, total: number) =>
+  total > 0 ? ((parte / total) * 100).toFixed(1).replace('.', ',') + '%' : '0,0%'
+
+function SecaoCand({ titulo, cargo }: { titulo: string; cargo: CargoCandidato }) {
+  // Mesma conta do /resultados público (components/resultados-dashboard):
+  // % oficial = ponderado ÷ (válidos + brancos + não sabe) ponderados.
+  const linhas = cargo.candidatos
+  const total = linhas.reduce((acc, l) => acc + l.votos, 0) + cargo.branco + cargo.nao_sabe
+  const brancoPond = cargo.brancoPond ?? cargo.branco
+  const naoSabePond = cargo.naoSabePond ?? cargo.nao_sabe
+  const totalPond =
+    linhas.reduce((acc, l) => acc + (l.votosPond ?? l.votos), 0) + brancoPond + naoSabePond
   return (
     <section className="snapshot-secao">
       <h3>
@@ -463,82 +352,9 @@ function SecaoCand({
               <th className="th-num">Nº</th>
               <th>Candidato</th>
               <th className="th-partido">Partido</th>
-              <th className="th-votos">Votos</th>
-              <th className="th-pct">%</th>
-            </tr>
-          </thead>
-          <tbody>
-            {linhas.map((l) => (
-              <tr key={l.id}>
-                <td className="td-num">{l.numero}</td>
-                <td>{l.nome_urna}</td>
-                <td className="td-partido">{l.sigla ?? '—'}</td>
-                <td className="td-votos">{l.votos.toLocaleString('pt-BR')}</td>
-                <td className="td-pct">
-                  {total === 0
-                    ? '0,0%'
-                    : ((l.votos / total) * 100).toFixed(1).replace('.', ',') +
-                      '%'}
-                </td>
-              </tr>
-            ))}
-            {branco > 0 && (
-              <tr className="tr-extra">
-                <td colSpan={3}>Voto em branco</td>
-                <td className="td-votos">{branco.toLocaleString('pt-BR')}</td>
-                <td className="td-pct">
-                  {((branco / total) * 100).toFixed(1).replace('.', ',')}%
-                </td>
-              </tr>
-            )}
-            {naoSabe > 0 && (
-              <tr className="tr-extra">
-                <td colSpan={3}>Não sabe / não respondeu</td>
-                <td className="td-votos">{naoSabe.toLocaleString('pt-BR')}</td>
-                <td className="td-pct">
-                  {((naoSabe / total) * 100).toFixed(1).replace('.', ',')}%
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      )}
-    </section>
-  )
-}
-
-function SecaoLeg({
-  titulo,
-  linhas,
-  branco,
-  naoSabe,
-}: {
-  titulo: string
-  linhas: LegLinha[]
-  branco: number
-  naoSabe: number
-}) {
-  const totalLeg = linhas.reduce((acc, l) => acc + l.votos, 0)
-  const total = totalLeg + branco + naoSabe
-  return (
-    <section className="snapshot-secao">
-      <h3>
-        {titulo}{' '}
-        <span className="snapshot-secao-n">
-          (n={total.toLocaleString('pt-BR')})
-        </span>
-      </h3>
-      {total === 0 ? (
-        <p className="snapshot-vazio">Sem votos.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th className="th-num">Nº</th>
-              <th>Sigla</th>
-              <th>Nome do partido</th>
-              <th className="th-votos">Votos</th>
-              <th className="th-pct">%</th>
+              <th className="th-votos">Votos (bruto)</th>
+              <th className="th-pct">% bruto</th>
+              <th className="th-pct">% oficial</th>
             </tr>
           </thead>
           <tbody>
@@ -546,31 +362,32 @@ function SecaoLeg({
               <tr key={l.id}>
                 <td className="td-num">{l.numero}</td>
                 <td>
-                  <strong>{l.sigla}</strong>
+                  {l.nome}
+                  {l.eleito && <span className="snapshot-tag"> · eleito na projeção</span>}
+                  {l.segundoTurno && <span className="snapshot-tag"> · 2º turno</span>}
                 </td>
-                <td className="td-nome-partido">{l.nome}</td>
+                <td className="td-partido">{l.partido || '—'}</td>
                 <td className="td-votos">{l.votos.toLocaleString('pt-BR')}</td>
-                <td className="td-pct">
-                  {((l.votos / total) * 100).toFixed(1).replace('.', ',')}%
+                <td className="td-pct">{fmtPct(l.votos, total)}</td>
+                <td className="td-pct td-pct-oficial">
+                  {fmtPct(l.votosPond ?? l.votos, totalPond)}
                 </td>
               </tr>
             ))}
-            {branco > 0 && (
+            {cargo.branco > 0 && (
               <tr className="tr-extra">
                 <td colSpan={3}>Voto em branco</td>
-                <td className="td-votos">{branco.toLocaleString('pt-BR')}</td>
-                <td className="td-pct">
-                  {((branco / total) * 100).toFixed(1).replace('.', ',')}%
-                </td>
+                <td className="td-votos">{cargo.branco.toLocaleString('pt-BR')}</td>
+                <td className="td-pct">{fmtPct(cargo.branco, total)}</td>
+                <td className="td-pct td-pct-oficial">{fmtPct(brancoPond, totalPond)}</td>
               </tr>
             )}
-            {naoSabe > 0 && (
+            {cargo.nao_sabe > 0 && (
               <tr className="tr-extra">
                 <td colSpan={3}>Não sabe / não respondeu</td>
-                <td className="td-votos">{naoSabe.toLocaleString('pt-BR')}</td>
-                <td className="td-pct">
-                  {((naoSabe / total) * 100).toFixed(1).replace('.', ',')}%
-                </td>
+                <td className="td-votos">{cargo.nao_sabe.toLocaleString('pt-BR')}</td>
+                <td className="td-pct">{fmtPct(cargo.nao_sabe, total)}</td>
+                <td className="td-pct td-pct-oficial">{fmtPct(naoSabePond, totalPond)}</td>
               </tr>
             )}
           </tbody>
@@ -701,17 +518,8 @@ function SecaoComposicao({
   )
 }
 
-function SecaoZona({
-  aju,
-  sc,
-  branco,
-  naoSabe,
-}: {
-  aju: number
-  sc: number
-  branco: number
-  naoSabe: number
-}) {
+function SecaoZona({ zona }: { zona: CargoZona }) {
+  const { aracaju: aju, sao_cristovao: sc, branco, nao_sabe: naoSabe } = zona
   const total = aju + sc + branco + naoSabe
   if (total === 0) return null
   return (
