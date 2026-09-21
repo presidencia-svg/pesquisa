@@ -18,7 +18,8 @@
     "simular": "tsx scripts/simular-votos.ts",
     "ata:build": "node scripts/build-ata-dpo.mjs",
     "convenio:build": "node scripts/build-convenio-tv-atalaia.mjs",
-    "verificar:resultados": "node --env-file=.env.local --import ./scripts/_lib/hook-server-only.mjs --import tsx scripts/verificar-resultados.ts"
+    "verificar:resultados": "node --env-file=.env.local --import ./scripts/_lib/hook-server-only.mjs --import tsx scripts/verificar-resultados.ts",
+    "verificar:padrao-unico": "node --env-file=.env.local --import ./scripts/_lib/hook-server-only.mjs --import tsx scripts/verificar-padrao-unico.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.3",

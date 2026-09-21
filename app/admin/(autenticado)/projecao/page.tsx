@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { coligacaoCurta } from '@/lib/federacoes'
-import { calcularPesos } from '@/lib/ponderacao'
+import { viewsPonderadas } from '@/lib/ponderacao-views'
 import { lerTudo as lerTudoLib } from '@/lib/supabase/ler-tudo'
 import {
   projetarCadeiras,
@@ -42,7 +42,7 @@ export default async function ProjecaoPage({
   const db = supabaseAdmin()
   const { data: edicao } = await db
     .from('edicao')
-    .select('id, nome')
+    .select('id, nome, ponderacao_metodo, ponderacao_execucao_id')
     .eq('ativa', true)
     .maybeSingle()
 
@@ -59,43 +59,42 @@ export default async function ProjecaoPage({
 
   const cargos = ['federal', 'estadual'] as const
 
-  // -------- Calculo de pesos amostrais (se modo ponderado) --------
-  const { data: municipios } = await db
-    .from('municipios_se')
-    .select('ibge_codigo, nome, eleitorado')
-  const municipiosNorm =
-    ((municipios ?? []) as Array<{
-      ibge_codigo: number
-      nome: string
-      eleitorado: number | null
-    }>).map((m) => ({
-      ibgeCodigo: m.ibge_codigo,
-      nome: m.nome,
-      eleitorado: m.eleitorado,
-    }))
-
-  // Respostas por municipio = distinct token_hash com voto valido naquele municipio
-  // (sem filtrar por cargo — peso amostral e' do respondente, nao do voto especifico).
-  // View agregada — antes o fetch cru truncava em 1.000 respostas.
-  const { data: respostasRows } = await db
-    .from('v_respostas_municipio')
-    .select('municipio_ibge, respostas')
-    .eq('edicao_id', edicao.id)
-  const respostasPorMunicipio = new Map<number, number>()
-  for (const r of (respostasRows ?? []) as Array<{
-    municipio_ibge: number
-    respostas: number
-  }>) {
-    respostasPorMunicipio.set(r.municipio_ibge, r.respostas)
-  }
-
-  const pesos = calcularPesos(municipiosNorm, respostasPorMunicipio)
-
-  /** Aplica peso amostral a uma contagem (votos_brutos * peso_do_municipio). */
-  const ponderar = (votos: number, ibge: number | null): number => {
-    if (!ponderado) return votos
-    if (ibge === null) return 0 // votos sem municipio nao entram na ponderacao
-    return votos * (pesos.get(ibge)?.peso ?? 0)
+  // -------- Votos ponderados: FONTE ÚNICA (lib/ponderacao-views.ts) --------
+  // As mesmas views do banco que alimentam /resultados, TV, apresentação e a
+  // prévia do estatístico. Esta página NÃO calcula peso: antes ela ponderava só
+  // por município, em memória, e projetava eleitos diferentes do resultado
+  // oficial (raking município × sexo × faixa × instrução).
+  const views = viewsPonderadas(edicao)
+  const pondCandidato = new Map<string, number>()
+  const pondPartido = new Map<string, number>()
+  if (ponderado) {
+    const [{ data: candPond, error: e1 }, { data: legPond, error: e2 }] = await Promise.all([
+      db
+        .from(views.candidato)
+        .select('cargo, candidato_id, votos_pond')
+        .eq('edicao_id', edicao.id)
+        .in('cargo', ['federal', 'estadual']),
+      db
+        .from(views.legenda)
+        .select('cargo, partido_id, votos_pond')
+        .eq('edicao_id', edicao.id)
+        .in('cargo', ['federal', 'estadual']),
+    ])
+    if (e1 || e2) throw new Error('projeção: falha ao ler as views ponderadas')
+    // Trava: a resposta tem que caber no limite de 1.000 linhas do PostgREST.
+    if ((candPond ?? []).length >= 1000 || (legPond ?? []).length >= 1000) {
+      throw new Error('projeção: view ponderada devolveu 1.000+ linhas — paginar antes de usar')
+    }
+    for (const r of (candPond ?? []) as Array<{ candidato_id: string; votos_pond: number | string }>) {
+      pondCandidato.set(r.candidato_id, Number(r.votos_pond))
+    }
+    for (const r of (legPond ?? []) as Array<{
+      cargo: string
+      partido_id: string
+      votos_pond: number | string
+    }>) {
+      pondPartido.set(`${r.cargo}:${r.partido_id}`, Number(r.votos_pond))
+    }
   }
 
   // -------- Projecao por cargo --------
@@ -120,16 +119,10 @@ export default async function ProjecaoPage({
       (r) => `${r.partido_id}:${r.municipio_ibge}`,
     )
     const votosPartidoBruto = new Map<string, number>()
-    const votosPartidoPond = new Map<string, number>()
     for (const r of legendaRows) {
       votosPartidoBruto.set(
         r.partido_id,
         (votosPartidoBruto.get(r.partido_id) ?? 0) + r.votos,
-      )
-      votosPartidoPond.set(
-        r.partido_id,
-        (votosPartidoPond.get(r.partido_id) ?? 0) +
-          ponderar(r.votos, r.municipio_ibge),
       )
     }
 
@@ -150,16 +143,10 @@ export default async function ProjecaoPage({
       (r) => `${r.candidato_id}:${r.municipio_ibge}`,
     )
     const votosCandidatoBruto = new Map<string, number>()
-    const votosCandidatoPond = new Map<string, number>()
     for (const r of candRows) {
       votosCandidatoBruto.set(
         r.candidato_id,
         (votosCandidatoBruto.get(r.candidato_id) ?? 0) + r.votos,
-      )
-      votosCandidatoPond.set(
-        r.candidato_id,
-        (votosCandidatoPond.get(r.candidato_id) ?? 0) +
-          ponderar(r.votos, r.municipio_ibge),
       )
     }
 
@@ -219,7 +206,7 @@ export default async function ProjecaoPage({
         numero: c.numero,
         nomeUrna: c.nome_urna,
         votos: ponderado
-          ? Math.round(votosCandidatoPond.get(c.id) ?? 0)
+          ? Math.round(pondCandidato.get(c.id) ?? 0)
           : votosCandidatoBruto.get(c.id) ?? 0,
       })
       partidosMap.set(p.id, entry)
@@ -266,7 +253,7 @@ export default async function ProjecaoPage({
         corHex: p.corHex,
         coligacao: p.coligacao,
         votosLegenda: ponderado
-          ? Math.round(votosPartidoPond.get(p.partidoId) ?? 0)
+          ? Math.round(pondPartido.get(`${cargo}:${p.partidoId}`) ?? 0)
           : votosPartidoBruto.get(p.partidoId) ?? 0,
         candidatos: p.candidatos,
       }),
@@ -311,11 +298,13 @@ export default async function ProjecaoPage({
 
       {ponderado && (
         <div className="rounded-md border border-accent/30 bg-accent/5 px-4 py-3 text-xs leading-relaxed">
-          <strong className="text-foreground">Modo ponderado:</strong> cada
-          voto é multiplicado por (% do eleitorado do município ÷ % das
-          respostas vindas do município). Município sub-representado tem
-          peso maior; super-representado tem peso menor. Os números abaixo
-          são votos ponderados, não brutos.
+          <strong className="text-foreground">Modo ponderado:</strong>{' '}
+          {views.metodo === 'estratos_raking'
+            ? 'votos ponderados pelo raking oficial da edição (município × sexo × faixa etária × instrução, marginais do eleitorado TSE)'
+            : 'votos ponderados por município (participação no eleitorado TSE ÷ participação na amostra)'}
+          , lidos das mesmas views do banco que alimentam os resultados, a TV e a
+          apresentação — os eleitos daqui são os mesmos de lá. Pesos e
+          diagnósticos: <Link href="/admin/amostra" className="underline">Amostra</Link>.
         </div>
       )}
 
@@ -356,14 +345,6 @@ export default async function ProjecaoPage({
         </ol>
       </details>
 
-      {ponderado && (
-        <BlocoPesos
-          municipios={municipiosNorm}
-          respostasPorMunicipio={respostasPorMunicipio}
-          pesos={Array.from(calcularPesos(municipiosNorm, respostasPorMunicipio).values())}
-        />
-      )}
-
       {cargos.map((cargo) => (
         <SecaoProjecao
           key={cargo}
@@ -373,56 +354,6 @@ export default async function ProjecaoPage({
         />
       ))}
     </div>
-  )
-}
-
-function BlocoPesos({
-  pesos,
-}: {
-  municipios: Array<{ ibgeCodigo: number; nome: string; eleitorado: number | null }>
-  respostasPorMunicipio: Map<number, number>
-  pesos: Array<{
-    ibgeCodigo: number
-    nome: string
-    eleitorado: number
-    respostas: number
-    peso: number
-  }>
-}) {
-  const ativos = pesos
-    .filter((p) => p.respostas > 0)
-    .sort((a, b) => b.respostas - a.respostas)
-  if (ativos.length === 0) return null
-  return (
-    <details className="rounded-md border border-border bg-background px-4 py-3 text-xs">
-      <summary className="cursor-pointer text-foreground font-semibold list-none">
-        Pesos por município ({ativos.length} com resposta) ▾
-      </summary>
-      <table className="mt-3 w-full text-xs">
-        <thead>
-          <tr className="text-muted-foreground uppercase tracking-widest text-[10px]">
-            <th className="text-left font-medium py-1">Município</th>
-            <th className="text-right font-medium py-1">Eleitorado</th>
-            <th className="text-right font-medium py-1">Respostas</th>
-            <th className="text-right font-medium py-1">Peso</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ativos.map((p) => (
-            <tr key={p.ibgeCodigo} className="border-t border-border/50">
-              <td className="py-1">{p.nome}</td>
-              <td className="text-right tabular-nums py-1">
-                {p.eleitorado.toLocaleString('pt-BR')}
-              </td>
-              <td className="text-right tabular-nums py-1">{p.respostas}</td>
-              <td className="text-right tabular-nums py-1 font-semibold">
-                {p.peso.toFixed(2)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </details>
   )
 }
 

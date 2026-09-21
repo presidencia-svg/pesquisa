@@ -17,6 +17,7 @@ import type {
   CargoZona,
   Pesquisa,
 } from '@/components/resultados-dashboard'
+import { type PonderacaoMetodo, viewsPonderadas } from '@/lib/ponderacao-views'
 import { projetarCadeiras, type PartidoVotos } from '@/lib/projecao'
 import { lerTudo } from '@/lib/supabase/ler-tudo'
 import {
@@ -66,7 +67,7 @@ export type EdicaoRow = {
   ponderacao_aprovada_por: string | null
 }
 
-export type PonderacaoMetodo = 'municipio' | 'estratos_raking'
+export type { PonderacaoMetodo } from '@/lib/ponderacao-views'
 
 /**
  * Diagnósticos da execução de ponderação (ponderacao_execucao). Alimentam a
@@ -191,16 +192,12 @@ export async function carregarResultados(
   //                     × instrução, pesos da execução em ponderacao_execucao_id)
   // Estratos SEM execução apontada é erro de configuração: falha em vez de
   // publicar número sem peso.
-  const metodo: PonderacaoMetodo =
-    edicao.ponderacao_metodo === 'estratos_raking' ? 'estratos_raking' : 'municipio'
-  if (metodo === 'estratos_raking' && !edicao.ponderacao_execucao_id) {
-    throw new Error(
-      'resultados: edição com ponderacao_metodo=estratos_raking sem ponderacao_execucao_id — rode a ponderação antes',
-    )
-  }
-  const viewCand = metodo === 'estratos_raking' ? 'v_resultados_candidato_pond_estratos' : 'v_resultados_candidato_pond'
-  const viewLeg = metodo === 'estratos_raking' ? 'v_resultados_legenda_pond_estratos' : 'v_resultados_legenda_pond'
-  const viewBns = metodo === 'estratos_raking' ? 'v_votos_branco_nao_sabe_pond_estratos' : 'v_votos_branco_nao_sabe_pond'
+  // Fonte única (lib/ponderacao-views.ts) — a projeção do admin lê as mesmas views.
+  const views = viewsPonderadas(edicao)
+  const metodo: PonderacaoMetodo = views.metodo
+  const viewCand = views.candidato
+  const viewLeg = views.legenda
+  const viewBns = views.brancoNaoSabe
 
   // ----- Carrega tudo em paralelo -----
   const [
