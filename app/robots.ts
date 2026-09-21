@@ -19,6 +19,7 @@ export default function robots(): MetadataRoute.Robots {
         '/dev/',
         '/tv',
         '/resultados',
+        '/previa',
         '/manutencao',
         '/teste-ficticio',
         '/votar/',

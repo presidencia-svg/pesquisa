@@ -1,0 +1,71 @@
+/* Prévia reservada (link de uso único) — tabela densa pra exame do estatístico. */
+.pv {
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+  color: var(--foreground);
+  background: var(--background);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.pv-topo { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.pv-topo img { height: 44px; width: auto; }
+.pv-topo h1 { font-size: 24px; font-weight: 600; line-height: 1.2; margin: 2px 0; }
+.pv-rotulo {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--accent);
+}
+.pv-sub { font-size: 13px; color: var(--muted-foreground); line-height: 1.5; }
+.pv-sigilo {
+  margin: 20px 0 8px; padding: 12px 16px; border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--error) 35%, transparent);
+  background: color-mix(in srgb, var(--error) 6%, transparent);
+  font-size: 13px; line-height: 1.5;
+}
+.pv-cargo { margin-top: 36px; }
+.pv-cargo h2 { font-size: 19px; font-weight: 600; margin-bottom: 2px; }
+.pv-rolagem { overflow-x: auto; margin-top: 12px; }
+.pv table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.pv th, .pv td { padding: 6px 10px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--border); }
+.pv th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted-foreground); }
+.pv .pv-esq { text-align: left; }
+.pv .pv-nome { white-space: normal; min-width: 180px; font-weight: 500; }
+.pv .pv-forte { font-weight: 700; }
+.pv .pv-mais { color: var(--accent); }
+.pv .pv-menos { color: var(--error); }
+.pv .pv-resto td { color: var(--muted-foreground); }
+.pv-ficha {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px; margin: 14px 0 6px;
+}
+.pv-ficha div { padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--muted); }
+.pv-ficha dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted-foreground); }
+.pv-ficha dd { font-size: 16px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.pv details { margin-top: 14px; }
+.pv summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent); }
+.pv-rodape { margin-top: 40px; font-size: 12px; color: var(--muted-foreground); }
+
+/* Marca d'água com o nome do destinatário — aparece em qualquer captura. */
+.pv-marca {
+  position: fixed; inset: -20% -20%; z-index: 50; pointer-events: none;
+  display: flex; flex-wrap: wrap; gap: 70px 50px; align-content: space-around;
+  transform: rotate(-24deg); opacity: 0.13;
+}
+.pv-marca span { font-size: 13px; font-weight: 700; white-space: nowrap; color: var(--foreground); }
+
+.pv-aviso {
+  min-height: 70vh; display: flex; flex-direction: column; gap: 16px;
+  align-items: flex-start; justify-content: center;
+  width: 100%; box-sizing: border-box;
+  max-width: 440px; margin: 0 auto; padding: 48px 20px;
+}
+.pv-aviso img { height: 48px; width: auto; }
+.pv-aviso h1 { font-size: 28px; font-weight: 600; }
+.pv-aviso p { color: var(--muted-foreground); line-height: 1.6; }
+
+@media print {
+  .pv, .pv-marca { display: none !important; }
+  body::after { content: 'Prévia reservada — impressão desativada.'; }
+}

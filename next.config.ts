@@ -161,6 +161,7 @@ const nextConfig: NextConfig = {
         '/dev/:path*',
         '/tv/:path*',
         '/resultados/:path*',
+        '/previa/:path*',
         '/manutencao/:path*',
         '/teste-ficticio/:path*',
         '/votar/:path+',
