@@ -313,7 +313,7 @@ export default async function PreviaVerPage() {
         </header>
 
         <p className="pv-sigilo">
-          Conteúdo sigiloso até a divulgação oficial (a partir de 23/09/2026, Res. TSE 23.747/2026).
+          Conteúdo sigiloso até a divulgação oficial (a partir de 24/09/2026, data de divulgação registrada no PesqEle; Res. TSE 23.747/2026).
           Esta página só abre neste navegador, leva o seu nome e cada acesso fica registrado. Não
           fotografe nem repasse.
         </p>
